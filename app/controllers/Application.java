@@ -18,6 +18,8 @@ public class Application extends Controller {
     public static final String REDDIT_SECRET = Play.configuration.getProperty("oauth.reddit.secret");
     public static final String REDDIT_CALLBACK = Play.configuration.getProperty("oauth.reddit.callbackurl");
     public static final String REDDIT_SCOPE = WS.encode("identity,mysubreddits");
+    public static final String REDDIT_AUTHORIZATION_URL = "https://www.reddit.com/api/v1/authorize?client_id=" + REDDIT_CLIENTID + "&response_type=code" +
+            "&state=iuknjvdihu&redirect_uri=" + REDDIT_CALLBACK + "&duration=permanent&scope=" + REDDIT_SCOPE;
     public static final String REDDIT_TOKEN_URL = "https://www.reddit.com/api/v1/access_token";
 
     public static final String OAUTH_API_DOMAIN = "https://oauth.reddit.com";
@@ -27,7 +29,6 @@ public class Application extends Controller {
 
     @Before
     static void setUser() {
-        Logger.info("Reddit client: " + REDDIT_CLIENTID);
         ChatUser user = null;
         if (session.contains("uid")) {
             Logger.info("existing user: " + session.get("uid"));
@@ -42,23 +43,6 @@ public class Application extends Controller {
 
     private static ChatUser connected() {
         return (ChatUser) renderArgs.get("user");
-    }
-
-    private static String getRedditClientId() {
-        return Play.configuration.getProperty("oauth.reddit.clientid");
-    }
-
-    private static String getRedditSecret() {
-        return Play.configuration.getProperty("oauth.reddit.secret");
-    }
-
-    private static String getRedditCallbackUrl() {
-        return Play.configuration.getProperty("oauth.reddit.callbackurl");
-    }
-
-    private static String getRedditAuthorizationUrl() {
-        return "https://www.reddit.com/api/v1/authorize?client_id=" + getRedditClientId() + "&response_type=code" +
-                "&state=iuknjvdihu&redirect_uri=" + getRedditCallbackUrl() + "&duration=permanent&scope=" + REDDIT_SCOPE;
     }
 
     public static void index() {
@@ -77,7 +61,7 @@ public class Application extends Controller {
         if (OAuth2.isCodeResponse()) {
             ChatUser u = connected();
 //            OAuth2.Response response = retrieveAccessToken(REDDIT_CALLBACK);
-            Tokens tokens = retrieveAccessToken(getRedditCallbackUrl());
+            Tokens tokens = retrieveAccessToken(REDDIT_CALLBACK);
             u.accessToken = tokens.access;
             u.refreshToken = tokens.refresh;
             String uuid = UUID.randomUUID().toString();
@@ -102,7 +86,7 @@ public class Application extends Controller {
 
             index();
         }
-        redirect(getRedditAuthorizationUrl());
+        redirect(REDDIT_AUTHORIZATION_URL);
 //        REDDIT.retrieveVerificationCode(authURL());
     }
 
@@ -119,13 +103,13 @@ public class Application extends Controller {
     private static Tokens retrieveAccessToken(String callbackURL) {
         String accessCode = Scope.Params.current().get("code");
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("client_id", getRedditClientId());
-        params.put("client_secret", getRedditSecret());
+        params.put("client_id", REDDIT_CLIENTID);
+        params.put("client_secret", REDDIT_SECRET);
         params.put("grant_type", "authorization_code");
         params.put("redirect_uri", callbackURL);
         params.put("code", accessCode);
         HashMap<String, String> headers = getOauthHeaders(accessCode);
-        String authStr = getRedditClientId() + ":" + getRedditSecret();
+        String authStr = REDDIT_CLIENTID + ":" + REDDIT_SECRET;
         headers.put("Authorization", "Basic " + Base64.encodeBase64String(authStr.getBytes()));
 
         WS.HttpResponse response = WS.url(REDDIT_TOKEN_URL).headers(headers).params(params).post();
