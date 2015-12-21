@@ -41,7 +41,7 @@ public class Application extends Controller {
         renderArgs.put("user", user);
     }
 
-    private static ChatUser connected() {
+    static ChatUser connected() {
         return (ChatUser) renderArgs.get("user");
     }
 
