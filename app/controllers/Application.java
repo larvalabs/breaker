@@ -1,6 +1,7 @@
 package controllers;
 
 import com.google.gson.JsonObject;
+import models.ChatUser;
 import org.apache.commons.codec.binary.Base64;
 import play.*;
 import play.libs.OAuth2;
@@ -9,8 +10,6 @@ import play.mvc.*;
 import play.data.validation.*;
 
 import java.util.*;
-
-import models.*;
 
 public class Application extends Controller {
 
@@ -41,7 +40,7 @@ public class Application extends Controller {
         renderArgs.put("user", user);
     }
 
-    static ChatUser connected() {
+    private static ChatUser connected() {
         return (ChatUser) renderArgs.get("user");
     }
 
