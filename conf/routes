@@ -5,6 +5,7 @@
 # Login
 GET     /                                       Application.index
 GET     /demo                                   Application.enterDemo
+GET     /auth                                   Application.auth
 
 # Refresh demo
 GET     /refresh                                Refresh.index
@@ -25,3 +26,5 @@ WS      /websocket/room/socket                  WebSocket.ChatRoomSocket.join
 # Map static resources from the /app/public folder to the /public path
 GET     /public/                                staticDir:public
 
+# Catch all
+*       /{controller}/{action}                  {controller}.{action}
