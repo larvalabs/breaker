@@ -1,0 +1,54 @@
+.DS_Store
+*.iws
+*.class
+tmp
+classes
+web/WEB-INF/classes
+/modules
+/test-result
+/logs
+/out
+/lib
+/precompiled
+public/images/vertical_grid.png
+solr/data
+*.cfe
+*.cfs
+*.si
+*.fdt
+*.fdx
+*.fnm
+*.tvd
+*.
+*.
+*.doc
+*.tvf
+*.tvx
+*.pos
+*.tim
+*.tip
+*.gen
+index/segments_9
+public/newsite/compass/.sass-cache
+
+# Idea folder project related:
+
+# User-specific stuff:
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/dictionaries
+.idea/shelf
+
+# Sensitive or high-churn files:
+.idea/dataSources.ids
+.idea/dataSources.xml
+.idea/sqlDataSources.xml
+.idea/dynamic.xml
+.idea/uiDesigner.xml
+
+# Gradle:
+.idea/gradle.xml
+.idea/libraries
+
+# Mongo Explorer plugin:
+.idea/mongoSettings.xml
