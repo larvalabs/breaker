@@ -26,17 +26,30 @@ public class Application extends Controller {
     public static final String COOKIE_CHATUSERNAME = "chatusername";
     public static final String COOKIE_CHATTOKEN = "chattoken";
 
+    public static final String SESSION_UID = "uid";
+
     @Before
-    static void setUser() {
+    static void preloadUser() {
         ChatUser user = null;
         if (session.contains("uid")) {
-            Logger.info("existing user: " + session.get("uid"));
-            user = ChatUser.get(Long.parseLong(session.get("uid")));
+            String uid = session.get(SESSION_UID);
+            Logger.info("existing user: " + uid);
+            user = ChatUser.get(uid);
+            if (user != null) {
+                renderArgs.put("user", user);
+            }
         }
+        // Only create user on successful auth
+/*
         if (user == null) {
             user = ChatUser.createNew();
             session.put("uid", user.uid);
         }
+*/
+    }
+
+    private static void setUserInSession(ChatUser user) {
+        session.put(SESSION_UID, user.uid);
         renderArgs.put("user", user);
     }
 
@@ -46,7 +59,7 @@ public class Application extends Controller {
 
     public static void index() {
         ChatUser chatUser = connected();
-        if (chatUser.accessToken == null) {
+        if (chatUser == null || chatUser.accessToken == null) {
             auth();
             return;
         }
@@ -55,32 +68,39 @@ public class Application extends Controller {
 //        render();
     }
 
+    public static void logout() {
+        session.remove(SESSION_UID);
+        index();
+    }
+
     public static void auth() {
         Logger.debug("Received auth response.");
         if (OAuth2.isCodeResponse()) {
-            ChatUser u = connected();
+//            ChatUser user = connected();
 //            OAuth2.Response response = retrieveAccessToken(REDDIT_CALLBACK);
             Tokens tokens = retrieveAccessToken(REDDIT_CALLBACK);
-            u.accessToken = tokens.access;
-            u.refreshToken = tokens.refresh;
-            String uuid = UUID.randomUUID().toString();
-            u.localToken = uuid.substring(uuid.lastIndexOf("-") + 1, uuid.length());
-            u.save();
 
-            if (u != null && u.accessToken != null) {
+            if (tokens.access != null) {
 
 //            Http.Header[] headers = new Http.Header[2];
-                HashMap<String, String> headers = getOauthHeaders(u.accessToken);
+                HashMap<String, String> headers = getOauthHeaders(tokens.access);
                 JsonObject me = WS.url(ENDPOINT_ME)
                         .headers(headers)
                         .get().getJson().getAsJsonObject();
 
                 String username = me.get("name").getAsString();
-                u.username = username;
-                u.linkKarma = me.get("link_karma").getAsLong();
-                u.commentKarma = me.get("link_karma").getAsLong();
-                u.lastResponseApiMe = me.toString();
-                u.save();
+                Logger.info("Trying to log in " + username);
+                ChatUser user = ChatUser.findOrCreate(username);
+                user.username = username;
+                user.accessToken = tokens.access;
+                user.refreshToken = tokens.refresh;
+
+                user.linkKarma = me.get("link_karma").getAsLong();
+                user.commentKarma = me.get("comment_karma").getAsLong();
+                user.lastResponseApiMe = me.toString();
+                user.save();
+
+                setUserInSession(user);
             }
 
             index();
@@ -146,4 +166,10 @@ public class Application extends Controller {
         }
     }
 
+    private static Random random = new Random();
+
+    public static void testId() {
+        long l = Math.abs(random.nextLong());
+        renderText(Long.toString(l, 26));
+    }
 }

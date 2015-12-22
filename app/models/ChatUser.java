@@ -1,5 +1,8 @@
 package models;
 
+import com.larvalabs.redditchat.util.Util;
+import org.hibernate.annotations.Index;
+import play.Logger;
 import play.db.jpa.Model;
 
 import javax.persistence.Entity;
@@ -8,10 +11,12 @@ import javax.persistence.Lob;
 @Entity
 public class ChatUser extends Model {
 
-    public long uid;
+    @Index(name = "useruid")
+    public String uid;
+
     public String accessToken;
     public String refreshToken;
-    public String localToken;
+
     public String username;
     public long linkKarma;
     public long commentKarma;
@@ -19,19 +24,26 @@ public class ChatUser extends Model {
     @Lob
     public String lastResponseApiMe;
 
-    public ChatUser(long uid) {
+    public ChatUser(String uid) {
         this.uid = uid;
     }
 
-    public static ChatUser get(long id) {
-        return find("uid", id).first();
+    public static ChatUser get(String uid) {
+        return find("uid", uid).first();
     }
 
     public static ChatUser createNew() {
-        long uid = (long) Math.floor(Math.random() * 10000);
-        ChatUser user = new ChatUser(uid);
+        ChatUser user = new ChatUser(Util.getShortRandomId());
         user.create();
         return user;
     }
 
+    public static ChatUser findOrCreate(String username) {
+        ChatUser user = find("username = ?", username).first();
+        if (user == null) {
+            Logger.debug("Creating new user object for " + username);
+            user = createNew();
+        }
+        return user;
+    }
 }

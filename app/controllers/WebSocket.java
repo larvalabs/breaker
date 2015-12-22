@@ -26,10 +26,11 @@ public class WebSocket extends Controller {
 
             ChatUser user;
             if (session.contains("uid")) {
-                Logger.info("websocket found existing user: " + session.get("uid"));
-                user = ChatUser.get(Long.parseLong(session.get("uid")));
+                String uid = session.get(Application.SESSION_UID);
+                Logger.info("websocket found existing user: " + uid);
+                user = ChatUser.get(uid);
             } else {
-                Logger.info("no user id in session.");
+                Logger.info("No user id in session.");
                 disconnect();
                 return;
             }
