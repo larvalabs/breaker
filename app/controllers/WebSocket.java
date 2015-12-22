@@ -16,26 +16,34 @@ import models.*;
 
 public class WebSocket extends Controller {
 
-    public static void room(String user) {
-        render(user);
+    private static ChatUser getUser() {
+        ChatUser user;
+        if (session.contains("uid")) {
+            String uid = session.get(Application.SESSION_UID);
+            Logger.info("websocket found existing user: " + uid);
+            return ChatUser.get(uid);
+        } else {
+            Logger.info("No user id in session.");
+            return null;
+        }
+    }
+
+    public static void room(String roomName) {
+        ChatUser user = getUser();
+        render(user, roomName);
     }
 
     public static class ChatRoomSocket extends WebSocketController {
 
-        public static void join() {
+        public static void join(String roomName) {
 
-            ChatUser user;
-            if (session.contains("uid")) {
-                String uid = session.get(Application.SESSION_UID);
-                Logger.info("websocket found existing user: " + uid);
-                user = ChatUser.get(uid);
-            } else {
-                Logger.info("No user id in session.");
+            ChatUser user = getUser();
+            if (user == null) {
                 disconnect();
                 return;
             }
 
-            ChatRoom room = ChatRoom.get();
+            ChatRoom room = ChatRoom.get(roomName);
 
             // Socket connected, join the chat room
             EventStream<ChatRoom.Event> roomMessagesStream = room.join(user.username);

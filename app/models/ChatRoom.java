@@ -6,8 +6,18 @@ import play.libs.*;
 import play.libs.F.*;
 
 public class ChatRoom {
-    
-    // ~~~~~~~~~ Let's chat! 
+
+    private String name;
+
+    public ChatRoom(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    // ~~~~~~~~~ Let's chat!
     
     final ArchivedEventStream<ChatRoom.Event> chatEvents = new ArchivedEventStream<ChatRoom.Event>(100);
     
@@ -104,12 +114,15 @@ public class ChatRoom {
     
     // ~~~~~~~~~ Chat room factory
 
-    static ChatRoom instance = null;
-    public static ChatRoom get() {
-        if(instance == null) {
-            instance = new ChatRoom();
+    private static HashMap<String, ChatRoom> rooms = new HashMap<String, ChatRoom>();
+
+    public static ChatRoom get(String name) {
+        ChatRoom chatRoom = rooms.get(name);
+        if (chatRoom == null) {
+            chatRoom = new ChatRoom(name);
+            rooms.put(name, chatRoom);
         }
-        return instance;
+        return chatRoom;
     }
     
 }

@@ -5,12 +5,12 @@
 <script src="@{'/public/javascripts/reconnecting-websocket.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
 #{/set}
 
-<h1>WebSocket — You are now chatting as ${user} <a href="@{Application.index()}">Leave the chat room</a></h1>
+<h1>${roomName} — You are now chatting as ${user.username} <a href="@{Application.index()}">Leave the chat room</a></h1>
 
 <div id="thread">
     <script type="text/html" id="message_tmpl">
         <% if(event.type == 'message') { %>
-            <div class="message <%= event.user == '${user}' ? 'you' : '' %>">
+            <div class="message <%= event.user == '${user.username}' ? 'you' : '' %>">
                 <h2><%= event.user %></h2>
                 <p>
                     <%= event.text %>
@@ -55,7 +55,7 @@
     // var WS = window['MozWebSocket'] ? MozWebSocket : WebSocket;
 
     // See https://github.com/joewalnes/reconnecting-websocket for options:
-    var socket = new ReconnectingWebSocket('@@{WebSocket.ChatRoomSocket.join()}')
+    var socket = new ReconnectingWebSocket('@@{WebSocket.ChatRoomSocket.join(roomName)}')
     // socket.debug = true;
 
     // Ping socket

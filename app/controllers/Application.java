@@ -72,7 +72,7 @@ public class Application extends Controller {
         }
 
         session.remove(SESSION_JOINROOM);
-        WebSocket.room(chatUser.username);
+        WebSocket.room(roomName);
     }
 
     public static void logout() {
@@ -165,28 +165,4 @@ public class Application extends Controller {
         return headers;
     }
 
-    public static void enterDemo(@Required String user, @Required String demo) {
-        if (validation.hasErrors()) {
-            flash.error("Please choose a nick name and the demonstration type…");
-            index();
-        }
-
-        // Dispatch to the demonstration        
-        if (demo.equals("refresh")) {
-            Refresh.index(user);
-        }
-        if (demo.equals("longpolling")) {
-            LongPolling.room(user);
-        }
-        if (demo.equals("websocket")) {
-            WebSocket.room(user);
-        }
-    }
-
-    private static Random random = new Random();
-
-    public static void testId() {
-        long l = Math.abs(random.nextLong());
-        renderText(Long.toString(l, 26));
-    }
 }
