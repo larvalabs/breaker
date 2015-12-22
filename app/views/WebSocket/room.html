@@ -58,6 +58,16 @@
     var socket = new ReconnectingWebSocket('@@{WebSocket.ChatRoomSocket.join()}')
     // socket.debug = true;
 
+    // Ping socket
+    setInterval(function() {
+        if (socket.readyState == 1) {
+            console.log("Sending ping.");
+            socket.send("##ping##");
+        } else {
+            console.log("Connection not open.");
+        }
+    }, 10000);
+
     // Display a message
     var display = function(event) {
         $('#thread').append(tmpl('message_tmpl', {event: event}));

@@ -58,7 +58,11 @@ public class WebSocket extends Controller {
 
                 // Case: TextEvent received on the socket
                 for (String userMessage : TextFrame.match(e._1)) {
-                    room.say(user.username, userMessage);
+                    if (userMessage != null && userMessage.toLowerCase().equals("##ping##")) {
+                        Logger.debug("Ping msg - skipping.");
+                    } else {
+                        room.say(user.username, userMessage);
+                    }
                 }
 
                 // Case: Someone joined the room
