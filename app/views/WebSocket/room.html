@@ -61,10 +61,10 @@
     // Ping socket
     setInterval(function() {
         if (socket.readyState == 1) {
-            console.log("Sending ping.");
+            // console.log("Sending ping.");
             socket.send("##ping##");
         } else {
-            console.log("Connection not open.");
+            console.log("Can't ping, connection not open.");
         }
     }, 10000);
 
