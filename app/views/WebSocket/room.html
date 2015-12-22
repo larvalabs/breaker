@@ -1,6 +1,10 @@
 #{extends 'main.html' /}
 #{set title:'Chat room' /}
 
+#{set 'moreScripts'}
+<script src="@{'/public/javascripts/reconnecting-websocket.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+#{/set}
+
 <h1>WebSocket — You are now chatting as ${user} <a href="@{Application.index()}">Leave the chat room</a></h1>
 
 <div id="thread">
@@ -48,9 +52,12 @@
 <script type="text/javascript">
 
     // Create a socket
-    var WS = window['MozWebSocket'] ? MozWebSocket : WebSocket;
-    var socket = new WS('@@{WebSocket.ChatRoomSocket.join()}')
-    
+    // var WS = window['MozWebSocket'] ? MozWebSocket : WebSocket;
+
+    // See https://github.com/joewalnes/reconnecting-websocket for options:
+    var socket = new ReconnectingWebSocket('@@{WebSocket.ChatRoomSocket.join()}')
+    // socket.debug = true;
+
     // Display a message
     var display = function(event) {
         $('#thread').append(tmpl('message_tmpl', {event: event}));
