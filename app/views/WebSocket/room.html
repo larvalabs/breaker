@@ -49,7 +49,7 @@
 
     // Create a socket
     var WS = window['MozWebSocket'] ? MozWebSocket : WebSocket;
-    var socket = new WS('@@{WebSocket.ChatRoomSocket.join(user)}')
+    var socket = new WS('@@{WebSocket.ChatRoomSocket.join()}')
     
     // Display a message
     var display = function(event) {
