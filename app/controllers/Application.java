@@ -67,7 +67,7 @@ public class Application extends Controller {
         ChatUser chatUser = connected();
         if (chatUser == null || chatUser.accessToken == null) {
             session.put(SESSION_JOINROOM, roomName);
-            preauthForRoomJoin(roomName);
+            preAuthForRoomJoin(roomName);
             return;
         }
 
@@ -80,7 +80,7 @@ public class Application extends Controller {
         index();
     }
 
-    public static void preauthForRoomJoin(String roomName) {
+    public static void preAuthForRoomJoin(String roomName) {
         ChatUser chatUser = connected();
         render(chatUser, roomName);
     }
