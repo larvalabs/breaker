@@ -3,33 +3,13 @@
 
 <div id="home">
 
-    <h2>The Play's Chat demonstration</h2>
+    <h2>Reddit chat</h2>
+    #{if user}
+    <p>Logged in user: ${user.username}</p>
+    #{/if}
 
-    <div id="signin">
-        #{form @enterDemo()}
-            #{if flash.error}
-                <p class="error">
-                    ${flash.error}
-                </p>
-            #{/if}
-            <p>
-                <label for="nick">Choose a nick name</label>
-                <input type="text" name="user" id="user">
-            </p>
-            <p>
-                <label for="nick">Demonstration</label>
-                <select name="demo">
-                    <option></option>
-                    <option value="refresh">Ajax, active refresh</option>
-                    <option value="longpolling">Ajax, long polling</option>
-                    <option value="websocket">WebSocket</option>
-                </select>
-            </p>
-            <p>
-                <label></label>
-                <input type="submit" id="enter" value="Enter the chat room">
-            </p>
-        #{/form}
-    </div>
+    <p><a href="@{Application.join('webdev')}">webdev chat</a></p>
+    <p><a href="@{Application.join('hockey')}">hockey chat</a></p>
+    <p><a href="@{Application.logout()}">logout</a></p>
 
 </div>

@@ -1,7 +1,7 @@
 #{extends 'main.html' /}
 #{set title:'Chat room' /}
 
-<h1>WebSocket — You are now chatting as ${user} <a href="@{Application.logout()}">Leave the chat room</a></h1>
+<h1>WebSocket — You are now chatting as ${user} <a href="@{Application.index()}">Leave the chat room</a></h1>
 
 <div id="thread">
     <script type="text/html" id="message_tmpl">

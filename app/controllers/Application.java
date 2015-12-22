@@ -27,6 +27,7 @@ public class Application extends Controller {
     public static final String COOKIE_CHATTOKEN = "chattoken";
 
     public static final String SESSION_UID = "uid";
+    public static final String SESSION_JOINROOM = "joinroomname";
 
     @Before
     static void preloadUser() {
@@ -59,18 +60,29 @@ public class Application extends Controller {
 
     public static void index() {
         ChatUser chatUser = connected();
+        render();
+    }
+
+    public static void join(String roomName) {
+        ChatUser chatUser = connected();
         if (chatUser == null || chatUser.accessToken == null) {
-            auth();
+            session.put(SESSION_JOINROOM, roomName);
+            preauthForRoomJoin(roomName);
             return;
         }
 
+        session.remove(SESSION_JOINROOM);
         WebSocket.room(chatUser.username);
-//        render();
     }
 
     public static void logout() {
         session.remove(SESSION_UID);
         index();
+    }
+
+    public static void preauthForRoomJoin(String roomName) {
+        ChatUser chatUser = connected();
+        render(chatUser, roomName);
     }
 
     public static void auth() {
@@ -103,7 +115,12 @@ public class Application extends Controller {
                 setUserInSession(user);
             }
 
-            index();
+            String joiningRoom = session.get(SESSION_JOINROOM);
+            if (joiningRoom != null) {
+                join(joiningRoom);
+            } else {
+                index();
+            }
         }
         redirect(REDDIT_AUTHORIZATION_URL);
 //        REDDIT.retrieveVerificationCode(authURL());
