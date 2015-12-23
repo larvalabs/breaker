@@ -1,6 +1,7 @@
 package models;
 
 import com.larvalabs.redditchat.Constants;
+import com.larvalabs.redditchat.util.Util;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Index;
 import play.Logger;
@@ -14,6 +15,8 @@ import java.util.regex.Matcher;
 @Entity
 @Table(name = "message")
 public class Message extends Model {
+
+    public String uuid = Util.getUUID();
 
     public static final int IMAGETYPE_SCREENSHOT = 0;
     public static final int IMAGETYPE_PROFILE = 1;
@@ -57,6 +60,14 @@ public class Message extends Model {
 
     public String languageDetected;
 
+    public Message(String uuid, ChatUser user, ChatRoom room, String messageText) {
+        this.uuid = uuid;
+        this.user = user;
+        this.room = room;
+        this.messageText = messageText;
+        this.createDate = new Date();
+    }
+
     public Message(ChatUser user, ChatRoom room, String messageText) {
         this.user = user;
         this.room = room;
@@ -78,6 +89,14 @@ public class Message extends Model {
         this.imageKey = imageKey;
         this.imageKeyType = imageKeyType;
         this.createDate = new Date();
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     public ChatUser getUser() {

@@ -1,5 +1,7 @@
 package controllers;
 
+import com.larvalabs.redditchat.dataobj.JsonMessage;
+import com.larvalabs.redditchat.dataobj.JsonUser;
 import com.larvalabs.redditchat.realtime.ChatRoomStream;
 import jobs.SaveNewMessageJob;
 import play.*;
@@ -45,10 +47,11 @@ public class WebSocket extends Controller {
                 return;
             }
 
-            ChatRoomStream room = ChatRoomStream.get(roomName);
+            ChatRoom room = ChatRoom.findByName(roomName);
+            ChatRoomStream roomStream = ChatRoomStream.get(roomName);
 
             // Socket connected, join the chat room
-            EventStream<ChatRoomStream.Event> roomMessagesStream = room.join(user.username);
+            EventStream<ChatRoomStream.Event> roomMessagesStream = roomStream.join(JsonUser.fromUser(user));
 
             // Loop while the socket is open
             while (inbound.isOpen()) {
@@ -61,7 +64,7 @@ public class WebSocket extends Controller {
 
                 // Case: User typed 'quit'
                 for (String userMessage : TextFrame.and(Equals("quit")).match(e._1)) {
-                    room.leave(user.username);
+                    roomStream.leave(JsonUser.fromUser(user));
                     outbound.send("quit:ok");
                     disconnect();
                 }
@@ -71,8 +74,10 @@ public class WebSocket extends Controller {
                     if (userMessage != null && userMessage.toLowerCase().equals("##ping##")) {
 //                        Logger.debug("Ping msg - skipping.");
                     } else {
-                        new SaveNewMessageJob(user, roomName, userMessage).now();
-                        room.say(user.username, userMessage);
+                        String uuid = com.larvalabs.redditchat.util.Util.getUUID();
+                        JsonMessage jsonMessage = JsonMessage.makePresavedMessage(uuid, user, room, userMessage);
+                        new SaveNewMessageJob(uuid, user, roomName, userMessage).now();
+                        roomStream.say(jsonMessage);
                     }
                 }
 
@@ -81,13 +86,13 @@ public class WebSocket extends Controller {
                     ChatRoomStream.Event event = e._2.get();
                     if (event instanceof ChatRoomStream.Join) {
                         ChatRoomStream.Join joined = (ChatRoomStream.Join) event;
-                        outbound.send("join:%s", joined.user);
+                        outbound.send("join:%s", joined.user.username);
                     } else if (event instanceof ChatRoomStream.Message) {
                         ChatRoomStream.Message message = (ChatRoomStream.Message) event;
-                        outbound.send("message:%s:%s", message.user, message.text);
+                        outbound.send("message:%s:%s", message.message.user.username, message.message.message);
                     } else if (event instanceof  ChatRoomStream.Leave) {
                         ChatRoomStream.Leave left = (ChatRoomStream.Leave) event;
-                        outbound.send("leave:%s", left.user);
+                        outbound.send("leave:%s", left.user.username);
                     }
                 }
 
@@ -113,7 +118,7 @@ public class WebSocket extends Controller {
 
                 // Case: The socket has been closed
                 for (WebSocketClose closed : SocketClosed.match(e._1)) {
-                    room.leave(user.username);
+                    roomStream.leave(JsonUser.fromUser(user));
                     disconnect();
                 }
 

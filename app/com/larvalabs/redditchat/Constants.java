@@ -42,4 +42,6 @@ public class Constants {
     public static final int PRESENCE_TIMEOUT_SEC = 30;
 
     public static final int USER_FLAG_THRESHOLD = 15;
+
+    public static final int DEFAULT_MESSAGE_LIMIT = 40;
 }

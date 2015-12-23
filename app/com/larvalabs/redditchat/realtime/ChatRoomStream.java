@@ -2,6 +2,8 @@ package com.larvalabs.redditchat.realtime;
 
 import java.util.*;
 
+import com.larvalabs.redditchat.dataobj.JsonMessage;
+import com.larvalabs.redditchat.dataobj.JsonUser;
 import play.libs.F.*;
 
 public class ChatRoomStream {
@@ -24,7 +26,7 @@ public class ChatRoomStream {
      * For WebSocket, when a user join the room we return a continuous event stream
      * of ChatEvent
      */
-    public EventStream<ChatRoomStream.Event> join(String user) {
+    public EventStream<ChatRoomStream.Event> join(JsonUser user) {
         chatEvents.publish(new Join(user));
         return chatEvents.eventStream();
     }
@@ -32,18 +34,19 @@ public class ChatRoomStream {
     /**
      * A user leave the room
      */
-    public void leave(String user) {
+    public void leave(JsonUser user) {
         chatEvents.publish(new Leave(user));
     }
     
     /**
      * A user say something on the room
      */
-    public void say(String user, String text) {
-        if(text == null || text.trim().equals("")) {
+    public void say(JsonMessage message) {
+        // todo maybe move this empty check elsewhere?
+        if(message.message == null || message.message.trim().equals("")) {
             return;
         }
-        chatEvents.publish(new Message(user, text));
+        chatEvents.publish(new Message(message));
     }
     
     /**
@@ -78,9 +81,9 @@ public class ChatRoomStream {
     
     public static class Join extends Event {
         
-        final public String user;
+        final public JsonUser user;
         
-        public Join(String user) {
+        public Join(JsonUser user) {
             super("join");
             this.user = user;
         }
@@ -89,9 +92,9 @@ public class ChatRoomStream {
     
     public static class Leave extends Event {
         
-        final public String user;
+        final public JsonUser user;
         
-        public Leave(String user) {
+        public Leave(JsonUser user) {
             super("leave");
             this.user = user;
         }
@@ -99,14 +102,12 @@ public class ChatRoomStream {
     }
     
     public static class Message extends Event {
-        
-        final public String user;
-        final public String text;
-        
-        public Message(String user, String text) {
+
+        final public JsonMessage message;
+
+        public Message(JsonMessage message) {
             super("message");
-            this.user = user;
-            this.text = text;
+            this.message = message;
         }
         
     }

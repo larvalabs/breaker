@@ -25,6 +25,11 @@ public class ChatUser extends Model {
     public static final Pattern PATTERN_VALID_USER = Pattern.compile(PATTERN_USERNAME_BASE);
     public static final Pattern PATTERN_USER_MENTION = Pattern.compile("@" + PATTERN_USERNAME_BASE);
 
+    public static final String PREFVAL_NOTIFICATION_EVERYTHING = "everything";
+    public static final String PREFVAL_NOTIFICATION_STARRED = "starred";
+    public static final String PREFVAL_NOTIFICATION_MENTIONED = "mentioned";
+    public static final String PREFVAL_NOTIFICATION_NEVER = "never";
+
     @Column(unique = true)
     public String uid;
 
@@ -36,12 +41,15 @@ public class ChatUser extends Model {
     public long commentKarma;
 
     public Date createDate = new Date();
+    public Date lastSeenDate = createDate;
 
     public int flagCount;
 
     public long likeCount;
 
     public String profileImageKey;
+
+    public String notificationPreference;
 
     @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(name = "user_starredroom")
@@ -78,12 +86,178 @@ public class ChatUser extends Model {
         this.profileImageKey = profileImageKey;
     }
 
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public long getLinkKarma() {
+        return linkKarma;
+    }
+
+    public void setLinkKarma(long linkKarma) {
+        this.linkKarma = linkKarma;
+    }
+
+    public long getCommentKarma() {
+        return commentKarma;
+    }
+
+    public void setCommentKarma(long commentKarma) {
+        this.commentKarma = commentKarma;
+    }
+
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public Date getLastSeenDate() {
+        return lastSeenDate;
+    }
+
+    public void setLastSeenDate(Date lastSeenDate) {
+        this.lastSeenDate = lastSeenDate;
+    }
+
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
+    }
+
+    public int getFlagCount() {
+        return flagCount;
+    }
+
+    public void setFlagCount(int flagCount) {
+        this.flagCount = flagCount;
+    }
+
+    public long getLikeCount() {
+        return likeCount;
+    }
+
+    public void setLikeCount(long likeCount) {
+        this.likeCount = likeCount;
+    }
+
+    public Set<ChatRoom> getStarredRooms() {
+        return starredRooms;
+    }
+
+    public void setStarredRooms(Set<ChatRoom> starredRooms) {
+        this.starredRooms = starredRooms;
+    }
+
+    public Set<ChatRoom> getWatchedRooms() {
+        return watchedRooms;
+    }
+
+    public void setWatchedRooms(Set<ChatRoom> watchedRooms) {
+        this.watchedRooms = watchedRooms;
+    }
+
+    public Set<ChatUser> getFlaggingUsers() {
+        return flaggingUsers;
+    }
+
+    public void setFlaggingUsers(Set<ChatUser> flaggingUsers) {
+        this.flaggingUsers = flaggingUsers;
+    }
+
+    public long getLastSeenMentionedMessageId() {
+        return lastSeenMentionedMessageId;
+    }
+
+    public void setLastSeenMentionedMessageId(long lastSeenMentionedMessageId) {
+        this.lastSeenMentionedMessageId = lastSeenMentionedMessageId;
+    }
+
+    public boolean isShadowBan() {
+        return shadowBan;
+    }
+
+    public void setShadowBan(boolean shadowBan) {
+        this.shadowBan = shadowBan;
+    }
+
+    public String getLastResponseApiMe() {
+        return lastResponseApiMe;
+    }
+
+    public void setLastResponseApiMe(String lastResponseApiMe) {
+        this.lastResponseApiMe = lastResponseApiMe;
+    }
+
     public String getProfileImageUrl() {
         if (profileImageKey != null) {
             return Constants.URL_S3_BUCKET_PROFILE_FULLSIZE + profileImageKey;
         }
         return null;
     }
+
+    public String getNotificationPreference() {
+        return notificationPreference;
+    }
+
+    public void setNotificationPreference(String notificationPreference) {
+        this.notificationPreference = notificationPreference;
+    }
+
+    public boolean isNotificationEnabledForEverything() {
+        if (StringUtils.isBlank(notificationPreference)) {
+            return true;
+        } else if (notificationPreference.equals(PREFVAL_NOTIFICATION_EVERYTHING)) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isNotificationEnabledForStarred() {
+        if (StringUtils.isBlank(notificationPreference)) {
+            return true;
+        } else if (isNotificationEnabledForEverything() || notificationPreference.equals(PREFVAL_NOTIFICATION_STARRED)) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isNotificationEnabledForMention() {
+        if (StringUtils.isBlank(notificationPreference)) {
+            return true;
+        } else if (isNotificationEnabledForEverything() || isNotificationEnabledForStarred() ||
+                notificationPreference.equals(PREFVAL_NOTIFICATION_MENTIONED)) {
+            return true;
+        }
+        return false;
+    }
+
+    // Static stuff
 
     public static ChatUser createNew() {
         ChatUser user = new ChatUser(Util.getShortRandomId());
@@ -134,7 +308,9 @@ public class ChatUser extends Model {
     }
 
     public boolean isRoomStarred(ChatRoom room) {
-        return starredRooms.contains(room);
+        return false;
+        // todo this has a JPA error when being called from websocket due to no session
+//        return starredRooms != null && starredRooms.contains(room);
     }
 
     public void markAllRoomsAsRead() {

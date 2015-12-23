@@ -11,11 +11,13 @@ import play.jobs.Job;
  */
 public class SaveNewMessageJob extends Job<Message> {
 
+    private String uuid;
     private ChatUser user;
     private String roomName;
     private String messageText;
 
-    public SaveNewMessageJob(ChatUser user, String roomName, String messageText) {
+    public SaveNewMessageJob(String uuid, ChatUser user, String roomName, String messageText) {
+        this.uuid = uuid;
         this.user = user;
         this.roomName = roomName;
         this.messageText = messageText;
@@ -25,7 +27,7 @@ public class SaveNewMessageJob extends Job<Message> {
     public Message doJobWithResult() throws Exception {
         Logger.info("Saving message...");
         ChatRoom chatRoom = ChatRoom.findByName(roomName);
-        Message message = new Message(user, chatRoom, messageText);
+        Message message = new Message(uuid, user, chatRoom, messageText);
         message.save();
         return message;
     }
