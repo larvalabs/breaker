@@ -1,6 +1,7 @@
 package controllers;
 
 import com.google.gson.JsonObject;
+import models.ChatRoom;
 import models.ChatUser;
 import org.apache.commons.codec.binary.Base64;
 import play.*;
@@ -72,6 +73,8 @@ public class Application extends Controller {
         }
 
         session.remove(SESSION_JOINROOM);
+        ChatRoom chatRoom = ChatRoom.findOrCreateForName(roomName);
+        chatUser.joinChatRoom(chatRoom);
         WebSocket.room(roomName);
     }
 

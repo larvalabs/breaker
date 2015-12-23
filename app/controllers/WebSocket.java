@@ -1,16 +1,14 @@
 package controllers;
 
+import com.larvalabs.redditchat.realtime.ChatRoomStream;
+import jobs.SaveNewMessageJob;
 import play.*;
 import play.mvc.*;
-import play.libs.*;
 import play.libs.F.*;
 import play.mvc.Http.*;
 
-import static play.libs.F.*;
 import static play.libs.F.Matcher.*;
 import static play.mvc.Http.WebSocketEvent.*;
-
-import java.util.*;
 
 import models.*;
 
@@ -43,16 +41,16 @@ public class WebSocket extends Controller {
                 return;
             }
 
-            ChatRoom room = ChatRoom.get(roomName);
+            ChatRoomStream room = ChatRoomStream.get(roomName);
 
             // Socket connected, join the chat room
-            EventStream<ChatRoom.Event> roomMessagesStream = room.join(user.username);
+            EventStream<ChatRoomStream.Event> roomMessagesStream = room.join(user.username);
 
             // Loop while the socket is open
             while (inbound.isOpen()) {
 
                 // Wait for an event (either something coming on the inbound socket channel, or ChatRoom messages)
-                Either<WebSocketEvent, ChatRoom.Event> e = await(Promise.waitEither(
+                Either<WebSocketEvent, ChatRoomStream.Event> e = await(Promise.waitEither(
                         inbound.nextEvent(),
                         roomMessagesStream.nextEvent()
                 ));
@@ -69,24 +67,45 @@ public class WebSocket extends Controller {
                     if (userMessage != null && userMessage.toLowerCase().equals("##ping##")) {
 //                        Logger.debug("Ping msg - skipping.");
                     } else {
+                        new SaveNewMessageJob(user, roomName, userMessage).now();
                         room.say(user.username, userMessage);
                     }
                 }
 
+                // Case: New message on the chat room
+                if (e._2.isDefined()) {
+                    ChatRoomStream.Event event = e._2.get();
+                    if (event instanceof ChatRoomStream.Join) {
+                        ChatRoomStream.Join joined = (ChatRoomStream.Join) event;
+                        outbound.send("join:%s", joined.user);
+                    } else if (event instanceof ChatRoomStream.Message) {
+                        ChatRoomStream.Message message = (ChatRoomStream.Message) event;
+                        outbound.send("message:%s:%s", message.user, message.text);
+                    } else if (event instanceof  ChatRoomStream.Leave) {
+                        ChatRoomStream.Leave left = (ChatRoomStream.Leave) event;
+                        outbound.send("leave:%s", left.user);
+                    }
+                }
+
+                // Note: This for loop stuff is the way that the play guys try to avoid
+                // casting and things like that. I dunno. I just replaced it with some
+                // ifs because I found it hard to read.
+/*
                 // Case: Someone joined the room
-                for (ChatRoom.Join joined : ClassOf(ChatRoom.Join.class).match(e._2)) {
+                for (ChatRoomStream.Join joined : ClassOf(ChatRoomStream.Join.class).match(e._2)) {
                     outbound.send("join:%s", joined.user);
                 }
 
-                // Case: New message on the chat room
-                for (ChatRoom.Message message : ClassOf(ChatRoom.Message.class).match(e._2)) {
+                for (ChatRoomStream.Message message : ClassOf(ChatRoomStream.Message.class).match(e._2)) {
+                    new SaveNewMessageJob(user, roomName, message.text);
                     outbound.send("message:%s:%s", message.user, message.text);
                 }
 
                 // Case: Someone left the room
-                for (ChatRoom.Leave left : ClassOf(ChatRoom.Leave.class).match(e._2)) {
+                for (ChatRoomStream.Leave left : ClassOf(ChatRoomStream.Leave.class).match(e._2)) {
                     outbound.send("leave:%s", left.user);
                 }
+*/
 
                 // Case: The socket has been closed
                 for (WebSocketClose closed : SocketClosed.match(e._1)) {

@@ -43,5 +43,17 @@
         </SOURCES>
       </library>
     </orderEntry>
+    <orderEntry type="module-library">
+      <library name="Redis module">
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/modules/redis-0.3/lib" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/modules/redis-0.3/src" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/modules/redis-0.3/lib" recursive="false" />
+      </library>
+    </orderEntry>
   </component>
 </module>

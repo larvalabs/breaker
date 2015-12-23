@@ -1,0 +1,354 @@
+package models;
+
+import com.larvalabs.redditchat.Constants;
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.annotations.Index;
+import play.Logger;
+import play.db.jpa.JPA;
+import play.db.jpa.Model;
+
+import javax.persistence.*;
+import java.util.*;
+import java.util.regex.Matcher;
+
+@Entity
+@Table(name = "message")
+public class Message extends Model {
+
+    public static final int IMAGETYPE_SCREENSHOT = 0;
+    public static final int IMAGETYPE_PROFILE = 1;
+    public static final int IMAGETYPE_WALLPAPER = 2;
+
+    @ManyToOne
+    public ChatUser user;
+
+    @ManyToOne
+    public ChatRoom room;
+
+    public String messageText;
+
+    public String imageKey;
+    public int imageKeyType = IMAGETYPE_SCREENSHOT;
+
+    @Index(name="createDate")
+    public Date createDate;
+
+    public int flagCount;
+
+    public int likeCount;
+
+    @ManyToMany(cascade = CascadeType.PERSIST)
+    @JoinTable(name = "message_like")
+    public Set<ChatUser> liked = new HashSet<ChatUser>();
+
+    @ManyToMany(cascade = CascadeType.PERSIST)
+    @JoinTable(name = "message_flag")
+    public Set<ChatUser> flagged = new HashSet<ChatUser>();
+
+    @ManyToMany(cascade = CascadeType.PERSIST)
+    @JoinTable(name = "message_mention")
+    public Set<ChatUser> mentioned = new HashSet<ChatUser>();
+
+    public boolean deleted;
+
+    // Scoring related for top message list
+    public float score = 0;
+    public Date scoreUpdateDate = new Date();
+
+    public String languageDetected;
+
+    public Message(ChatUser user, ChatRoom room, String messageText) {
+        this.user = user;
+        this.room = room;
+        this.messageText = messageText;
+        this.createDate = new Date();
+    }
+
+    /**
+     *
+     * @param user
+     * @param room
+     * @param messageText Usually empty or null for now.
+     * @param imageKey
+     */
+    public Message(ChatUser user, ChatRoom room, String messageText, String imageKey, int imageKeyType) {
+        this.user = user;
+        this.room = room;
+        this.messageText = messageText;
+        this.imageKey = imageKey;
+        this.imageKeyType = imageKeyType;
+        this.createDate = new Date();
+    }
+
+    public ChatUser getUser() {
+        return user;
+    }
+
+    public void setUser(ChatUser user) {
+        this.user = user;
+    }
+
+    public ChatRoom getRoom() {
+        return room;
+    }
+
+    public void setRoom(ChatRoom room) {
+        this.room = room;
+    }
+
+    public String getMessageText() {
+        return messageText;
+    }
+
+    public void setMessageText(String messageText) {
+        this.messageText = messageText;
+    }
+
+    public String getImageKey() {
+        return imageKey;
+    }
+
+    public void setImageKey(String imageKey) {
+        this.imageKey = imageKey;
+    }
+
+    public int getImageKeyType() {
+        return imageKeyType;
+    }
+
+    public void setImageKeyType(int imageKeyType) {
+        this.imageKeyType = imageKeyType;
+    }
+
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
+    }
+
+    public int getFlagCount() {
+        return flagCount;
+    }
+
+    public void setFlagCount(int flagCount) {
+        this.flagCount = flagCount;
+    }
+
+    public int getLikeCount() {
+        return likeCount;
+    }
+
+    public void setLikeCount(int likeCount) {
+        this.likeCount = likeCount;
+    }
+
+    public Set<ChatUser> getLiked() {
+        return liked;
+    }
+
+    public Set<ChatUser> getFlagged() {
+        return flagged;
+    }
+
+    public void setFlagged(Set<ChatUser> flagged) {
+        this.flagged = flagged;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    public String getLanguageDetected() {
+        return languageDetected;
+    }
+
+    public void setLanguageDetected(String languageDetected) {
+        this.languageDetected = languageDetected;
+    }
+
+    public Set<ChatUser> getMentioned() {
+        return mentioned;
+    }
+
+    public void setMentioned(Set<ChatUser> mentioned) {
+        this.mentioned = mentioned;
+    }
+
+    /// Custom stuff
+
+    public boolean flagMessageAndUpdateCounts(ChatUser flaggingUser) {
+        if (!flagged.contains(flaggingUser)) {
+            flagCount++;
+            flagged.add(flaggingUser);
+            save();
+            user.tryToFlag(flaggingUser);
+//            user.setFlagCount(user.getFlagCount() + 1);
+//            user.save();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean addLikingUser(ChatUser likingUser) {
+        if (!liked.contains(likingUser) && !this.equals(likingUser)) {
+            liked.add(likingUser);
+            save();
+            return true;
+        }
+        return false;
+    }
+
+    public boolean likeMessageAndUpdateCounts(ChatUser likingUser) {
+        if (!liked.contains(likingUser) && !this.equals(likingUser)) {
+//            likeCount++;
+            liked.add(likingUser);
+//            save();
+//            user.incrementLikeCount();
+//            user.save();
+            return true;
+        }
+        return false;
+    }
+
+    public String getDirectS3Url() {
+        if (imageKey != null) {
+            switch (imageKeyType) {
+                case IMAGETYPE_SCREENSHOT: {
+                    return Constants.URL_S3_BUCKET_SCREENSHOT_FULLSIZE + imageKey;
+                }
+                case IMAGETYPE_PROFILE: {
+                    return Constants.URL_S3_BUCKET_PROFILE_FULLSIZE + imageKey;
+                }
+                case IMAGETYPE_WALLPAPER: {
+                    return Constants.URL_S3_BUCKET_WALLPAPER_FULLSIZE + imageKey;
+                }
+            }
+        }
+        return null;
+    }
+
+    public String getImageUrl() {
+        String directS3Url = getDirectS3Url();
+        if (directS3Url == null) {
+            return null;
+        } else {
+            return directS3Url;
+        }
+    }
+
+    public String getImageThumbUrl() {
+        String regImageUrl = getDirectS3Url();
+        if (regImageUrl == null) {
+            return null;
+        } else {
+            return Constants.URL_WALLPAPER_THUMB + regImageUrl;
+        }
+    }
+
+    public List<ChatUser> getMentionedUsers() {
+        ArrayList<ChatUser> mentionList = new ArrayList<ChatUser>();
+        if (messageText == null) {
+            return mentionList;
+        }
+        Matcher matcher = ChatUser.PATTERN_USER_MENTION.matcher(messageText);
+        while (matcher.find()) {
+            String username = matcher.group();
+            Logger.info("Found username: " + username);
+            username = username.replaceAll("@", "").trim().toLowerCase();
+            ChatUser mentionedUser = ChatUser.findByUsername(username);
+            if (mentionedUser != null) {
+                mentionList.add(mentionedUser);
+            }
+        }
+        return mentionList;
+    }
+
+    public Set<ChatUser> updateMentionedUsers() {
+        List<ChatUser> mentionedUsers = getMentionedUsers();
+        mentioned = new HashSet<ChatUser>(mentionedUsers);
+        save();
+        return mentioned;
+    }
+
+    public static class MentionMessage {
+        public String replacedMessage;
+        public List<String> usernames;
+
+        public MentionMessage(String replacedMessage, List<String> usernames) {
+            this.replacedMessage = replacedMessage;
+            this.usernames = usernames;
+        }
+    }
+
+    public static MentionMessage getMessageTextWithUsernamePlaceholders(String messageText) {
+        ArrayList<String> usernames = new ArrayList<String>();
+        Matcher matcher = ChatUser.PATTERN_USER_MENTION.matcher(messageText);
+        String replacedMsg = new String(messageText);
+        while (matcher.find()) {
+            String usernameWithSymbol = matcher.group().toLowerCase().trim();
+            if (!usernames.contains(usernameWithSymbol)) {
+                replacedMsg = replacedMsg.replaceAll(usernameWithSymbol, "@" + usernames.size());
+                Logger.info("Found username: " + usernameWithSymbol);
+//            String username = usernameWithSymbol.replaceAll("@", "");
+                usernames.add(usernameWithSymbol);
+            }
+        }
+
+        return new MentionMessage(replacedMsg, usernames);
+    }
+
+    public static String reconstructMessageWithTranslation(MentionMessage mentionMessage, String translatedMsg) {
+        String reconstructedMsg = new String(translatedMsg);
+        for (int i = 0; i < mentionMessage.usernames.size(); i++) {
+            String username = mentionMessage.usernames.get(i);
+            reconstructedMsg = reconstructedMsg.replace("@" + i, username);
+        }
+        return reconstructedMsg;
+    }
+
+    public boolean didUserLike(ChatUser loggedInUser) {
+        return liked.contains(loggedInUser);
+    }
+
+    public void recalcScore() {
+        Date curDate = new Date();
+        long ageMillis = curDate.getTime() - createDate.getTime();
+        double ageHours = ageMillis / 3600000f;
+        score = (float) (Math.pow(likeCount, 0.8d) / Math.pow(ageHours + 1, 0.3d));
+        scoreUpdateDate = new Date();
+    }
+
+    public boolean isImageMessage() {
+        return imageKey != null;
+    }
+
+    public boolean hasDetectedLanguage() {
+        return !StringUtils.isBlank(getLanguageDetected());
+    }
+
+    public boolean isLanguageSame(String userLanguage) {
+        return (getLanguageDetected() != null && getLanguageDetected().equals(userLanguage));
+    }
+
+    public static List<Message> getLiked(ChatUser user, List<Message> messages) {
+        if (messages == null || messages.size() == 0) {
+            return new ArrayList<Message>();
+        }
+        Query query = JPA.em().createQuery("FROM Message m LEFT JOIN m.liked l WHERE m in :messages and :user in l");
+        query.setParameter("user", user);
+        query.setParameter("messages", messages);
+        List<Object[]> likeResult = query.getResultList();
+        List<Message> msgResultList = new ArrayList<Message>();
+        for (Object[] messageAndUser : likeResult) {
+            msgResultList.add((Message) messageAndUser[0]);
+        }
+        return msgResultList;
+    }
+}
