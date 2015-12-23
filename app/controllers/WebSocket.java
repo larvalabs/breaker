@@ -28,6 +28,10 @@ public class WebSocket extends Controller {
 
     public static void room(String roomName) {
         ChatUser user = getUser();
+        if (user == null) {
+            Application.preAuthForRoomJoin(roomName);
+            return;
+        }
         render(user, roomName);
     }
 
