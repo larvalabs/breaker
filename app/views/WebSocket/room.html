@@ -54,6 +54,10 @@
     // Create a socket
     // var WS = window['MozWebSocket'] ? MozWebSocket : WebSocket;
 
+    var numNewMessages = 0;
+    var roomName = '${roomName}';
+    var hasFocus = true;
+
     // See https://github.com/joewalnes/reconnecting-websocket for options:
     var socket = new ReconnectingWebSocket('@@{WebSocket.ChatRoomSocket.join(roomName)}')
     // socket.debug = true;
@@ -72,12 +76,25 @@
     var display = function(event) {
         $('#thread').append(tmpl('message_tmpl', {event: event}));
         $('#thread').scrollTo('max')
-    }
+    };
+
+    var updateTitle = function() {
+        var title = roomName + ' chat';
+        if (numNewMessages > 0) {
+            title = '(' + numNewMessages + ') ' + title;
+        }
+        document.title = title;
+    };
+    updateTitle();
     
     // Message received on the socket
     socket.onmessage = function(event) {
         console.log(event.data);
         var eventObj = JSON.parse(event.data);
+        if (eventObj.type === 'message' && !hasFocus) {
+            numNewMessages++;
+            updateTitle();
+        }
 //        var parts = /^([^:]+):([^:]+)(:(.*))?$/.exec(event.data)
         display(eventObj);
 /*
@@ -100,6 +117,25 @@
             $('#send').click()
             e.preventDefault()
         }
-    })
+    });
+
+    // Stuff to do with window focus
+
+    var onBlur = function onBlur() {
+        hasFocus = false;
+    };
+    var onFocus = function onFocus(){
+        hasFocus = true;
+        numNewMessages = 0;
+        updateTitle();
+    };
+
+    if (/*@cc_on!@*/false) { // check for Internet Explorer
+        document.onfocusin = onFocus;
+        document.onfocusout = onBlur;
+    } else {
+        window.onfocus = onFocus;
+        window.onblur = onBlur;
+    }
     
 </script>
