@@ -1,9 +1,11 @@
 package com.larvalabs.redditchat.dataobj;
 
 import models.*;
+import org.nibor.autolink.*;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.List;
 
 public class JsonMessage {
@@ -20,6 +22,10 @@ public class JsonMessage {
     public long createDateLongUTC;
     public boolean isNewSinceLastSession;
     public String detectedLanguage;
+
+    public String messageHtml;
+    public String[] allLinks;
+    public String[] imageLinks;
 
     // If true means it was sent before saving, so doesn't contain all info
     public boolean partial = false;
@@ -45,6 +51,7 @@ public class JsonMessage {
         this.createDateLongUTC = createDateLongUTC;
         isNewSinceLastSession = newSinceLastSession;
         this.detectedLanguage = detectedLanguage;
+        processMessage();
     }
 
     public JsonMessage(String uuid, JsonUser user, JsonChatRoom room, String message) {
@@ -52,6 +59,7 @@ public class JsonMessage {
         this.user = user;
         this.room = room;
         this.message = message;
+        processMessage();
     }
 
     public static JsonMessage from(Message message, ChatUser loggedInUser, boolean isNewSinceLastSession) {
@@ -103,6 +111,42 @@ public class JsonMessage {
         return jsonMessages.toArray(new JsonMessage[]{});
     }
 
+    public void processMessage() {
+        LinkExtractor linkExtractor = LinkExtractor.builder()
+                .linkTypes(EnumSet.of(LinkType.URL)) // limit to URLs
+                .build();
+
+        final ArrayList<String> localLinks = new ArrayList<String>();
+        final ArrayList<String> localImageLinks = new ArrayList<String>();
+
+        Iterable<LinkSpan> links = linkExtractor.extractLinks(message);
+        messageHtml = Autolink.renderLinks(message, links,
+                new LinkRenderer() {
+                    @Override
+                    public void render(LinkSpan link, CharSequence text, StringBuilder sb) {
+                        String linkStr = text.toString().substring(link.getBeginIndex(), link.getEndIndex());
+                        localLinks.add(linkStr);
+                        // todo this is budget
+                        String linkStrLower = linkStr.toLowerCase();
+                        if (linkStrLower.endsWith("jpg") || linkStrLower.endsWith("jpeg") ||
+                                linkStrLower.endsWith("png") || linkStrLower.endsWith("gif")) {
+                            localImageLinks.add(linkStr);
+                        }
+                        sb.append("<a href=\"");
+                        sb.append(text, link.getBeginIndex(), link.getEndIndex());
+                        sb.append("\" target='_blank'>");
+                        sb.append(text, link.getBeginIndex(), link.getEndIndex());
+                        sb.append("</a>");
+                    }
+                });
+
+        if (localLinks.size() > 0) {
+            allLinks = localLinks.toArray(new String[]{});
+        }
+        if (localImageLinks.size() > 0) {
+            imageLinks = localImageLinks.toArray(new String[]{});
+        }
+    }
 /*
     public void fillTranslation(Translation translation) {
         translatedMessage = translation.getTranslatedMessageText();

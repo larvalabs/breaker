@@ -13,8 +13,16 @@
             <div class="message <%= event.user.username == '${user.username}' ? 'you' : '' %>">
                 <h2><%= event.user.username %></h2>
                 <p>
-                    <%= event.message.message %>
+                    <%= event.message.messageHtml %>
                 </p>
+                <% if (event.message.imageLinks && event.message.imageLinks.length > 0) { %>
+                    <h2></h2>
+                    <p>
+                        <a href="<%= event.message.imageLinks[0] %>" target="_blank">
+                            <img src='<%= event.message.imageLinks[0] %>' class="preview" onload="previewLoaded();"/>
+                        </a>
+                    </p>
+                <% } %>
             </div>
         <% } %>
         <% if(event.type == 'join') { %>
@@ -78,6 +86,11 @@
         $('#thread').scrollTo('max')
     };
 
+    var previewLoaded = function(e) {
+//        console.log("Preview loaded.");
+        $('#thread').scrollTo('max');
+    }
+
     var updateTitle = function() {
         var title = roomName + ' chat';
         if (numNewMessages > 0) {
@@ -104,8 +117,8 @@
             text: parts[4]
         })
 */
-    }
-    
+    };
+
     $('#send').click(function(e) {
         var message = $('#message').val()
         $('#message').val('')

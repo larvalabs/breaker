@@ -128,6 +128,11 @@ h1 a {
     padding-left: 115px;
 }
 
+img.preview {
+    max-width: 300px;
+    max-height: 300px;
+}
+
 #newMessage {
     position: fixed;
     left: 14px;
