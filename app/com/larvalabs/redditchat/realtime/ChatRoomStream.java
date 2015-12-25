@@ -2,8 +2,10 @@ package com.larvalabs.redditchat.realtime;
 
 import java.util.*;
 
+import com.google.gson.Gson;
 import com.larvalabs.redditchat.dataobj.JsonMessage;
 import com.larvalabs.redditchat.dataobj.JsonUser;
+import play.Logger;
 import play.libs.F.*;
 
 public class ChatRoomStream {
@@ -76,7 +78,12 @@ public class ChatRoomStream {
             this.type = type;
             this.timestamp = System.currentTimeMillis();
         }
-        
+
+        public String toJson() {
+            String json = new Gson().toJson(this);
+            Logger.info("Event json: " + json);
+            return json;
+        }
     }
     
     public static class Join extends Event {
@@ -103,11 +110,13 @@ public class ChatRoomStream {
     
     public static class Message extends Event {
 
+        final public JsonUser user;         // Just for convenience on the front end
         final public JsonMessage message;
 
         public Message(JsonMessage message) {
             super("message");
             this.message = message;
+            this.user = this.message.user;
         }
         
     }

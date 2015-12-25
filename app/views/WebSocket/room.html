@@ -10,10 +10,10 @@
 <div id="thread">
     <script type="text/html" id="message_tmpl">
         <% if(event.type == 'message') { %>
-            <div class="message <%= event.user == '${user.username}' ? 'you' : '' %>">
-                <h2><%= event.user %></h2>
+            <div class="message <%= event.user.username == '${user.username}' ? 'you' : '' %>">
+                <h2><%= event.user.username %></h2>
                 <p>
-                    <%= event.text %>
+                    <%= event.message.message %>
                 </p>
             </div>
         <% } %>
@@ -21,7 +21,7 @@
             <div class="message notice">
                 <h2></h2>
                 <p>
-                    <%= event.user %> joined the room
+                    <%= event.user.username %> joined the room
                 </p>
             </div>
         <% } %>
@@ -29,7 +29,7 @@
             <div class="message notice">
                 <h2></h2>
                 <p>
-                    <%= event.user %> left the room
+                    <%= event.user.username %> left the room
                 </p>
             </div>
         <% } %>
@@ -77,12 +77,16 @@
     // Message received on the socket
     socket.onmessage = function(event) {
         console.log(event.data);
-        var parts = /^([^:]+):([^:]+)(:(.*))?$/.exec(event.data)
+        var eventObj = JSON.parse(event.data);
+//        var parts = /^([^:]+):([^:]+)(:(.*))?$/.exec(event.data)
+        display(eventObj);
+/*
         display({
             type: parts[1],
             user: parts[2],
             text: parts[4]
         })
+*/
     }
     
     $('#send').click(function(e) {

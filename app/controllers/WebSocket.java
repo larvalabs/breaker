@@ -85,14 +85,17 @@ public class WebSocket extends Controller {
                 if (e._2.isDefined()) {
                     ChatRoomStream.Event event = e._2.get();
                     if (event instanceof ChatRoomStream.Join) {
-                        ChatRoomStream.Join joined = (ChatRoomStream.Join) event;
-                        outbound.send("join:%s", joined.user.username);
+                        ChatRoomStream.Join joinedEvent = (ChatRoomStream.Join) event;
+//                        outbound.send("join:%s", joinedEvent.user.username);
+                        outbound.send(joinedEvent.toJson());
                     } else if (event instanceof ChatRoomStream.Message) {
-                        ChatRoomStream.Message message = (ChatRoomStream.Message) event;
-                        outbound.send("message:%s:%s", message.message.user.username, message.message.message);
+                        ChatRoomStream.Message messageEvent = (ChatRoomStream.Message) event;
+//                        outbound.send("message:%s:%s", messageEvent.message.user.username, messageEvent.message.message);
+                        outbound.send(messageEvent.toJson());
                     } else if (event instanceof  ChatRoomStream.Leave) {
-                        ChatRoomStream.Leave left = (ChatRoomStream.Leave) event;
-                        outbound.send("leave:%s", left.user.username);
+                        ChatRoomStream.Leave leftEvent = (ChatRoomStream.Leave) event;
+//                        outbound.send("leave:%s", leftEvent.user.username);
+                        outbound.send(leftEvent.toJson());
                     }
                 }
 
