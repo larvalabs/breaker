@@ -3,6 +3,7 @@
 
 #{set 'moreScripts'}
 <script src="@{'/public/javascripts/reconnecting-websocket.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+<script src="@{'/public/javascripts/staydown.js'}" type="text/javascript" charset="${_response_encoding}"></script>
 #{/set}
 
 <h1>${roomName} — You are now chatting as ${user.username} <a href="@{Application.index()}">Leave the chat room</a></h1>
@@ -80,15 +81,20 @@
         }
     }, 10000);
 
+    var staydown = new StayDown({
+        target: document.getElementById('thread'),
+        interval: 500
+    });
+
     // Display a message
     var display = function(event) {
         $('#thread').append(tmpl('message_tmpl', {event: event}));
-        $('#thread').scrollTo('max')
+//        $('#thread').scrollTo('max')
     };
 
     var previewLoaded = function(e) {
-//        console.log("Preview loaded.");
-        $('#thread').scrollTo('max');
+        // Makes the UI feel a little more responsive to trigger a check right when preview loads
+        staydown.checkdown();
     }
 
     var updateTitle = function() {
@@ -123,6 +129,7 @@
         var message = $('#message').val()
         $('#message').val('')
         socket.send(message)
+        staydown.intend_down = true;
     });
     
     $('#message').keypress(function(e) {
