@@ -82,6 +82,12 @@ h1 a {
 
 }
 
+.userentry p {
+    font-size: 14px;
+    padding: 2px;
+    margin: 0 0 0 0px;
+}
+
 #thread {
     position: fixed;
     top: 50px;

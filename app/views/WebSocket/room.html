@@ -102,7 +102,9 @@
         if (event.type === 'message') {
             $('#thread').append(tmpl('message_tmpl', {event: event}));
         } else if (event.type === 'join') {
-            $('#userlist').append(tmpl('userentry_tmpl', {username: event.user.username}));
+            if ($('#userlist_'+event.user.username).length == 0) {
+                $('#userlist').append(tmpl('userentry_tmpl', {username: event.user.username}));
+            }
         } else if (event.type === 'leave') {
             $('#userlist_'+event.user.username).remove();
         } else if (event.type === 'memberlist') {
@@ -132,6 +134,11 @@
         document.title = title;
     };
     updateTitle();
+
+    socket.onopen = function(event) {
+        console.log("Socket open, requesting member list.");
+        socket.send('##memberlist##');
+    };
 
     // Message received on the socket
     socket.onmessage = function (event) {

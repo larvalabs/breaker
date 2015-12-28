@@ -33,7 +33,6 @@ public class ChatRoomStream {
         if (broadcastJoin) {
             chatEvents.publish(new Join(user));
         }
-        sendMemberList(room);
         return chatEvents.eventStream();
     }
 

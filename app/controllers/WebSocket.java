@@ -81,9 +81,12 @@ public class WebSocket extends Controller {
 
                 // Case: TextEvent received on the socket
                 for (String userMessage : TextFrame.match(e._1)) {
-                    if (userMessage != null && userMessage.toLowerCase().equals("##ping##")) {
+                    if (userMessage.toLowerCase().equals("##ping##")) {
                         room.userPresent(user, connectionId);
 //                        Logger.debug("Ping msg - skipping.");
+                    } else if (userMessage.toLowerCase().equals("##memberlist##")) {
+                        Logger.debug("User " + user.username + " requested member list.");
+                        outbound.send(new ChatRoomStream.MemberList(room.getUsernamesPresent().toArray(new String[]{})).toJson());
                     } else {
                         String uuid = com.larvalabs.redditchat.util.Util.getUUID();
                         JsonMessage jsonMessage = JsonMessage.makePresavedMessage(uuid, user, room, userMessage);
@@ -99,21 +102,6 @@ public class WebSocket extends Controller {
                     Logger.debug("Sending event to " + user.username + ":"+connectionId +" - " +json);
                     outbound.send(json);
 
-/*
-                    if (event instanceof ChatRoomStream.Join) {
-                        ChatRoomStream.Join joinedEvent = (ChatRoomStream.Join) event;
-//                        outbound.send("join:%s", joinedEvent.user.username);
-                        outbound.send(joinedEvent.toJson());
-                    } else if (event instanceof ChatRoomStream.Message) {
-                        ChatRoomStream.Message messageEvent = (ChatRoomStream.Message) event;
-//                        outbound.send("message:%s:%s", messageEvent.message.user.username, messageEvent.message.message);
-                        outbound.send(messageEvent.toJson());
-                    } else if (event instanceof  ChatRoomStream.Leave) {
-                        ChatRoomStream.Leave leftEvent = (ChatRoomStream.Leave) event;
-//                        outbound.send("leave:%s", leftEvent.user.username);
-                        outbound.send(leftEvent.toJson());
-                    }
-*/
                 }
 
                 // Note: This for loop stuff is the way that the play guys try to avoid
