@@ -1,10 +1,8 @@
 package models;
 
 import com.larvalabs.redditchat.Constants;
-import org.hibernate.annotations.Index;
 import play.Logger;
 import play.db.DB;
-import play.db.jpa.JPABase;
 import play.db.jpa.Model;
 import play.modules.redis.Redis;
 
@@ -219,14 +217,14 @@ public class ChatRoom extends Model {
         }
     }
 
-    private String getRedisPresenceKey() {
+    private String getRedisPresenceKeyForRoom() {
         return "presence_" + name;
     }
 
     public long getCurrentUserCount() {
         try {
             int time = (int) (System.currentTimeMillis() / 1000);
-            Long zcount = Redis.zcount(getRedisPresenceKey(), time - Constants.PRESENCE_TIMEOUT_SEC, time);
+            Long zcount = Redis.zcount(getRedisPresenceKeyForRoom(), time - Constants.PRESENCE_TIMEOUT_SEC, time);
 //        Logger.info(appPackage + " live count " + zcount);
             return zcount;
         } catch (Exception e) {
@@ -235,10 +233,16 @@ public class ChatRoom extends Model {
         }
     }
 
-    public String[] getUsernamesPresent() {
+    // note: could consider doing this as a separate set of just usernames
+    public TreeSet<String> getUsernamesPresent() {
         try {
             int time = (int) (System.currentTimeMillis() / 1000);
-            Set<String> usersPresent = Redis.zrangeByScore(getRedisPresenceKey(), time - Constants.PRESENCE_TIMEOUT_SEC, time);
+            Set<String> usersPresent = Redis.zrangeByScore(getRedisPresenceKeyForRoom(), time - Constants.PRESENCE_TIMEOUT_SEC, time);
+            TreeSet<String> usernamesPresent = new TreeSet<String>();
+            for (String usernameAndConnStr : usersPresent) {
+                usernamesPresent.add(splitUsernameAndConnection(usernameAndConnStr)[0]);
+            }
+
 /*
         usersPresent.add("test1");
         usersPresent.add("horribleidiot");
@@ -246,28 +250,66 @@ public class ChatRoom extends Model {
         usersPresent.add("bigloser");
         usersPresent.add("wingotango");
 */
-            return usersPresent.toArray(new String[]{});
+            return usernamesPresent;
         } catch (Exception e) {
             Logger.error("Error contacting redis.");
-            return new String[]{};
+            return new TreeSet<String>();
         }
     }
 
-    public void userPresent(ChatUser user) {
+
+    public boolean isUserPresent(ChatUser user) {
+        TreeSet<String> usernamesPresent = getUsernamesPresent();
+        return usernamesPresent.contains(user.username);
+/*
         try {
-            int time = (int) (System.currentTimeMillis() / 1000);
-            Redis.zadd(getRedisPresenceKey(), time, user.username);
+            Double zscore = Redis.zscore(getRedisPresenceKeyForRoom(), user.username);
+            return zscore != null;
         } catch (Exception e) {
             Logger.error("Error contacting redis.");
+        }
+        return false;
+*/
+    }
+
+    public void userPresent(ChatUser user, String connectionId) {
+        try {
+            int time = (int) (System.currentTimeMillis() / 1000);
+            Redis.zadd(getRedisPresenceKeyForRoom(), time, getUsernameAndConnectionString(user, connectionId));
+            cleanPresenceSet();             // todo remove later
+        } catch (Exception e) {
+            Logger.error("Error contacting redis.");
+        }
+    }
+
+    private String getUsernameAndConnectionString(ChatUser user, String connectionId) {
+        return user.username + ":" + connectionId;
+    }
+
+    /**
+     *
+     * @param [0] = username, [1] = connectionId
+     * @return
+     */
+    private String[] splitUsernameAndConnection(String combined) {
+        return combined.split(":");
+    }
+
+    public void userNotPresent(ChatUser user, String connectionId) {
+        try {
+            Redis.zrem(getRedisPresenceKeyForRoom(), getUsernameAndConnectionString(user, connectionId));
+        } catch (Exception e) {
+            Logger.error(e, "Error contacting redis.");
         }
     }
 
     public void cleanPresenceSet() {
         try {
             int time = (int) (System.currentTimeMillis() / 1000);
-            Redis.zremrangeByScore(name, 0, -60);
+            Long removed = Redis.zremrangeByScore(getRedisPresenceKeyForRoom(), 0, time - Constants.PRESENCE_TIMEOUT_SEC * 2);
+//            Logger.debug("Clean of presence set for " + name + " removed " + removed + " elements.");
         } catch (Exception e) {
-            Logger.error("Error contacting redis.");
+            Logger.error(e, "Error contacting redis.");
         }
     }
 

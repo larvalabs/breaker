@@ -1,18 +1,21 @@
 package controllers;
 
+import com.larvalabs.redditchat.Constants;
 import com.larvalabs.redditchat.dataobj.JsonMessage;
 import com.larvalabs.redditchat.dataobj.JsonUser;
 import com.larvalabs.redditchat.realtime.ChatRoomStream;
+import com.larvalabs.redditchat.util.Util;
 import jobs.SaveNewMessageJob;
 import play.*;
-import play.mvc.*;
 import play.libs.F.*;
+import play.mvc.Controller;
 import play.mvc.Http.*;
 
 import static play.libs.F.Matcher.*;
 import static play.mvc.Http.WebSocketEvent.*;
 
 import models.*;
+import play.mvc.WebSocketController;
 
 public class WebSocket extends Controller {
 
@@ -47,11 +50,18 @@ public class WebSocket extends Controller {
                 return;
             }
 
+            String connectionId = Util.getUUID();
             ChatRoom room = ChatRoom.findByName(roomName);
             ChatRoomStream roomStream = ChatRoomStream.get(roomName);
 
             // Socket connected, join the chat room
-            EventStream<ChatRoomStream.Event> roomMessagesStream = roomStream.join(JsonUser.fromUser(user));
+            // If this is the first connection this user has to the room then broadcast
+            boolean broadcastJoin = !room.isUserPresent(user);
+            if (broadcastJoin) {
+                Logger.debug("First connection for " + user.username + ", broadcasting join for connectionId " + connectionId);
+            }
+            room.userPresent(user, connectionId);
+            EventStream<ChatRoomStream.Event> roomMessagesStream = roomStream.join(room, JsonUser.fromUser(user), broadcastJoin);
 
             // Loop while the socket is open
             while (inbound.isOpen()) {
@@ -72,6 +82,7 @@ public class WebSocket extends Controller {
                 // Case: TextEvent received on the socket
                 for (String userMessage : TextFrame.match(e._1)) {
                     if (userMessage != null && userMessage.toLowerCase().equals("##ping##")) {
+                        room.userPresent(user, connectionId);
 //                        Logger.debug("Ping msg - skipping.");
                     } else {
                         String uuid = com.larvalabs.redditchat.util.Util.getUUID();
@@ -84,6 +95,11 @@ public class WebSocket extends Controller {
                 // Case: New message on the chat room
                 if (e._2.isDefined()) {
                     ChatRoomStream.Event event = e._2.get();
+                    String json = event.toJson();
+                    Logger.debug("Sending event to " + user.username + ":"+connectionId +" - " +json);
+                    outbound.send(json);
+
+/*
                     if (event instanceof ChatRoomStream.Join) {
                         ChatRoomStream.Join joinedEvent = (ChatRoomStream.Join) event;
 //                        outbound.send("join:%s", joinedEvent.user.username);
@@ -97,6 +113,7 @@ public class WebSocket extends Controller {
 //                        outbound.send("leave:%s", leftEvent.user.username);
                         outbound.send(leftEvent.toJson());
                     }
+*/
                 }
 
                 // Note: This for loop stuff is the way that the play guys try to avoid
@@ -121,7 +138,12 @@ public class WebSocket extends Controller {
 
                 // Case: The socket has been closed
                 for (WebSocketClose closed : SocketClosed.match(e._1)) {
-                    roomStream.leave(JsonUser.fromUser(user));
+                    room.userNotPresent(user, connectionId);
+                    // If this was the last connection that user had to the room then broadcast they've left
+                    if (!room.isUserPresent(user)) {
+                        Logger.debug("Last connection for " + user.username + " disconnected, broadcasting leave.");
+                        roomStream.leave(JsonUser.fromUser(user));
+                    }
                     disconnect();
                 }
 

@@ -2,53 +2,63 @@
 #{set title:'Chat room' /}
 
 #{set 'moreScripts'}
-<script src="@{'/public/javascripts/reconnecting-websocket.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+<script src="@{'/public/javascripts/reconnecting-websocket.min.js'}" type="text/javascript"
+        charset="${_response_encoding}"></script>
 <script src="@{'/public/javascripts/staydown.js'}" type="text/javascript" charset="${_response_encoding}"></script>
 #{/set}
 
 <h1>${roomName} — You are now chatting as ${user.username} <a href="@{Application.index()}">Leave the chat room</a></h1>
 
+<div id="userlist">
+    <script type="text/html" id="userentry_tmpl">
+        <div class="userentry" id="userlist_<%= username %>">
+            <p><%= username %></p>
+        </div>
+    </script>
+</div>
+
+
 <div id="thread">
     <script type="text/html" id="message_tmpl">
         <% if(event.type == 'message') { %>
-            <div class="message <%= event.user.username == '${user.username}' ? 'you' : '' %>">
-                <h2><%= event.user.username %></h2>
-                <p>
-                    <%= event.message.messageHtml %>
-                </p>
-                <% if (event.message.imageLinks && event.message.imageLinks.length > 0) { %>
-                    <h2></h2>
-                    <p>
-                        <a href="<%= event.message.imageLinks[0] %>" target="_blank">
-                            <img src='<%= event.message.imageLinks[0] %>' class="preview" onload="previewLoaded();"/>
-                        </a>
-                    </p>
-                <% } %>
-            </div>
+        <div class="message <%= event.user.username == '${user.username}' ? 'you' : '' %>">
+            <h2><%= event.user.username %></h2>
+            <p>
+                <%= event.message.messageHtml %>
+            </p>
+            <% if (event.message.imageLinks && event.message.imageLinks.length > 0) { %>
+            <h2></h2>
+            <p>
+                <a href="<%= event.message.imageLinks[0] %>" target="_blank">
+                    <img src='<%= event.message.imageLinks[0] %>' class="preview" onload="previewLoaded();"/>
+                </a>
+            </p>
+            <% } %>
+        </div>
         <% } %>
         <% if(event.type == 'join') { %>
-            <div class="message notice">
-                <h2></h2>
-                <p>
-                    <%= event.user.username %> joined the room
-                </p>
-            </div>
+        <div class="message notice">
+            <h2></h2>
+            <p>
+                <%= event.user.username %> joined the room
+            </p>
+        </div>
         <% } %>
         <% if(event.type == 'leave') { %>
-            <div class="message notice">
-                <h2></h2>
-                <p>
-                    <%= event.user.username %> left the room
-                </p>
-            </div>
+        <div class="message notice">
+            <h2></h2>
+            <p>
+                <%= event.user.username %> left the room
+            </p>
+        </div>
         <% } %>
         <% if(event.type == 'quit') { %>
-            <div class="message important">
-                <h2></h2>
-                <p>
-                    You are now disconnected!
-                </p>
-            </div>
+        <div class="message important">
+            <h2></h2>
+            <p>
+                You are now disconnected!
+            </p>
+        </div>
         <% } %>
     </script>
 </div>
@@ -72,7 +82,7 @@
     // socket.debug = true;
 
     // Ping socket
-    setInterval(function() {
+    setInterval(function () {
         if (socket.readyState == 1) {
             // console.log("Sending ping.");
             socket.send("##ping##");
@@ -87,17 +97,34 @@
     });
 
     // Display a message
-    var display = function(event) {
-        $('#thread').append(tmpl('message_tmpl', {event: event}));
+    var display = function (event) {
+//        console.log("Received event: " + event.type);
+        if (event.type === 'message') {
+            $('#thread').append(tmpl('message_tmpl', {event: event}));
+        } else if (event.type === 'join') {
+            $('#userlist').append(tmpl('userentry_tmpl', {username: event.user.username}));
+        } else if (event.type === 'leave') {
+            $('#userlist_'+event.user.username).remove();
+        } else if (event.type === 'memberlist') {
+            // todo only add/remove users who are different
+            // Remove all user items
+            $('[id^=userlist_]').remove();
+            var arrayLength = event.usernames.length;
+            for (var i = 0; i < arrayLength; i++) {
+                var username = event.usernames[i];
+                $('#userlist').append(tmpl('userentry_tmpl', {username: username}));
+            }
+        }
+
 //        $('#thread').scrollTo('max')
     };
 
-    var previewLoaded = function(e) {
+    var previewLoaded = function (e) {
         // Makes the UI feel a little more responsive to trigger a check right when preview loads
         staydown.checkdown();
     }
 
-    var updateTitle = function() {
+    var updateTitle = function () {
         var title = roomName + ' chat';
         if (numNewMessages > 0) {
             title = '(' + numNewMessages + ') ' + title;
@@ -105,9 +132,9 @@
         document.title = title;
     };
     updateTitle();
-    
+
     // Message received on the socket
-    socket.onmessage = function(event) {
+    socket.onmessage = function (event) {
         console.log(event.data);
         var eventObj = JSON.parse(event.data);
         if (eventObj.type === 'message' && !hasFocus) {
@@ -116,24 +143,24 @@
         }
 //        var parts = /^([^:]+):([^:]+)(:(.*))?$/.exec(event.data)
         display(eventObj);
-/*
-        display({
-            type: parts[1],
-            user: parts[2],
-            text: parts[4]
-        })
-*/
+        /*
+         display({
+         type: parts[1],
+         user: parts[2],
+         text: parts[4]
+         })
+         */
     };
 
-    $('#send').click(function(e) {
+    $('#send').click(function (e) {
         var message = $('#message').val()
         $('#message').val('')
         socket.send(message)
         staydown.intend_down = true;
     });
-    
-    $('#message').keypress(function(e) {
-        if(e.charCode == 13 || e.keyCode == 13) {
+
+    $('#message').keypress(function (e) {
+        if (e.charCode == 13 || e.keyCode == 13) {
             $('#send').click()
             e.preventDefault()
         }
@@ -144,7 +171,7 @@
     var onBlur = function onBlur() {
         hasFocus = false;
     };
-    var onFocus = function onFocus(){
+    var onFocus = function onFocus() {
         hasFocus = true;
         numNewMessages = 0;
         updateTitle();
@@ -157,5 +184,5 @@
         window.onfocus = onFocus;
         window.onblur = onBlur;
     }
-    
+
 </script>

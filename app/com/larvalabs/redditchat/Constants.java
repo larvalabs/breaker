@@ -39,7 +39,9 @@ public class Constants {
 
     public static final String APPCHAT_PACKAGE_NAME = "com.larvalabs.myapps";
 
-    public static final int PRESENCE_TIMEOUT_SEC = 30;
+    public static final int PING_FREQUENCY_SEC = 30;
+    public static final int PRESENCE_TIMEOUT_SEC = PING_FREQUENCY_SEC;
+    public static final int RESEND_MEMBERLIST_SEC = PING_FREQUENCY_SEC * 3;
 
     public static final int USER_FLAG_THRESHOLD = 15;
 

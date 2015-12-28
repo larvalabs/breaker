@@ -5,6 +5,7 @@ import java.util.*;
 import com.google.gson.Gson;
 import com.larvalabs.redditchat.dataobj.JsonMessage;
 import com.larvalabs.redditchat.dataobj.JsonUser;
+import models.ChatRoom;
 import play.Logger;
 import play.libs.F.*;
 
@@ -28,9 +29,18 @@ public class ChatRoomStream {
      * For WebSocket, when a user join the room we return a continuous event stream
      * of ChatEvent
      */
-    public EventStream<ChatRoomStream.Event> join(JsonUser user) {
-        chatEvents.publish(new Join(user));
+    public EventStream<ChatRoomStream.Event> join(ChatRoom room, JsonUser user, boolean broadcastJoin) {
+        if (broadcastJoin) {
+            chatEvents.publish(new Join(user));
+        }
+        sendMemberList(room);
         return chatEvents.eventStream();
+    }
+
+    public void sendMemberList(ChatRoom room) {
+        String[] usernames = room.getUsernamesPresent().toArray(new String[]{});
+        Logger.info("Sending member list of length " + usernames.length);
+        chatEvents.publish(new MemberList(usernames));
     }
     
     /**
@@ -81,8 +91,17 @@ public class ChatRoomStream {
 
         public String toJson() {
             String json = new Gson().toJson(this);
-            Logger.info("Event json: " + json);
             return json;
+        }
+    }
+
+    public static class MemberList extends Event {
+
+        final public String[] usernames;
+
+        public MemberList(String[] usernames) {
+            super("memberlist");
+            this.usernames = usernames;
         }
     }
     

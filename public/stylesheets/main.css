@@ -67,16 +67,32 @@ h1 a {
     color: lightblue;
 }
 
-#thread {
+#userlist {
     position: fixed;
     top: 50px;
     left: 14px;
+    width: 105px;
+    bottom: 100px;
+    background: white;
+    border-bottom: 3px solid #666;
+    border-right: 1px solid #666;
+    padding: 10px;
+    overflow-y: scroll;
+    /*visibility: hidden;*/
+
+}
+
+#thread {
+    position: fixed;
+    top: 50px;
+    left: 140px;
     right: 14px;
     bottom: 100px;
     background: white;
     border-bottom: 3px solid #666;
     padding: 10px;
     overflow-y: scroll;
+    /*visibility: hidden;*/
 }
 
 .message {
