@@ -33,6 +33,7 @@ public class Application extends Controller {
     @Before
     static void preloadUser() {
         ChatUser user = null;
+//        session.put(SESSION_UID, "2hfc8agp4k9ane");
         if (session.contains("uid")) {
             String uid = session.get(SESSION_UID);
             Logger.info("existing user: " + uid);

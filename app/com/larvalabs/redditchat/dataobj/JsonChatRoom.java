@@ -47,6 +47,23 @@ public class JsonChatRoom {
         this.noIconAvailableFromStore = noIconAvailableFromStore;
     }
 
+    /**
+     * Get a json rep for this room but doens't load unread counts or starred status for logged in user.
+     * @param room
+     * @return
+     */
+    public static JsonChatRoom from(ChatRoom room) {
+        JsonChatRoom jsonChatRoom = new JsonChatRoom(room.getId(), room.name,
+                room.numberOfUsers,
+                0, false, room.getCurrentUserCount(), room.getIconUrl(),
+                room.getIconUrlSource(), room.isNoIconAvailableFromStore());
+        return jsonChatRoom;
+    }
+
+    public static JsonChatRoom from(ChatRoom room, ChatUser loggedInUser) {
+        return from(room, loggedInUser, null, false);
+    }
+
     public static JsonChatRoom from(ChatRoom room, ChatUser loggedInUser, HashMap<Long, Long> unreadCountsByRoomId, boolean loadWatcherStatus) {
         Long unreadCount = 0l;
         if (unreadCountsByRoomId != null && unreadCountsByRoomId.containsKey(room.id)) {

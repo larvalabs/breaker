@@ -25,7 +25,7 @@ public class SaveNewMessageJob extends Job<Message> {
 
     @Override
     public Message doJobWithResult() throws Exception {
-        Logger.info("Saving message...");
+        Logger.info("Saving message to room " + roomName);
         ChatRoom chatRoom = ChatRoom.findByName(roomName);
         Message message = new Message(uuid, user, chatRoom, messageText);
         message.save();

@@ -3,9 +3,14 @@ package com.larvalabs.redditchat.realtime;
 import java.util.*;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.larvalabs.redditchat.dataobj.JsonChatRoom;
 import com.larvalabs.redditchat.dataobj.JsonMessage;
 import com.larvalabs.redditchat.dataobj.JsonUser;
+import jobs.RedisQueueJob;
 import models.ChatRoom;
+import models.ChatUser;
 import play.Logger;
 import play.libs.F.*;
 
@@ -29,9 +34,9 @@ public class ChatRoomStream {
      * For WebSocket, when a user join the room we return a continuous event stream
      * of ChatEvent
      */
-    public EventStream<ChatRoomStream.Event> join(ChatRoom room, JsonUser user, boolean broadcastJoin) {
+    public EventStream<ChatRoomStream.Event> join(ChatRoom room, ChatUser user, boolean broadcastJoin) {
         if (broadcastJoin) {
-            chatEvents.publish(new Join(user));
+            publishEvent(new Join(JsonChatRoom.from(room), JsonUser.fromUser(user)), true);
         }
         return chatEvents.eventStream();
     }
@@ -39,14 +44,14 @@ public class ChatRoomStream {
     public void sendMemberList(ChatRoom room) {
         String[] usernames = room.getUsernamesPresent().toArray(new String[]{});
         Logger.info("Sending member list of length " + usernames.length);
-        chatEvents.publish(new MemberList(usernames));
+        publishEvent(new MemberList(JsonChatRoom.from(room), usernames), true);
     }
     
     /**
      * A user leave the room
      */
-    public void leave(JsonUser user) {
-        chatEvents.publish(new Leave(user));
+    public void leave(ChatRoom room, ChatUser user) {
+        publishEvent(new Leave(JsonChatRoom.from(room), JsonUser.fromUser(user)), true);
     }
     
     /**
@@ -57,9 +62,17 @@ public class ChatRoomStream {
         if(message.message == null || message.message.trim().equals("")) {
             return;
         }
-        chatEvents.publish(new Message(message));
+        publishEvent(new Message(message), true);
     }
-    
+
+    public void publishEvent(Event event, boolean alsoPublishToRedis) {
+        RedisQueueJob.publish(event);
+    }
+
+    public void publishEventInternal(Event event) {
+        chatEvents.publish(event);
+    }
+
     /**
      * For long polling, as we are sometimes disconnected, we need to pass 
      * the last event seen id, to be sure to not miss any message
@@ -75,16 +88,26 @@ public class ChatRoomStream {
     public List<ChatRoomStream.Event> archive() {
         return chatEvents.archive();
     }
-    
+
     // ~~~~~~~~~ Chat room events
 
     public static abstract class Event {
         
-        final public String type;
-        final public Long timestamp;
-        
-        public Event(String type) {
+        public String type;
+        public Long timestamp;
+        public JsonChatRoom room;
+
+        public static final String TYPE_MEMBERLIST = "memberlist";
+        public static final String TYPE_JOIN = "join";
+        public static final String TYPE_MESSAGE = "message";
+        public static final String TYPE_LEAVE = "leave";
+
+        public Event() {
+        }
+
+        public Event(String type, JsonChatRoom room) {
             this.type = type;
+            this.room = room;
             this.timestamp = System.currentTimeMillis();
         }
 
@@ -92,35 +115,61 @@ public class ChatRoomStream {
             String json = new Gson().toJson(this);
             return json;
         }
+
+        public static Event fromJson(String jsonStr) {
+            JsonObject obj = new JsonParser().parse(jsonStr).getAsJsonObject();
+            String type = obj.get("type").getAsString();
+            Gson gson = new Gson();
+            if (type.equals(TYPE_MEMBERLIST)) {
+                return gson.fromJson(jsonStr, MemberList.class);
+            } else if (type.equals(TYPE_JOIN)) {
+                return gson.fromJson(jsonStr, Join.class);
+            } else if (type.equals(TYPE_MESSAGE)) {
+                return gson.fromJson(jsonStr, Message.class);
+            } else if (type.equals(TYPE_LEAVE)) {
+                return gson.fromJson(jsonStr, Leave.class);
+            }
+            Logger.error("Even");
+            return null;
+        }
     }
 
     public static class MemberList extends Event {
 
-        final public String[] usernames;
+        public String[] usernames;
 
-        public MemberList(String[] usernames) {
-            super("memberlist");
+        public MemberList() {
+        }
+
+        public MemberList(JsonChatRoom room, String[] usernames) {
+            super(TYPE_MEMBERLIST, room);
             this.usernames = usernames;
         }
     }
     
     public static class Join extends Event {
         
-        final public JsonUser user;
-        
-        public Join(JsonUser user) {
-            super("join");
+        public JsonUser user;
+
+        public Join() {
+        }
+
+        public Join(JsonChatRoom room, JsonUser user) {
+            super(TYPE_JOIN, room);
             this.user = user;
         }
         
     }
     
     public static class Leave extends Event {
-        
-        final public JsonUser user;
-        
-        public Leave(JsonUser user) {
-            super("leave");
+
+        public JsonUser user;
+
+        public Leave() {
+        }
+
+        public Leave(JsonChatRoom room, JsonUser user) {
+            super(TYPE_LEAVE, room);
             this.user = user;
         }
         
@@ -128,11 +177,14 @@ public class ChatRoomStream {
     
     public static class Message extends Event {
 
-        final public JsonUser user;         // Just for convenience on the front end
-        final public JsonMessage message;
+        public JsonUser user;         // Just for convenience on the front end
+        public JsonMessage message;
+
+        public Message() {
+        }
 
         public Message(JsonMessage message) {
-            super("message");
+            super(TYPE_MESSAGE, message.room);
             this.message = message;
             this.user = this.message.user;
         }

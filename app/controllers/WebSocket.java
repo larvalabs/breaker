@@ -1,6 +1,7 @@
 package controllers;
 
 import com.larvalabs.redditchat.Constants;
+import com.larvalabs.redditchat.dataobj.JsonChatRoom;
 import com.larvalabs.redditchat.dataobj.JsonMessage;
 import com.larvalabs.redditchat.dataobj.JsonUser;
 import com.larvalabs.redditchat.realtime.ChatRoomStream;
@@ -61,7 +62,7 @@ public class WebSocket extends Controller {
                 Logger.debug("First connection for " + user.username + ", broadcasting join for connectionId " + connectionId);
             }
             room.userPresent(user, connectionId);
-            EventStream<ChatRoomStream.Event> roomMessagesStream = roomStream.join(room, JsonUser.fromUser(user), broadcastJoin);
+            EventStream<ChatRoomStream.Event> roomMessagesStream = roomStream.join(room, user, broadcastJoin);
 
             // Loop while the socket is open
             while (inbound.isOpen()) {
@@ -74,7 +75,7 @@ public class WebSocket extends Controller {
 
                 // Case: User typed 'quit'
                 for (String userMessage : TextFrame.and(Equals("quit")).match(e._1)) {
-                    roomStream.leave(JsonUser.fromUser(user));
+                    roomStream.leave(room, user);
                     outbound.send("quit:ok");
                     disconnect();
                 }
@@ -86,7 +87,7 @@ public class WebSocket extends Controller {
 //                        Logger.debug("Ping msg - skipping.");
                     } else if (userMessage.toLowerCase().equals("##memberlist##")) {
                         Logger.debug("User " + user.username + " requested member list.");
-                        outbound.send(new ChatRoomStream.MemberList(room.getUsernamesPresent().toArray(new String[]{})).toJson());
+                        outbound.send(new ChatRoomStream.MemberList(JsonChatRoom.from(room, user), room.getUsernamesPresent().toArray(new String[]{})).toJson());
                     } else {
                         String uuid = com.larvalabs.redditchat.util.Util.getUUID();
                         JsonMessage jsonMessage = JsonMessage.makePresavedMessage(uuid, user, room, userMessage);
@@ -130,7 +131,7 @@ public class WebSocket extends Controller {
                     // If this was the last connection that user had to the room then broadcast they've left
                     if (!room.isUserPresent(user)) {
                         Logger.debug("Last connection for " + user.username + " disconnected, broadcasting leave.");
-                        roomStream.leave(JsonUser.fromUser(user));
+                        roomStream.leave(room, user);
                     }
                     disconnect();
                 }
