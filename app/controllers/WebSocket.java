@@ -38,7 +38,11 @@ public class WebSocket extends Controller {
             Application.preAuthForRoomJoin(roomName);
             return;
         }
-        render(user, roomName);
+        render("WebSocket/room3.html", user, roomName);
+    }
+
+    public static void room2() {
+        render();
     }
 
     public static class ChatRoomSocket extends WebSocketController {

@@ -1,0 +1,6 @@
+.image-preview {
+    display: inline-block;
+    max-height: 200px;
+    width: auto;
+    vertical-align: middle;
+}

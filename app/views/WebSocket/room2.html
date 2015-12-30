@@ -1,0 +1,547 @@
+#{extends 'main.html' /}
+#{set title:'Chat room' /}
+
+#{set 'moreScripts'}
+<link rel="stylesheet" href="@{'/public/libs/assets/animate.css/animate.css'}" type="text/css"/>
+<link rel="stylesheet" href="@{'/public/libs/assets/font-awesome/css/font-awesome.min.css'}" type="text/css"/>
+<link rel="stylesheet" href="@{'/public/libs/assets/simple-line-icons/css/simple-line-icons.css'}" type="text/css"/>
+<link rel="stylesheet" href="@{'/public/libs/jquery/bootstrap/dist/css/bootstrap.css'}" type="text/css"/>
+
+<link rel="stylesheet" href="@{'/public/css/font.css'}" type="text/css"/>
+<link rel="stylesheet" href="@{'/public/css/app.css'}" type="text/css"/>
+#{/set}
+
+
+<body>
+
+
+<!-- Templates -->
+<script type="text/html" id="userentry_tmpl">
+    <li id="userlist_<%= username %>" class="list-group-item">
+        <a herf class="pull-left thumb-sm avatar m-r">
+            <img src="/public/img/a4.jpg" alt="..." class="img-circle">
+            <i class="on b-white bottom"></i>
+        </a>
+        <div class="clear">
+            <div><a href><%= username %></a></div>
+            <!--<small class="text-muted">Designer, Blogger</small>-->
+        </div>
+    </li>
+</script>
+
+
+<script type="text/html" id="message_tmpl">
+    <% if(event.type == 'message') { %>
+    <li class="list-group-item clearfix b-l-3x b-l-info">
+        <a class="avatar thumb pull-left m-r" href="#/app/page/profile">
+            <img ng-src="/public/img/a10.jpg" src="/public/img/a4.jpg">
+        </a>
+        <div class="pull-right text-sm text-muted">
+            <span class="hidden-xs ">Today at 4:37 PM</span>
+        </div>
+        <div class="clear">
+            <div><a  class="text-md " href="#/app/mail/10"><%= event.user.username %></a><!--<span class="label bg-light m-l-sm ">angular</span>--></div>
+            <div class="m-t-xs "><%= event.message.messageHtml %></div>
+            <% if (event.message.imageLinks && event.message.imageLinks.length > 0) { %>
+            <div>
+                <a href="<%= event.message.imageLinks[0] %>" target="_blank">
+                    <img src='<%= event.message.imageLinks[0] %>' class="preview" onload="previewLoaded();"/>
+                </a>
+            </div>
+            <% } %>
+        </div>
+    </li>
+    <% } %>
+    <% if(event.type == 'join') { %>
+    <div class="message notice">
+        <h2></h2>
+        <p>
+            <%= event.user.username %> joined the room
+        </p>
+    </div>
+    <% } %>
+    <% if(event.type == 'leave') { %>
+    <div class="message notice">
+        <h2></h2>
+        <p>
+            <%= event.user.username %> left the room
+        </p>
+    </div>
+    <% } %>
+    <% if(event.type == 'quit') { %>
+    <div class="message important">
+        <h2></h2>
+        <p>
+            You are now disconnected!
+        </p>
+    </div>
+    <% } %>
+</script>
+<!-- end templates -->
+
+<div class="app app-header-fixed app-aside-fixed">
+
+    <!-- header -->
+    <header id="header" class="app-header navbar" role="menu">
+        <!-- navbar header -->
+        <div class="navbar-header bg-dark">
+            <button class="pull-right visible-xs dk" ui-toggle-class="show" target=".navbar-collapse">
+                <i class="glyphicon glyphicon-cog"></i>
+            </button>
+            <button class="pull-right visible-xs" ui-toggle-class="off-screen" target=".app-aside" ui-scroll="app">
+                <i class="glyphicon glyphicon-align-justify"></i>
+            </button>
+            <!-- brand -->
+            <a href="#/" class="navbar-brand text-lt">
+                <i class="fa fa-terminal"></i>
+                <img src="/public/img/logo.png" alt="." class="hide">
+                <span class="hidden-folded m-l-xs">Breaker</span>
+            </a>
+            <!-- / brand -->
+        </div>
+        <!-- / navbar header -->
+
+        <!-- navbar collapse -->
+        <div class="collapse pos-rlt navbar-collapse box-shadow bg-white-only">
+
+            <!-- nabar right -->
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    <a href="#" data-toggle="dropdown" class="dropdown-toggle">
+                        <i class="icon-bell fa-fw"></i>
+                        <span class="visible-xs-inline">Notifications</span>
+                        <span class="badge badge-sm up bg-danger pull-right-xs">2</span>
+                    </a>
+                    <!-- dropdown -->
+                    <div class="dropdown-menu w-xl animated fadeInUp">
+                        <div class="panel bg-white">
+                            <div class="panel-heading b-light bg-light">
+                                <strong>You have <span>2</span> notifications</strong>
+                            </div>
+                            <div class="list-group">
+                                <a href class="list-group-item">
+                    <span class="pull-left m-r thumb-sm">
+                      <img src="/public/img/a4.jpg" alt="..." class="img-circle">
+                    </span>
+                    <span class="clear block m-b-none">
+                      Use awesome animate.css<br>
+                      <small class="text-muted">10 minutes ago</small>
+                    </span>
+                                </a>
+                                <a href class="list-group-item">
+                    <span class="clear block m-b-none">
+                      1.0 initial released<br>
+                      <small class="text-muted">1 hour ago</small>
+                    </span>
+                                </a>
+                            </div>
+                            <div class="panel-footer text-sm">
+                                <a href class="pull-right"><i class="fa fa-cog"></i></a>
+                                <a href="#notes" data-toggle="class:show animated fadeInRight">See all the
+                                    notifications</a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- / dropdown -->
+                </li>
+                <li class="dropdown">
+                    <a href="#" data-toggle="dropdown" class="dropdown-toggle clear" data-toggle="dropdown">
+                          <span class="thumb-sm avatar pull-right m-t-n-sm m-b-n-sm m-l-sm">
+                            <img src="/public/img/a4.jpg" alt="...">
+                            <i class="on md b-white bottom"></i>
+                          </span>
+                        <span class="hidden-sm hidden-md">${user.username}</span> <b class="caret"></b>
+                    </a>
+                    <!-- dropdown -->
+                    <ul class="dropdown-menu animated fadeInRight w">
+                        <li class="wrapper b-b m-b-sm bg-light m-t-n-xs">
+                            <div>
+                                <p>300mb of 500mb used</p>
+                            </div>
+                            <div class="progress progress-xs m-b-none dker">
+                                <div class="progress-bar progress-bar-info" data-toggle="tooltip"
+                                     data-original-title="50%" style="width: 50%"></div>
+                            </div>
+                        </li>
+                        <li>
+                            <a href>
+                                <span class="badge bg-danger pull-right">30%</span>
+                                <span>Settings</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a ui-sref="app.page.profile">Profile</a>
+                        </li>
+                        <li>
+                            <a ui-sref="app.docs">
+                                <span class="label bg-info pull-right">new</span>
+                                Help
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a ui-sref="access.signin">Logout</a>
+                        </li>
+                    </ul>
+                    <!-- / dropdown -->
+                </li>
+            </ul>
+            <!-- / navbar right -->
+        </div>
+        <!-- / navbar collapse -->
+    </header>
+    <!-- / header -->
+
+
+    <!-- aside -->
+    <aside id="aside" class="app-aside hidden-xs bg-dark">
+        <div class="aside-wrap">
+            <div class="navi-wrap">
+                <!-- user -->
+                <div class="clearfix hidden-xs text-center hide" id="aside-user">
+                    <div class="dropdown wrapper">
+                        <a href="app.page.profile">
+                <span class="thumb-lg w-auto-folded avatar m-t-sm">
+                  <img src="/public/img/a0.jpg" class="img-full" alt="...">
+                </span>
+                        </a>
+                        <a href="#" data-toggle="dropdown" class="dropdown-toggle hidden-folded">
+                <span class="clear">
+                  <span class="block m-t-sm">
+                    <strong class="font-bold text-lt">John.Smith</strong> 
+                    <b class="caret"></b>
+                  </span>
+                  <span class="text-muted text-xs block">Art Director</span>
+                </span>
+                        </a>
+                        <!-- dropdown -->
+                        <ul class="dropdown-menu animated fadeInRight w hidden-folded">
+                            <li class="wrapper b-b m-b-sm bg-info m-t-n-xs">
+                                <span class="arrow top hidden-folded arrow-info"></span>
+                                <div>
+                                    <p>300mb of 500mb used</p>
+                                </div>
+                                <div class="progress progress-xs m-b-none dker">
+                                    <div class="progress-bar bg-white" data-toggle="tooltip" data-original-title="50%"
+                                         style="width: 50%"></div>
+                                </div>
+                            </li>
+                            <li>
+                                <a href>Settings</a>
+                            </li>
+                            <li>
+                                <a href="page_profile.html">Profile</a>
+                            </li>
+                            <li>
+                                <a href>
+                                    <span class="badge bg-danger pull-right">3</span>
+                                    Notifications
+                                </a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a href="page_signin.html">Logout</a>
+                            </li>
+                        </ul>
+                        <!-- / dropdown -->
+                    </div>
+                    <div class="line dk hidden-folded"></div>
+                </div>
+                <!-- / user -->
+
+                <!-- nav -->
+                <nav ui-nav class="navi clearfix">
+                    <ul class="nav">
+                        <li class="hidden-folded padder m-t m-b-sm text-muted text-xs">
+                            <span>Rooms</span>
+                        </li>
+                        <li>
+                            <a href="mail.html">
+<!--
+                                <span class="pull-right text-muted">
+                                    <i class="fa fa-fw fa-angle-right text"></i>
+                                    <i class="fa fa-fw fa-angle-down text-active"></i>
+                                  </span>
+-->
+                                <b class="label bg-primary pull-right">9</b>
+                                <!--<i class="glyphicon glyphicon-envelope icon text-info-lter"></i>-->
+                                <span class="font-bold">#${roomName}</span>
+                            </a>
+                        </li>
+
+                    </ul>
+                </nav>
+                <!-- nav -->
+
+            </div>
+        </div>
+    </aside>
+    <!-- / aside -->
+
+
+    <!-- content -->
+    <div id="content" class="app-content" role="main">
+        <div class="app-content-body ">
+
+
+            <div class="hbox hbox-auto-xs hbox-auto-sm" ng-init="
+                app.settings.asideFolded = false;
+                app.settings.asideFixed = true;
+                app.settings.asideDock = false;
+                app.settings.container = false;
+                app.hideAside = false
+                ">
+                <!-- main -->
+                <div class="col">
+                    <div class="vbox">
+                        <div class="row-row">
+                            <div class="cell">
+                                <div class="cell-inner">
+                                    <div>
+                        <!-- header -->
+                        <div class="bg-light lter b-b wrapper-md">
+                            <div class="row">
+                                <div class="col-sm-6 col-xs-12">
+                                    <h1 class="m-n font-thin h3 text-black">#${roomName}</h1>
+                                    <small class="text-muted">Message from the moderators to you, the user.</small>
+                                </div>
+<!--
+                                <div class="col-sm-6 text-right hidden-xs">
+                                    <div class="inline m-r text-left">
+                                        <div class="m-b-xs">1290 <span class="text-muted">items</span></div>
+                                        <div ng-init="d3_1=[ 106,108,110,105,110,109,105,104,107,109,105,100,105,102,101,99,98 ]" ui-jq="sparkline" ui-options="[ 106,108,110,105,110,109,105,104,107,109,105,100,105,102,101,99,98 ], {type:'bar', height:20, barWidth:5, barSpacing:1, barColor:'#dce5ec'}" class="sparkline inline"><canvas width="101" height="20" style="display: inline-block; width: 101px; height: 20px; vertical-align: top;"></canvas></div>
+                                    </div>
+                                    <div class="inline text-left">
+                                        <div class="m-b-xs">$30,000 <span class="text-muted">revenue</span></div>
+                                        <div ng-init="d3_2=[ 105,102,106,107,105,104,101,99,98,109,105,100,108,110,105,110,109 ]" ui-jq="sparkline" ui-options="[ 105,102,106,107,105,104,101,99,98,109,105,100,108,110,105,110,109 ], {type:'bar', height:20, barWidth:5, barSpacing:1, barColor:'#dce5ec'}" class="sparkline inline"><canvas width="101" height="20" style="display: inline-block; width: 101px; height: 20px; vertical-align: top;"></canvas></div>
+                                    </div>
+                                </div>
+-->
+                            </div>
+                        </div>
+                        <!-- / header -->
+
+                        <!-- The list of messages -->
+                        <ul id="thread" class="list-group list-group-lg no-radius m-b-none m-t-n-xxs">
+                            <!-- Filled in dynamically -->
+                        </ul>
+                        <!-- / list of messages -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- / main -->
+
+
+                <!-- right col -->
+                <div class="col w-md bg-white-only b-l bg-auto no-border-xs">
+                    <!--
+                    <div class="nav-tabs-alt">
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li class="active">
+                                <a data-target="#tab-1" role="tab" data-toggle="tab">
+                                    <i class="glyphicon glyphicon-user text-md text-muted wrapper-sm"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a data-target="#tab-2" role="tab" data-toggle="tab">
+                                    <i class="glyphicon glyphicon-comment text-md text-muted wrapper-sm"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a data-target="#tab-3" role="tab" data-toggle="tab">
+                                    <i class="glyphicon glyphicon-transfer text-md text-muted wrapper-sm"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    -->
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="tab-1">
+                            <div class="wrapper-md">
+                                <div class="m-b-sm text-md">Users</div>
+                                <ul id='userlist' class="list-group no-bg no-borders pull-in">
+                                    <!-- Filled in dynamically -->
+                                </ul>
+<!--
+                                <div class="text-center">
+                                    <a href class="btn btn-sm btn-primary padder-md m-b">More Connections</a>
+                                </div>
+-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- / right col -->
+            </div>
+
+
+        </div>
+    </div>
+    <!-- /content -->
+
+    <!-- footer -->
+<!--
+    <footer id="footer" class="app-footer" role="footer">
+        <div class="wrapper b-t bg-light">
+
+            <div class="form-group">
+                <input id="message" type="text" class="form-control" placeholder="Type a message to ${roomName}...">
+            </div>
+        </div>
+    </footer>
+-->
+    <!-- / footer -->
+
+
+</div>
+
+<script src="@{'/public/libs/jquery/bootstrap/dist/js/bootstrap.js'}"></script>
+<script src="@{'/public/js/ui-load.js'}"></script>
+<script src="@{'/public/js/ui-jp.config.js'}"></script>
+<script src="@{'/public/js/ui-jp.js'}"></script>
+<script src="@{'/public/js/ui-nav.js'}"></script>
+<script src="@{'/public/js/ui-toggle.js'}"></script>
+<script src="@{'/public/js/ui-client.js'}"></script>
+
+<script src="@{'/public/javascripts/reconnecting-websocket.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+<script src="@{'/public/javascripts/staydown.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+
+
+<script type="text/javascript">
+
+    // Create a socket
+    // var WS = window['MozWebSocket'] ? MozWebSocket : WebSocket;
+
+    var numNewMessages = 0;
+    var roomName = '${roomName}';
+    var hasFocus = true;
+
+    // See https://github.com/joewalnes/reconnecting-websocket for options:
+    var socket = new ReconnectingWebSocket('@@{WebSocket.ChatRoomSocket.join(roomName)}')
+    // socket.debug = true;
+
+    // Ping socket
+    setInterval(function () {
+        if (socket.readyState == 1) {
+            // console.log("Sending ping.");
+            socket.send("##ping##");
+        } else {
+            console.log("Can't ping, connection not open.");
+        }
+    }, 10000);
+
+    var staydown = new StayDown({
+        target: document.getElementById('thread'),
+        interval: 500
+    });
+
+    // Display a message
+    var display = function (event) {
+//        console.log("Received event: " + event.type);
+        if (event.type === 'message') {
+            $('#thread').append(tmpl('message_tmpl', {event: event}));
+        } else if (event.type === 'join') {
+            if ($('#userlist_'+event.user.username).length == 0) {
+                $('#userlist').append(tmpl('userentry_tmpl', {username: event.user.username}));
+            }
+        } else if (event.type === 'leave') {
+            $('#userlist_'+event.user.username).remove();
+        } else if (event.type === 'memberlist') {
+            // todo only add/remove users who are different
+            // Remove all user items
+            $('[id^=userlist_]').remove();
+            var arrayLength = event.usernames.length;
+            for (var i = 0; i < arrayLength; i++) {
+                var username = event.usernames[i];
+                $('#userlist').append(tmpl('userentry_tmpl', {username: username}));
+            }
+        }
+
+//        $('#thread').scrollTo('max')
+    };
+
+    var previewLoaded = function (e) {
+        // Makes the UI feel a little more responsive to trigger a check right when preview loads
+        staydown.checkdown();
+    }
+
+    var updateTitle = function () {
+        var title = roomName + ' chat';
+        if (numNewMessages > 0) {
+            title = '(' + numNewMessages + ') ' + title;
+        }
+        document.title = title;
+    };
+    updateTitle();
+
+    socket.onopen = function(event) {
+        console.log("Socket open, requesting member list.");
+        socket.send('##memberlist##');
+    };
+
+    // Message received on the socket
+    socket.onmessage = function (event) {
+//        console.log(event.data);
+        var eventObj = JSON.parse(event.data);
+        if (eventObj.type === 'message' && !hasFocus) {
+            numNewMessages++;
+            updateTitle();
+        }
+//        var parts = /^([^:]+):([^:]+)(:(.*))?$/.exec(event.data)
+        display(eventObj);
+        /*
+         display({
+         type: parts[1],
+         user: parts[2],
+         text: parts[4]
+         })
+         */
+    };
+
+/*
+    $('#send').click(function (e) {
+        var message = $('#message').val()
+        $('#message').val('')
+        socket.send(message)
+        staydown.intend_down = true;
+    });
+*/
+
+    $('#message').keypress(function (e) {
+        if (e.charCode == 13 || e.keyCode == 13) {
+//            $('#send').click()
+            var message = $('#message').val()
+            $('#message').val('')
+            socket.send(message)
+            staydown.intend_down = true;
+
+            e.preventDefault()
+        }
+    });
+
+    // Stuff to do with window focus
+
+    var onBlur = function onBlur() {
+        hasFocus = false;
+    };
+    var onFocus = function onFocus() {
+        hasFocus = true;
+        numNewMessages = 0;
+        updateTitle();
+    };
+
+    if (/*@cc_on!@*/false) { // check for Internet Explorer
+        document.onfocusin = onFocus;
+        document.onfocusout = onBlur;
+    } else {
+        window.onfocus = onFocus;
+        window.onblur = onBlur;
+    }
+
+</script>
+
+</body>
