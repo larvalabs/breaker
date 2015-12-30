@@ -41,8 +41,12 @@ public class WebSocket extends Controller {
         render("WebSocket/room3.html", user, roomName);
     }
 
-    public static void room2() {
-        render();
+    /**
+     * Just used to wake up the server after restart since the websocket controller
+     * doesn't seem to count
+     */
+    public static void wakeup() {
+        renderText("ok");
     }
 
     public static class ChatRoomSocket extends WebSocketController {

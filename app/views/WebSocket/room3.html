@@ -10,6 +10,9 @@
 <link rel="stylesheet" href="@{'/public/css/font.css'}" type="text/css"/>
 <link rel="stylesheet" href="@{'/public/css/app.css'}" type="text/css"/>
 <link rel="stylesheet" href="@{'/public/stylesheets/angulr-custom.css'}" type="text/css"/>
+
+<link href="@{'/public/stylesheets/messenger.css'}" rel="stylesheet" type="text/css" />
+<link href="@{'/public/stylesheets/messenger-theme-flat.css'}" rel="stylesheet" type="text/css" />
 #{/set}
 
 <body>
@@ -31,7 +34,7 @@
 
 <script type="text/html" id="message_tmpl">
     <% if(event.type == 'message') { %>
-    <li class="list-group-item clearfix b-l-3x b-l-info">
+    <li id="message_<%= event.message.uuid %>" class="list-group-item clearfix b-l-3x b-l-info">
         <a class="avatar thumb pull-left m-r" href="https://reddit.com/u/<%= event.user.username %>" target="_blank">
             <img ng-src="/public/img/a10.jpg" src="/public/img/a4.jpg">
         </a>
@@ -396,6 +399,8 @@
         charset="${_response_encoding}"></script>
 <script src="@{'/public/javascripts/staydown.js'}" type="text/javascript" charset="${_response_encoding}"></script>
 <script src="@{'/public/javascripts/jquery.timeago.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+<script src="@{'/public/javascripts/messenger.min.js'}" type="text/javascript"></script>
+<script src="@{'/public/javascripts/messenger-theme-flat.js'}" type="text/javascript"></script>
 
 
 <script type="text/javascript">
@@ -421,16 +426,38 @@
         }
     }, 10000);
 
+    // Uncomment this block to test network disconnect/reconnect
+/*
+    setInterval(function () {
+        console.log("Cycling connection...");
+        socket.refresh();
+    }, 5000);
+*/
+
     var staydown = new StayDown({
         target: document.getElementById('thread_scrollparent'),
         interval: 500
     });
 
+    Messenger.options = {
+        extraClasses: 'messenger-fixed messenger-on-bottom messenger-on-right',
+        theme: 'flat'
+    }
+
     // Display a message
     var display = function (event) {
 //        console.log("Received event: " + event.type);
         if (event.type === 'message') {
-            $('#thread').append(tmpl('message_tmpl', {event: event}));
+//            console.log("Message uuid : " + event.message.uuid);
+            var msg = tmpl('message_tmpl', {event: event});
+            var msgObjects = $('#message_'+event.message.uuid);
+            if (msgObjects.length > 0) {
+//                console.log("Existing message, replacing with new render.");
+                msgObjects.first().replaceWith(msg);
+            } else {
+//                console.log("New message, appending.");
+                $('#thread').append(msg);
+            }
 
             jQuery(".timeago").timeago();
         } else if (event.type === 'join') {
@@ -440,13 +467,22 @@
         } else if (event.type === 'leave') {
             $('#userlist_' + event.user.username).remove();
         } else if (event.type === 'memberlist') {
-            // todo only add/remove users who are different
-            // Remove all user items
-            $('[id^=userlist_]').remove();
             var arrayLength = event.usernames.length;
             for (var i = 0; i < arrayLength; i++) {
                 var username = event.usernames[i];
-                $('#userlist').append(tmpl('userentry_tmpl', {username: username}));
+
+                var userHtml = tmpl('userentry_tmpl', {username: username})
+                var existingElements = $('#userlist_'+username);
+                if (existingElements.length > 0) {
+//                    console.log("Existing user, replacing with new render.");
+                    existingElements.first().replaceWith(userHtml);
+                } else {
+//                    console.log("New user, appending.");
+                    // todo insert at sorted location
+                    $('#thread').append(userHtml);
+                }
+
+//                $('#userlist').append();
             }
         }
 
@@ -467,10 +503,29 @@
     };
     updateTitle();
 
+    var firstConnect = true;
+
     socket.onopen = function (event) {
-        console.log("Socket open, requesting member list.");
+//        console.log("Socket state: "+socket.readyState);
+        if (!firstConnect) {
+            Messenger().post({
+                message: 'Connected!',
+                type: 'success'
+            });
+        }
+        firstConnect = false;
+
         socket.send('##memberlist##');
+        $('#message').prop("disabled", false);
     };
+
+    socket.onclose = function (event) {
+        Messenger().post({
+            message: 'Disconnected from server, will retry...',
+            type: 'error'
+        });
+        $('#message').prop("disabled", true);
+    }
 
     // Message received on the socket
     socket.onmessage = function (event) {
