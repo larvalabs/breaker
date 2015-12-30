@@ -32,14 +32,14 @@
 <script type="text/html" id="message_tmpl">
     <% if(event.type == 'message') { %>
     <li class="list-group-item clearfix b-l-3x b-l-info">
-        <a class="avatar thumb pull-left m-r" href="#/app/page/profile">
+        <a class="avatar thumb pull-left m-r" href="https://reddit.com/u/<%= event.user.username %>" target="_blank">
             <img ng-src="/public/img/a10.jpg" src="/public/img/a4.jpg">
         </a>
         <div class="pull-right text-sm text-muted">
-            <span class="hidden-xs ">Today at 4:37 PM</span>
+            <span class="hidden-xs timeago" title="<%= new Date(event.timestamp).toISOString() %>">less than</span>
         </div>
         <div class="clear">
-            <div><a class="text-md " href="#/app/mail/10"><%= event.user.username %></a>
+            <div><a class="text-md " href="https://reddit.com/u/<%= event.user.username %>" target="_blank"><%= event.user.username %></a>
                 <!--<span class="label bg-light m-l-sm ">angular</span>--></div>
             <div class="m-t-xs "><%= event.message.messageHtml %></div>
             <% if (event.message.imageLinks && event.message.imageLinks.length > 0) { %>
@@ -92,7 +92,7 @@
                 <i class="glyphicon glyphicon-align-justify"></i>
             </button>
             <!-- brand -->
-            <a href="#/" class="navbar-brand text-lt">
+            <a href="#" class="navbar-brand text-lt">
                 <i class="fa fa-terminal"></i>
                 <img src="/public/img/logo.png" alt="." class="hide">
                 <span class="hidden-folded m-l-xs">breaker</span>
@@ -116,6 +116,17 @@
                         </div>
             -->
             <!-- / buttons -->
+
+            <ul class="nav navbar-nav hidden-sm">
+
+                <li class="m-t-xs m-b-xxs middle">
+                    <h1 class="m-n font-thin h4 text-black">#${roomName}</h1>
+                    <small class="text-muted">
+                        Message from the moderators to you, the user.
+                    </small>
+                </li>
+
+            </ul>
 
             <!-- nabar right -->
             <ul class="nav navbar-nav navbar-right">
@@ -157,7 +168,7 @@
                     </div>
                     <!-- / dropdown -->
                 </li>
-                <li class="dropdown">
+                <li class="dropdown v-middle">
                     <a href="#" data-toggle="dropdown" class="dropdown-toggle clear" data-toggle="dropdown">
                       <span class="thumb-sm avatar pull-right m-t-n-sm m-b-n-sm m-l-sm">
                         <img src="/public/img/a4.jpg" alt="...">
@@ -300,34 +311,11 @@
                   ">
                 <!-- column -->
                 <div class="col">
+
                     <div class="vbox">
                         <div class="row-row">
                             <div id="thread_scrollparent" class="cell">
                                 <div class="cell-inner">
-                                    <!-- header -->
-                                    <div class="bg-light lter b-b wrapper-md">
-                                        <div class="row">
-                                            <div class="col-sm-6 col-xs-12">
-                                                <h1 class="m-n font-thin h3 text-black">#${roomName}</h1>
-                                                <small class="text-muted">Message from the moderators to you, the
-                                                    user.
-                                                </small>
-                                            </div>
-                                            <!--
-                                                <div class="col-sm-6 text-right hidden-xs">
-                                                    <div class="inline m-r text-left">
-                                                        <div class="m-b-xs">1290 <span class="text-muted">items</span></div>
-                                                        <div ng-init="d3_1=[ 106,108,110,105,110,109,105,104,107,109,105,100,105,102,101,99,98 ]" ui-jq="sparkline" ui-options="[ 106,108,110,105,110,109,105,104,107,109,105,100,105,102,101,99,98 ], {type:'bar', height:20, barWidth:5, barSpacing:1, barColor:'#dce5ec'}" class="sparkline inline"><canvas width="101" height="20" style="display: inline-block; width: 101px; height: 20px; vertical-align: top;"></canvas></div>
-                                                    </div>
-                                                    <div class="inline text-left">
-                                                        <div class="m-b-xs">$30,000 <span class="text-muted">revenue</span></div>
-                                                        <div ng-init="d3_2=[ 105,102,106,107,105,104,101,99,98,109,105,100,108,110,105,110,109 ]" ui-jq="sparkline" ui-options="[ 105,102,106,107,105,104,101,99,98,109,105,100,108,110,105,110,109 ], {type:'bar', height:20, barWidth:5, barSpacing:1, barColor:'#dce5ec'}" class="sparkline inline"><canvas width="101" height="20" style="display: inline-block; width: 101px; height: 20px; vertical-align: top;"></canvas></div>
-                                                    </div>
-                                                </div>
-                                            -->
-                                        </div>
-                                    </div>
-                                    <!-- / header -->
 
                                     <!-- The list of messages -->
                                     <ul id="thread" class="list-group list-group-lg no-radius m-b-none m-t-n-xxs">
@@ -339,11 +327,9 @@
                             </div>
                         </div>
 
-                        <div class="padder b-t b-light text-center">
-                            <div class="form-group">
-                                <input id="message" type="text" class="form-control"
-                                       placeholder="Type a message to ${roomName}...">
-                            </div>
+                        <div class="padder padder-v b-t b-light text-center">
+                            <input id="message" type="text" class="form-control"
+                                   placeholder="Type a message to ${roomName}...">
                         </div>
 
                     </div>
@@ -351,7 +337,7 @@
                 <!-- /column -->
 
                 <!-- column -->
-                <div class="col w-md lter b-l">
+                <div class="col w-md lter b-l hidden-sm hidden-xs">
                     <div class="vbox">
                         <div class="row-row">
                             <div class="cell scrollable hover">
@@ -409,6 +395,7 @@
 <script src="@{'/public/javascripts/reconnecting-websocket.min.js'}" type="text/javascript"
         charset="${_response_encoding}"></script>
 <script src="@{'/public/javascripts/staydown.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+<script src="@{'/public/javascripts/jquery.timeago.js'}" type="text/javascript" charset="${_response_encoding}"></script>
 
 
 <script type="text/javascript">
@@ -444,6 +431,8 @@
 //        console.log("Received event: " + event.type);
         if (event.type === 'message') {
             $('#thread').append(tmpl('message_tmpl', {event: event}));
+
+            jQuery(".timeago").timeago();
         } else if (event.type === 'join') {
             if ($('#userlist_' + event.user.username).length == 0) {
                 $('#userlist').append(tmpl('userentry_tmpl', {username: event.user.username}));
