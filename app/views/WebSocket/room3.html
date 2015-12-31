@@ -20,18 +20,18 @@
 <!-- Templates -->
 
 <script type="text/html" id="roomentry_tmpl">
-    <li id="roomlist_<%= roomObj.name %>">
+    <li id="<%= getRoomlistEntrySelector(roomObj.name).substring(1) %>">
         <a href="#" class="roomselect" data-roomname="<%= roomObj.name %>">
-            <b class="label bg-info pull-right">9</b>
+            <b class="unreadcount label bg-info pull-right"></b>
             <!--<i class="glyphicon glyphicon-envelope icon text-info-lter"></i>-->
-            <span class="font-bold">#<%= roomObj.name %></span>
+            <span class="roomname">#<%= roomObj.name %></span>
         </a>
     </li>
 </script>
 
 
 <script type="text/html" id="userentry_tmpl">
-    <li id="userlist_<%= roomName %>_<%= username %>" class="list-group-item">
+    <li id="<%= getUserEntrySelector(roomName,username).substring(1) %>" class="list-group-item">
         <a herf class="pull-left thumb-sm avatar m-r">
             <img src="/public/img/a4.jpg" alt="..." class="img-circle">
             <i class="on b-white bottom"></i>
@@ -46,7 +46,7 @@
 
 <script type="text/html" id="message_tmpl">
     <% if(event.type == 'message') { %>
-    <li id="message_<%= event.message.uuid %>" class="list-group-item clearfix b-l-3x b-l-info">
+    <li id="<%= getMessageSelector(event.message.uuid).substring(1) %>" class="list-group-item clearfix b-l-3x b-l-info">
         <a class="avatar thumb pull-left m-r" href="https://reddit.com/u/<%= event.user.username %>" target="_blank">
             <img ng-src="/public/img/a10.jpg" src="/public/img/a4.jpg">
         </a>
@@ -422,10 +422,25 @@
     // Create a socket
     // var WS = window['MozWebSocket'] ? MozWebSocket : WebSocket;
 
-    var numNewMessages = 0;
+    var numNewMessagesTotal = 0;
 //    var roomName = '${roomName}';
     var hasFocus = true;
     var rooms = [];
+    var selectedRoomName;
+
+    var getRoomForName = function (roomName) {
+        for (var i = 0; i < rooms.length; i++) {
+            var roomObj = rooms[i];
+            if (roomName === roomObj.name) {
+                return roomObj;
+            }
+        }
+        return null;
+    };
+
+    var getCurrentSelectedRoomObject = function() {
+        return getRoomForName(selectedRoomName);
+    };
 
     // See https://github.com/joewalnes/reconnecting-websocket for options:
     var socket = new ReconnectingWebSocket('@@{WebSocket.ChatRoomSocket.join()}')
@@ -451,11 +466,41 @@
 
         // Select correct room in sidebar
         $('[id^=roomlist_]').removeClass('active');
-        $('#roomlist_' + roomName).addClass('active');
+        $('[id^=roomlist_]').find('.roomname').removeClass('font-bold');
+        $(getRoomlistEntrySelector(roomName)).addClass('active');
+        $(getRoomlistEntrySelector(roomName)).find('.roomname').addClass('font-bold');
 
         // Change title
         $('#room-title').text('#' + roomName);
         $('#room-modmessage').text('[A message from the ' + roomName+ ' mods to you.]');
+
+        resetUnreadCountForRoom(roomName);
+
+        selectedRoomName = roomName;
+    };
+
+    function resetUnreadCountForRoom(roomName) {
+        var roomObj = getRoomForName(roomName);
+        if (roomObj) {
+            roomObj.localUnreadCount = 0;
+            setUnreadCountForRoom(roomName, roomObj.localUnreadCount);
+        }
+    }
+
+    function incrementUnreadCountForRoom(roomName) {
+        var roomObj = getRoomForName(roomName);
+        if (roomObj) {
+            roomObj.localUnreadCount++;
+            setUnreadCountForRoom(roomName, roomObj.localUnreadCount);
+        }
+    }
+
+    var setUnreadCountForRoom = function (roomName, count) {
+        var countStr = count;
+        if (count == 0) {
+            countStr = "";
+        }
+        $(getRoomlistEntrySelector(roomName)).find('.unreadcount').text(countStr);
     };
 
     var setupRoomClicks = function () {
@@ -525,6 +570,27 @@
         return '#userlistparent_' + roomName + ' #userlist';
     }
 
+    function getThreadSelector(roomName) {
+        return '#threadparent_' + roomName + ' #thread';
+    }
+
+    function getUserListParentSelector(roomName) {
+        return 'userlistparent_' + roomName;
+    }
+
+    function getThreadParentSelector(roomName) {
+        return 'threadparent_' + roomName;
+    }
+
+
+    function getRoomlistEntrySelector(roomName) {
+        return '#roomlist_' + roomName;
+    }
+
+    function getMessageSelector(msgUuid) {
+        return '#message_' + msgUuid;
+    }
+
     var display = function (event) {
         console.log("Received event: " + event.type);
         if (event.type === 'roomlist') {
@@ -536,7 +602,7 @@
                 var roomObj = event.rooms[i];
 
                 var roomElement = tmpl('roomentry_tmpl', {roomObj: roomObj});
-                var existingElements = $('#roomlist_'+roomObj.name);
+                var existingElements = $(getRoomlistEntrySelector(roomObj.name));
                 if (existingElements.length > 0) {
 //                console.log("Existing message, replacing with new render.");
                     existingElements.first().replaceWith(roomElement);
@@ -549,29 +615,32 @@
                     $(parentClone).find('.input-message')
                             .attr('placeholder', 'Type a message to ' + roomObj.name + '...')
                             .attr('data-roomname', roomObj.name);
-                    parentClone.attr('id', 'threadparent_'+roomObj.name);
+                    parentClone.attr('id', getThreadParentSelector(roomObj.name));
 
                     // Clone and configure user list for this room
                     var userlistParentClone = $('#userlistparent').first().clone().appendTo('#rightcol');
-                    userlistParentClone.attr('id', 'userlistparent_'+roomObj.name);
+                    userlistParentClone.attr('id', getUserListParentSelector(roomObj.name));
                 }
 
                 requestMemberlist(roomObj.name);
             }
             rooms = event.rooms;
+            for (var i = 0; i < rooms.length; i++) {
+                rooms[i].localUnreadCount = 0;
+            }
             selectRoom(rooms[0].name);
             setupRoomClicks();
             setupMessageInputHandlers();
         } else if (event.type === 'message') {
 //            console.log("Message uuid : " + event.message.uuid);
             var msg = tmpl('message_tmpl', {event: event});
-            var msgObjects = $('#message_'+event.message.uuid);
+            var msgObjects = $(getMessageSelector(event.message.uuid));
             if (msgObjects.length > 0) {
 //                console.log("Existing message, replacing with new render.");
                 msgObjects.first().replaceWith(msg);
             } else {
 //                console.log("New message, appending.");
-                $('#threadparent_'+event.room.name+' #thread').append(msg);
+                $(getThreadSelector(event.room.name)).append(msg);
             }
 
             jQuery(".timeago").timeago();
@@ -612,8 +681,8 @@
 
     var updateTitle = function () {
         var title = 'breaker';
-        if (numNewMessages > 0) {
-            title = '(' + numNewMessages + ') ' + title;
+        if (numNewMessagesTotal > 0) {
+            title = '(' + numNewMessagesTotal + ') ' + title;
         }
         document.title = title;
     };
@@ -640,15 +709,22 @@
             type: 'error'
         });
         $('.input-message').prop("disabled", true);
-    }
+    };
 
     // Message received on the socket
     socket.onmessage = function (event) {
 //        console.log(event.data);
         var eventObj = JSON.parse(event.data);
         if (eventObj.type === 'message' && !hasFocus) {
-            numNewMessages++;
-            updateTitle();
+            var roomName = eventObj.room.name;
+            if (!hasFocus) {
+                numNewMessagesTotal++;
+                updateTitle();
+
+                incrementUnreadCountForRoom(roomName);
+            } else if (roomName != selectedRoomName) {
+                incrementUnreadCountForRoom(roomName);
+            }
         }
 //        var parts = /^([^:]+):([^:]+)(:(.*))?$/.exec(event.data)
         display(eventObj);
@@ -677,8 +753,9 @@
     };
     var onFocus = function onFocus() {
         hasFocus = true;
-        numNewMessages = 0;
+        numNewMessagesTotal = 0;
         updateTitle();
+        resetUnreadCountForRoom(selectedRoomName);
     };
 
     if (/*@cc_on!@*/false) { // check for Internet Explorer
