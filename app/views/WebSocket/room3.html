@@ -18,15 +18,27 @@
 <body>
 
 <!-- Templates -->
+
+<script type="text/html" id="roomentry_tmpl">
+    <li id="roomlist_<%= roomObj.name %>">
+        <a href="#" class="roomselect" data-roomname="<%= roomObj.name %>">
+            <b class="label bg-info pull-right">9</b>
+            <!--<i class="glyphicon glyphicon-envelope icon text-info-lter"></i>-->
+            <span class="font-bold">#<%= roomObj.name %></span>
+        </a>
+    </li>
+</script>
+
+
 <script type="text/html" id="userentry_tmpl">
-    <li id="userlist_<%= username %>" class="list-group-item">
+    <li id="userlist_<%= roomName %>_<%= username %>" class="list-group-item">
         <a herf class="pull-left thumb-sm avatar m-r">
             <img src="/public/img/a4.jpg" alt="..." class="img-circle">
             <i class="on b-white bottom"></i>
         </a>
         <div class="clear">
             <div><a href><%= username %></a></div>
-            <!--<small class="text-muted">Designer, Blogger</small>-->
+            <small class="text-muted">[User status msg]</small>
         </div>
     </li>
 </script>
@@ -123,8 +135,8 @@
             <ul class="nav navbar-nav hidden-sm">
 
                 <li class="m-t-xs m-b-xxs middle">
-                    <h1 class="m-n font-thin h4 text-black">#${roomName}</h1>
-                    <small class="text-muted">
+                    <h1 id="room-title" class="m-n font-thin h4 text-black">#roomname</h1>
+                    <small id="room-modmessage" class="text-muted">
                         Message from the moderators to you, the user.
                     </small>
                 </li>
@@ -278,18 +290,20 @@
 
                 <!-- nav -->
                 <nav ui-nav class="navi clearfix">
-                    <ul class="nav">
+                    <ul id="roomlist" class="nav">
                         <li class="hidden-folded padder m-t m-b-sm text-muted text-xs">
                             <span>Rooms</span>
                         </li>
 
+<!--
                         <li>
                             <a href="mail.html">
                                 <b class="label bg-info pull-right">9</b>
-                                <!--<i class="glyphicon glyphicon-envelope icon text-info-lter"></i>-->
+                                &lt;!&ndash;<i class="glyphicon glyphicon-envelope icon text-info-lter"></i>&ndash;&gt;
                                 <span class="font-bold">#${roomName}</span>
                             </a>
                         </li>
+-->
                     </ul>
                 </nav>
 
@@ -313,9 +327,9 @@
                   app.hideAside = false
                   ">
                 <!-- column -->
-                <div class="col">
+                <div id="centercol" class="col">
 
-                    <div class="vbox">
+                    <div id="threadparent" class="vbox">
                         <div class="row-row">
                             <div id="thread_scrollparent" class="cell">
                                 <div class="cell-inner">
@@ -331,7 +345,7 @@
                         </div>
 
                         <div class="padder padder-v b-t b-light text-center">
-                            <input id="message" type="text" class="form-control"
+                            <input type="text" class="form-control input-message"
                                    placeholder="Type a message to ${roomName}...">
                         </div>
 
@@ -340,8 +354,8 @@
                 <!-- /column -->
 
                 <!-- column -->
-                <div class="col w-md lter b-l hidden-sm hidden-xs">
-                    <div class="vbox">
+                <div id="rightcol" class="col w-md lter b-l hidden-sm hidden-xs">
+                    <div id="userlistparent" class="vbox">
                         <div class="row-row">
                             <div class="cell scrollable hover">
                                 <div class="cell-inner">
@@ -409,18 +423,76 @@
     // var WS = window['MozWebSocket'] ? MozWebSocket : WebSocket;
 
     var numNewMessages = 0;
-    var roomName = '${roomName}';
+//    var roomName = '${roomName}';
     var hasFocus = true;
+    var rooms = [];
 
     // See https://github.com/joewalnes/reconnecting-websocket for options:
-    var socket = new ReconnectingWebSocket('@@{WebSocket.ChatRoomSocket.join(roomName)}')
+    var socket = new ReconnectingWebSocket('@@{WebSocket.ChatRoomSocket.join()}')
     // socket.debug = true;
+
+    var makeMessage = function (roomName, message) {
+        var msg = {};
+        msg.roomName = roomName;
+        msg.message = message;
+        return msg;
+    };
+
+    var selectRoom = function (roomName) {
+        console.log("Select room: " + roomName);
+
+        // Hide all thread views, then show selected message thread
+        $('[id^=threadparent_]').hide();
+        $('#threadparent_'+roomName).show();
+
+        // Hide all user lists, then show user list for selected room
+        $('[id^=userlistparent_]').hide();
+        $('#userlistparent_'+roomName).show();
+
+        // Select correct room in sidebar
+        $('[id^=roomlist_]').removeClass('active');
+        $('#roomlist_' + roomName).addClass('active');
+
+        // Change title
+        $('#room-title').text('#' + roomName);
+        $('#room-modmessage').text('[A message from the ' + roomName+ ' mods to you.]');
+    };
+
+    var setupRoomClicks = function () {
+        $('.roomselect').click(function() {
+            var clickRoomName = $(this).attr('data-roomname');
+            console.log("Room click: " + clickRoomName);
+            selectRoom(clickRoomName);
+        });
+    };
+
+    var setupMessageInputHandlers = function() {
+        $('.input-message').keypress(function (e) {
+            if (e.charCode == 13 || e.keyCode == 13) {
+//            $('#send').click()
+                var messageElement = $(this);
+                var message = messageElement.val();
+                messageElement.val('');
+                var messageObj = makeMessage(messageElement.attr('data-roomname'), message);
+                socket.send(JSON.stringify(messageObj))
+                staydown.intend_down = true;
+
+                e.preventDefault()
+            }
+        });
+    };
+
+    var requestMemberlist = function (roomName) {
+        var messageObj = makeMessage(roomName, '##memberlist##');
+        socket.send(JSON.stringify(messageObj));
+    };
 
     // Ping socket
     setInterval(function () {
         if (socket.readyState == 1) {
             // console.log("Sending ping.");
-            socket.send("##ping##");
+            var messageObj = makeMessage(rooms[0].name, "##ping##");
+            socket.send(JSON.stringify(messageObj));
         } else {
             console.log("Can't ping, connection not open.");
         }
@@ -442,12 +514,55 @@
     Messenger.options = {
         extraClasses: 'messenger-fixed messenger-on-bottom messenger-on-right',
         theme: 'flat'
+    };
+
+    function getUserEntrySelector(roomName, username) {
+        return '#userlist_' + roomName + '_' + username;
     }
 
     // Display a message
+    function getUserListSelector(roomName) {
+        return '#userlistparent_' + roomName + ' #userlist';
+    }
+
     var display = function (event) {
-//        console.log("Received event: " + event.type);
-        if (event.type === 'message') {
+        console.log("Received event: " + event.type);
+        if (event.type === 'roomlist') {
+            $('#threadparent').hide();
+            $('#userlistparent').hide();
+
+            var arrayLength = event.rooms.length;
+            for (var i = 0; i < arrayLength; i++) {
+                var roomObj = event.rooms[i];
+
+                var roomElement = tmpl('roomentry_tmpl', {roomObj: roomObj});
+                var existingElements = $('#roomlist_'+roomObj.name);
+                if (existingElements.length > 0) {
+//                console.log("Existing message, replacing with new render.");
+                    existingElements.first().replaceWith(roomElement);
+                } else {
+//                console.log("New message, appending.");
+                    $('#roomlist').append(roomElement);
+
+                    // Clone and configure thread for this room
+                    var parentClone = $('#threadparent').first().clone().appendTo('#centercol');
+                    $(parentClone).find('.input-message')
+                            .attr('placeholder', 'Type a message to ' + roomObj.name + '...')
+                            .attr('data-roomname', roomObj.name);
+                    parentClone.attr('id', 'threadparent_'+roomObj.name);
+
+                    // Clone and configure user list for this room
+                    var userlistParentClone = $('#userlistparent').first().clone().appendTo('#rightcol');
+                    userlistParentClone.attr('id', 'userlistparent_'+roomObj.name);
+                }
+
+                requestMemberlist(roomObj.name);
+            }
+            rooms = event.rooms;
+            selectRoom(rooms[0].name);
+            setupRoomClicks();
+            setupMessageInputHandlers();
+        } else if (event.type === 'message') {
 //            console.log("Message uuid : " + event.message.uuid);
             var msg = tmpl('message_tmpl', {event: event});
             var msgObjects = $('#message_'+event.message.uuid);
@@ -456,30 +571,31 @@
                 msgObjects.first().replaceWith(msg);
             } else {
 //                console.log("New message, appending.");
-                $('#thread').append(msg);
+                $('#threadparent_'+event.room.name+' #thread').append(msg);
             }
 
             jQuery(".timeago").timeago();
         } else if (event.type === 'join') {
-            if ($('#userlist_' + event.user.username).length == 0) {
-                $('#userlist').append(tmpl('userentry_tmpl', {username: event.user.username}));
+            if ($(getUserEntrySelector(event.room.name, event.user.username)).length == 0) {
+                $(getUserListSelector(event.room.name)).append(tmpl('userentry_tmpl', {username: event.user.username, roomName: event.room.name}));
             }
         } else if (event.type === 'leave') {
-            $('#userlist_' + event.user.username).remove();
+            $(getUserEntrySelector(event.room.name, event.user.username)).remove();
         } else if (event.type === 'memberlist') {
+            console.log("Member list for " + event.room.name);
             var arrayLength = event.usernames.length;
             for (var i = 0; i < arrayLength; i++) {
                 var username = event.usernames[i];
 
-                var userHtml = tmpl('userentry_tmpl', {username: username})
-                var existingElements = $('#userlist_'+username);
+                var userHtml = tmpl('userentry_tmpl', {username: username, roomName: event.room.name});
+                var existingElements = $(getUserEntrySelector(event.room.name, username));
                 if (existingElements.length > 0) {
 //                    console.log("Existing user, replacing with new render.");
                     existingElements.first().replaceWith(userHtml);
                 } else {
 //                    console.log("New user, appending.");
                     // todo insert at sorted location
-                    $('#thread').append(userHtml);
+                    $(getUserListSelector(event.room.name)).append(userHtml);
                 }
 
 //                $('#userlist').append();
@@ -495,7 +611,7 @@
     }
 
     var updateTitle = function () {
-        var title = roomName + ' chat';
+        var title = 'breaker';
         if (numNewMessages > 0) {
             title = '(' + numNewMessages + ') ' + title;
         }
@@ -515,8 +631,7 @@
         }
         firstConnect = false;
 
-        socket.send('##memberlist##');
-        $('#message').prop("disabled", false);
+        $('.input-message').prop("disabled", false);
     };
 
     socket.onclose = function (event) {
@@ -524,7 +639,7 @@
             message: 'Disconnected from server, will retry...',
             type: 'error'
         });
-        $('#message').prop("disabled", true);
+        $('.input-message').prop("disabled", true);
     }
 
     // Message received on the socket
@@ -554,18 +669,6 @@
      staydown.intend_down = true;
      });
      */
-
-    $('#message').keypress(function (e) {
-        if (e.charCode == 13 || e.keyCode == 13) {
-//            $('#send').click()
-            var message = $('#message').val()
-            $('#message').val('')
-            socket.send(message)
-            staydown.intend_down = true;
-
-            e.preventDefault()
-        }
-    });
 
     // Stuff to do with window focus and unread messages
 

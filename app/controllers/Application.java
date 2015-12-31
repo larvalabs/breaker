@@ -51,6 +51,11 @@ public class Application extends Controller {
 */
     }
 
+    public static void testForceLogin() {
+        setUserInSession(ChatUser.findByUsername("chattest1"));
+        index();
+    }
+
     private static void setUserInSession(ChatUser user) {
         session.put(SESSION_UID, user.uid);
         renderArgs.put("user", user);

@@ -1,5 +1,8 @@
 package controllers;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import com.larvalabs.redditchat.Constants;
 import com.larvalabs.redditchat.dataobj.JsonChatRoom;
 import com.larvalabs.redditchat.dataobj.JsonMessage;
@@ -8,6 +11,7 @@ import com.larvalabs.redditchat.realtime.ChatRoomStream;
 import com.larvalabs.redditchat.util.Util;
 import jobs.SaveNewMessageJob;
 import play.*;
+import play.libs.F;
 import play.libs.F.*;
 import play.mvc.Controller;
 import play.mvc.Http.*;
@@ -17,6 +21,10 @@ import static play.mvc.Http.WebSocketEvent.*;
 
 import models.*;
 import play.mvc.WebSocketController;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class WebSocket extends Controller {
 
@@ -49,9 +57,21 @@ public class WebSocket extends Controller {
         renderText("ok");
     }
 
+    private static class RoomConnection {
+        public ChatRoom room;
+        public ChatRoomStream roomStream;
+        public EventStream<ChatRoomStream.Event> eventStream;
+
+        public RoomConnection(ChatRoom room, ChatRoomStream roomStream, EventStream<ChatRoomStream.Event> eventStream) {
+            this.room = room;
+            this.roomStream = roomStream;
+            this.eventStream = eventStream;
+        }
+    }
+
     public static class ChatRoomSocket extends WebSocketController {
 
-        public static void join(String roomName) {
+        public static void join() {
 
             ChatUser user = getUser();
             if (user == null) {
@@ -60,51 +80,74 @@ public class WebSocket extends Controller {
             }
 
             String connectionId = Util.getUUID();
-            ChatRoom room = ChatRoom.findByName(roomName);
-            ChatRoomStream roomStream = ChatRoomStream.get(roomName);
+            List<ChatUserRoomJoin> chatRoomJoins = user.getChatRoomJoins();
 
-            // Socket connected, join the chat room
-            // If this is the first connection this user has to the room then broadcast
-            boolean broadcastJoin = !room.isUserPresent(user);
-            if (broadcastJoin) {
-                Logger.debug("First connection for " + user.username + ", broadcasting join for connectionId " + connectionId);
+            HashMap<String, RoomConnection> roomConnections = new HashMap<java.lang.String, RoomConnection>();
+
+            {
+                JsonChatRoom[] jsonChatRooms = new JsonChatRoom[chatRoomJoins.size()];
+                int i = 0;
+                for (ChatUserRoomJoin chatRoomJoin : chatRoomJoins) {
+                    ChatRoom room = chatRoomJoin.getRoom();
+                    jsonChatRooms[i] = JsonChatRoom.from(room);
+                    Logger.debug("Connecting to chat room stream for " + room.getName());
+                    addConnection(user, connectionId, roomConnections, room);
+                    i++;
+                }
+                String roomListJson = new ChatRoomStream.RoomList(jsonChatRooms).toJson();
+                Logger.info("Room list json: " + roomListJson);
+                outbound.send(roomListJson);
             }
-            room.userPresent(user, connectionId);
-            EventStream<ChatRoomStream.Event> roomMessagesStream = roomStream.join(room, user, broadcastJoin);
+//            ChatRoom room = ChatRoom.findByName(roomName);
+//            ChatRoomStream roomStream = ChatRoomStream.get(roomName);
 
             // Loop while the socket is open
             while (inbound.isOpen()) {
 
+                Promise<ChatRoomStream.Event>[] roomEventPromises = new Promise[roomConnections.size()];
+                int i = 0;
+                for (RoomConnection roomConnection : roomConnections.values()) {
+                    roomEventPromises[i] = roomConnection.eventStream.nextEvent();
+                    i++;
+                }
+
                 // Wait for an event (either something coming on the inbound socket channel, or ChatRoom messages)
                 Either<WebSocketEvent, ChatRoomStream.Event> e = await(Promise.waitEither(
                         inbound.nextEvent(),
-                        roomMessagesStream.nextEvent()
+                        Promise.waitAny(roomEventPromises)
                 ));
 
-                // Case: User typed 'quit'
-                for (String userMessage : TextFrame.and(Equals("quit")).match(e._1)) {
-                    roomStream.leave(room, user);
-                    outbound.send("quit:ok");
-                    disconnect();
-                }
-
                 // Case: TextEvent received on the socket
-                for (String userMessage : TextFrame.match(e._1)) {
-                    if (userMessage.toLowerCase().equals("##ping##")) {
-                        room.userPresent(user, connectionId);
-//                        Logger.debug("Ping msg - skipping.");
-                    } else if (userMessage.toLowerCase().equals("##memberlist##")) {
-                        Logger.debug("User " + user.username + " requested member list.");
-                        outbound.send(new ChatRoomStream.MemberList(JsonChatRoom.from(room, user), room.getUsernamesPresent().toArray(new String[]{})).toJson());
-                    } else {
-                        String uuid = com.larvalabs.redditchat.util.Util.getUUID();
-                        JsonMessage jsonMessage = JsonMessage.makePresavedMessage(uuid, user, room, userMessage);
-                        new SaveNewMessageJob(uuid, user, roomName, userMessage).now();
-                        roomStream.say(jsonMessage);
+                for (String userMessageJson : TextFrame.match(e._1)) {
+                    try {
+                        Logger.debug("Message received from socket: " + userMessageJson);
+                        JsonObject msgObj = new JsonParser().parse(userMessageJson).getAsJsonObject();
+                        String roomName = msgObj.get("roomName").getAsString();
+                        String message = msgObj.get("message").getAsString();
+                        RoomConnection roomConnection = roomConnections.get(roomName);
+                        if (roomConnection != null) {
+                            if (message.toLowerCase().equals("##ping##")) {
+                                roomConnection.room.userPresent(user, connectionId);
+    //                        Logger.debug("Ping msg - skipping.");
+                            } else if (message.toLowerCase().equals("##memberlist##")) {
+                                Logger.debug("User " + user.username + " requested member list.");
+                                outbound.send(new ChatRoomStream.MemberList(JsonChatRoom.from(roomConnection.room, user),
+                                        roomConnection.room.getUsernamesPresent().toArray(new String[]{})).toJson());
+                            } else {
+                                String uuid = Util.getUUID();
+                                JsonMessage jsonMessage = JsonMessage.makePresavedMessage(uuid, user, roomConnection.room, message);
+                                new SaveNewMessageJob(uuid, user, roomName, message).now();
+                                roomConnection.roomStream.say(jsonMessage);
+                            }
+                        } else {
+                            Logger.error("Could not find room connection.");
+                        }
+                    } catch (Exception e1) {
+                        Logger.error(e1, "Error handling user message, discarding.");
                     }
                 }
 
-                // Case: New message on the chat room
+                // Case: New message on a chat room
                 if (e._2.isDefined()) {
                     ChatRoomStream.Event event = e._2.get();
                     String json = event.toJson();
@@ -135,17 +178,34 @@ public class WebSocket extends Controller {
 
                 // Case: The socket has been closed
                 for (WebSocketClose closed : SocketClosed.match(e._1)) {
-                    room.userNotPresent(user, connectionId);
-                    // If this was the last connection that user had to the room then broadcast they've left
-                    if (!room.isUserPresent(user)) {
-                        Logger.debug("Last connection for " + user.username + " disconnected, broadcasting leave.");
-                        roomStream.leave(room, user);
+                    for (RoomConnection roomConnection : roomConnections.values()) {
+                        roomConnection.room.userNotPresent(user, connectionId);
+                        // If this was the last connection that user had to the room then broadcast they've left
+                        if (!roomConnection.room.isUserPresent(user)) {
+                            Logger.debug("Last connection for " + user.username + " on channel " + roomConnection.room.getName() + " disconnected, broadcasting leave.");
+                            roomConnection.roomStream.leave(roomConnection.room, user);
+                        }
                     }
                     disconnect();
                 }
 
             }
 
+        }
+
+        private static void addConnection(ChatUser user, String connectionId, HashMap<String, RoomConnection> roomConnections, ChatRoom room) {
+            ChatRoomStream roomStream = ChatRoomStream.get(room.name);
+
+            // Socket connected, join the chat room
+            // If this is the first connection this user has to the room then broadcast
+            boolean broadcastJoin = !room.isUserPresent(user);
+            if (broadcastJoin) {
+                Logger.debug("First connection for " + user.username + ", broadcasting join for connectionId " + connectionId);
+            }
+            room.userPresent(user, connectionId);
+            EventStream<ChatRoomStream.Event> roomMessagesStream = roomStream.join(room, user, broadcastJoin);
+
+            roomConnections.put(room.name, new RoomConnection(room, roomStream, roomMessagesStream));
         }
 
     }

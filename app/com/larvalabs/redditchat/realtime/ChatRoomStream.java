@@ -97,6 +97,7 @@ public class ChatRoomStream {
         public Long timestamp;
         public JsonChatRoom room;
 
+        public static final String TYPE_ROOMLIST = "roomlist";
         public static final String TYPE_MEMBERLIST = "memberlist";
         public static final String TYPE_JOIN = "join";
         public static final String TYPE_MESSAGE = "message";
@@ -134,6 +135,19 @@ public class ChatRoomStream {
         }
     }
 
+    public static class RoomList extends Event {
+
+        public JsonChatRoom[] rooms;
+
+        public RoomList() {
+        }
+
+        public RoomList(JsonChatRoom[] rooms) {
+            super(TYPE_ROOMLIST, null);
+            this.rooms = rooms;
+        }
+    }
+
     public static class MemberList extends Event {
 
         public String[] usernames;
@@ -146,7 +160,7 @@ public class ChatRoomStream {
             this.usernames = usernames;
         }
     }
-    
+
     public static class Join extends Event {
         
         public JsonUser user;
