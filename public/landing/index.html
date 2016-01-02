@@ -43,22 +43,31 @@
       top: 50%;
       transform: translateY(-50%);
     }
+
+    .badge-plain {
+      text-shadow: none;
+      color: #58666E;
+    }
+
+    .navbar-header-wide {
+      width: 250px;
+    }
   </style>
 
 </head>
 <body>
-	
+
   <!-- header -->
   <header id="header" class="navbar navbar-fixed-top bg-white-only padder-v"  data-spy="affix" data-offset-top="1">
     <div class="container">
-      <div class="navbar-header">
+      <div class="navbar-header navbar-header-wide">
         <button class="btn btn-link visible-xs pull-right m-r" type="button" data-toggle="collapse" data-target=".navbar-collapse">
           <i class="fa fa-bars"></i>
         </button>
         <a href="#" class="navbar-brand m-r-lg">
           <i class="fa fa-terminal"></i>
-          <img src="img/logo.png" class="m-r-sm hide">
-          <span class="h3 font-bold">breaker</span>
+          <!--<img src="img/logo.png" class="m-r-sm hide">-->
+          <span class="h3 font-bold">breaker</span> <sup><span class="badge badge-plain">beta</span></sup>
         </a>
       </div>
       <div class="collapse navbar-collapse">
@@ -82,7 +91,7 @@
           <li>
             <div class="m-t-sm">
               <!--<a href="/public/angular/#/access/signin" class="btn btn-link btn-sm">Sign in</a> or-->
-              <a href="/public/angular/#/access/signup" class="btn btn-sm btn-success btn-rounded m-l"><strong>Sign in</strong></a>
+              <a href="/test" class="btn btn-sm btn-success btn-rounded m-l"><strong>Sign in</strong></a>
             </div>
           </li>
         </ul>     
