@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>  
+  <meta charset="utf-8" />
+  <title>breaker | live chat for reddit</title>
+  <meta name="description" content="Breaker is a chat room for every subreddit." />
+  <meta name="keywords" content="chat, irc, slack, reddit" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+
+  <link rel="shortcut icon" type="image/png" href="http://www.breakerapp.com/favicon.png" />
+
+  <link rel="stylesheet" href="/public/libs/assets/animate.css/animate.css" type="text/css" />
+  <link rel="stylesheet" href="/public/libs/assets/font-awesome/css/font-awesome.min.css" type="text/css" />
+  <link rel="stylesheet" href="/public/libs/assets/simple-line-icons/css/simple-line-icons.css" type="text/css" />
+  <link rel="stylesheet" href="/public/libs/jquery/bootstrap/dist/css/bootstrap.css" type="text/css" />
+
+  <link rel="stylesheet" href="css/font.css" type="text/css" />
+  <link rel="stylesheet" href="css/app.css" type="text/css" />
+
+  <style>
+    .landing-footer {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 1005;
+    }
+
+    .full-viewport {
+      position: absolute;
+      bottom: 0px;
+      top: 0px;
+      height: 100%;
+      width: 100%;
+    }
+
+    .full-height {
+      height: 100%;
+    }
+
+    .center-vertical {
+      position: relative;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+  </style>
+
+</head>
+<body>
+	
+  <!-- header -->
+  <header id="header" class="navbar navbar-fixed-top bg-white-only padder-v"  data-spy="affix" data-offset-top="1">
+    <div class="container">
+      <div class="navbar-header">
+        <button class="btn btn-link visible-xs pull-right m-r" type="button" data-toggle="collapse" data-target=".navbar-collapse">
+          <i class="fa fa-bars"></i>
+        </button>
+        <a href="#" class="navbar-brand m-r-lg">
+          <i class="fa fa-terminal"></i>
+          <img src="img/logo.png" class="m-r-sm hide">
+          <span class="h3 font-bold">breaker</span>
+        </a>
+      </div>
+      <div class="collapse navbar-collapse">
+<!--
+        <ul class="nav navbar-nav font-bold">
+          <li>
+            <a href="#what" data-ride="scroll">What is Angulr</a>
+          </li>
+          <li>
+            <a href="#why" data-ride="scroll">Why</a>
+          </li>
+          <li>
+            <a href="#features" data-ride="scroll">Features</a>
+          </li>
+          <li>
+            <a href="http://themeforest.net/item/angulr-bootstrap-admin-web-app-with-angularjs/8437259">Download</a>
+          </li>
+        </ul>
+-->
+        <ul class="nav navbar-nav navbar-right">
+          <li>
+            <div class="m-t-sm">
+              <!--<a href="/public/angular/#/access/signin" class="btn btn-link btn-sm">Sign in</a> or-->
+              <a href="/public/angular/#/access/signup" class="btn btn-sm btn-success btn-rounded m-l"><strong>Sign in</strong></a>
+            </div>
+          </li>
+        </ul>     
+      </div>
+    </div>
+  </header>
+  <!-- / header -->
+  <div id="content" class="full-viewport">
+    
+    <div class="bg-white-only full-height">
+      <div class="container center-vertical">
+        <div class="row">
+          <div class="col-md-8 col-md-offset-2 text-center">
+            <div class="m-t-xxl m-b-xxl padder-v">
+              <h1 class="font-bold l-h-1x m-t-xxl text-black padder-v animated fadeInDown">
+                A chat room for every subreddit.
+                <!--<br><span class="b-b b-black b-3x">5 in 1</span> ui kits package.-->
+              </h1>
+              <h3 class="text-muted m-t-xl l-h-1x">Breaker is like IRC or Slack, but made just for Reddit.
+                <br><br>
+                Use your <span class="b-b b-2x">reddit username</span> and flair, <span class="b-b b-2x">helpful bots</span> post stuff from the subreddit into the channel, <span class="b-b b-2x">subreddit moderators</span> automatically become channel operators, and a lot more.</h3>
+            </div>
+            <p class="text-center m-b-xxl wrapper">
+              <a href="/test" class="btn b-2x btn-lg btn-info btn-rounded text-lg font-bold m-b-xxl animated fadeIn"><i class="fa fa-reddit btn-addon pull-left"></i>&nbsp;&nbsp;Sign in with Reddit</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- footer -->
+  <footer id="footer" class="landing-footer">
+<!--    <div class="bg-white">
+      <div class="container">
+        <div class="row m-t-xl m-b-xl">
+          <div class="col-sm-3">
+            <h4 class="text-u-c m-b font-thin"><span class="b-b b-dark font-bold">Version</span> options</h4>
+            <ul class="list-unstyled">
+              <li><a href="/public/angular"><i class="fa fa-angle-right m-r-sm"></i>Angular App</a></li>
+              <li><a href="/public/html"><i class="fa fa-angle-right m-r-sm"></i>Html Template</a></li>
+              <li><a href="/public/angular/#music/home"><i class="fa fa-angle-right m-r-sm"></i>Music single page application</a></li>
+              <li><a href="#"><i class="fa fa-angle-right m-r-sm"></i>App landing page</a></li>
+            </ul>
+            <p class="m-b-xl">More coming...</p>
+          </div>
+          <div class="col-sm-3">
+            <h4 class="text-u-c m-b font-thin"><span class="b-b b-dark font-bold">Find</span> Us</h4>
+            <p class="text-sm">23 soe Midlokls <br>
+              120002 Loki — UNITED KINGDOM <br>
+              +333 432 321 322
+             </p>
+             <p>Sale: <a href="mailto:hey@example.com">info@example.com</a></p>
+             <p class="m-b-xl">Job: <a href="mailto:hey@example.com">job@example.com</a></p>
+          </div>
+          <div class="col-sm-3">
+            <h4 class="text-u-c m-b-xl font-thin"><span class="b-b b-dark font-bold">Follow</span> Us</h4>
+            <div class="m-b-xl">
+              <a href="#" class="btn btn-icon btn-rounded btn-dark"><i class="fa fa-facebook"></i></a>
+              <a href="#" class="btn btn-icon btn-rounded btn-dark"><i class="fa fa-twitter"></i></a>
+              <a href="#" class="btn btn-icon btn-rounded btn-dark"><i class="fa fa-google-plus"></i></a>
+              <a href="#" class="btn btn-icon btn-rounded btn-dark"><i class="fa fa-linkedin"></i></a>
+              <a href="#" class="btn btn-icon btn-rounded btn-dark"><i class="fa fa-pinterest"></i></a>
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <h4 class="text-u-c m-b font-thin"><span class="b-b b-dark font-bold">News</span> Letter</h4>
+            <p>Do not want to miss anything? Subscribe to our newsletter box</p>
+            <form class="form-inline m-t m-b text-center m-b-xl">
+              <div class="aside-xl inline">
+                <div class="input-group">
+                    <input type="text" id="address" name="address" class="form-control btn-rounded" placeholder="Your email">
+                    <span class="input-group-btn">
+                      <button class="btn btn-default btn-rounded" type="submit">Subscribe</button>
+                    </span>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>-->
+    <div class="bg-light dk">
+      <div class="container">
+        <div class="row padder-v m-t">
+          <div class="col-xs-8">
+            &copy; 2015
+<!--
+            <ul class="list-inline">
+              <li><a href="#">Sales</a></li>
+              <li><a href="#">About</a></li>
+              <li><a href="#">API</a></li>
+              <li><a href="#">Contact us</a></li>
+              <li><a href="#">Job</a></li>
+            </ul> 
+-->
+          </div>
+          <div class="col-xs-4 text-right">
+            <a href="http://larvalabs.com">Larva Labs</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <!-- / footer -->
+
+  <script src="/public/libs/jquery/jquery/dist/jquery.js"></script>
+  <script src="/public/libs/jquery/bootstrap/dist/js/bootstrap.js"></script>
+  <script src="/public/libs/jquery/jquery_appear/jquery.appear.js"></script>
+  <script src="js/landing.js"></script>
+</body>
+</html>

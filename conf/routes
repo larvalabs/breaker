@@ -3,7 +3,7 @@
 # ~~~~
 
 # Login
-GET     /                                       Application.index
+GET     /test                                   Application.index
 GET     /demo                                   Application.enterDemo
 GET     /auth                                   Application.auth
 
@@ -25,6 +25,7 @@ WS      /websocket/room/socket                  WebSocket.ChatRoomSocket.join
 
 # Map static resources from the /app/public folder to the /public path
 GET     /public/                                staticDir:public
+GET     /                                       staticDir:public/landing
 
 # Catch all
 *       /{controller}/{action}                  {controller}.{action}
