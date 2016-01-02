@@ -85,13 +85,20 @@ public class Application extends Controller {
 
     public static void logout() {
         session.remove(SESSION_UID);
-        index();
+        redirect("/");
+//        index();
     }
 
     public static void preAuthForRoomJoin(String roomName) {
-        ChatUser chatUser = connected();
-        session.put(SESSION_JOINROOM, roomName);
-        render(chatUser, roomName);
+        if (roomName != null) {
+            // This is generally a direct link from a subreddit, so introduce things a bit
+            ChatUser chatUser = connected();
+            session.put(SESSION_JOINROOM, roomName);
+            render(chatUser, roomName);
+        } else {
+            // This is probably a generic signup request from the homepage
+            auth();
+        }
     }
 
     public static void auth() {
@@ -128,7 +135,7 @@ public class Application extends Controller {
             if (joiningRoom != null) {
                 join(joiningRoom);
             } else {
-                index();
+                WebSocket.room(null);
             }
         }
         redirect(REDDIT_AUTHORIZATION_URL);

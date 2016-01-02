@@ -46,6 +46,13 @@ public class WebSocket extends Controller {
             Application.preAuthForRoomJoin(roomName);
             return;
         }
+        if (roomName == null) {
+            if (user.getChatRoomJoins().size() == 0) {
+                user.joinChatRoom(ChatRoom.findByName(Constants.CHATROOM_DEFAULT));
+            }
+        } else {
+            user.joinChatRoom(ChatRoom.findByName(roomName));
+        }
         render("WebSocket/room3.html", user, roomName);
     }
 

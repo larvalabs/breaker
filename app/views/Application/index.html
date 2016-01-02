@@ -1,13 +1,14 @@
 #{extends 'main.html' /}
-#{set title:'Sign in' /}
+#{set title:'Test Page' /}
 
 <div id="home">
 
-    <h2>Reddit chat</h2>
+    <h2>Reddit chat test page</h2>
     #{if user}
     <p>Logged in user: ${user.username}</p>
     #{/if}
 
+    <p><a href="@{Application.join('breakerapp')}">breakerapp chat (eventual default)</a></p>
     <p><a href="@{Application.join('webdev')}">webdev chat</a></p>
     <p><a href="@{Application.join('hockey')}">hockey chat</a></p>
     <p></p>

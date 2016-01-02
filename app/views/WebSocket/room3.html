@@ -109,7 +109,7 @@
             <!-- brand -->
             <a href="#" class="navbar-brand text-lt">
                 <i class="fa fa-terminal"></i>
-                <img src="/public/img/logo.png" alt="." class="hide">
+                <!--<img src="/public/img/logo.png" alt="." class="hide">-->
                 <span class="hidden-folded m-l-xs">breaker</span>
             </a>
             <!-- / brand -->
@@ -135,7 +135,7 @@
             <ul class="nav navbar-nav hidden-sm">
 
                 <li class="m-t-xs m-b-xxs middle">
-                    <h1 id="room-title" class="m-n font-thin h4 text-black">#roomname</h1>
+                    <h1 id="room-title" class="m-n font-thin h4 text-black"><a id="room-link" href="#" target="_blank">#roomname</a></h1>
                     <small id="room-modmessage" class="text-muted">
                         Message from the moderators to you, the user.
                     </small>
@@ -145,13 +145,14 @@
 
             <!-- nabar right -->
             <ul class="nav navbar-nav navbar-right">
+<!--
                 <li class="dropdown">
                     <a href="#" data-toggle="dropdown" class="dropdown-toggle">
                         <i class="icon-bell fa-fw"></i>
                         <span class="visible-xs-inline">Notifications</span>
                         <span class="badge badge-sm up bg-danger pull-right-xs">2</span>
                     </a>
-                    <!-- dropdown -->
+                    &lt;!&ndash; dropdown &ndash;&gt;
                     <div class="dropdown-menu w-xl animated fadeInUp">
                         <div class="panel bg-white">
                             <div class="panel-heading b-light bg-light">
@@ -181,8 +182,9 @@
                             </div>
                         </div>
                     </div>
-                    <!-- / dropdown -->
+                    &lt;!&ndash; / dropdown &ndash;&gt;
                 </li>
+-->
                 <li class="dropdown v-middle">
                     <a href="#" data-toggle="dropdown" class="dropdown-toggle clear" data-toggle="dropdown">
                       <span class="thumb-sm avatar pull-right m-t-n-sm m-b-n-sm m-l-sm">
@@ -192,7 +194,8 @@
                         <span class="hidden-sm hidden-md">${user.username}</span> <b class="caret"></b>
                     </a>
                     <!-- dropdown -->
-                    <ul class="dropdown-menu animated fadeInRight w">
+                    <ul class="dropdown-menu w">
+<!--
                         <li class="wrapper b-b m-b-sm bg-light m-t-n-xs">
                             <div>
                                 <p>300mb of 500mb used</p>
@@ -218,8 +221,9 @@
                             </a>
                         </li>
                         <li class="divider"></li>
+-->
                         <li>
-                            <a ui-sref="access.signin">Logout</a>
+                            <a ui-sref="access.signin" href="@{Application.logout}">Logout</a>
                         </li>
                     </ul>
                     <!-- / dropdown -->
@@ -423,7 +427,7 @@
     // var WS = window['MozWebSocket'] ? MozWebSocket : WebSocket;
 
     var numNewMessagesTotal = 0;
-//    var roomName = '${roomName}';
+    var preSelectRoomName = '${roomName}';
     var hasFocus = true;
     var rooms = [];
     var selectedRoomName;
@@ -471,7 +475,8 @@
         $(getRoomlistEntrySelector(roomName)).find('.roomname').addClass('font-bold');
 
         // Change title
-        $('#room-title').text('#' + roomName);
+        $('#room-link').text('#' + roomName);
+        $('#room-link').attr('href', 'https://reddit.com/r/'+roomName);
         $('#room-modmessage').text('[A message from the ' + roomName+ ' mods to you.]');
 
         resetUnreadCountForRoom(roomName);
@@ -628,7 +633,11 @@
             for (var i = 0; i < rooms.length; i++) {
                 rooms[i].localUnreadCount = 0;
             }
-            selectRoom(rooms[0].name);
+            if (preSelectRoomName) {
+                selectRoom(preSelectRoomName);
+            } else {
+                selectRoom(rooms[0].name);
+            }
             setupRoomClicks();
             setupMessageInputHandlers();
         } else if (event.type === 'message') {

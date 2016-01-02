@@ -283,6 +283,10 @@ public class ChatUser extends Model {
     }
 
     public void joinChatRoom(ChatRoom chatRoom) {
+        if (chatRoom == null) {
+            Logger.warn("Chat room was null, cannot join.");
+            return;
+        }
         ChatUserRoomJoin join = ChatUserRoomJoin.findByUserAndRoom(this, chatRoom);
         if (join != null) {
             return;
