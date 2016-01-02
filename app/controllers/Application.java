@@ -53,7 +53,7 @@ public class Application extends Controller {
 
     public static void testForceLogin() {
         setUserInSession(ChatUser.findByUsername("chattest1"));
-        index();
+        test();
     }
 
     private static void setUserInSession(ChatUser user) {
@@ -66,6 +66,17 @@ public class Application extends Controller {
     }
 
     public static void index() {
+        ChatUser chatUser = connected();
+        if (chatUser != null) {
+            // go to chat
+            WebSocket.room(null);
+        } else {
+            // static landing
+            redirect("/");
+        }
+    }
+
+    public static void test() {
         ChatUser chatUser = connected();
         render();
     }

@@ -3,7 +3,7 @@
 # ~~~~
 
 # Login
-GET     /test                                   Application.index
+GET     /test                                   Application.test
 GET     /demo                                   Application.enterDemo
 GET     /auth                                   Application.auth
 GET     /logout                                 Application.logout
