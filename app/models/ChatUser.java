@@ -218,7 +218,7 @@ public class ChatUser extends Model {
         if (profileImageKey != null) {
             return Constants.URL_S3_BUCKET_PROFILE_FULLSIZE + profileImageKey;
         }
-        return null;
+        return Constants.DEFAULT_PROFILE_URL;
     }
 
     public String getNotificationPreference() {

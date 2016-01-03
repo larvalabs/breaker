@@ -2,6 +2,7 @@ package com.larvalabs.redditchat;
 
 public class Constants {
     public static final String CHATROOM_DEFAULT = "breakerapp";
+    public static final String DEFAULT_PROFILE_URL = "/public/img/user-anon.png";
 
     public enum Flair {
         DEV_SAME_ROOM(0x1F451),

@@ -1,6 +1,7 @@
 package models;
 
 import com.larvalabs.redditchat.Constants;
+import com.larvalabs.redditchat.dataobj.JsonUser;
 import play.Logger;
 import play.db.DB;
 import play.db.jpa.Model;
@@ -231,6 +232,38 @@ public class ChatRoom extends Model {
             Logger.error("Error contacting redis.");
             return 0;
         }
+    }
+
+    /**
+     * This is probably slow as hell, but ok for v1
+     * @return
+     */
+    public TreeSet<ChatUser> getPresentUserObjects() {
+        TreeSet<String> usernamesPresent = getUsernamesPresent();
+        TreeSet<ChatUser> users = new TreeSet<ChatUser>(new Comparator<ChatUser>() {
+            @Override
+            public int compare(ChatUser o1, ChatUser o2) {
+                return o1.username.compareTo(o2.username);
+            }
+        });
+        for (String username : usernamesPresent) {
+            ChatUser chatUser = ChatUser.findByUsername(username);
+            if (chatUser != null) {
+                users.add(chatUser);
+            }
+        }
+        return users;
+    }
+
+    public JsonUser[] getPresentJsonUsers() {
+        TreeSet<ChatUser> presentUserObjects = getPresentUserObjects();
+        JsonUser[] users = new JsonUser[presentUserObjects.size()];
+        int i = 0;
+        for (ChatUser presentUserObject : presentUserObjects) {
+            users[i] = JsonUser.fromUser(presentUserObject);
+            i++;
+        }
+        return users;
     }
 
     // note: could consider doing this as a separate set of just usernames

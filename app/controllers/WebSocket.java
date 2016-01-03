@@ -145,7 +145,7 @@ public class WebSocket extends Controller {
                             } else if (message.toLowerCase().equals("##memberlist##")) {
                                 Logger.debug("User " + user.username + " requested member list.");
                                 outbound.send(new ChatRoomStream.MemberList(JsonChatRoom.from(roomConnection.room, user),
-                                        roomConnection.room.getUsernamesPresent().toArray(new String[]{})).toJson());
+                                        roomConnection.room.getPresentJsonUsers()).toJson());
                             } else {
                                 String uuid = Util.getUUID();
                                 JsonMessage jsonMessage = JsonMessage.makePresavedMessage(uuid, user, roomConnection.room, message);

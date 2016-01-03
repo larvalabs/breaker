@@ -31,13 +31,13 @@
 
 
 <script type="text/html" id="userentry_tmpl">
-    <li id="<%= getUserEntrySelector(roomName,username).substring(1) %>" class="list-group-item">
+    <li id="<%= getUserEntrySelector(roomName, user.username).substring(1) %>" class="list-group-item">
         <a herf class="pull-left thumb-sm avatar m-r">
-            <img src="/public/img/a4.jpg" alt="..." class="img-circle">
+            <img src="<%= user.profileImageUrl %>" alt="..." class="img-circle">
             <i class="on b-white bottom"></i>
         </a>
         <div class="clear">
-            <div><a href><%= username %></a></div>
+            <div><a href><%= user.username %></a></div>
             <small class="text-muted">[User status msg]</small>
         </div>
     </li>
@@ -48,7 +48,7 @@
     <% if(event.type == 'message') { %>
     <li id="<%= getMessageSelector(event.message.uuid).substring(1) %>" class="list-group-item clearfix b-l-3x b-l-info">
         <a class="avatar thumb pull-left m-r" href="https://reddit.com/u/<%= event.user.username %>" target="_blank">
-            <img ng-src="/public/img/a10.jpg" src="/public/img/a4.jpg">
+            <img src="<%= event.user.profileImageUrl %>">
         </a>
         <div class="pull-right text-sm text-muted">
             <span class="hidden-xs timeago" title="<%= new Date(event.timestamp).toISOString() %>">less than</span>
@@ -188,7 +188,7 @@
                 <li class="dropdown v-middle">
                     <a href="#" data-toggle="dropdown" class="dropdown-toggle clear" data-toggle="dropdown">
                       <span class="thumb-sm avatar pull-right m-t-n-sm m-b-n-sm m-l-sm">
-                        <img src="/public/img/a4.jpg" alt="...">
+                        <img src="/public/img/user-anon.png" alt="...">
                         <i class="on md b-white bottom"></i>
                       </span>
                         <span class="hidden-sm hidden-md">${user.username}</span> <b class="caret"></b>
@@ -245,7 +245,7 @@
                     <div class="dropdown wrapper">
                         <a href="app.page.profile">
                 <span class="thumb-lg w-auto-folded avatar m-t-sm">
-                  <img src="/public/img/a0.jpg" class="img-full" alt="...">
+                  <img src="/public/img/user-anon.png" class="img-full" alt="...">
                 </span>
                         </a>
                         <a href="#" data-toggle="dropdown" class="dropdown-toggle hidden-folded">
@@ -430,20 +430,29 @@
     var preSelectRoomName = '${roomName}';
     var hasFocus = true;
     var rooms = [];
+    var stayDownObjs = [];
     var selectedRoomName;
 
-    var getRoomForName = function (roomName) {
+    var getIndexForRoom = function (roomName) {
         for (var i = 0; i < rooms.length; i++) {
             var roomObj = rooms[i];
             if (roomName === roomObj.name) {
-                return roomObj;
+                return i;
             }
         }
-        return null;
+        return -1;
+    };
+
+    var getRoomForName = function (roomName) {
+        return rooms[getIndexForRoom(roomName)];
     };
 
     var getCurrentSelectedRoomObject = function() {
         return getRoomForName(selectedRoomName);
+    };
+
+    var getStaydownForRoom = function (roomName) {
+        return stayDownObjs[getIndexForRoom(roomName)];
     };
 
     // See https://github.com/joewalnes/reconnecting-websocket for options:
@@ -527,7 +536,7 @@
                 messageElement.val('');
                 var messageObj = makeMessage(messageElement.attr('data-roomname'), message);
                 socket.send(JSON.stringify(messageObj))
-                staydown.intend_down = true;
+                getStaydownForRoom(selectedRoomName).intend_down = true;
 
                 e.preventDefault()
             }
@@ -558,11 +567,6 @@
     }, 5000);
 */
 
-    var staydown = new StayDown({
-        target: document.getElementById('thread_scrollparent'),
-        interval: 500
-    });
-
     Messenger.options = {
         extraClasses: 'messenger-fixed messenger-on-bottom messenger-on-right',
         theme: 'flat'
@@ -585,7 +589,7 @@
         return 'userlistparent_' + roomName;
     }
 
-    function getThreadParentSelector(roomName) {
+    function getThreadParentId(roomName) {
         return 'threadparent_' + roomName;
     }
 
@@ -622,7 +626,14 @@
                     $(parentClone).find('.input-message')
                             .attr('placeholder', 'Type a message to ' + roomObj.name + '...')
                             .attr('data-roomname', roomObj.name);
-                    parentClone.attr('id', getThreadParentSelector(roomObj.name));
+                    parentClone.attr('id', getThreadParentId(roomObj.name));
+
+                    // Make staydown scroll handler for room
+                    var staydown = new StayDown({
+                        target: $('#'+getThreadParentId(roomObj.name)+ ' #thread_scrollparent')[0],
+                        interval: 500
+                    });
+                    stayDownObjs.push(staydown);
 
                     // Clone and configure user list for this room
                     var userlistParentClone = $('#userlistparent').first().clone().appendTo('#rightcol');
@@ -657,17 +668,20 @@
             jQuery(".timeago").timeago();
         } else if (event.type === 'join') {
             if ($(getUserEntrySelector(event.room.name, event.user.username)).length == 0) {
-                $(getUserListSelector(event.room.name)).append(tmpl('userentry_tmpl', {username: event.user.username, roomName: event.room.name}));
+                $(getUserListSelector(event.room.name)).append(tmpl('userentry_tmpl',
+                        {roomName: event.room.name, user: event.user}));
             }
         } else if (event.type === 'leave') {
             $(getUserEntrySelector(event.room.name, event.user.username)).remove();
         } else if (event.type === 'memberlist') {
             console.log("Member list for " + event.room.name);
-            var arrayLength = event.usernames.length;
+            var arrayLength = event.users.length;
             for (var i = 0; i < arrayLength; i++) {
-                var username = event.usernames[i];
+                var userObj = event.users[i];
+                var username = userObj.username;
 
-                var userHtml = tmpl('userentry_tmpl', {username: username, roomName: event.room.name});
+                var userHtml = tmpl('userentry_tmpl',
+                        {roomName: event.room.name, user: userObj});
                 var existingElements = $(getUserEntrySelector(event.room.name, username));
                 if (existingElements.length > 0) {
 //                    console.log("Existing user, replacing with new render.");
@@ -687,8 +701,8 @@
 
     var previewLoaded = function (e) {
         // Makes the UI feel a little more responsive to trigger a check right when preview loads
-        staydown.checkdown();
-    }
+        getStaydownForRoom(selectedRoomName).checkdown();
+    };
 
     var updateTitle = function () {
         var title = 'breaker';

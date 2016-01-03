@@ -42,9 +42,10 @@ public class ChatRoomStream {
     }
 
     public void sendMemberList(ChatRoom room) {
-        String[] usernames = room.getUsernamesPresent().toArray(new String[]{});
-        Logger.info("Sending member list of length " + usernames.length);
-        publishEvent(new MemberList(JsonChatRoom.from(room), usernames), true);
+//        String[] usernames = room.getUsernamesPresent().toArray(new String[]{});
+//        TreeSet<ChatUser> users = room.getPresentUserObjects();
+//        Logger.info("Sending member list of length " + users.size());
+        publishEvent(new MemberList(JsonChatRoom.from(room), room.getPresentJsonUsers()), true);
     }
     
     /**
@@ -150,14 +151,14 @@ public class ChatRoomStream {
 
     public static class MemberList extends Event {
 
-        public String[] usernames;
+        public JsonUser[] users;
 
         public MemberList() {
         }
 
-        public MemberList(JsonChatRoom room, String[] usernames) {
+        public MemberList(JsonChatRoom room, JsonUser[] users) {
             super(TYPE_MEMBERLIST, room);
-            this.usernames = usernames;
+            this.users = users;
         }
     }
 
