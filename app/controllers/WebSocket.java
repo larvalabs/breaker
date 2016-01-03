@@ -131,7 +131,7 @@ public class WebSocket extends Controller {
                 // Case: TextEvent received on the socket
                 for (String userMessageJson : TextFrame.match(e._1)) {
                     try {
-                        Logger.debug("Message received from socket: " + userMessageJson);
+                        Logger.debug("Message received from socket (" + user.username + "): " + userMessageJson);
                         JsonObject msgObj = new JsonParser().parse(userMessageJson).getAsJsonObject();
                         String roomName = msgObj.get("roomName").getAsString();
                         String message = msgObj.get("message").getAsString();
