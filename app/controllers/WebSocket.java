@@ -22,9 +22,7 @@ import static play.mvc.Http.WebSocketEvent.*;
 import models.*;
 import play.mvc.WebSocketController;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class WebSocket extends Controller {
 
@@ -101,6 +99,12 @@ public class WebSocket extends Controller {
                     addConnection(user, connectionId, roomConnections, room);
                     i++;
                 }
+                Arrays.sort(jsonChatRooms, new Comparator<JsonChatRoom>() {
+                    @Override
+                    public int compare(JsonChatRoom o1, JsonChatRoom o2) {
+                        return o1.name.compareTo(o2.name);
+                    }
+                });
                 String roomListJson = new ChatRoomStream.RoomList(jsonChatRooms).toJson();
                 Logger.info("Room list json: " + roomListJson);
                 outbound.send(roomListJson);
