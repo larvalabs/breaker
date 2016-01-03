@@ -447,7 +447,9 @@
     };
 
     // See https://github.com/joewalnes/reconnecting-websocket for options:
-    var socket = new ReconnectingWebSocket('@@{WebSocket.ChatRoomSocket.join()}')
+    var websocketUrl = '@@{WebSocket.ChatRoomSocket.join()}';
+    websocketUrl = websocketUrl.replace('ws:', 'wss:');
+    var socket = new ReconnectingWebSocket(websocketUrl);
     // socket.debug = true;
 
     var makeMessage = function (roomName, message) {
