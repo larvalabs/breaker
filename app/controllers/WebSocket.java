@@ -21,9 +21,11 @@ import static play.mvc.Http.WebSocketEvent.*;
 
 import models.*;
 import play.mvc.WebSocketController;
+import play.mvc.With;
 
 import java.util.*;
 
+@With(ForceSSL.class)
 public class WebSocket extends Controller {
 
     private static ChatUser getUser() {
@@ -39,7 +41,6 @@ public class WebSocket extends Controller {
     }
 
     public static void room(String roomName) {
-        ForceSSL.redirectIfNeeded(request);
         ChatUser user = getUser();
         if (user == null) {
             Application.preAuthForRoomJoin(roomName);

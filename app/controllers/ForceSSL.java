@@ -1,6 +1,7 @@
 package controllers;
 
 import play.Logger;
+import play.Play;
 import play.mvc.Before;
 import play.mvc.Controller;
 import play.mvc.Http;
@@ -27,7 +28,7 @@ public class ForceSSL extends Controller {
         }
         if (!request.secure) {
             request.secure = true;
-            if (Server.httpsPort > 0) {
+            if (Server.httpsPort > 0 && Play.mode.isDev()) {
                 request.port = Server.httpsPort;
             }
             Logger.info("Redirecting to https with path: " + request.url);
