@@ -39,6 +39,7 @@ public class WebSocket extends Controller {
     }
 
     public static void room(String roomName) {
+        ForceSSL.redirectIfNeeded(request);
         ChatUser user = getUser();
         if (user == null) {
             Application.preAuthForRoomJoin(roomName);
