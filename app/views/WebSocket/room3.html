@@ -38,7 +38,7 @@
         </a>
         <div class="clear">
             <div><a href><%= user.username %></a></div>
-            <small class="text-muted"><%= user.statusMessage %></small>
+            <small class="text-muted"><%= user.statusMessage ? user.statusMessage : '&nbsp;' %></small>
         </div>
     </li>
 </script>
