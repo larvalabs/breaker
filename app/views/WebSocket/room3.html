@@ -497,7 +497,7 @@
 
         // Message received on the socket
         socket.onmessage = function (event) {
-//            console.log(event.data);
+            console.log(event.data);
             var eventObj = JSON.parse(event.data);
 
             display(eventObj);
@@ -703,14 +703,14 @@
             setupRoomClicks();
             setupMessageInputHandlers();
         } else if (event.type === 'message') {
-//            console.log("Message uuid : " + event.message.uuid);
+            console.log("Message uuid : " + event.message.uuid);
             var msg = tmpl('message_tmpl', {event: event});
             if (doesMessageElementExist(event.message.uuid)) {
 //                console.log("Existing message, replacing with new render.");
                 var msgObjects = $(getMessageSelector(event.message.uuid));
                 msgObjects.first().replaceWith(msg);
             } else {
-//                console.log("New message, appending.");
+                console.log("New message, appending.");
 
                 var roomName = event.room.name;
                 if (!hasFocus) {

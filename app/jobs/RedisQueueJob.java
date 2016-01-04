@@ -58,7 +58,7 @@ public class RedisQueueJob extends Job {
     }
 
     public static void publish(ChatRoomStream.Event event) {
-        Logger.debug("Sening event to redis");
+        Logger.debug("Sending event to redis");
         Redis.publish(CHANNEL, event.toJson());
     }
 }
