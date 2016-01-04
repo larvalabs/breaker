@@ -62,6 +62,10 @@ public class JsonMessage {
         processMessage();
     }
 
+    public static JsonMessage from(Message message) {
+        return new JsonMessage(message.getUuid(), JsonUser.fromUser(message.getUser()), JsonChatRoom.from(message.getRoom()), message.getMessageText());
+    }
+
     public static JsonMessage from(Message message, ChatUser loggedInUser, boolean isNewSinceLastSession) {
         return from(message, loggedInUser, isNewSinceLastSession, null);
     }

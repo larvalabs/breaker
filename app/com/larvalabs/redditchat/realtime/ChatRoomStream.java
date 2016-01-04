@@ -11,15 +11,30 @@ import com.larvalabs.redditchat.dataobj.JsonUser;
 import jobs.RedisQueueJob;
 import models.ChatRoom;
 import models.ChatUser;
+import models.Message;
 import play.Logger;
 import play.libs.F.*;
 
 public class ChatRoomStream {
 
+    public static final int STREAM_SIZE = 100;
+    public static final int PRELOAD_NUM_MSGS_ON_STARTUP = STREAM_SIZE / 2;
+
     private String name;
 
     public ChatRoomStream(String name) {
         this.name = name;
+        loadOldMessages();
+    }
+
+    private void loadOldMessages() {
+        ChatRoom room = ChatRoom.findByName(name);
+        List<models.Message> messages = room.getMessages(PRELOAD_NUM_MSGS_ON_STARTUP);
+        // We're pushing onto a queue here so go in sqeuential order
+        Collections.reverse(messages);
+        for (models.Message message : messages) {
+            chatEvents.publish(new Message(JsonMessage.from(message)));
+        }
     }
 
     public String getName() {
@@ -28,7 +43,7 @@ public class ChatRoomStream {
 
     // ~~~~~~~~~ Let's chat!
     
-    final ArchivedEventStream<ChatRoomStream.Event> chatEvents = new ArchivedEventStream<ChatRoomStream.Event>(100);
+    final ArchivedEventStream<ChatRoomStream.Event> chatEvents = new ArchivedEventStream<ChatRoomStream.Event>(STREAM_SIZE);
     
     /**
      * For WebSocket, when a user join the room we return a continuous event stream

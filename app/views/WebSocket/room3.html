@@ -68,28 +68,34 @@
     </li>
     <% } %>
     <% if(event.type == 'join') { %>
+<!--
     <div class="message notice">
         <h2></h2>
         <p>
             <%= event.user.username %> joined the room
         </p>
     </div>
+-->
     <% } %>
     <% if(event.type == 'leave') { %>
+<!--
     <div class="message notice">
         <h2></h2>
         <p>
             <%= event.user.username %> left the room
         </p>
     </div>
+-->
     <% } %>
     <% if(event.type == 'quit') { %>
+<!--
     <div class="message important">
         <h2></h2>
         <p>
             You are now disconnected!
         </p>
     </div>
+-->
     <% } %>
 </script>
 <!-- end templates -->
