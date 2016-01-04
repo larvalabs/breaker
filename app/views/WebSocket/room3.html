@@ -441,6 +441,7 @@
     var rooms = [];
     var stayDownObjs = [];
     var selectedRoomName;
+    var socket;
 
     var getIndexForRoom = function (roomName) {
         for (var i = 0; i < rooms.length; i++) {
@@ -464,11 +465,45 @@
         return stayDownObjs[getIndexForRoom(roomName)];
     };
 
-    // See https://github.com/joewalnes/reconnecting-websocket for options:
-    var websocketUrl = '@@{WebSocket.ChatRoomSocket.join()}';
-    websocketUrl = websocketUrl.replace('ws:', 'wss:');
-    var socket = new ReconnectingWebSocket(websocketUrl);
-    // socket.debug = true;
+    // Connect socket after DOM ready
+    // not totally sure if this is necessary but seems sensible
+    $(function() {
+        // See https://github.com/joewalnes/reconnecting-websocket for options:
+        var websocketUrl = '@@{WebSocket.ChatRoomSocket.join()}';
+        websocketUrl = websocketUrl.replace('ws:', 'wss:');
+        socket = new ReconnectingWebSocket(websocketUrl);
+        // socket.debug = true;
+
+        socket.onopen = function (event) {
+//        console.log("Socket state: "+socket.readyState);
+            if (!firstConnect) {
+                Messenger().post({
+                    message: 'Connected!',
+                    type: 'success'
+                });
+            }
+            firstConnect = false;
+
+            $('.input-message').prop("disabled", false);
+        };
+
+        socket.onclose = function (event) {
+            Messenger().post({
+                message: 'Disconnected from server, will retry...',
+                type: 'error'
+            });
+            $('.input-message').prop("disabled", true);
+        };
+
+        // Message received on the socket
+        socket.onmessage = function (event) {
+//            console.log(event.data);
+            var eventObj = JSON.parse(event.data);
+
+            display(eventObj);
+        };
+    });
+
 
     var makeMessage = function (roomName, message) {
         var msg = {};
@@ -500,6 +535,7 @@
         $('#room-modmessage').text('[A message from the ' + roomName+ ' mods to you.]');
 
         resetUnreadCountForRoom(roomName);
+        getStaydownForRoom(roomName).checkdown();
 
         selectedRoomName = roomName;
     };
@@ -611,6 +647,10 @@
         return '#message_' + msgUuid;
     }
 
+    function doesMessageElementExist(uuid) {
+        return $(getMessageSelector(uuid)).length > 0;
+    }
+
     var display = function (event) {
         console.log("Received event: " + event.type);
         if (event.type === 'roomlist') {
@@ -665,12 +705,23 @@
         } else if (event.type === 'message') {
 //            console.log("Message uuid : " + event.message.uuid);
             var msg = tmpl('message_tmpl', {event: event});
-            var msgObjects = $(getMessageSelector(event.message.uuid));
-            if (msgObjects.length > 0) {
+            if (doesMessageElementExist(event.message.uuid)) {
 //                console.log("Existing message, replacing with new render.");
+                var msgObjects = $(getMessageSelector(event.message.uuid));
                 msgObjects.first().replaceWith(msg);
             } else {
 //                console.log("New message, appending.");
+
+                var roomName = event.room.name;
+                if (!hasFocus) {
+                    numNewMessagesTotal++;
+                    updateTitle();
+
+                    incrementUnreadCountForRoom(roomName);
+                } else if (roomName != selectedRoomName) {
+                    incrementUnreadCountForRoom(roomName);
+                }
+
                 $(getThreadSelector(event.room.name)).append(msg);
             }
 
@@ -723,62 +774,6 @@
     updateTitle();
 
     var firstConnect = true;
-
-    socket.onopen = function (event) {
-//        console.log("Socket state: "+socket.readyState);
-        if (!firstConnect) {
-            Messenger().post({
-                message: 'Connected!',
-                type: 'success'
-            });
-        }
-        firstConnect = false;
-
-        $('.input-message').prop("disabled", false);
-    };
-
-    socket.onclose = function (event) {
-        Messenger().post({
-            message: 'Disconnected from server, will retry...',
-            type: 'error'
-        });
-        $('.input-message').prop("disabled", true);
-    };
-
-    // Message received on the socket
-    socket.onmessage = function (event) {
-//        console.log(event.data);
-        var eventObj = JSON.parse(event.data);
-        if (eventObj.type === 'message' && !hasFocus) {
-            var roomName = eventObj.room.name;
-            if (!hasFocus) {
-                numNewMessagesTotal++;
-                updateTitle();
-
-                incrementUnreadCountForRoom(roomName);
-            } else if (roomName != selectedRoomName) {
-                incrementUnreadCountForRoom(roomName);
-            }
-        }
-//        var parts = /^([^:]+):([^:]+)(:(.*))?$/.exec(event.data)
-        display(eventObj);
-        /*
-         display({
-         type: parts[1],
-         user: parts[2],
-         text: parts[4]
-         })
-         */
-    };
-
-    /*
-     $('#send').click(function (e) {
-     var message = $('#message').val()
-     $('#message').val('')
-     socket.send(message)
-     staydown.intend_down = true;
-     });
-     */
 
     // Stuff to do with window focus and unread messages
 
