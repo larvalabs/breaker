@@ -725,7 +725,7 @@
                 $(getThreadSelector(event.room.name)).append(msg);
             }
 
-            jQuery(".timeago").timeago();
+            jQuery(getMessageSelector(event.message.uuid)+' .timeago').timeago();
         } else if (event.type === 'join') {
             if ($(getUserEntrySelector(event.room.name, event.user.username)).length == 0) {
                 $(getUserListSelector(event.room.name)).append(tmpl('userentry_tmpl',
