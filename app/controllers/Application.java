@@ -8,11 +8,10 @@ import play.*;
 import play.libs.OAuth2;
 import play.libs.WS;
 import play.mvc.*;
-import play.data.validation.*;
 
 import java.util.*;
 
-public class Application extends Controller {
+public class Application extends PreloadUserController {
 
     public static final String REDDIT_CLIENTID = Play.configuration.getProperty("oauth.reddit.clientid");
     public static final String REDDIT_SECRET = Play.configuration.getProperty("oauth.reddit.secret");
@@ -27,43 +26,13 @@ public class Application extends Controller {
     public static final String COOKIE_CHATUSERNAME = "chatusername";
     public static final String COOKIE_CHATTOKEN = "chattoken";
 
-    public static final String SESSION_UID = "uid";
     public static final String SESSION_JOINROOM = "joinroomname";
-
-    @Before
-    static void preloadUser() {
-        ChatUser user = null;
-//        session.put(SESSION_UID, "2hfc8agp4k9ane");
-        if (session.contains("uid")) {
-            String uid = session.get(SESSION_UID);
-            Logger.info("existing user: " + uid);
-            user = ChatUser.get(uid);
-            if (user != null) {
-                renderArgs.put("user", user);
-            }
-        }
-        // Only create user on successful auth
-/*
-        if (user == null) {
-            user = ChatUser.createNew();
-            session.put("uid", user.uid);
-        }
-*/
-    }
 
     public static void testForceLogin() {
         setUserInSession(ChatUser.findByUsername("chattest1"));
         test();
     }
 
-    private static void setUserInSession(ChatUser user) {
-        session.put(SESSION_UID, user.uid);
-        renderArgs.put("user", user);
-    }
-
-    private static ChatUser connected() {
-        return (ChatUser) renderArgs.get("user");
-    }
 
     public static void index() {
         ChatUser chatUser = connected();

@@ -11,6 +11,7 @@ GET     /testlogin                              Application.testForceLogin
 GET     /join/{roomName}                           Application.join
 # Doing these specific controller actions so we can support static loading of landing page assets below
 *       /application/{action}                   Application.{action}
+*       /usermanage/{action}                    UserManage.{action}
 
 # Refresh demo
 GET     /refresh                                Refresh.index
@@ -31,6 +32,7 @@ WS      /websocket/room/socket                  WebSocket.ChatRoomSocket.join
 
 # Map static resources from the /app/public folder to the /public path
 GET     /public/                                staticDir:public
+GET     /libs/                                  staticDir:public/libs
 GET     /                                       staticDir:public/landing
 
 # Catch all

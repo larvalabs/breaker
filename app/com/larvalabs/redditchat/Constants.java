@@ -3,6 +3,7 @@ package com.larvalabs.redditchat;
 public class Constants {
     public static final String CHATROOM_DEFAULT = "breakerapp";
     public static final String DEFAULT_PROFILE_URL = "/public/img/user-anon.png";
+    public static final long MAX_PROFILE_IMAGE_SIZE_BYTES = 300 * 1000;
 
     public enum Flair {
         DEV_SAME_ROOM(0x1F451),
@@ -33,9 +34,10 @@ public class Constants {
 
     public static final String URL_CLOUDFRONT_THUMB_PREFIX = "http://d1j13ers05ggmx.cloudfront.net/thumb?url=";
     public static final String URL_CLOUDINARY_FULLSIZE_PREFIX = "http://res.cloudinary.com/appchat/image/fetch/";
-    public static final String URL_S3_BUCKET_SCREENSHOT_FULLSIZE = "http://appchat-screenshots.s3.amazonaws.com/";
-    public static final String URL_S3_BUCKET_PROFILE_FULLSIZE = "http://appchat-userprofile.s3.amazonaws.com/";
-    public static final String URL_S3_BUCKET_WALLPAPER_FULLSIZE = "http://appchat-wallpaper.s3.amazonaws.com/";
+    public static final String URL_S3_BUCKET_SCREENSHOT_FULLSIZE = "http://breaker-screenshots.s3.amazonaws.com/";
+    public static final String S3BUCKET_PROFILEPICS = "breaker-userprofile";
+    public static final String URL_S3_BUCKET_PROFILE_FULLSIZE = "https://" + S3BUCKET_PROFILEPICS + ".s3.amazonaws.com/";
+    public static final String URL_S3_BUCKET_WALLPAPER_FULLSIZE = "http://breaker-wallpaper.s3.amazonaws.com/";
     public static final String URL_WALLPAPER_THUMB = URL_CLOUDFRONT_THUMB_PREFIX;
 
     public static final long TIMEOUT_TRANSLATE_SECONDS = 1;

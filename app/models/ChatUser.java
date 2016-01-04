@@ -37,6 +37,7 @@ public class ChatUser extends Model {
     public String refreshToken;
 
     public String username;
+    public String email;
     public long linkKarma;
     public long commentKarma;
 
@@ -69,6 +70,8 @@ public class ChatUser extends Model {
 
     @Lob
     public String lastResponseApiMe;
+
+    public String statusMessage;
 
     public ChatUser(String uid) {
         this.uid = uid;
@@ -116,6 +119,14 @@ public class ChatUser extends Model {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public long getLinkKarma() {
@@ -212,6 +223,14 @@ public class ChatUser extends Model {
 
     public void setLastResponseApiMe(String lastResponseApiMe) {
         this.lastResponseApiMe = lastResponseApiMe;
+    }
+
+    public String getStatusMessage() {
+        return statusMessage;
+    }
+
+    public void setStatusMessage(String statusMessage) {
+        this.statusMessage = statusMessage;
     }
 
     public String getProfileImageUrl() {

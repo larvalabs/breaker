@@ -38,7 +38,7 @@
         </a>
         <div class="clear">
             <div><a href><%= user.username %></a></div>
-            <small class="text-muted">[User status msg]</small>
+            <small class="text-muted"><%= user.statusMessage %></small>
         </div>
     </li>
 </script>
@@ -48,13 +48,13 @@
     <% if(event.type == 'message') { %>
     <li id="<%= getMessageSelector(event.message.uuid).substring(1) %>" class="list-group-item clearfix b-l-3x b-l-info">
         <a class="avatar thumb pull-left m-r" href="https://reddit.com/u/<%= event.user.username %>" target="_blank">
-            <img src="<%= event.user.profileImageUrl %>">
+            <img src="<%= event.user.profileImageUrl.indexOf('user-anon') > -1 ? '/public/img/user-empty.png' :  event.user.profileImageUrl %>">
         </a>
         <div class="pull-right text-sm text-muted">
             <span class="hidden-xs timeago" title="<%= new Date(event.timestamp).toISOString() %>">less than</span>
         </div>
         <div class="clear">
-            <div><a class="text-md " href="https://reddit.com/u/<%= event.user.username %>" target="_blank"><%= event.user.username %></a>
+            <div><a class="text-md text-dark" href="https://reddit.com/u/<%= event.user.username %>" target="_blank"><%= event.user.username %></a>
                 <!--<span class="label bg-light m-l-sm ">angular</span>--></div>
             <div class="m-t-xs "><%= event.message.messageHtml %></div>
             <% if (event.message.imageLinks && event.message.imageLinks.length > 0) { %>
@@ -188,7 +188,7 @@
                 <li class="dropdown v-middle">
                     <a href="#" data-toggle="dropdown" class="dropdown-toggle clear" data-toggle="dropdown">
                       <span class="thumb-sm avatar pull-right m-t-n-sm m-b-n-sm m-l-sm">
-                        <img src="/public/img/user-anon.png" alt="...">
+                        <img src="${user.getProfileImageUrl()}" alt="...">
                         <i class="on md b-white bottom"></i>
                       </span>
                         <span class="hidden-sm hidden-md">${user.username}</span> <b class="caret"></b>
@@ -222,6 +222,9 @@
                         </li>
                         <li class="divider"></li>
 -->
+                        <li>
+                            <a ui-sref="access.signin" href="@{UserManage.prefs()}">Preferences</a>
+                        </li>
                         <li>
                             <a ui-sref="access.signin" href="@{Application.logout}">Logout</a>
                         </li>
