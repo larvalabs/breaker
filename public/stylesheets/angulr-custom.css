@@ -4,3 +4,24 @@
     width: auto;
     vertical-align: middle;
 }
+
+.p-t-s {
+    padding-small: 4px !important;
+}
+
+.p-t-xs {
+    padding-top: 2px !important;
+}
+
+.p-t-none {
+    padding-top: 0px !important;
+}
+
+.p-b-xs {
+    padding-bottom: 2px !important;
+}
+
+.last-message {
+    padding-bottom: 15px;
+}
+

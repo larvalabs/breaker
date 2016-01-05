@@ -136,7 +136,7 @@ public class JsonMessage {
                                 linkStrLower.endsWith("png") || linkStrLower.endsWith("gif")) {
                             localImageLinks.add(linkStr);
                         }
-                        sb.append("<a href=\"");
+                        sb.append("<a class=\"text-info\" href=\"");
                         sb.append(text, link.getBeginIndex(), link.getEndIndex());
                         sb.append("\" target='_blank'>");
                         sb.append(text, link.getBeginIndex(), link.getEndIndex());

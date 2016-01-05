@@ -46,7 +46,7 @@
 
 <script type="text/html" id="message_tmpl">
     <% if(event.type == 'message') { %>
-    <li id="<%= getMessageSelector(event.message.uuid).substring(1) %>" class="list-group-item clearfix b-l-3x b-l-info">
+    <li id="<%= getMessageSelector(event.message.uuid).substring(1) %>" class="list-group-item no-border p-t-s p-b-xs clearfix b-l-3x b-l-info">
         <a class="avatar thumb pull-left m-r" href="https://reddit.com/u/<%= event.user.username %>" target="_blank">
             <img src="<%= event.user.profileImageUrl.indexOf('user-anon') > -1 ? '/public/img/user-empty.png' :  event.user.profileImageUrl %>">
         </a>
@@ -54,7 +54,7 @@
             <span class="hidden-xs timeago" title="<%= new Date(event.timestamp).toISOString() %>">less than</span>
         </div>
         <div class="clear">
-            <div><a class="text-md text-dark" href="https://reddit.com/u/<%= event.user.username %>" target="_blank"><%= event.user.username %></a>
+            <div><a class="text-md text-dark-dker" href="https://reddit.com/u/<%= event.user.username %>" target="_blank"><%= event.user.username %></a>
                 <!--<span class="label bg-light m-l-sm ">angular</span>--></div>
             <div class="m-t-xs "><%= event.message.messageHtml %></div>
             <% if (event.message.imageLinks && event.message.imageLinks.length > 0) { %>
@@ -97,6 +97,24 @@
     </div>
 -->
     <% } %>
+</script>
+
+<script type="text/html" id="messageshort_tmpl">
+    <li id="<%= getMessageSelector(event.message.uuid).substring(1) %>" class="list-group-item p-t-none p-b-xs no-border clearfix b-l-3x b-l-info">
+        <a class="avatar thumb pull-left m-r" href="https://reddit.com/u/<%= event.user.username %>" target="_blank">
+            &nbsp;
+        </a>
+        <div class="clear">
+            <div class="m-t-xs "><%= event.message.messageHtml %></div>
+            <% if (event.message.imageLinks && event.message.imageLinks.length > 0) { %>
+            <div class="m-t-sm">
+                <a href="<%= event.message.imageLinks[0] %>" target="_blank">
+                    <img src='<%= event.message.imageLinks[0] %>' class="image-preview" onload="previewLoaded();"/>
+                </a>
+            </div>
+            <% } %>
+        </div>
+    </li>
 </script>
 <!-- end templates -->
 
@@ -440,6 +458,7 @@
     var hasFocus = true;
     var rooms = [];
     var stayDownObjs = [];
+    var lastMessageUsernameForRoom = [];
     var selectedRoomName;
     var socket;
 
@@ -463,6 +482,14 @@
 
     var getStaydownForRoom = function (roomName) {
         return stayDownObjs[getIndexForRoom(roomName)];
+    };
+
+    var getLastMessageUsernameForRoom = function (roomName) {
+        return lastMessageUsernameForRoom[getIndexForRoom(roomName)];
+    };
+
+    var setLastMessageUsernameForRoom = function (roomName, username) {
+        lastMessageUsernameForRoom[getIndexForRoom(roomName)] = username;
     };
 
     // Connect socket after DOM ready
@@ -638,7 +665,6 @@
         return 'threadparent_' + roomName;
     }
 
-
     function getRoomlistEntrySelector(roomName) {
         return '#roomlist_' + roomName;
     }
@@ -684,6 +710,8 @@
                     });
                     stayDownObjs.push(staydown);
 
+                    lastMessageUsernameForRoom.push('');
+
                     // Clone and configure user list for this room
                     var userlistParentClone = $('#userlistparent').first().clone().appendTo('#rightcol');
                     userlistParentClone.attr('id', getUserListParentSelector(roomObj.name));
@@ -704,7 +732,11 @@
             setupMessageInputHandlers();
         } else if (event.type === 'message') {
             console.log("Message uuid : " + event.message.uuid);
-            var msg = tmpl('message_tmpl', {event: event});
+            var msgTemplateId = 'message_tmpl';
+            if (getLastMessageUsernameForRoom(event.room.name) === event.user.username) {
+                msgTemplateId = 'messageshort_tmpl';
+            }
+            var msg = tmpl(msgTemplateId, {event: event});
             if (doesMessageElementExist(event.message.uuid)) {
 //                console.log("Existing message, replacing with new render.");
                 var msgObjects = $(getMessageSelector(event.message.uuid));
@@ -724,6 +756,8 @@
 
                 $(getThreadSelector(event.room.name)).append(msg);
             }
+
+            setLastMessageUsernameForRoom(event.room.name, event.user.username);
 
             jQuery(getMessageSelector(event.message.uuid)+' .timeago').timeago();
         } else if (event.type === 'join') {
