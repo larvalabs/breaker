@@ -28,6 +28,7 @@ public class Message extends Model {
     @ManyToOne
     public ChatRoom room;
 
+    @Lob
     public String messageText;
 
     public String imageKey;

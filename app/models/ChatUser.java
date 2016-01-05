@@ -456,4 +456,14 @@ public class ChatUser extends Model {
         }
         return topUsers;
     }
+
+    public static ChatUser getBreakerBot() {
+        ChatUser user = findByUsername(Constants.BREAKER_BOT_USERNAME);
+        if (user == null) {
+            user = new ChatUser(Util.getUUID());
+            user.setUsername(Constants.BREAKER_BOT_USERNAME);
+            user.save();
+        }
+        return user;
+    }
 }

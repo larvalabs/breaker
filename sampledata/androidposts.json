@@ -1,0 +1,2431 @@
+{
+  "kind": "Listing",
+  "data": {
+    "modhash": "zqdpss3to04279b8ff7fb80d181c413e220872bccb837daa9a",
+    "children": [
+      {
+        "kind": "t3",
+        "data": {
+          "domain": "self.Android",
+          "banned_by": null,
+          "media_embed": {},
+          "subreddit": "Android",
+          "selftext_html": "&lt;!-- SC_OFF --&gt;&lt;div class=\"md\"&gt;&lt;p&gt;Hello &lt;a href=\"/r/Android\"&gt;/r/Android&lt;/a&gt;, we haven&amp;#39;t had a meta thread about this sub in quite awhile so we wanted to take this time to clarify some stuff as well as discuss some potential rule changes.  &lt;/p&gt;\n\n&lt;hr/&gt;\n\n&lt;h1&gt;Clarifications&lt;/h1&gt;\n\n&lt;p&gt;We&amp;#39;ve had a few people in some threads wondering why we filter each self-post and simply &amp;quot;don&amp;#39;t let the votes decide.&amp;quot; I&amp;#39;m going to list briefly address those complaints and some others:  &lt;/p&gt;\n\n&lt;p&gt;1) &lt;a href=\"/r/Android\"&gt;/r/Android&lt;/a&gt; is an extremely active sub. There are TONS of people who need tech support help, people who are looking for X app, people looking to get a new phone, etc. It&amp;#39;s necessary to split each type of content into separate subs so that one sub isn&amp;#39;t overwhelmed with posts. If you want to see what &lt;a href=\"/r/Android\"&gt;/r/Android&lt;/a&gt; would be like if we didn&amp;#39;t remove most question threads, see: &lt;a href=\"/r/android+androidquestions+androidapps+pickanandroidforme/new\"&gt;/r/android+androidquestions+androidapps+pickanandroidforme/new&lt;/a&gt;. As you can see, for users looking to just see Android news and discussion, it would be quite difficult to sort through.  &lt;/p&gt;\n\n&lt;p&gt;2) Unfortunately, the consequence of splitting the sub up means that people looking for help don&amp;#39;t have as large of an audience to seek help from. &lt;a href=\"/r/AndroidQuestions\"&gt;/r/AndroidQuestions&lt;/a&gt; gets a ton of posts and many unfortunately go unanswered. To combat that problem, &lt;a href=\"https://www.reddit.com/r/AndroidQuestions/comments/3tbwcf/meta_introducing_uandroidhelperbot_a_bot_that/\"&gt;we recently implemented a bot&lt;/a&gt; that awards users points when they successfully solve an OP&amp;#39;s problem. (Yes, you don&amp;#39;t actually win anything yet, but don&amp;#39;t underestimate the power of amassing Internet points as an incentive - hell this is reddit after all!) &lt;strong&gt;Please participate in &lt;a href=\"/r/androidquestions\"&gt;/r/androidquestions&lt;/a&gt; to help your fellow redditor out!&lt;/strong&gt;&lt;/p&gt;\n\n&lt;p&gt;3) What posts pass are allowed through are sometimes not consistent - yes this is true. We&amp;#39;ve gotten better at this as time has gone on since we&amp;#39;ve had time to communicate over Slack rather than modmail (which is slow). Inconsistency in what posts pass through for promoting discussion will always exist - but if you feel a post was incorrectly removed you can always message us via modmail, IRC, Discord, or Telegram.  &lt;/p&gt;\n\n&lt;p&gt;4) &amp;quot;The sub is nothing but articles now&amp;quot; - this is not true at all. &lt;a href=\"https://www.reddit.com/r/Android/search?q=self%3Ayes&amp;amp;amp;restrict_sr=on&amp;amp;amp;sort=new&amp;amp;amp;t=all\"&gt;There are many popular discussion threads&lt;/a&gt; just from this past week alone.  &lt;/p&gt;\n\n&lt;p&gt;5) &amp;quot;Self-posts are at a disadvantage compared to other threads&amp;quot; - this is also not true. When we filter a self-post, its clock is &amp;quot;frozen&amp;quot; so when we approve it later on it&amp;#39;s as if it was never filtered in the first place.   &lt;/p&gt;\n\n&lt;p&gt;6) Sometimes rule breaking posts slip by and users write us a message wondering why X thread hasn&amp;#39;t been removed while Y post was removed. Mistakes happen and some rule breaking threads stay up for several hours...but if they&amp;#39;ve gotten a ton of comments we &lt;strong&gt;generally are a bit more lenient&lt;/strong&gt; with them because they already have a lot of discussion in them.  &lt;/p&gt;\n\n&lt;p&gt;7) APKMirror posts - a link to an APK update is not sufficient here unless it&amp;#39;s already established what that new update entails. Eg. if a Google app is updated to a new version and &lt;em&gt;nobody knows what changed&lt;/em&gt; because the update was just pushed out and/or no official blog post was made, then that APKMirror post will be removed. There needs to be a relevant article explaining what the update brings. Minor bug fix/point updates are definitely not allowed either.&lt;/p&gt;\n\n&lt;hr/&gt;\n\n&lt;h1&gt;Potential Rule Changes&lt;/h1&gt;\n\n&lt;p&gt;1) Affiliate Links  &lt;/p&gt;\n\n&lt;p&gt;To clarify, there are two issues at play here.  &lt;/p&gt;\n\n&lt;ul&gt;\n&lt;li&gt;&lt;p&gt;Issue 1: Redditor submitting a post with an affiliate link. THIS IS NOT AND NEVER WILL BE ALLOWED BECAUSE IT BREAKS SITE-WIDE RULES ON SELF-PROMOTION!  &lt;/p&gt;&lt;/li&gt;\n&lt;li&gt;&lt;p&gt;Issue 2: Redditor submits a link to an article that itself includes an affiliate link. For example, an article about a deal includes an affiliate link to an Amazon page to buy the product. &lt;strong&gt;Should we allow this?&lt;/strong&gt;  &lt;/p&gt;&lt;/li&gt;\n&lt;/ul&gt;\n\n&lt;p&gt;2) Linking to APKs  &lt;/p&gt;\n\n&lt;p&gt;Our current rule prohibits linking to APKs of any kind (on user-hosted sites like Mega, Dropbox, Google Drive, etc.) The issues at play here are this:  &lt;/p&gt;\n\n&lt;ul&gt;\n&lt;li&gt;&lt;p&gt;Issue 1: Hosting and linking to paid APKs. This is explicitly piracy and the rule on it will never be changed. We have a lot of developers who post here, and we do not want to drive them away by encouraging users to share pirated apps.  &lt;/p&gt;&lt;/li&gt;\n&lt;li&gt;&lt;p&gt;Issue 2: Linking to free apps for users who want an old version (eg. this happened when QuickPic changed ownership). This is currently disallowed because there&amp;#39;s no way to verify if the uploaded APK has been tampered with, so in order to protect users they can&amp;#39;t link to APKs from a non-trusted source (a trusted source would be, for example, APKMirror). But we&amp;#39;re thinking this rule is a bit outdated, and it&amp;#39;s better for users to decide for themselves and be aware of any potential risks. &lt;strong&gt;Should we do away with this part of the rule?&lt;/strong&gt;  &lt;/p&gt;&lt;/li&gt;\n&lt;/ul&gt;\n\n&lt;hr/&gt;\n\n&lt;h1&gt;Discussion&lt;/h1&gt;\n\n&lt;p&gt;1) &lt;strong&gt;How do you feel about the current weekly thread line-up? Anything we should change?&lt;/strong&gt;  &lt;/p&gt;\n\n&lt;p&gt;2) &lt;strong&gt;How do you feel about the &lt;a href=\"https://www.reddit.com/r/Android/comments/3sloga/meta_introducing_the_randroid_telegram_and/\"&gt;group chats&lt;/a&gt; we&amp;#39;ve set up?&lt;/strong&gt;  &lt;/p&gt;\n\n&lt;p&gt;3) &lt;strong&gt;What are your thoughts on the wiki pages? Have you ever installed an app listed &lt;a href=\"https://www.reddit.com/r/Android/wiki/apps\"&gt;on our wiki?&lt;/a&gt;&lt;/strong&gt;  &lt;/p&gt;\n\n&lt;p&gt;4) &lt;strong&gt;What are your thoughts on the AMAs we&amp;#39;ve had so far? Are there any AMAs you would like to see next?&lt;/strong&gt;  &lt;/p&gt;\n\n&lt;p&gt;5) &lt;strong&gt;How do you feel about the &lt;a href=\"https://www.reddit.com/r/Android/wiki/index#wiki_podcast\"&gt;podcast?&lt;/a&gt;&lt;/strong&gt;  &lt;/p&gt;\n\n&lt;p&gt;6) &lt;strong&gt;What are your thoughts on our &lt;a href=\"https://www.reddit.com/r/Android/wiki/index#wiki_faqs\"&gt;FAQs&lt;/a&gt; page and our &lt;a href=\"https://www.reddit.com/r/Android/wiki/index#wiki_reviews\"&gt;community device review threads?&lt;/a&gt; Should we do more of these/update these threads?&lt;/strong&gt;&lt;/p&gt;\n\n&lt;hr/&gt;\n\n&lt;p&gt;Please reply to this post with your feedback on these issues and anything else you had in mind!&lt;/p&gt;\n&lt;/div&gt;&lt;!-- SC_ON --&gt;",
+          "selftext": "Hello /r/Android, we haven't had a meta thread about this sub in quite awhile so we wanted to take this time to clarify some stuff as well as discuss some potential rule changes.  \n\n---\n\n# Clarifications  \n\nWe've had a few people in some threads wondering why we filter each self-post and simply \"don't let the votes decide.\" I'm going to list briefly address those complaints and some others:  \n\n1) /r/Android is an extremely active sub. There are TONS of people who need tech support help, people who are looking for X app, people looking to get a new phone, etc. It's necessary to split each type of content into separate subs so that one sub isn't overwhelmed with posts. If you want to see what /r/Android would be like if we didn't remove most question threads, see: /r/android+androidquestions+androidapps+pickanandroidforme/new. As you can see, for users looking to just see Android news and discussion, it would be quite difficult to sort through.  \n\n2) Unfortunately, the consequence of splitting the sub up means that people looking for help don't have as large of an audience to seek help from. /r/AndroidQuestions gets a ton of posts and many unfortunately go unanswered. To combat that problem, [we recently implemented a bot](https://www.reddit.com/r/AndroidQuestions/comments/3tbwcf/meta_introducing_uandroidhelperbot_a_bot_that/) that awards users points when they successfully solve an OP's problem. (Yes, you don't actually win anything yet, but don't underestimate the power of amassing Internet points as an incentive - hell this is reddit after all!) **Please participate in /r/androidquestions to help your fellow redditor out!**\n\n3) What posts pass are allowed through are sometimes not consistent - yes this is true. We've gotten better at this as time has gone on since we've had time to communicate over Slack rather than modmail (which is slow). Inconsistency in what posts pass through for promoting discussion will always exist - but if you feel a post was incorrectly removed you can always message us via modmail, IRC, Discord, or Telegram.  \n\n4) \"The sub is nothing but articles now\" - this is not true at all. [There are many popular discussion threads](https://www.reddit.com/r/Android/search?q=self%3Ayes&amp;amp;restrict_sr=on&amp;amp;sort=new&amp;amp;t=all) just from this past week alone.  \n\n5) \"Self-posts are at a disadvantage compared to other threads\" - this is also not true. When we filter a self-post, its clock is \"frozen\" so when we approve it later on it's as if it was never filtered in the first place.   \n\n6) Sometimes rule breaking posts slip by and users write us a message wondering why X thread hasn't been removed while Y post was removed. Mistakes happen and some rule breaking threads stay up for several hours...but if they've gotten a ton of comments we **generally are a bit more lenient** with them because they already have a lot of discussion in them.  \n\n7) APKMirror posts - a link to an APK update is not sufficient here unless it's already established what that new update entails. Eg. if a Google app is updated to a new version and *nobody knows what changed* because the update was just pushed out and/or no official blog post was made, then that APKMirror post will be removed. There needs to be a relevant article explaining what the update brings. Minor bug fix/point updates are definitely not allowed either.\n\n---  \n\n# Potential Rule Changes  \n\n1) Affiliate Links  \n\nTo clarify, there are two issues at play here.  \n\n* Issue 1: Redditor submitting a post with an affiliate link. THIS IS NOT AND NEVER WILL BE ALLOWED BECAUSE IT BREAKS SITE-WIDE RULES ON SELF-PROMOTION!  \n\n* Issue 2: Redditor submits a link to an article that itself includes an affiliate link. For example, an article about a deal includes an affiliate link to an Amazon page to buy the product. **Should we allow this?**  \n\n2) Linking to APKs  \n\nOur current rule prohibits linking to APKs of any kind (on user-hosted sites like Mega, Dropbox, Google Drive, etc.) The issues at play here are this:  \n\n* Issue 1: Hosting and linking to paid APKs. This is explicitly piracy and the rule on it will never be changed. We have a lot of developers who post here, and we do not want to drive them away by encouraging users to share pirated apps.  \n\n* Issue 2: Linking to free apps for users who want an old version (eg. this happened when QuickPic changed ownership). This is currently disallowed because there's no way to verify if the uploaded APK has been tampered with, so in order to protect users they can't link to APKs from a non-trusted source (a trusted source would be, for example, APKMirror). But we're thinking this rule is a bit outdated, and it's better for users to decide for themselves and be aware of any potential risks. **Should we do away with this part of the rule?**  \n\n---  \n\n# Discussion  \n\n1) **How do you feel about the current weekly thread line-up? Anything we should change?**  \n\n2) **How do you feel about the [group chats](https://www.reddit.com/r/Android/comments/3sloga/meta_introducing_the_randroid_telegram_and/) we've set up?**  \n\n3) **What are your thoughts on the wiki pages? Have you ever installed an app listed [on our wiki?](https://www.reddit.com/r/Android/wiki/apps)**  \n\n4) **What are your thoughts on the AMAs we've had so far? Are there any AMAs you would like to see next?**  \n\n5) **How do you feel about the [podcast?](https://www.reddit.com/r/Android/wiki/index#wiki_podcast)**  \n\n6) **What are your thoughts on our [FAQs](https://www.reddit.com/r/Android/wiki/index#wiki_faqs) page and our [community device review threads?](https://www.reddit.com/r/Android/wiki/index#wiki_reviews) Should we do more of these/update these threads?**\n\n\n---\n\nPlease reply to this post with your feedback on these issues and anything else you had in mind!",
+          "likes": null,
+          "suggested_sort": null,
+          "user_reports": [],
+          "secure_media": null,
+          "link_flair_text": null,
+          "id": "3vyw5c",
+          "from_kind": null,
+          "gilded": 0,
+          "archived": false,
+          "clicked": false,
+          "report_reasons": null,
+          "author": "IAmAN00bie",
+          "media": null,
+          "score": 359,
+          "approved_by": null,
+          "over_18": false,
+          "hidden": false,
+          "num_comments": 118,
+          "thumbnail": "self",
+          "subreddit_id": "t5_2qlqh",
+          "hide_score": false,
+          "edited": 1450899410.0,
+          "link_flair_css_class": null,
+          "author_flair_css_class": "userTeal",
+          "downs": 0,
+          "secure_media_embed": {},
+          "saved": false,
+          "removal_reason": null,
+          "stickied": true,
+          "from": null,
+          "is_self": true,
+          "from_id": null,
+          "permalink": "/r/Android/comments/3vyw5c/meta_discussion_on_the_state_of_randroid/",
+          "locked": false,
+          "name": "t3_3vyw5c",
+          "created": 1449631890.0,
+          "url": "https://www.reddit.com/r/Android/comments/3vyw5c/meta_discussion_on_the_state_of_randroid/",
+          "author_flair_text": "Mod - Nexus 6| 32GB Blue",
+          "quarantine": false,
+          "title": "[Meta] Discussion on the State of /r/Android",
+          "created_utc": 1449603090.0,
+          "distinguished": "moderator",
+          "mod_reports": [],
+          "visited": false,
+          "num_reports": null,
+          "ups": 359
+        }
+      },
+      {
+        "kind": "t3",
+        "data": {
+          "domain": "self.Android",
+          "banned_by": null,
+          "media_embed": {},
+          "subreddit": "Android",
+          "selftext_html": "&lt;!-- SC_OFF --&gt;&lt;div class=\"md\"&gt;&lt;p&gt;Note 1. Join us at &lt;a href=\"/r/MoronicMondayAndroid\"&gt;/r/MoronicMondayAndroid&lt;/a&gt;, a sub serving as a repository for our retired weekly threads. Just pick any thread and Ctrl-F your way to wisdom! &lt;/p&gt;\n\n&lt;p&gt;Note 2. Join our IRC channel #android on irc.snoonet.org for anything-goes discussion on Android! &lt;a href=\"https://kiwiirc.com/client/irc.snoonet.org/android\"&gt;&lt;strong&gt;Click here to chat!&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;\n&lt;/div&gt;&lt;!-- SC_ON --&gt;",
+          "selftext": "Note 1. Join us at /r/MoronicMondayAndroid, a sub serving as a repository for our retired weekly threads. Just pick any thread and Ctrl-F your way to wisdom! \n\nNote 2. Join our IRC channel #android on irc.snoonet.org for anything-goes discussion on Android! [**Click here to chat!**](https://kiwiirc.com/client/irc.snoonet.org/android)\n",
+          "likes": null,
+          "suggested_sort": "new",
+          "user_reports": [],
+          "secure_media": null,
+          "link_flair_text": null,
+          "id": "3zed05",
+          "from_kind": null,
+          "gilded": 0,
+          "archived": false,
+          "clicked": false,
+          "report_reasons": null,
+          "author": "AutoModerator",
+          "media": null,
+          "score": 52,
+          "approved_by": null,
+          "over_18": false,
+          "hidden": false,
+          "num_comments": 215,
+          "thumbnail": "self",
+          "subreddit_id": "t5_2qlqh",
+          "hide_score": false,
+          "edited": false,
+          "link_flair_css_class": null,
+          "author_flair_css_class": "robot",
+          "downs": 0,
+          "secure_media_embed": {},
+          "saved": false,
+          "removal_reason": null,
+          "stickied": true,
+          "from": null,
+          "is_self": true,
+          "from_id": null,
+          "permalink": "/r/Android/comments/3zed05/moronic_monday_jan_04_2016_your_weekly_questions/",
+          "locked": false,
+          "name": "t3_3zed05",
+          "created": 1451934133.0,
+          "url": "https://www.reddit.com/r/Android/comments/3zed05/moronic_monday_jan_04_2016_your_weekly_questions/",
+          "author_flair_text": "*beep boop*",
+          "quarantine": false,
+          "title": "Moronic Monday (Jan 04 2016) - Your weekly questions thread!",
+          "created_utc": 1451905333.0,
+          "distinguished": "moderator",
+          "mod_reports": [],
+          "visited": false,
+          "num_reports": null,
+          "ups": 52
+        }
+      },
+      {
+        "kind": "t3",
+        "data": {
+          "domain": "play.google.com",
+          "banned_by": null,
+          "media_embed": {},
+          "subreddit": "Android",
+          "selftext_html": null,
+          "selftext": "",
+          "likes": null,
+          "suggested_sort": null,
+          "user_reports": [],
+          "secure_media": null,
+          "link_flair_text": "Regional restrictions",
+          "id": "3zke4v",
+          "from_kind": null,
+          "gilded": 1,
+          "archived": false,
+          "clicked": false,
+          "report_reasons": null,
+          "author": "Randomd0g",
+          "media": null,
+          "score": 1027,
+          "approved_by": null,
+          "over_18": false,
+          "hidden": false,
+          "preview": {
+            "images": [
+              {
+                "source": {
+                  "url": "https://i.redditmedia.com/EoIngfIU4bDCdgGBEtR6_asGWNv0ytBXsZT85aA7d6s.jpg?s=b9ff575b276e713f4448404b870e59df",
+                  "width": 540,
+                  "height": 900
+                },
+                "resolutions": [
+                  {
+                    "url": "https://i.redditmedia.com/EoIngfIU4bDCdgGBEtR6_asGWNv0ytBXsZT85aA7d6s.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=108&amp;s=b3aca0d8e43616ddf0f5510d265b8500",
+                    "width": 108,
+                    "height": 180
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/EoIngfIU4bDCdgGBEtR6_asGWNv0ytBXsZT85aA7d6s.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=216&amp;s=e0abbdfd91685511614021f57732187b",
+                    "width": 216,
+                    "height": 360
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/EoIngfIU4bDCdgGBEtR6_asGWNv0ytBXsZT85aA7d6s.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=320&amp;s=2e5e2190a32eb66a1d6c7a733fd2f719",
+                    "width": 320,
+                    "height": 533
+                  }
+                ],
+                "variants": {},
+                "id": "iAsf4W2-1HLQCG8qTPfRuP8pSDUPBAqVQVoafRxvG4g"
+              }
+            ]
+          },
+          "num_comments": 191,
+          "thumbnail": "http://b.thumbs.redditmedia.com/WUwmORimedAEvhFawSk_-IQhR7v0D0JFr75Vyk2UFmY.jpg",
+          "subreddit_id": "t5_2qlqh",
+          "hide_score": false,
+          "edited": false,
+          "link_flair_css_class": "googleplus",
+          "author_flair_css_class": "userDarkPink",
+          "downs": 0,
+          "secure_media_embed": {},
+          "saved": false,
+          "removal_reason": null,
+          "post_hint": "link",
+          "stickied": false,
+          "from": null,
+          "is_self": false,
+          "from_id": null,
+          "permalink": "/r/Android/comments/3zke4v/havent_seen_this_bit_of_advice_for_a_while_always/",
+          "locked": false,
+          "name": "t3_3zke4v",
+          "created": 1452033420.0,
+          "url": "https://play.google.com/store/apps/details?id=com.cube.rca&amp;hl=en_GB",
+          "author_flair_text": "Note 4 + LG OG Watch",
+          "quarantine": false,
+          "title": "Haven't seen this bit of advice for a while - Always have a first aid app loaded on your smartphone. It might save someone's life one day.",
+          "created_utc": 1452004620.0,
+          "distinguished": null,
+          "mod_reports": [],
+          "visited": false,
+          "num_reports": null,
+          "ups": 1027
+        }
+      },
+      {
+        "kind": "t3",
+        "data": {
+          "domain": "self.Android",
+          "banned_by": null,
+          "media_embed": {},
+          "subreddit": "Android",
+          "selftext_html": "&lt;!-- SC_OFF --&gt;&lt;div class=\"md\"&gt;&lt;p&gt;Hey guys,&lt;/p&gt;\n\n&lt;p&gt;Thought I would share my latest experience with Google customer service, but it&amp;#39;s not the post you think it&amp;#39;s going to be. Most recently, I ordered a Pixel C from the Google Shop. I got express shipping which calculated my order would arrive between Dec 30 - Jan 1. No worries, I continue the next few days without issue. Jan 1 comes, and my Pixel doesn&amp;#39;t arrive, I figure since it&amp;#39;s a holiday it must just be coming Monday, continue my weekend.&lt;/p&gt;\n\n&lt;p&gt;Monday morning my Pixel C arrives in the mail. Yay! Monday afternoon, I get an E-Mail from Google out of the blue. In the E-Mail is a lovely Customer Service consultant who says that she can see that my Pixel arrived today, instead of Friday. She further explains that the system didn&amp;#39;t calculate Jan 1 as a holiday. She refunded my entire shipping costs and gave me a $10 Google Play voucher.&lt;/p&gt;\n\n&lt;p&gt;If Google&amp;#39;s customer service continues to be this good, I&amp;#39;m going to be so impressed.&lt;/p&gt;\n&lt;/div&gt;&lt;!-- SC_ON --&gt;",
+          "selftext": "Hey guys,\n\nThought I would share my latest experience with Google customer service, but it's not the post you think it's going to be. Most recently, I ordered a Pixel C from the Google Shop. I got express shipping which calculated my order would arrive between Dec 30 - Jan 1. No worries, I continue the next few days without issue. Jan 1 comes, and my Pixel doesn't arrive, I figure since it's a holiday it must just be coming Monday, continue my weekend.\n\nMonday morning my Pixel C arrives in the mail. Yay! Monday afternoon, I get an E-Mail from Google out of the blue. In the E-Mail is a lovely Customer Service consultant who says that she can see that my Pixel arrived today, instead of Friday. She further explains that the system didn't calculate Jan 1 as a holiday. She refunded my entire shipping costs and gave me a $10 Google Play voucher.\n\nIf Google's customer service continues to be this good, I'm going to be so impressed.\n\n",
+          "likes": null,
+          "suggested_sort": null,
+          "user_reports": [],
+          "secure_media": null,
+          "link_flair_text": null,
+          "id": "3zl8d8",
+          "from_kind": null,
+          "gilded": 0,
+          "archived": false,
+          "clicked": false,
+          "report_reasons": null,
+          "author": "Takadiurga_",
+          "media": null,
+          "score": 114,
+          "approved_by": null,
+          "over_18": false,
+          "hidden": false,
+          "num_comments": 10,
+          "thumbnail": "self",
+          "subreddit_id": "t5_2qlqh",
+          "hide_score": false,
+          "edited": false,
+          "link_flair_css_class": null,
+          "author_flair_css_class": "userBlue",
+          "downs": 0,
+          "secure_media_embed": {},
+          "saved": false,
+          "removal_reason": null,
+          "stickied": false,
+          "from": null,
+          "is_self": true,
+          "from_id": null,
+          "permalink": "/r/Android/comments/3zl8d8/experience_with_google_customer_service/",
+          "locked": false,
+          "name": "t3_3zl8d8",
+          "created": 1452044737.0,
+          "url": "https://www.reddit.com/r/Android/comments/3zl8d8/experience_with_google_customer_service/",
+          "author_flair_text": "Galaxy S6 Edge | Pixel C",
+          "quarantine": false,
+          "title": "Experience with Google Customer Service",
+          "created_utc": 1452015937.0,
+          "distinguished": null,
+          "mod_reports": [],
+          "visited": false,
+          "num_reports": null,
+          "ups": 114
+        }
+      },
+      {
+        "kind": "t3",
+        "data": {
+          "domain": "anandtech.com",
+          "banned_by": null,
+          "media_embed": {},
+          "subreddit": "Android",
+          "selftext_html": null,
+          "selftext": "",
+          "likes": null,
+          "suggested_sort": null,
+          "user_reports": [],
+          "secure_media": null,
+          "link_flair_text": null,
+          "id": "3zjr3f",
+          "from_kind": null,
+          "gilded": 0,
+          "archived": false,
+          "clicked": false,
+          "report_reasons": null,
+          "author": "axehomeless",
+          "media": null,
+          "score": 257,
+          "approved_by": null,
+          "over_18": false,
+          "hidden": false,
+          "preview": {
+            "images": [
+              {
+                "source": {
+                  "url": "https://i.redditmedia.com/oagWdh40pBecxs3JXtU4q6HglMzek5fZRgCJlImxQV8.jpg?s=b35a9ec51e2c32ed3d763d09e2132ccd",
+                  "width": 678,
+                  "height": 403
+                },
+                "resolutions": [
+                  {
+                    "url": "https://i.redditmedia.com/oagWdh40pBecxs3JXtU4q6HglMzek5fZRgCJlImxQV8.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=108&amp;s=1f0bc514219005867dfc4e3620edb885",
+                    "width": 108,
+                    "height": 64
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/oagWdh40pBecxs3JXtU4q6HglMzek5fZRgCJlImxQV8.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=216&amp;s=c85b463ddabfb44f72140aa7a1a98e1c",
+                    "width": 216,
+                    "height": 128
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/oagWdh40pBecxs3JXtU4q6HglMzek5fZRgCJlImxQV8.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=320&amp;s=a4328f9eb541e266737d533e7bb2f351",
+                    "width": 320,
+                    "height": 190
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/oagWdh40pBecxs3JXtU4q6HglMzek5fZRgCJlImxQV8.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=640&amp;s=015ae2deb39e79510f7e839afbcf3425",
+                    "width": 640,
+                    "height": 380
+                  }
+                ],
+                "variants": {},
+                "id": "kLredaYtFZXib6QBrQ94CwjW4EDHOjR-NeSHWS3znjE"
+              }
+            ]
+          },
+          "num_comments": 36,
+          "thumbnail": "http://a.thumbs.redditmedia.com/wsUChIaJSCzgMUTJb9pS9bKHXlNRtRliu53jfAzCeV0.jpg",
+          "subreddit_id": "t5_2qlqh",
+          "hide_score": false,
+          "edited": false,
+          "link_flair_css_class": null,
+          "author_flair_css_class": "userGray",
+          "downs": 0,
+          "secure_media_embed": {},
+          "saved": false,
+          "removal_reason": null,
+          "post_hint": "link",
+          "stickied": false,
+          "from": null,
+          "is_self": false,
+          "from_id": null,
+          "permalink": "/r/Android/comments/3zjr3f/nvidia_discloses_nextgeneration_tegra_soc_denver/",
+          "locked": false,
+          "name": "t3_3zjr3f",
+          "created": 1452021621.0,
+          "url": "http://anandtech.com/show/9902/nvidia-discloses-2016-tegra",
+          "author_flair_text": "N5/N7LTE",
+          "quarantine": false,
+          "title": "NVIDIA Discloses Next-Generation Tegra SoC; Denver and A57, Pascal GPU.",
+          "created_utc": 1451992821.0,
+          "distinguished": null,
+          "mod_reports": [],
+          "visited": false,
+          "num_reports": null,
+          "ups": 257
+        }
+      },
+      {
+        "kind": "t3",
+        "data": {
+          "domain": "android.googlesource.com",
+          "banned_by": null,
+          "media_embed": {},
+          "subreddit": "Android",
+          "selftext_html": null,
+          "selftext": "",
+          "likes": null,
+          "suggested_sort": null,
+          "user_reports": [],
+          "secure_media": null,
+          "link_flair_text": null,
+          "id": "3zl7gd",
+          "from_kind": null,
+          "gilded": 0,
+          "archived": false,
+          "clicked": false,
+          "report_reasons": null,
+          "author": "foundfootagefan",
+          "media": null,
+          "score": 74,
+          "approved_by": null,
+          "over_18": false,
+          "hidden": false,
+          "num_comments": 4,
+          "thumbnail": "default",
+          "subreddit_id": "t5_2qlqh",
+          "hide_score": false,
+          "edited": false,
+          "link_flair_css_class": null,
+          "author_flair_css_class": "userBlue",
+          "downs": 0,
+          "secure_media_embed": {},
+          "saved": false,
+          "removal_reason": null,
+          "stickied": false,
+          "from": null,
+          "is_self": false,
+          "from_id": null,
+          "permalink": "/r/Android/comments/3zl7gd/washed_out_colors_bug_in_nexus_player_fixed_in/",
+          "locked": false,
+          "name": "t3_3zl7gd",
+          "created": 1452044407.0,
+          "url": "https://android.googlesource.com/platform/hardware/intel/img/hwcomposer/+/781a2f1",
+          "author_flair_text": "Nexus 5 &amp; 7 Marshmallow",
+          "quarantine": false,
+          "title": "Washed out colors bug in Nexus Player fixed in January update according to commit and small number of users (thanks to /u/johnnyb138 for pointing it out)",
+          "created_utc": 1452015607.0,
+          "distinguished": null,
+          "mod_reports": [],
+          "visited": false,
+          "num_reports": null,
+          "ups": 74
+        }
+      },
+      {
+        "kind": "t3",
+        "data": {
+          "domain": "anandtech.com",
+          "banned_by": null,
+          "media_embed": {},
+          "subreddit": "Android",
+          "selftext_html": null,
+          "selftext": "",
+          "likes": null,
+          "suggested_sort": null,
+          "user_reports": [],
+          "secure_media": null,
+          "link_flair_text": null,
+          "id": "3zlbsi",
+          "from_kind": null,
+          "gilded": 0,
+          "archived": false,
+          "clicked": false,
+          "report_reasons": null,
+          "author": "EvilWeasel47",
+          "media": null,
+          "score": 64,
+          "approved_by": null,
+          "over_18": false,
+          "hidden": false,
+          "preview": {
+            "images": [
+              {
+                "source": {
+                  "url": "https://i.redditmedia.com/SGDlmfkFq-hO4kmzSVfsphBVDwsKt92w5gTxqVPrUGM.jpg?s=07fd3b9881db0264be076d0d982cb83e",
+                  "width": 678,
+                  "height": 435
+                },
+                "resolutions": [
+                  {
+                    "url": "https://i.redditmedia.com/SGDlmfkFq-hO4kmzSVfsphBVDwsKt92w5gTxqVPrUGM.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=108&amp;s=e11e1e716393926c9a12b2a6ba89a6e0",
+                    "width": 108,
+                    "height": 69
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/SGDlmfkFq-hO4kmzSVfsphBVDwsKt92w5gTxqVPrUGM.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=216&amp;s=9efce704ea9b0a60dea348176ebc2891",
+                    "width": 216,
+                    "height": 138
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/SGDlmfkFq-hO4kmzSVfsphBVDwsKt92w5gTxqVPrUGM.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=320&amp;s=78c96ac944bf4d4c24a6f8dabb4d6892",
+                    "width": 320,
+                    "height": 205
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/SGDlmfkFq-hO4kmzSVfsphBVDwsKt92w5gTxqVPrUGM.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=640&amp;s=2cfcc4170ac684008f3acf67cd85909e",
+                    "width": 640,
+                    "height": 410
+                  }
+                ],
+                "variants": {},
+                "id": "e7Oas4Y9oE-fkd1BoTj9xE5OK_SWK_qGM5_I80zP9sU"
+              }
+            ]
+          },
+          "num_comments": 26,
+          "thumbnail": "http://a.thumbs.redditmedia.com/wke95ztqnUgky0xaoANqe5QUBlHArgTfB4ld1CjbDw8.jpg",
+          "subreddit_id": "t5_2qlqh",
+          "hide_score": false,
+          "edited": false,
+          "link_flair_css_class": null,
+          "author_flair_css_class": "userGray",
+          "downs": 0,
+          "secure_media_embed": {},
+          "saved": false,
+          "removal_reason": null,
+          "post_hint": "link",
+          "stickied": false,
+          "from": null,
+          "is_self": false,
+          "from_id": null,
+          "permalink": "/r/Android/comments/3zlbsi/the_huawei_mate_8_review_anandtech/",
+          "locked": false,
+          "name": "t3_3zlbsi",
+          "created": 1452045989.0,
+          "url": "http://www.anandtech.com/show/9878/the-huawei-mate-8-review",
+          "author_flair_text": "ATT Galaxy S5",
+          "quarantine": false,
+          "title": "The Huawei Mate 8 Review - Anandtech",
+          "created_utc": 1452017189.0,
+          "distinguished": null,
+          "mod_reports": [],
+          "visited": false,
+          "num_reports": null,
+          "ups": 64
+        }
+      },
+      {
+        "kind": "t3",
+        "data": {
+          "domain": "self.Android",
+          "banned_by": null,
+          "media_embed": {},
+          "subreddit": "Android",
+          "selftext_html": null,
+          "selftext": "",
+          "likes": null,
+          "suggested_sort": null,
+          "user_reports": [],
+          "secure_media": null,
+          "link_flair_text": null,
+          "id": "3zjyak",
+          "from_kind": null,
+          "gilded": 0,
+          "archived": false,
+          "clicked": false,
+          "report_reasons": null,
+          "author": "iamankursjain",
+          "media": null,
+          "score": 158,
+          "approved_by": null,
+          "over_18": false,
+          "hidden": false,
+          "num_comments": 635,
+          "thumbnail": "self",
+          "subreddit_id": "t5_2qlqh",
+          "hide_score": false,
+          "edited": false,
+          "link_flair_css_class": null,
+          "author_flair_css_class": null,
+          "downs": 0,
+          "secure_media_embed": {},
+          "saved": false,
+          "removal_reason": null,
+          "stickied": false,
+          "from": null,
+          "is_self": true,
+          "from_id": null,
+          "permalink": "/r/Android/comments/3zjyak/what_is_one_thing_you_dont_like_about_your/",
+          "locked": false,
+          "name": "t3_3zjyak",
+          "created": 1452025906.0,
+          "url": "https://www.reddit.com/r/Android/comments/3zjyak/what_is_one_thing_you_dont_like_about_your/",
+          "author_flair_text": null,
+          "quarantine": false,
+          "title": "What is one thing you don't like about your smartphone?",
+          "created_utc": 1451997106.0,
+          "distinguished": null,
+          "mod_reports": [],
+          "visited": false,
+          "num_reports": null,
+          "ups": 158
+        }
+      },
+      {
+        "kind": "t3",
+        "data": {
+          "domain": "theverge.com",
+          "banned_by": null,
+          "media_embed": {},
+          "subreddit": "Android",
+          "selftext_html": null,
+          "selftext": "",
+          "likes": null,
+          "suggested_sort": null,
+          "user_reports": [],
+          "secure_media": null,
+          "link_flair_text": "Facebook",
+          "id": "3zfw1c",
+          "from_kind": null,
+          "gilded": 0,
+          "archived": false,
+          "clicked": false,
+          "report_reasons": null,
+          "author": "ghemanth90",
+          "media": null,
+          "score": 4219,
+          "approved_by": null,
+          "over_18": false,
+          "hidden": false,
+          "preview": {
+            "images": [
+              {
+                "source": {
+                  "url": "https://i.redditmedia.com/kYDyNka6dzt9hCkFmUYCQeyMkH-YqMs4zez6PbNsmmo.jpg?s=419b4e1595fcbd4eb627cd2a9c67d249",
+                  "width": 1600,
+                  "height": 900
+                },
+                "resolutions": [
+                  {
+                    "url": "https://i.redditmedia.com/kYDyNka6dzt9hCkFmUYCQeyMkH-YqMs4zez6PbNsmmo.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=108&amp;s=65dffd1cb89dbdccfa2339e250a3e793",
+                    "width": 108,
+                    "height": 60
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/kYDyNka6dzt9hCkFmUYCQeyMkH-YqMs4zez6PbNsmmo.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=216&amp;s=316710e16a091e31db2f690f9d72d8d8",
+                    "width": 216,
+                    "height": 121
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/kYDyNka6dzt9hCkFmUYCQeyMkH-YqMs4zez6PbNsmmo.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=320&amp;s=21d0a6ca5f3de8c634612e57b3c05523",
+                    "width": 320,
+                    "height": 180
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/kYDyNka6dzt9hCkFmUYCQeyMkH-YqMs4zez6PbNsmmo.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=640&amp;s=53f36120a2e5b946fe7eb463c566cbbc",
+                    "width": 640,
+                    "height": 360
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/kYDyNka6dzt9hCkFmUYCQeyMkH-YqMs4zez6PbNsmmo.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=960&amp;s=ad2fdcfe5f5f0a4cb2d655c42f0c40d3",
+                    "width": 960,
+                    "height": 540
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/kYDyNka6dzt9hCkFmUYCQeyMkH-YqMs4zez6PbNsmmo.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=1080&amp;s=b7d72d7109cdb6f3bbf6286678eb6978",
+                    "width": 1080,
+                    "height": 607
+                  }
+                ],
+                "variants": {},
+                "id": "m0GO924efPo6ghZ_XbqrAZ1Yd3Kh-0o3aJs6sf77BO4"
+              }
+            ]
+          },
+          "num_comments": 987,
+          "thumbnail": "http://b.thumbs.redditmedia.com/b_fAj3ClxnQ0f2AtzyIRL2PMoFnwVHv_mFjRJ510CaI.jpg",
+          "subreddit_id": "t5_2qlqh",
+          "hide_score": false,
+          "edited": false,
+          "link_flair_css_class": "facebook",
+          "author_flair_css_class": null,
+          "downs": 0,
+          "secure_media_embed": {},
+          "saved": false,
+          "removal_reason": null,
+          "post_hint": "link",
+          "stickied": false,
+          "from": null,
+          "is_self": false,
+          "from_id": null,
+          "permalink": "/r/Android/comments/3zfw1c/facebook_made_its_android_app_crash_to_test_your/",
+          "locked": false,
+          "name": "t3_3zfw1c",
+          "created": 1451959980.0,
+          "url": "http://www.theverge.com/2016/1/4/10708590/facebook-google-android-app-crash-tests",
+          "author_flair_text": null,
+          "quarantine": false,
+          "title": "Facebook made its Android app crash to test your loyalty",
+          "created_utc": 1451931180.0,
+          "distinguished": null,
+          "mod_reports": [],
+          "visited": false,
+          "num_reports": null,
+          "ups": 4219
+        }
+      },
+      {
+        "kind": "t3",
+        "data": {
+          "domain": "xda-developers.com",
+          "banned_by": null,
+          "media_embed": {},
+          "subreddit": "Android",
+          "selftext_html": null,
+          "selftext": "",
+          "likes": null,
+          "suggested_sort": null,
+          "user_reports": [],
+          "secure_media": null,
+          "link_flair_text": null,
+          "id": "3zkzx9",
+          "from_kind": null,
+          "gilded": 0,
+          "archived": false,
+          "clicked": false,
+          "report_reasons": null,
+          "author": "ghatroad",
+          "media": null,
+          "score": 51,
+          "approved_by": null,
+          "over_18": false,
+          "hidden": false,
+          "preview": {
+            "images": [
+              {
+                "source": {
+                  "url": "https://i.redditmedia.com/TKvpkYnJEhhqE0CFHtw9ao6FdryeMBBVwF92RZ0q-IY.jpg?s=bf3ae87756e3c0d976a38d4702033881",
+                  "width": 960,
+                  "height": 376
+                },
+                "resolutions": [
+                  {
+                    "url": "https://i.redditmedia.com/TKvpkYnJEhhqE0CFHtw9ao6FdryeMBBVwF92RZ0q-IY.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=108&amp;s=f7a1f85d18ca78887dc5f2a328329d30",
+                    "width": 108,
+                    "height": 42
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/TKvpkYnJEhhqE0CFHtw9ao6FdryeMBBVwF92RZ0q-IY.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=216&amp;s=c7bfe05b2bdf678a8f98fa9c9c17fe18",
+                    "width": 216,
+                    "height": 84
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/TKvpkYnJEhhqE0CFHtw9ao6FdryeMBBVwF92RZ0q-IY.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=320&amp;s=04b0011c25387fbeeb80c1083d741c37",
+                    "width": 320,
+                    "height": 125
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/TKvpkYnJEhhqE0CFHtw9ao6FdryeMBBVwF92RZ0q-IY.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=640&amp;s=ceba9bea8a24654b9ab7d60dc7f59902",
+                    "width": 640,
+                    "height": 250
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/TKvpkYnJEhhqE0CFHtw9ao6FdryeMBBVwF92RZ0q-IY.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=960&amp;s=0055b196392742f6a6bf3d5fe694ec83",
+                    "width": 960,
+                    "height": 376
+                  }
+                ],
+                "variants": {},
+                "id": "brpwMvJgMtqsUwKYj5u1SDQSJAJXwy9M8mOJwBd7-Q0"
+              }
+            ]
+          },
+          "num_comments": 6,
+          "thumbnail": "http://a.thumbs.redditmedia.com/rM0o4TSJALeH9Bgau9NjlaAmUUrwI2rCtXczfeWMNq4.jpg",
+          "subreddit_id": "t5_2qlqh",
+          "hide_score": false,
+          "edited": false,
+          "link_flair_css_class": null,
+          "author_flair_css_class": "userGreen",
+          "downs": 0,
+          "secure_media_embed": {},
+          "saved": false,
+          "removal_reason": null,
+          "post_hint": "link",
+          "stickied": false,
+          "from": null,
+          "is_self": false,
+          "from_id": null,
+          "permalink": "/r/Android/comments/3zkzx9/android_wear_revisited_perfect_companion_for_the/",
+          "locked": false,
+          "name": "t3_3zkzx9",
+          "created": 1452041721.0,
+          "url": "http://www.xda-developers.com/revisiting-android-wear-a-year-and-a-half-later/",
+          "author_flair_text": "OnePlus One, CM 12.1",
+          "quarantine": false,
+          "title": "Android Wear Revisited: Perfect Companion for the Internet of Things",
+          "created_utc": 1452012921.0,
+          "distinguished": null,
+          "mod_reports": [],
+          "visited": false,
+          "num_reports": null,
+          "ups": 51
+        }
+      },
+      {
+        "kind": "t3",
+        "data": {
+          "domain": "en.miui.com",
+          "banned_by": null,
+          "media_embed": {},
+          "subreddit": "Android",
+          "selftext_html": null,
+          "selftext": "",
+          "likes": null,
+          "suggested_sort": null,
+          "user_reports": [],
+          "secure_media": null,
+          "link_flair_text": null,
+          "id": "3zjsx3",
+          "from_kind": null,
+          "gilded": 0,
+          "archived": false,
+          "clicked": false,
+          "report_reasons": null,
+          "author": "ghatroad",
+          "media": null,
+          "score": 117,
+          "approved_by": null,
+          "over_18": false,
+          "hidden": false,
+          "preview": {
+            "images": [
+              {
+                "source": {
+                  "url": "https://i.redditmedia.com/W_loPQWcVzLTCkZNYlKPLILFsjTFMkR725394-P68ik.jpg?s=ec66fa40dc8a1370c41d43b2ee870496",
+                  "width": 1057,
+                  "height": 870
+                },
+                "resolutions": [
+                  {
+                    "url": "https://i.redditmedia.com/W_loPQWcVzLTCkZNYlKPLILFsjTFMkR725394-P68ik.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=108&amp;s=f394c88bd97ef832348b0b54021026b7",
+                    "width": 108,
+                    "height": 88
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/W_loPQWcVzLTCkZNYlKPLILFsjTFMkR725394-P68ik.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=216&amp;s=3cf61ead5b522beb1b1e8a65c906a569",
+                    "width": 216,
+                    "height": 177
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/W_loPQWcVzLTCkZNYlKPLILFsjTFMkR725394-P68ik.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=320&amp;s=c042a868e9d708a6923735464965b36e",
+                    "width": 320,
+                    "height": 263
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/W_loPQWcVzLTCkZNYlKPLILFsjTFMkR725394-P68ik.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=640&amp;s=58bdd04721c4058e94e7b6113fc7a99d",
+                    "width": 640,
+                    "height": 526
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/W_loPQWcVzLTCkZNYlKPLILFsjTFMkR725394-P68ik.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=960&amp;s=998593acbf391a8211f1ae27d3289412",
+                    "width": 960,
+                    "height": 790
+                  }
+                ],
+                "variants": {},
+                "id": "JsrQ7U5Ol2-xf1izZs1KjJviuYxMVU-0MbsGuNm-Yhg"
+              }
+            ]
+          },
+          "num_comments": 37,
+          "thumbnail": "http://a.thumbs.redditmedia.com/vlPjPB4aPWz9QJUn3kW3VlJ_jj6gKYu0CIXndRVIsu8.jpg",
+          "subreddit_id": "t5_2qlqh",
+          "hide_score": false,
+          "edited": false,
+          "link_flair_css_class": null,
+          "author_flair_css_class": "userGreen",
+          "downs": 0,
+          "secure_media_embed": {},
+          "saved": false,
+          "removal_reason": null,
+          "post_hint": "link",
+          "stickied": false,
+          "from": null,
+          "is_self": false,
+          "from_id": null,
+          "permalink": "/r/Android/comments/3zjsx3/xiaomi_begins_rolling_out_miui_71/",
+          "locked": false,
+          "name": "t3_3zjsx3",
+          "created": 1452022825.0,
+          "url": "http://en.miui.com/thread-204184-1-1.html",
+          "author_flair_text": "OnePlus One, CM 12.1",
+          "quarantine": false,
+          "title": "Xiaomi begins rolling out MIUI 7.1",
+          "created_utc": 1451994025.0,
+          "distinguished": null,
+          "mod_reports": [],
+          "visited": false,
+          "num_reports": null,
+          "ups": 117
+        }
+      },
+      {
+        "kind": "t3",
+        "data": {
+          "domain": "androidpolice.com",
+          "banned_by": null,
+          "media_embed": {},
+          "subreddit": "Android",
+          "selftext_html": null,
+          "selftext": "",
+          "likes": null,
+          "suggested_sort": null,
+          "user_reports": [],
+          "secure_media": null,
+          "link_flair_text": null,
+          "id": "3zm22t",
+          "from_kind": null,
+          "gilded": 0,
+          "archived": false,
+          "clicked": false,
+          "report_reasons": null,
+          "author": "agentrandom",
+          "media": null,
+          "score": 22,
+          "approved_by": null,
+          "over_18": false,
+          "hidden": false,
+          "preview": {
+            "images": [
+              {
+                "source": {
+                  "url": "https://i.redditmedia.com/cxPuN0cZ_lVSmpZjgaThdymUMH7QN-7-Gu5jefZtnCI.jpg?s=cf57d8c0d70683c18168219c384204da",
+                  "width": 728,
+                  "height": 485
+                },
+                "resolutions": [
+                  {
+                    "url": "https://i.redditmedia.com/cxPuN0cZ_lVSmpZjgaThdymUMH7QN-7-Gu5jefZtnCI.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=108&amp;s=43cf8f11d11bf781ac9e01ec47e232ef",
+                    "width": 108,
+                    "height": 71
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/cxPuN0cZ_lVSmpZjgaThdymUMH7QN-7-Gu5jefZtnCI.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=216&amp;s=74d9ab3f0fefa2e7a01b971a077cd304",
+                    "width": 216,
+                    "height": 143
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/cxPuN0cZ_lVSmpZjgaThdymUMH7QN-7-Gu5jefZtnCI.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=320&amp;s=d20e088117645dda9d6dcac0353676a8",
+                    "width": 320,
+                    "height": 213
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/cxPuN0cZ_lVSmpZjgaThdymUMH7QN-7-Gu5jefZtnCI.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=640&amp;s=27f01ecde14a65f2c2ae1fafb4fa0524",
+                    "width": 640,
+                    "height": 426
+                  }
+                ],
+                "variants": {},
+                "id": "exMG9oyHriSr6ZYIAO--nlOcWdc-zhQV9Cxl0NL7Wak"
+              }
+            ]
+          },
+          "num_comments": 9,
+          "thumbnail": "http://b.thumbs.redditmedia.com/HOKRz_k-MylZJWVO_6V7mlWdceE3Tw-OkM9tAoIjuiA.jpg",
+          "subreddit_id": "t5_2qlqh",
+          "hide_score": true,
+          "edited": false,
+          "link_flair_css_class": null,
+          "author_flair_css_class": "userWhite",
+          "downs": 0,
+          "secure_media_embed": {},
+          "saved": false,
+          "removal_reason": null,
+          "post_hint": "link",
+          "stickied": false,
+          "from": null,
+          "is_self": false,
+          "from_id": null,
+          "permalink": "/r/Android/comments/3zm22t/qualcomm_spills_the_beans_on_the_first_snapdragon/",
+          "locked": false,
+          "name": "t3_3zm22t",
+          "created": 1452055146.0,
+          "url": "http://www.androidpolice.com/2016/01/05/qualcomm-spills-the-beans-on-the-first-snapdragon-820-smartphone-the-letv-max-pro/",
+          "author_flair_text": "Nexus 5X",
+          "quarantine": false,
+          "title": "Qualcomm Spills The Beans On The First Snapdragon 820 Smartphone: The Letv Max Pro",
+          "created_utc": 1452026346.0,
+          "distinguished": null,
+          "mod_reports": [],
+          "visited": false,
+          "num_reports": null,
+          "ups": 22
+        }
+      },
+      {
+        "kind": "t3",
+        "data": {
+          "domain": "github.com",
+          "banned_by": null,
+          "media_embed": {},
+          "subreddit": "Android",
+          "selftext_html": null,
+          "selftext": "",
+          "likes": null,
+          "suggested_sort": null,
+          "user_reports": [],
+          "secure_media": null,
+          "link_flair_text": null,
+          "id": "3zlmid",
+          "from_kind": null,
+          "gilded": 0,
+          "archived": false,
+          "clicked": false,
+          "report_reasons": null,
+          "author": "recipriversexcluson",
+          "media": null,
+          "score": 30,
+          "approved_by": null,
+          "over_18": false,
+          "hidden": false,
+          "preview": {
+            "images": [
+              {
+                "source": {
+                  "url": "https://i.redditmedia.com/V1QW2-0B7SSYDo3FzO0svtDooEerjmCMq1gu9gLOlpY.jpg?s=8ad08cbf3f089218f78671530e5687a9",
+                  "width": 184,
+                  "height": 184
+                },
+                "resolutions": [
+                  {
+                    "url": "https://i.redditmedia.com/V1QW2-0B7SSYDo3FzO0svtDooEerjmCMq1gu9gLOlpY.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=108&amp;s=9d92501c57c5934dea7ba129ba024506",
+                    "width": 108,
+                    "height": 108
+                  }
+                ],
+                "variants": {},
+                "id": "8fiOfQzpdyg2qiZF2ffQ9efRZ5vl_xVrwdP4Ms22xhQ"
+              }
+            ]
+          },
+          "num_comments": 1,
+          "thumbnail": "http://b.thumbs.redditmedia.com/sE5IlE03UaIesQ7c6aX-a5gm2vFUmJFI6_OxAPKwRbY.jpg",
+          "subreddit_id": "t5_2qlqh",
+          "hide_score": false,
+          "edited": false,
+          "link_flair_css_class": null,
+          "author_flair_css_class": null,
+          "downs": 0,
+          "secure_media_embed": {},
+          "saved": false,
+          "removal_reason": null,
+          "post_hint": "link",
+          "stickied": false,
+          "from": null,
+          "is_self": false,
+          "from_id": null,
+          "permalink": "/r/Android/comments/3zlmid/visual_studio_addin_for_android_dev_now_open/",
+          "locked": false,
+          "name": "t3_3zlmid",
+          "created": 1452049720.0,
+          "url": "https://github.com/webbju/android-plus-plus",
+          "author_flair_text": null,
+          "quarantine": false,
+          "title": "Visual Studio add-in for Android Dev, now open source",
+          "created_utc": 1452020920.0,
+          "distinguished": null,
+          "mod_reports": [],
+          "visited": false,
+          "num_reports": null,
+          "ups": 30
+        }
+      },
+      {
+        "kind": "t3",
+        "data": {
+          "domain": "androidpolice.com",
+          "banned_by": null,
+          "media_embed": {},
+          "subreddit": "Android",
+          "selftext_html": null,
+          "selftext": "",
+          "likes": null,
+          "suggested_sort": null,
+          "user_reports": [],
+          "secure_media": null,
+          "link_flair_text": null,
+          "id": "3zkdur",
+          "from_kind": null,
+          "gilded": 0,
+          "archived": false,
+          "clicked": false,
+          "report_reasons": null,
+          "author": "Chynus",
+          "media": null,
+          "score": 67,
+          "approved_by": null,
+          "over_18": false,
+          "hidden": false,
+          "preview": {
+            "images": [
+              {
+                "source": {
+                  "url": "https://i.redditmedia.com/RHf2FomFcjwz1pFEZ4MjAXwKdel5rbwMblXw57PBcfs.jpg?s=e82a2d5381fb392294d93761b376eef8",
+                  "width": 732,
+                  "height": 352
+                },
+                "resolutions": [
+                  {
+                    "url": "https://i.redditmedia.com/RHf2FomFcjwz1pFEZ4MjAXwKdel5rbwMblXw57PBcfs.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=108&amp;s=cb14c0bcef90ca72accd39458e947753",
+                    "width": 108,
+                    "height": 51
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/RHf2FomFcjwz1pFEZ4MjAXwKdel5rbwMblXw57PBcfs.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=216&amp;s=21169e2917446d238d824b2aa0cc40ba",
+                    "width": 216,
+                    "height": 103
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/RHf2FomFcjwz1pFEZ4MjAXwKdel5rbwMblXw57PBcfs.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=320&amp;s=b9ecbccd30e7675247a7540587d3572a",
+                    "width": 320,
+                    "height": 153
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/RHf2FomFcjwz1pFEZ4MjAXwKdel5rbwMblXw57PBcfs.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=640&amp;s=bad9f44ca38e7ad97421622c3afc347d",
+                    "width": 640,
+                    "height": 307
+                  }
+                ],
+                "variants": {},
+                "id": "je7oinE-V4q_JntB2YVcvwHy3Hrp42IXzMOm8m3ejzk"
+              }
+            ]
+          },
+          "num_comments": 0,
+          "thumbnail": "http://b.thumbs.redditmedia.com/MeIKGbETS0ZP7F9ts0e18bdysFfI2ER_7O1LqSStxtY.jpg",
+          "subreddit_id": "t5_2qlqh",
+          "hide_score": false,
+          "edited": false,
+          "link_flair_css_class": null,
+          "author_flair_css_class": "userGray",
+          "downs": 0,
+          "secure_media_embed": {},
+          "saved": false,
+          "removal_reason": null,
+          "post_hint": "link",
+          "stickied": false,
+          "from": null,
+          "is_self": false,
+          "from_id": null,
+          "permalink": "/r/Android/comments/3zkdur/aosp_changelogs_posted_for_januarys_601_and_511/",
+          "locked": false,
+          "name": "t3_3zkdur",
+          "created": 1452033298.0,
+          "url": "http://www.androidpolice.com/2016/01/05/aosp-changelogs-posted-for-januarys-6-0-1-and-5-1-1-security-updates/",
+          "author_flair_text": "Moto G | Stock 5.1 until N5 2016(?)",
+          "quarantine": false,
+          "title": "AOSP Changelogs Posted For January's 6.0.1 And 5.1.1 Security Updates",
+          "created_utc": 1452004498.0,
+          "distinguished": null,
+          "mod_reports": [],
+          "visited": false,
+          "num_reports": null,
+          "ups": 67
+        }
+      },
+      {
+        "kind": "t3",
+        "data": {
+          "domain": "uswitch.com",
+          "banned_by": null,
+          "media_embed": {},
+          "subreddit": "Android",
+          "selftext_html": null,
+          "selftext": "",
+          "likes": null,
+          "suggested_sort": null,
+          "user_reports": [],
+          "secure_media": null,
+          "link_flair_text": "Samsung",
+          "id": "3zl514",
+          "from_kind": null,
+          "gilded": 0,
+          "archived": false,
+          "clicked": false,
+          "report_reasons": null,
+          "author": "Ferrum_Deus",
+          "media": null,
+          "score": 39,
+          "approved_by": null,
+          "over_18": false,
+          "hidden": false,
+          "preview": {
+            "images": [
+              {
+                "source": {
+                  "url": "https://i.redditmedia.com/wX0_gExhadlc3FgaFDkV5mQ-74qCp74A3M1EYBHyobo.jpg?s=fa21304cdd7d0fee4d4502085951895d",
+                  "width": 74,
+                  "height": 74
+                },
+                "resolutions": [],
+                "variants": {},
+                "id": "NnPz5OSUSThXmT2gThVlQOM0J_GfR_85Fvu0vm_SBAM"
+              }
+            ]
+          },
+          "num_comments": 43,
+          "thumbnail": "http://b.thumbs.redditmedia.com/J1b-PeXJzrV7TKR0HmjxhocrGie1tDFiH0ichcuTJsE.jpg",
+          "subreddit_id": "t5_2qlqh",
+          "hide_score": false,
+          "edited": false,
+          "link_flair_css_class": "samsung",
+          "author_flair_css_class": "userBlue",
+          "downs": 0,
+          "secure_media_embed": {},
+          "saved": false,
+          "removal_reason": null,
+          "post_hint": "link",
+          "stickied": false,
+          "from": null,
+          "is_self": false,
+          "from_id": null,
+          "permalink": "/r/Android/comments/3zl514/leak_samsung_galaxy_s7_renders_reveal_thicker/",
+          "locked": false,
+          "name": "t3_3zl514",
+          "created": 1452043556.0,
+          "url": "http://www.uswitch.com/mobiles/samsung_galaxy_s7_deals//",
+          "author_flair_text": "Blue",
+          "quarantine": false,
+          "title": "*LEAK* Samsung Galaxy S7 renders reveal thicker, Galaxy Note 5-style design and curved, 5.1-inch screen",
+          "created_utc": 1452014756.0,
+          "distinguished": null,
+          "mod_reports": [],
+          "visited": false,
+          "num_reports": null,
+          "ups": 39
+        }
+      },
+      {
+        "kind": "t3",
+        "data": {
+          "domain": "webcache.googleusercontent.com",
+          "banned_by": null,
+          "media_embed": {},
+          "subreddit": "Android",
+          "selftext_html": null,
+          "selftext": "",
+          "likes": null,
+          "suggested_sort": null,
+          "user_reports": [],
+          "secure_media": null,
+          "link_flair_text": null,
+          "id": "3zlqmx",
+          "from_kind": null,
+          "gilded": 0,
+          "archived": false,
+          "clicked": false,
+          "report_reasons": null,
+          "author": "Istartedthewar",
+          "media": null,
+          "score": 24,
+          "approved_by": null,
+          "over_18": false,
+          "hidden": false,
+          "preview": {
+            "images": [
+              {
+                "source": {
+                  "url": "https://i.redditmedia.com/ZcgvJNds5AdyzCT2eTWJvB8WIDQYGtTIKcW4XcbIp50.jpg?s=259731a3c861725dda3bb4aa57b6c46f",
+                  "width": 1600,
+                  "height": 900
+                },
+                "resolutions": [
+                  {
+                    "url": "https://i.redditmedia.com/ZcgvJNds5AdyzCT2eTWJvB8WIDQYGtTIKcW4XcbIp50.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=108&amp;s=56bcc73df9f95b5e2dd2b98bd2339ce6",
+                    "width": 108,
+                    "height": 60
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/ZcgvJNds5AdyzCT2eTWJvB8WIDQYGtTIKcW4XcbIp50.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=216&amp;s=0dbb6c9c5fac371dd48713192491e7d4",
+                    "width": 216,
+                    "height": 121
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/ZcgvJNds5AdyzCT2eTWJvB8WIDQYGtTIKcW4XcbIp50.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=320&amp;s=ce240c521a995048981d6dbef8fb6e59",
+                    "width": 320,
+                    "height": 180
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/ZcgvJNds5AdyzCT2eTWJvB8WIDQYGtTIKcW4XcbIp50.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=640&amp;s=1f587bf6d080ef6dedd58380112c05cb",
+                    "width": 640,
+                    "height": 360
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/ZcgvJNds5AdyzCT2eTWJvB8WIDQYGtTIKcW4XcbIp50.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=960&amp;s=24321b8edca9750237b95162a9685157",
+                    "width": 960,
+                    "height": 540
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/ZcgvJNds5AdyzCT2eTWJvB8WIDQYGtTIKcW4XcbIp50.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=1080&amp;s=9b5f679ff74ac6ecdae6612a3e898f0c",
+                    "width": 1080,
+                    "height": 607
+                  }
+                ],
+                "variants": {},
+                "id": "fcxdHy54SOcC4J_wYyRoVuFXJIad6eTueDn93jWU6IM"
+              }
+            ]
+          },
+          "num_comments": 14,
+          "thumbnail": "http://a.thumbs.redditmedia.com/ICS__Hxl3qvNR_7tBwRIELCR9qne7WDY1GlPOXIpm-8.jpg",
+          "subreddit_id": "t5_2qlqh",
+          "hide_score": false,
+          "edited": false,
+          "link_flair_css_class": null,
+          "author_flair_css_class": "userWhite",
+          "downs": 0,
+          "secure_media_embed": {},
+          "saved": false,
+          "removal_reason": null,
+          "post_hint": "link",
+          "stickied": false,
+          "from": null,
+          "is_self": false,
+          "from_id": null,
+          "permalink": "/r/Android/comments/3zlqmx/casios_first_smartwatch_brings_android_wear/",
+          "locked": false,
+          "name": "t3_3zlqmx",
+          "created": 1452051172.0,
+          "url": "http://webcache.googleusercontent.com/search?q=cache:www.theverge.com%2F2016%2F1%2F5%2F10713260%2Fcasio-smart-outdoor-watch-wsd-f10-android-wear-announced-ces-2016&amp;usg=AFQjCNGXY8NHG2r1qlrVas8McRa9fuNsmg&amp;sig2=do1ceLgoEMkFUOnWfdO2OQ",
+          "author_flair_text": "LG V10 Black/ LG Watch urbane",
+          "quarantine": false,
+          "title": "Casio's first smartwatch brings Android Wear outdoors (Cached view, direct link 404's)",
+          "created_utc": 1452022372.0,
+          "distinguished": null,
+          "mod_reports": [],
+          "visited": false,
+          "num_reports": null,
+          "ups": 24
+        }
+      },
+      {
+        "kind": "t3",
+        "data": {
+          "domain": "androidpolice.com",
+          "banned_by": null,
+          "media_embed": {},
+          "subreddit": "Android",
+          "selftext_html": null,
+          "selftext": "",
+          "likes": null,
+          "suggested_sort": null,
+          "user_reports": [],
+          "secure_media": null,
+          "link_flair_text": null,
+          "id": "3zk5oz",
+          "from_kind": null,
+          "gilded": 0,
+          "archived": false,
+          "clicked": false,
+          "report_reasons": null,
+          "author": "Rinkeli",
+          "media": null,
+          "score": 65,
+          "approved_by": null,
+          "over_18": false,
+          "hidden": false,
+          "preview": {
+            "images": [
+              {
+                "source": {
+                  "url": "https://i.redditmedia.com/Dy6-XjUuvvZB6sUyH-xhJzEBq4SnpwMNfU2nMIJsr4o.jpg?s=ace6857c0a1e93bd3dd02e47b42bbcd4",
+                  "width": 728,
+                  "height": 441
+                },
+                "resolutions": [
+                  {
+                    "url": "https://i.redditmedia.com/Dy6-XjUuvvZB6sUyH-xhJzEBq4SnpwMNfU2nMIJsr4o.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=108&amp;s=461403781d1870da93dc9c89356d5663",
+                    "width": 108,
+                    "height": 65
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/Dy6-XjUuvvZB6sUyH-xhJzEBq4SnpwMNfU2nMIJsr4o.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=216&amp;s=33a8f8b62ae85f3c20b213ddde957034",
+                    "width": 216,
+                    "height": 130
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/Dy6-XjUuvvZB6sUyH-xhJzEBq4SnpwMNfU2nMIJsr4o.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=320&amp;s=b1f39eb87477fc5343a324e15695a996",
+                    "width": 320,
+                    "height": 193
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/Dy6-XjUuvvZB6sUyH-xhJzEBq4SnpwMNfU2nMIJsr4o.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=640&amp;s=b603d6a3aa19c622df713395d7374991",
+                    "width": 640,
+                    "height": 387
+                  }
+                ],
+                "variants": {},
+                "id": "xmP22ogUDvRkF3LnyatKK_drPqLqWWPCEzhTWia0J90"
+              }
+            ]
+          },
+          "num_comments": 35,
+          "thumbnail": "http://b.thumbs.redditmedia.com/gPLwC0hiWNuxfKca9t5N9R6I8okOovwZhauBl9TEKOY.jpg",
+          "subreddit_id": "t5_2qlqh",
+          "hide_score": false,
+          "edited": false,
+          "link_flair_css_class": null,
+          "author_flair_css_class": "userBlack",
+          "downs": 0,
+          "secure_media_embed": {},
+          "saved": false,
+          "removal_reason": null,
+          "post_hint": "link",
+          "stickied": false,
+          "from": null,
+          "is_self": false,
+          "from_id": null,
+          "permalink": "/r/Android/comments/3zk5oz/lastpass_40_is_the_first_major_release_since/",
+          "locked": false,
+          "name": "t3_3zk5oz",
+          "created": 1452029710.0,
+          "url": "http://www.androidpolice.com/2016/01/05/lastpass-4-0-is-the-first-major-release-since-logmein-adds-emergency-access-and-a-new-sharing-center/",
+          "author_flair_text": "LG G4",
+          "quarantine": false,
+          "title": "LastPass 4.0 Is The First Major Release Since LogMeIn, Adds Emergency Access And A New Sharing Center",
+          "created_utc": 1452000910.0,
+          "distinguished": null,
+          "mod_reports": [],
+          "visited": false,
+          "num_reports": null,
+          "ups": 65
+        }
+      },
+      {
+        "kind": "t3",
+        "data": {
+          "domain": "androidheadlines.com",
+          "banned_by": null,
+          "media_embed": {},
+          "subreddit": "Android",
+          "selftext_html": null,
+          "selftext": "",
+          "likes": null,
+          "suggested_sort": null,
+          "user_reports": [],
+          "secure_media": null,
+          "link_flair_text": null,
+          "id": "3zkcuw",
+          "from_kind": null,
+          "gilded": 0,
+          "archived": false,
+          "clicked": false,
+          "report_reasons": null,
+          "author": "istealthbro",
+          "media": null,
+          "score": 59,
+          "approved_by": null,
+          "over_18": false,
+          "hidden": false,
+          "preview": {
+            "images": [
+              {
+                "source": {
+                  "url": "https://i.redditmedia.com/zo6_ihWP6dcBUtCClr5iLKom2HtNm53HKTSFxhG3y8s.jpg?s=715534d5c6693d42f05bfbc98cccfd44",
+                  "width": 2560,
+                  "height": 1920
+                },
+                "resolutions": [
+                  {
+                    "url": "https://i.redditmedia.com/zo6_ihWP6dcBUtCClr5iLKom2HtNm53HKTSFxhG3y8s.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=108&amp;s=ba404ce3a030b4b667ace8a8bb6b2790",
+                    "width": 108,
+                    "height": 81
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/zo6_ihWP6dcBUtCClr5iLKom2HtNm53HKTSFxhG3y8s.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=216&amp;s=04eebd1c1ced605c154755e3710873c0",
+                    "width": 216,
+                    "height": 162
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/zo6_ihWP6dcBUtCClr5iLKom2HtNm53HKTSFxhG3y8s.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=320&amp;s=5b0f5b4a364fc94cde328aa4df7ffd2c",
+                    "width": 320,
+                    "height": 240
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/zo6_ihWP6dcBUtCClr5iLKom2HtNm53HKTSFxhG3y8s.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=640&amp;s=d09a461fd42c290a38974ebaff3f0995",
+                    "width": 640,
+                    "height": 480
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/zo6_ihWP6dcBUtCClr5iLKom2HtNm53HKTSFxhG3y8s.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=960&amp;s=05dd144d9478ba2aa3a6ae9d8355eb6e",
+                    "width": 960,
+                    "height": 720
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/zo6_ihWP6dcBUtCClr5iLKom2HtNm53HKTSFxhG3y8s.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=1080&amp;s=57f46b8e12f1546f6e38ae4a474646c0",
+                    "width": 1080,
+                    "height": 810
+                  }
+                ],
+                "variants": {},
+                "id": "mLQmtCf2-3-yiWsuDnk1O7h16aBdGxwT4064BoBS_qQ"
+              }
+            ]
+          },
+          "num_comments": 11,
+          "thumbnail": "http://b.thumbs.redditmedia.com/FDp8shQS9XHa50V1zuOj0Y2ijH2d8KdiYSswYAChEcU.jpg",
+          "subreddit_id": "t5_2qlqh",
+          "hide_score": false,
+          "edited": false,
+          "link_flair_css_class": null,
+          "author_flair_css_class": "userPurple",
+          "downs": 0,
+          "secure_media_embed": {},
+          "saved": false,
+          "removal_reason": null,
+          "post_hint": "link",
+          "stickied": false,
+          "from": null,
+          "is_self": false,
+          "from_id": null,
+          "permalink": "/r/Android/comments/3zkcuw/speck_announces_the_collapsible_pocket_vr_viewer/",
+          "locked": false,
+          "name": "t3_3zkcuw",
+          "created": 1452032867.0,
+          "url": "http://www.androidheadlines.com/2016/01/speck-announces-the-collapsible-pocket-vr-viewer-at-ces-2016.html",
+          "author_flair_text": "Nexus 6P",
+          "quarantine": false,
+          "title": "Speck announces the Collapsible Pocket VR Viewer at CES 2016",
+          "created_utc": 1452004067.0,
+          "distinguished": null,
+          "mod_reports": [],
+          "visited": false,
+          "num_reports": null,
+          "ups": 59
+        }
+      },
+      {
+        "kind": "t3",
+        "data": {
+          "domain": "andreasgal.com",
+          "banned_by": null,
+          "media_embed": {},
+          "subreddit": "Android",
+          "selftext_html": null,
+          "selftext": "",
+          "likes": null,
+          "suggested_sort": null,
+          "user_reports": [],
+          "secure_media": null,
+          "link_flair_text": null,
+          "id": "3zl8qj",
+          "from_kind": null,
+          "gilded": 0,
+          "archived": false,
+          "clicked": false,
+          "report_reasons": null,
+          "author": "johnmountain",
+          "media": null,
+          "score": 27,
+          "approved_by": null,
+          "over_18": false,
+          "hidden": false,
+          "preview": {
+            "images": [
+              {
+                "source": {
+                  "url": "https://i.redditmedia.com/F6AGihc6sjMmnVLm-XWIe0jcP2vPZpBwjOqH2PhZX-c.jpg?s=56a677929f9af56fa137ae07c36cfd15",
+                  "width": 200,
+                  "height": 200
+                },
+                "resolutions": [
+                  {
+                    "url": "https://i.redditmedia.com/F6AGihc6sjMmnVLm-XWIe0jcP2vPZpBwjOqH2PhZX-c.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=108&amp;s=482dd3c6232f59884e434a498faa2cbd",
+                    "width": 108,
+                    "height": 108
+                  }
+                ],
+                "variants": {},
+                "id": "sAYY86zgdT-GUuuQxQ55XhcVr4wy0uMIajd_UOBdg3Y"
+              }
+            ]
+          },
+          "num_comments": 14,
+          "thumbnail": "http://b.thumbs.redditmedia.com/6E0YXUncXhFZE-HgC8IH7COjePvS20nr4P30WrcpyiU.jpg",
+          "subreddit_id": "t5_2qlqh",
+          "hide_score": false,
+          "edited": false,
+          "link_flair_css_class": null,
+          "author_flair_css_class": null,
+          "downs": 0,
+          "secure_media_embed": {},
+          "saved": false,
+          "removal_reason": null,
+          "post_hint": "link",
+          "stickied": false,
+          "from": null,
+          "is_self": false,
+          "from_id": null,
+          "permalink": "/r/Android/comments/3zl8qj/oracle_sinks_its_claws_into_android/",
+          "locked": false,
+          "name": "t3_3zl8qj",
+          "created": 1452044875.0,
+          "url": "http://andreasgal.com/2016/01/05/oracle-sinks-its-claws-into-android/",
+          "author_flair_text": null,
+          "quarantine": false,
+          "title": "Oracle sinks its claws into Android",
+          "created_utc": 1452016075.0,
+          "distinguished": null,
+          "mod_reports": [],
+          "visited": false,
+          "num_reports": null,
+          "ups": 27
+        }
+      },
+      {
+        "kind": "t3",
+        "data": {
+          "domain": "timesofindia.indiatimes.com",
+          "banned_by": null,
+          "media_embed": {},
+          "subreddit": "Android",
+          "selftext_html": null,
+          "selftext": "",
+          "likes": null,
+          "suggested_sort": null,
+          "user_reports": [],
+          "secure_media": null,
+          "link_flair_text": null,
+          "id": "3zkzla",
+          "from_kind": null,
+          "gilded": 0,
+          "archived": false,
+          "clicked": false,
+          "report_reasons": null,
+          "author": "ghatroad",
+          "media": null,
+          "score": 25,
+          "approved_by": null,
+          "over_18": false,
+          "hidden": false,
+          "preview": {
+            "images": [
+              {
+                "source": {
+                  "url": "https://i.redditmedia.com/MlkOv96yrkYm35BHdSCheQ58ISaveNu2BmPeCTBNtGc.jpg?s=5ab49a8274ee1874e735c5cad60ce5b8",
+                  "width": 780,
+                  "height": 570
+                },
+                "resolutions": [
+                  {
+                    "url": "https://i.redditmedia.com/MlkOv96yrkYm35BHdSCheQ58ISaveNu2BmPeCTBNtGc.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=108&amp;s=d32bd6709fe5d693ff44aa713d544745",
+                    "width": 108,
+                    "height": 78
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/MlkOv96yrkYm35BHdSCheQ58ISaveNu2BmPeCTBNtGc.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=216&amp;s=3e6056846b774c83dd0bfdd2a15d77d5",
+                    "width": 216,
+                    "height": 157
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/MlkOv96yrkYm35BHdSCheQ58ISaveNu2BmPeCTBNtGc.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=320&amp;s=2e81d4901a1eb9c1c3721973d0434050",
+                    "width": 320,
+                    "height": 233
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/MlkOv96yrkYm35BHdSCheQ58ISaveNu2BmPeCTBNtGc.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=640&amp;s=227373774d953d4beb69926b81cb41d1",
+                    "width": 640,
+                    "height": 467
+                  }
+                ],
+                "variants": {},
+                "id": "egIOLxaN8yb-B_zRi70uS-e32b7rRks0qjdRKR_GaeA"
+              }
+            ]
+          },
+          "num_comments": 4,
+          "thumbnail": "http://b.thumbs.redditmedia.com/iLGVJcrZSY4zqKMsDA0rHotTbNFQhr_iQ4JRVK0DavE.jpg",
+          "subreddit_id": "t5_2qlqh",
+          "hide_score": false,
+          "edited": false,
+          "link_flair_css_class": null,
+          "author_flair_css_class": "userGreen",
+          "downs": 0,
+          "secure_media_embed": {},
+          "saved": false,
+          "removal_reason": null,
+          "post_hint": "link",
+          "stickied": false,
+          "from": null,
+          "is_self": false,
+          "from_id": null,
+          "permalink": "/r/Android/comments/3zkzla/asus_launches_zenwatch_2_in_india_prices_start_at/",
+          "locked": false,
+          "name": "t3_3zkzla",
+          "created": 1452041600.0,
+          "url": "http://timesofindia.indiatimes.com/tech/more-gadgets/Asus-launches-ZenWatch-2-in-India-prices-start-at-Rs-11999/articleshow/50449637.cms",
+          "author_flair_text": "OnePlus One, CM 12.1",
+          "quarantine": false,
+          "title": "Asus launches ZenWatch 2 in India, prices start at Rs 11,999",
+          "created_utc": 1452012800.0,
+          "distinguished": null,
+          "mod_reports": [],
+          "visited": false,
+          "num_reports": null,
+          "ups": 25
+        }
+      },
+      {
+        "kind": "t3",
+        "data": {
+          "domain": "youtube.com",
+          "banned_by": null,
+          "media_embed": {
+            "content": "&lt;iframe class=\"embedly-embed\" src=\"//cdn.embedly.com/widgets/media.html?src=https%3A%2F%2Fwww.youtube.com%2Fembed%2Fmg4j-a-jXz8%3Ffeature%3Doembed&amp;url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3Dmg4j-a-jXz8&amp;image=https%3A%2F%2Fi.ytimg.com%2Fvi%2Fmg4j-a-jXz8%2Fhqdefault.jpg&amp;key=2aa3c4d5f3de4f5b9120b660ad850dc9&amp;type=text%2Fhtml&amp;schema=youtube\" width=\"600\" height=\"338\" scrolling=\"no\" frameborder=\"0\" allowfullscreen&gt;&lt;/iframe&gt;",
+            "width": 600,
+            "scrolling": false,
+            "height": 338
+          },
+          "subreddit": "Android",
+          "selftext_html": null,
+          "selftext": "",
+          "likes": null,
+          "suggested_sort": null,
+          "user_reports": [],
+          "secure_media": {
+            "oembed": {
+              "provider_url": "https://www.youtube.com/",
+              "description": "CES 2016 Press Conference Live Stream Jan 5th, 2016 @Las Vegas",
+              "title": "CES 2016 LG - Press Conference",
+              "url": "http://www.youtube.com/watch?v=mg4j-a-jXz8",
+              "type": "video",
+              "author_name": "LG Global",
+              "height": 338,
+              "width": 600,
+              "html": "&lt;iframe class=\"embedly-embed\" src=\"https://cdn.embedly.com/widgets/media.html?src=https%3A%2F%2Fwww.youtube.com%2Fembed%2Fmg4j-a-jXz8%3Ffeature%3Doembed&amp;url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3Dmg4j-a-jXz8&amp;image=https%3A%2F%2Fi.ytimg.com%2Fvi%2Fmg4j-a-jXz8%2Fhqdefault.jpg&amp;key=2aa3c4d5f3de4f5b9120b660ad850dc9&amp;type=text%2Fhtml&amp;schema=youtube\" width=\"600\" height=\"338\" scrolling=\"no\" frameborder=\"0\" allowfullscreen&gt;&lt;/iframe&gt;",
+              "thumbnail_width": 480,
+              "version": "1.0",
+              "provider_name": "YouTube",
+              "thumbnail_url": "https://i.embed.ly/1/image?url=https%3A%2F%2Fi.ytimg.com%2Fvi%2Fmg4j-a-jXz8%2Fhqdefault.jpg&amp;key=b1e305db91cf4aa5a86b732cc9fffceb",
+              "thumbnail_height": 360,
+              "author_url": "https://www.youtube.com/user/LGHomeAppliance"
+            },
+            "type": "youtube.com"
+          },
+          "link_flair_text": "LG",
+          "id": "3zkryv",
+          "from_kind": null,
+          "gilded": 0,
+          "archived": false,
+          "clicked": false,
+          "report_reasons": null,
+          "author": "seekahaa",
+          "media": {
+            "oembed": {
+              "provider_url": "https://www.youtube.com/",
+              "description": "CES 2016 Press Conference Live Stream Jan 5th, 2016 @Las Vegas",
+              "title": "CES 2016 LG - Press Conference",
+              "url": "http://www.youtube.com/watch?v=mg4j-a-jXz8",
+              "type": "video",
+              "author_name": "LG Global",
+              "height": 338,
+              "width": 600,
+              "html": "&lt;iframe class=\"embedly-embed\" src=\"//cdn.embedly.com/widgets/media.html?src=https%3A%2F%2Fwww.youtube.com%2Fembed%2Fmg4j-a-jXz8%3Ffeature%3Doembed&amp;url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3Dmg4j-a-jXz8&amp;image=https%3A%2F%2Fi.ytimg.com%2Fvi%2Fmg4j-a-jXz8%2Fhqdefault.jpg&amp;key=2aa3c4d5f3de4f5b9120b660ad850dc9&amp;type=text%2Fhtml&amp;schema=youtube\" width=\"600\" height=\"338\" scrolling=\"no\" frameborder=\"0\" allowfullscreen&gt;&lt;/iframe&gt;",
+              "thumbnail_width": 480,
+              "version": "1.0",
+              "provider_name": "YouTube",
+              "thumbnail_url": "https://i.ytimg.com/vi/mg4j-a-jXz8/hqdefault.jpg",
+              "thumbnail_height": 360,
+              "author_url": "https://www.youtube.com/user/LGHomeAppliance"
+            },
+            "type": "youtube.com"
+          },
+          "score": 31,
+          "approved_by": null,
+          "over_18": false,
+          "hidden": false,
+          "preview": {
+            "images": [
+              {
+                "source": {
+                  "url": "https://i.redditmedia.com/YAHi7QLrElpPzuzUT8PWgZBkjYbTgdVVrrhNgAC6jrg.jpg?s=40de6eb7fd013f3678520ddb29df8e2e",
+                  "width": 480,
+                  "height": 360
+                },
+                "resolutions": [
+                  {
+                    "url": "https://i.redditmedia.com/YAHi7QLrElpPzuzUT8PWgZBkjYbTgdVVrrhNgAC6jrg.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=108&amp;s=9a8bd4753caccc987eba7379b3a473b8",
+                    "width": 108,
+                    "height": 81
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/YAHi7QLrElpPzuzUT8PWgZBkjYbTgdVVrrhNgAC6jrg.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=216&amp;s=76aaf73494d23e8f4ec7a89a0ac9620e",
+                    "width": 216,
+                    "height": 162
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/YAHi7QLrElpPzuzUT8PWgZBkjYbTgdVVrrhNgAC6jrg.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=320&amp;s=49cabbaa3ca89a93e296e0c60a53d8f9",
+                    "width": 320,
+                    "height": 240
+                  }
+                ],
+                "variants": {},
+                "id": "s27KvXepYxWCbX0ZzcMmMGfYVp2l99ixqJyFYs54vQ8"
+              }
+            ]
+          },
+          "num_comments": 7,
+          "thumbnail": "http://b.thumbs.redditmedia.com/30-ifrMq0cZTz7Jo9IEpqpGLUHIVNwzTMF1sJM_Njyk.jpg",
+          "subreddit_id": "t5_2qlqh",
+          "hide_score": false,
+          "edited": false,
+          "link_flair_css_class": "lg",
+          "author_flair_css_class": "userGray",
+          "downs": 0,
+          "secure_media_embed": {
+            "content": "&lt;iframe class=\"embedly-embed\" src=\"https://cdn.embedly.com/widgets/media.html?src=https%3A%2F%2Fwww.youtube.com%2Fembed%2Fmg4j-a-jXz8%3Ffeature%3Doembed&amp;url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3Dmg4j-a-jXz8&amp;image=https%3A%2F%2Fi.ytimg.com%2Fvi%2Fmg4j-a-jXz8%2Fhqdefault.jpg&amp;key=2aa3c4d5f3de4f5b9120b660ad850dc9&amp;type=text%2Fhtml&amp;schema=youtube\" width=\"600\" height=\"338\" scrolling=\"no\" frameborder=\"0\" allowfullscreen&gt;&lt;/iframe&gt;",
+            "width": 600,
+            "scrolling": false,
+            "height": 338
+          },
+          "saved": false,
+          "removal_reason": null,
+          "post_hint": "rich:video",
+          "stickied": false,
+          "from": null,
+          "is_self": false,
+          "from_id": null,
+          "permalink": "/r/Android/comments/3zkryv/ces_2016_lg_press_conference/",
+          "locked": false,
+          "name": "t3_3zkryv",
+          "created": 1452038863.0,
+          "url": "https://www.youtube.com/watch?v=mg4j-a-jXz8",
+          "author_flair_text": "Nexus 6, Android M !!",
+          "quarantine": false,
+          "title": "CES 2016 LG - Press Conference",
+          "created_utc": 1452010063.0,
+          "distinguished": null,
+          "mod_reports": [],
+          "visited": false,
+          "num_reports": null,
+          "ups": 31
+        }
+      },
+      {
+        "kind": "t3",
+        "data": {
+          "domain": "androidpolice.com",
+          "banned_by": null,
+          "media_embed": {},
+          "subreddit": "Android",
+          "selftext_html": null,
+          "selftext": "",
+          "likes": null,
+          "suggested_sort": null,
+          "user_reports": [],
+          "secure_media": null,
+          "link_flair_text": null,
+          "id": "3zlnzs",
+          "from_kind": null,
+          "gilded": 0,
+          "archived": false,
+          "clicked": false,
+          "report_reasons": null,
+          "author": "bezelless",
+          "media": null,
+          "score": 17,
+          "approved_by": null,
+          "over_18": false,
+          "hidden": false,
+          "preview": {
+            "images": [
+              {
+                "source": {
+                  "url": "https://i.redditmedia.com/UGELPuo6EEKU8HDMvjxlvWe6gcrlVhjRWIFKu8kVUa4.jpg?s=84bc826acc0e073f766b9a6889b25d3e",
+                  "width": 728,
+                  "height": 487
+                },
+                "resolutions": [
+                  {
+                    "url": "https://i.redditmedia.com/UGELPuo6EEKU8HDMvjxlvWe6gcrlVhjRWIFKu8kVUa4.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=108&amp;s=38d3bdc8f8e09ceacadd0c8ece2885fe",
+                    "width": 108,
+                    "height": 72
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/UGELPuo6EEKU8HDMvjxlvWe6gcrlVhjRWIFKu8kVUa4.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=216&amp;s=43edc3aabe167cee23a3043b546196d2",
+                    "width": 216,
+                    "height": 144
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/UGELPuo6EEKU8HDMvjxlvWe6gcrlVhjRWIFKu8kVUa4.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=320&amp;s=751f612dd178e6d64a06897d5f201708",
+                    "width": 320,
+                    "height": 214
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/UGELPuo6EEKU8HDMvjxlvWe6gcrlVhjRWIFKu8kVUa4.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=640&amp;s=0f30e94b8ec084be7a6a42d90818402b",
+                    "width": 640,
+                    "height": 428
+                  }
+                ],
+                "variants": {},
+                "id": "AOBQ3Ivc7TaafWB_xb-dNNA8PXArfu2ayMpgikzXpzs"
+              }
+            ]
+          },
+          "num_comments": 16,
+          "thumbnail": "http://b.thumbs.redditmedia.com/6LCI73YGDxxqiYIjzFXqMXM4Q445ZFBvaiDH2kOUuGI.jpg",
+          "subreddit_id": "t5_2qlqh",
+          "hide_score": false,
+          "edited": false,
+          "link_flair_css_class": null,
+          "author_flair_css_class": "userGray",
+          "downs": 0,
+          "secure_media_embed": {},
+          "saved": false,
+          "removal_reason": null,
+          "post_hint": "link",
+          "stickied": false,
+          "from": null,
+          "is_self": false,
+          "from_id": null,
+          "permalink": "/r/Android/comments/3zlnzs/huawei_announces_mate_8_with_a_6inch_1080p/",
+          "locked": false,
+          "name": "t3_3zlnzs",
+          "created": 1452050237.0,
+          "url": "http://www.androidpolice.com/2016/01/05/huawei-announces-mate-8-with-a-6-inch-1080p-display-android-6-0-and-a-4000mah-battery/",
+          "author_flair_text": " Nexus 6P 32GB Graphite",
+          "quarantine": false,
+          "title": "Huawei Announces Mate 8 With A 6-Inch 1080p Display, Android 6.0, And A 4000mAh Battery",
+          "created_utc": 1452021437.0,
+          "distinguished": null,
+          "mod_reports": [],
+          "visited": false,
+          "num_reports": null,
+          "ups": 17
+        }
+      },
+      {
+        "kind": "t3",
+        "data": {
+          "domain": "xda-developers.com",
+          "banned_by": null,
+          "media_embed": {},
+          "subreddit": "Android",
+          "selftext_html": null,
+          "selftext": "",
+          "likes": null,
+          "suggested_sort": null,
+          "user_reports": [],
+          "secure_media": null,
+          "link_flair_text": null,
+          "id": "3zkqhv",
+          "from_kind": null,
+          "gilded": 0,
+          "archived": false,
+          "clicked": false,
+          "report_reasons": null,
+          "author": "ghatroad",
+          "media": null,
+          "score": 27,
+          "approved_by": null,
+          "over_18": false,
+          "hidden": false,
+          "preview": {
+            "images": [
+              {
+                "source": {
+                  "url": "https://i.redditmedia.com/_wItbUxioPdBpznsy3o4_K8568r8CXo5CTSBBa3c34A.jpg?s=36669a3da4b17f81b87d77d9d5009ea4",
+                  "width": 1200,
+                  "height": 787
+                },
+                "resolutions": [
+                  {
+                    "url": "https://i.redditmedia.com/_wItbUxioPdBpznsy3o4_K8568r8CXo5CTSBBa3c34A.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=108&amp;s=b4dbab820a52478ff15285791f5f818f",
+                    "width": 108,
+                    "height": 70
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/_wItbUxioPdBpznsy3o4_K8568r8CXo5CTSBBa3c34A.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=216&amp;s=129e25b4f234ca15ccfd7dad33b3bb34",
+                    "width": 216,
+                    "height": 141
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/_wItbUxioPdBpznsy3o4_K8568r8CXo5CTSBBa3c34A.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=320&amp;s=0fef71db7f89ad62dd629209ed59802c",
+                    "width": 320,
+                    "height": 209
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/_wItbUxioPdBpznsy3o4_K8568r8CXo5CTSBBa3c34A.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=640&amp;s=619904bf130ec79783f9961fdaca9638",
+                    "width": 640,
+                    "height": 419
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/_wItbUxioPdBpznsy3o4_K8568r8CXo5CTSBBa3c34A.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=960&amp;s=fa760d2081da9af38479d3e054dcf3a4",
+                    "width": 960,
+                    "height": 629
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/_wItbUxioPdBpznsy3o4_K8568r8CXo5CTSBBa3c34A.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=1080&amp;s=72ee23bbee174a4e219706dd91f9aeea",
+                    "width": 1080,
+                    "height": 708
+                  }
+                ],
+                "variants": {},
+                "id": "NEiUzlPJF4D-k678pjPg8R1umRThL6KVElzxjS3jFmc"
+              }
+            ]
+          },
+          "num_comments": 25,
+          "thumbnail": "http://b.thumbs.redditmedia.com/ydgg4s1DsOCjRoUAMuJnawVsfey6T6yzYD1C92aXXhY.jpg",
+          "subreddit_id": "t5_2qlqh",
+          "hide_score": false,
+          "edited": false,
+          "link_flair_css_class": null,
+          "author_flair_css_class": "userGreen",
+          "downs": 0,
+          "secure_media_embed": {},
+          "saved": false,
+          "removal_reason": null,
+          "post_hint": "link",
+          "stickied": false,
+          "from": null,
+          "is_self": false,
+          "from_id": null,
+          "permalink": "/r/Android/comments/3zkqhv/do_you_care_about_andor_install_the_monthly/",
+          "locked": false,
+          "name": "t3_3zkqhv",
+          "created": 1452038345.0,
+          "url": "http://www.xda-developers.com/do-you-care-about-or-install-the-monthly-security-patches/",
+          "author_flair_text": "OnePlus One, CM 12.1",
+          "quarantine": false,
+          "title": "Do You Care About and/or Install the Monthly Security Patches?",
+          "created_utc": 1452009545.0,
+          "distinguished": null,
+          "mod_reports": [],
+          "visited": false,
+          "num_reports": null,
+          "ups": 27
+        }
+      },
+      {
+        "kind": "t3",
+        "data": {
+          "domain": "blogs.nvidia.com",
+          "banned_by": null,
+          "media_embed": {},
+          "subreddit": "Android",
+          "selftext_html": null,
+          "selftext": "",
+          "likes": null,
+          "suggested_sort": null,
+          "user_reports": [],
+          "secure_media": null,
+          "link_flair_text": null,
+          "id": "3zm3gp",
+          "from_kind": null,
+          "gilded": 0,
+          "archived": false,
+          "clicked": false,
+          "report_reasons": null,
+          "author": "Andrroid",
+          "media": null,
+          "score": 11,
+          "approved_by": null,
+          "over_18": false,
+          "hidden": false,
+          "preview": {
+            "images": [
+              {
+                "source": {
+                  "url": "https://i.redditmedia.com/VBcG8INvYYXohM8zBELh2-6Atfw4g18SczKMzFR8YFQ.jpg?s=ead4eea2a5f5b557b23eb867b217d739",
+                  "width": 700,
+                  "height": 467
+                },
+                "resolutions": [
+                  {
+                    "url": "https://i.redditmedia.com/VBcG8INvYYXohM8zBELh2-6Atfw4g18SczKMzFR8YFQ.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=108&amp;s=d33318437ad1b0e3698d0ea6d84bbedf",
+                    "width": 108,
+                    "height": 72
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/VBcG8INvYYXohM8zBELh2-6Atfw4g18SczKMzFR8YFQ.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=216&amp;s=1c92dd11c20ff7c039c69a01a0ed444c",
+                    "width": 216,
+                    "height": 144
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/VBcG8INvYYXohM8zBELh2-6Atfw4g18SczKMzFR8YFQ.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=320&amp;s=b57eb40740122cd7917cc01f2737d7ce",
+                    "width": 320,
+                    "height": 213
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/VBcG8INvYYXohM8zBELh2-6Atfw4g18SczKMzFR8YFQ.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=640&amp;s=1d8e05785f809c0dd0bdd99b0f1ede41",
+                    "width": 640,
+                    "height": 426
+                  }
+                ],
+                "variants": {},
+                "id": "BuFFTIKUPJWCEapva-OlrUuFKzSGOeXBn5dwDT6v06g"
+              }
+            ]
+          },
+          "num_comments": 0,
+          "thumbnail": "http://b.thumbs.redditmedia.com/urVFob2emdCfUhY-QhRjBBYS8CsTlu19qasjS6faMec.jpg",
+          "subreddit_id": "t5_2qlqh",
+          "hide_score": true,
+          "edited": false,
+          "link_flair_css_class": null,
+          "author_flair_css_class": "userGreen",
+          "downs": 0,
+          "secure_media_embed": {},
+          "saved": false,
+          "removal_reason": null,
+          "post_hint": "link",
+          "stickied": false,
+          "from": null,
+          "is_self": false,
+          "from_id": null,
+          "permalink": "/r/Android/comments/3zm3gp/android_60_marshmallow_new_games_coming_to_shield/",
+          "locked": false,
+          "name": "t3_3zm3gp",
+          "created": 1452055648.0,
+          "url": "http://blogs.nvidia.com/blog/2016/01/05/shield-android-marshmallow/",
+          "author_flair_text": "Nexus 5 | Nexus 7 2013 | Nexus Player | ShieldTV",
+          "quarantine": false,
+          "title": "Android 6.0 Marshmallow, New Games Coming to SHIELD | NVIDIA Blog",
+          "created_utc": 1452026848.0,
+          "distinguished": null,
+          "mod_reports": [],
+          "visited": false,
+          "num_reports": null,
+          "ups": 11
+        }
+      },
+      {
+        "kind": "t3",
+        "data": {
+          "domain": "venturebeat.com",
+          "banned_by": null,
+          "media_embed": {},
+          "subreddit": "Android",
+          "selftext_html": null,
+          "selftext": "",
+          "likes": null,
+          "suggested_sort": null,
+          "user_reports": [],
+          "secure_media": null,
+          "link_flair_text": "Samsung",
+          "id": "3zgna3",
+          "from_kind": null,
+          "gilded": 0,
+          "archived": false,
+          "clicked": false,
+          "report_reasons": null,
+          "author": "OiYou",
+          "media": null,
+          "score": 854,
+          "approved_by": null,
+          "over_18": false,
+          "hidden": false,
+          "preview": {
+            "images": [
+              {
+                "source": {
+                  "url": "https://i.redditmedia.com/2lPiGoY9n6B9n0eN41_Wcp4VP7N_CBPuxj3eudv0Zps.jpg?s=8b8d069eceeddd2b5359bb2ea5480be7",
+                  "width": 780,
+                  "height": 400
+                },
+                "resolutions": [
+                  {
+                    "url": "https://i.redditmedia.com/2lPiGoY9n6B9n0eN41_Wcp4VP7N_CBPuxj3eudv0Zps.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=108&amp;s=d92ab491c06db1001cb16100619bb40a",
+                    "width": 108,
+                    "height": 55
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/2lPiGoY9n6B9n0eN41_Wcp4VP7N_CBPuxj3eudv0Zps.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=216&amp;s=7174ea8f32615842ba794f5f9b0a8c2e",
+                    "width": 216,
+                    "height": 110
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/2lPiGoY9n6B9n0eN41_Wcp4VP7N_CBPuxj3eudv0Zps.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=320&amp;s=1f7ed30564daef362db1cc6706986cc6",
+                    "width": 320,
+                    "height": 164
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/2lPiGoY9n6B9n0eN41_Wcp4VP7N_CBPuxj3eudv0Zps.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=640&amp;s=4da125fedd8a308d4f69961ae06d1b90",
+                    "width": 640,
+                    "height": 328
+                  }
+                ],
+                "variants": {},
+                "id": "qshbnf0d_LAt66p5yv65Na-c5o67rEA4jEjVmalRovQ"
+              }
+            ]
+          },
+          "num_comments": 342,
+          "thumbnail": "http://b.thumbs.redditmedia.com/qJUpoh3bISBzZ1iwpfYKq4UgLUSTwBFlkW9tghpxriA.jpg",
+          "subreddit_id": "t5_2qlqh",
+          "hide_score": false,
+          "edited": false,
+          "link_flair_css_class": "samsung",
+          "author_flair_css_class": null,
+          "downs": 0,
+          "secure_media_embed": {},
+          "saved": false,
+          "removal_reason": null,
+          "post_hint": "link",
+          "stickied": false,
+          "from": null,
+          "is_self": false,
+          "from_id": null,
+          "permalink": "/r/Android/comments/3zgna3/samsung_galaxy_s7_and_s7_edge_will_feature/",
+          "locked": false,
+          "name": "t3_3zgna3",
+          "created": 1451970100.0,
+          "url": "http://venturebeat.com/2016/01/04/samsung-galaxy-s7-and-s7-edge-will-feature-microsd-water-resistance-and-larger-batteries/",
+          "author_flair_text": null,
+          "quarantine": false,
+          "title": "Samsung Galaxy S7 and S7 edge will feature microSD, water resistance, and larger batteries",
+          "created_utc": 1451941300.0,
+          "distinguished": null,
+          "mod_reports": [],
+          "visited": false,
+          "num_reports": null,
+          "ups": 854
+        }
+      },
+      {
+        "kind": "t3",
+        "data": {
+          "domain": "self.Android",
+          "banned_by": null,
+          "media_embed": {},
+          "subreddit": "Android",
+          "selftext_html": "&lt;!-- SC_OFF --&gt;&lt;div class=\"md\"&gt;&lt;p&gt;I&amp;#39;m not just talking about an app you like, I&amp;#39;m talking about an app that adds something essential for your Android experience.&lt;/p&gt;\n\n&lt;p&gt;Apps like &lt;a href=\"https://play.google.com/store/apps/details?id=com.teslacoilsw.launcher&amp;amp;hl=en\"&gt;Nova Launcher&lt;/a&gt; or &lt;a href=\"https://play.google.com/store/apps/details?id=arun.com.chromer&amp;amp;hl=en\"&gt;Chromer&lt;/a&gt; are two great examples in my view.&lt;/p&gt;\n\n&lt;p&gt;I&amp;#39;d love to hear everyone else&amp;#39;s!&lt;/p&gt;\n&lt;/div&gt;&lt;!-- SC_ON --&gt;",
+          "selftext": "I'm not just talking about an app you like, I'm talking about an app that adds something essential for your Android experience.\n\nApps like [Nova Launcher](https://play.google.com/store/apps/details?id=com.teslacoilsw.launcher&amp;hl=en) or [Chromer](https://play.google.com/store/apps/details?id=arun.com.chromer&amp;hl=en) are two great examples in my view.\n\nI'd love to hear everyone else's!",
+          "likes": null,
+          "suggested_sort": null,
+          "user_reports": [],
+          "secure_media": null,
+          "link_flair_text": null,
+          "id": "3zicad",
+          "from_kind": null,
+          "gilded": 0,
+          "archived": false,
+          "clicked": false,
+          "report_reasons": null,
+          "author": "Theeeantifeminist",
+          "media": null,
+          "score": 222,
+          "approved_by": null,
+          "over_18": false,
+          "hidden": false,
+          "preview": {
+            "images": [
+              {
+                "source": {
+                  "url": "https://i.redditmedia.com/yuUYuZPWgIX314xU5nGu-6rO3VEwNS3ulbndp1gUcYI.jpg?s=251efee726260f9ee72cf584da93f85e",
+                  "width": 1200,
+                  "height": 900
+                },
+                "resolutions": [
+                  {
+                    "url": "https://i.redditmedia.com/yuUYuZPWgIX314xU5nGu-6rO3VEwNS3ulbndp1gUcYI.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=108&amp;s=0b51f4fafa0ce5ebb3e4767de2accd5e",
+                    "width": 108,
+                    "height": 81
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/yuUYuZPWgIX314xU5nGu-6rO3VEwNS3ulbndp1gUcYI.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=216&amp;s=dd5ffb61f2d88d0c3f27bb5af73e8b77",
+                    "width": 216,
+                    "height": 162
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/yuUYuZPWgIX314xU5nGu-6rO3VEwNS3ulbndp1gUcYI.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=320&amp;s=9a904846790012a13bba0cddbd14815e",
+                    "width": 320,
+                    "height": 240
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/yuUYuZPWgIX314xU5nGu-6rO3VEwNS3ulbndp1gUcYI.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=640&amp;s=3a7fd0ed99f272b020b11ca309228903",
+                    "width": 640,
+                    "height": 480
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/yuUYuZPWgIX314xU5nGu-6rO3VEwNS3ulbndp1gUcYI.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=960&amp;s=abdcaddac015b24ab71e6cf61fdf803d",
+                    "width": 960,
+                    "height": 720
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/yuUYuZPWgIX314xU5nGu-6rO3VEwNS3ulbndp1gUcYI.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=1080&amp;s=245c89a6262317875a96ed122e754fdc",
+                    "width": 1080,
+                    "height": 810
+                  }
+                ],
+                "variants": {},
+                "id": "_nZvwA5e6IgBuYcsczVVTyKlUWShVfv-LM8SIlaAETg"
+              }
+            ]
+          },
+          "num_comments": 267,
+          "thumbnail": "self",
+          "subreddit_id": "t5_2qlqh",
+          "hide_score": false,
+          "edited": 1451965759.0,
+          "link_flair_css_class": null,
+          "author_flair_css_class": "userBlack",
+          "downs": 0,
+          "secure_media_embed": {},
+          "saved": false,
+          "removal_reason": null,
+          "post_hint": "self",
+          "stickied": false,
+          "from": null,
+          "is_self": true,
+          "from_id": null,
+          "permalink": "/r/Android/comments/3zicad/which_apps_has_changed_your_android_experience/",
+          "locked": false,
+          "name": "t3_3zicad",
+          "created": 1451994233.0,
+          "url": "https://www.reddit.com/r/Android/comments/3zicad/which_apps_has_changed_your_android_experience/",
+          "author_flair_text": "LG V10",
+          "quarantine": false,
+          "title": "Which app(s) has changed your Android experience?",
+          "created_utc": 1451965433.0,
+          "distinguished": null,
+          "mod_reports": [],
+          "visited": false,
+          "num_reports": null,
+          "ups": 222
+        }
+      },
+      {
+        "kind": "t3",
+        "data": {
+          "domain": "youtube.com",
+          "banned_by": null,
+          "media_embed": {
+            "content": "&lt;iframe class=\"embedly-embed\" src=\"//cdn.embedly.com/widgets/media.html?src=https%3A%2F%2Fwww.youtube.com%2Fembed%2Fq9v-irJFsRw%3Ffeature%3Doembed&amp;url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3Dq9v-irJFsRw%26feature%3Dem-uploademail&amp;image=https%3A%2F%2Fi.ytimg.com%2Fvi%2Fq9v-irJFsRw%2Fhqdefault.jpg&amp;key=2aa3c4d5f3de4f5b9120b660ad850dc9&amp;type=text%2Fhtml&amp;schema=youtube\" width=\"600\" height=\"338\" scrolling=\"no\" frameborder=\"0\" allowfullscreen&gt;&lt;/iframe&gt;",
+            "width": 600,
+            "scrolling": false,
+            "height": 338
+          },
+          "subreddit": "Android",
+          "selftext_html": null,
+          "selftext": "",
+          "likes": null,
+          "suggested_sort": null,
+          "user_reports": [],
+          "secure_media": {
+            "type": "youtube.com",
+            "oembed": {
+              "provider_url": "https://www.youtube.com/",
+              "description": "My real world review of the LG V10 after using it for 2 months! LG V10 Pricing &amp; Specs: http://amzn.to/1ZLpkYB Subscribe! http://bit.ly/SubTechofTomorrow Try Amazon Prime FREE for 30 Days &amp; Support Tech of Tomorrow! http://amzn.to/12JFYau Don't forget to check out the website! http://www.techoftomorrow.com Check us out on Facebook!",
+              "title": "LG V10: 2 Months Later!",
+              "url": "http://www.youtube.com/watch?v=q9v-irJFsRw",
+              "author_name": "Tech of Tomorrow",
+              "height": 338,
+              "width": 600,
+              "html": "&lt;iframe class=\"embedly-embed\" src=\"https://cdn.embedly.com/widgets/media.html?src=https%3A%2F%2Fwww.youtube.com%2Fembed%2Fq9v-irJFsRw%3Ffeature%3Doembed&amp;url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3Dq9v-irJFsRw%26feature%3Dem-uploademail&amp;image=https%3A%2F%2Fi.ytimg.com%2Fvi%2Fq9v-irJFsRw%2Fhqdefault.jpg&amp;key=2aa3c4d5f3de4f5b9120b660ad850dc9&amp;type=text%2Fhtml&amp;schema=youtube\" width=\"600\" height=\"338\" scrolling=\"no\" frameborder=\"0\" allowfullscreen&gt;&lt;/iframe&gt;",
+              "thumbnail_width": 480,
+              "version": "1.0",
+              "provider_name": "YouTube",
+              "thumbnail_url": "https://i.embed.ly/1/image?url=https%3A%2F%2Fi.ytimg.com%2Fvi%2Fq9v-irJFsRw%2Fhqdefault.jpg&amp;key=b1e305db91cf4aa5a86b732cc9fffceb",
+              "type": "video",
+              "thumbnail_height": 360,
+              "author_url": "https://www.youtube.com/user/techtomorrow"
+            }
+          },
+          "link_flair_text": "LG",
+          "id": "3zlkqm",
+          "from_kind": null,
+          "gilded": 0,
+          "archived": false,
+          "clicked": false,
+          "report_reasons": null,
+          "author": "thebinderclip_",
+          "media": {
+            "type": "youtube.com",
+            "oembed": {
+              "provider_url": "https://www.youtube.com/",
+              "description": "My real world review of the LG V10 after using it for 2 months! LG V10 Pricing &amp; Specs: http://amzn.to/1ZLpkYB Subscribe! http://bit.ly/SubTechofTomorrow Try Amazon Prime FREE for 30 Days &amp; Support Tech of Tomorrow! http://amzn.to/12JFYau Don't forget to check out the website! http://www.techoftomorrow.com Check us out on Facebook!",
+              "title": "LG V10: 2 Months Later!",
+              "url": "http://www.youtube.com/watch?v=q9v-irJFsRw",
+              "author_name": "Tech of Tomorrow",
+              "height": 338,
+              "width": 600,
+              "html": "&lt;iframe class=\"embedly-embed\" src=\"//cdn.embedly.com/widgets/media.html?src=https%3A%2F%2Fwww.youtube.com%2Fembed%2Fq9v-irJFsRw%3Ffeature%3Doembed&amp;url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3Dq9v-irJFsRw%26feature%3Dem-uploademail&amp;image=https%3A%2F%2Fi.ytimg.com%2Fvi%2Fq9v-irJFsRw%2Fhqdefault.jpg&amp;key=2aa3c4d5f3de4f5b9120b660ad850dc9&amp;type=text%2Fhtml&amp;schema=youtube\" width=\"600\" height=\"338\" scrolling=\"no\" frameborder=\"0\" allowfullscreen&gt;&lt;/iframe&gt;",
+              "thumbnail_width": 480,
+              "version": "1.0",
+              "provider_name": "YouTube",
+              "thumbnail_url": "https://i.ytimg.com/vi/q9v-irJFsRw/hqdefault.jpg",
+              "type": "video",
+              "thumbnail_height": 360,
+              "author_url": "https://www.youtube.com/user/techtomorrow"
+            }
+          },
+          "score": 14,
+          "approved_by": null,
+          "over_18": false,
+          "hidden": false,
+          "preview": {
+            "images": [
+              {
+                "source": {
+                  "url": "https://i.redditmedia.com/ICAsqczXNxIM4J1JS1FZaapXVklSsLHSQHnFnGeo99c.jpg?s=b8bbb5fb085b37e5c4759f0a62349a10",
+                  "width": 480,
+                  "height": 360
+                },
+                "resolutions": [
+                  {
+                    "url": "https://i.redditmedia.com/ICAsqczXNxIM4J1JS1FZaapXVklSsLHSQHnFnGeo99c.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=108&amp;s=484f0a3f44b2cbf4ac65b8c204471274",
+                    "width": 108,
+                    "height": 81
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/ICAsqczXNxIM4J1JS1FZaapXVklSsLHSQHnFnGeo99c.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=216&amp;s=b991807084bb85c1b99b06d9ff0cf3df",
+                    "width": 216,
+                    "height": 162
+                  },
+                  {
+                    "url": "https://i.redditmedia.com/ICAsqczXNxIM4J1JS1FZaapXVklSsLHSQHnFnGeo99c.jpg?fit=crop&amp;crop=faces%2Centropy&amp;arh=2&amp;w=320&amp;s=de62aff64889827b7386dbdc08b44266",
+                    "width": 320,
+                    "height": 240
+                  }
+                ],
+                "variants": {},
+                "id": "cdniEpDPW7c4ItOkY4EpFwN_ydcF6rrTBeOsosWFXTY"
+              }
+            ]
+          },
+          "num_comments": 2,
+          "thumbnail": "http://a.thumbs.redditmedia.com/ETfAEttKfLQHoEqT-xCnd33rhKk0xpv7s2aS8SG05T8.jpg",
+          "subreddit_id": "t5_2qlqh",
+          "hide_score": false,
+          "edited": false,
+          "link_flair_css_class": "lg",
+          "author_flair_css_class": "userBlue",
+          "downs": 0,
+          "secure_media_embed": {
+            "content": "&lt;iframe class=\"embedly-embed\" src=\"https://cdn.embedly.com/widgets/media.html?src=https%3A%2F%2Fwww.youtube.com%2Fembed%2Fq9v-irJFsRw%3Ffeature%3Doembed&amp;url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3Dq9v-irJFsRw%26feature%3Dem-uploademail&amp;image=https%3A%2F%2Fi.ytimg.com%2Fvi%2Fq9v-irJFsRw%2Fhqdefault.jpg&amp;key=2aa3c4d5f3de4f5b9120b660ad850dc9&amp;type=text%2Fhtml&amp;schema=youtube\" width=\"600\" height=\"338\" scrolling=\"no\" frameborder=\"0\" allowfullscreen&gt;&lt;/iframe&gt;",
+            "width": 600,
+            "scrolling": false,
+            "height": 338
+          },
+          "saved": false,
+          "removal_reason": null,
+          "post_hint": "rich:video",
+          "stickied": false,
+          "from": null,
+          "is_self": false,
+          "from_id": null,
+          "permalink": "/r/Android/comments/3zlkqm/lg_v10_2_months_later/",
+          "locked": false,
+          "name": "t3_3zlkqm",
+          "created": 1452049124.0,
+          "url": "https://www.youtube.com/watch?v=q9v-irJFsRw&amp;feature=em-uploademail",
+          "author_flair_text": "6P",
+          "quarantine": false,
+          "title": "LG V10: 2 Months Later",
+          "created_utc": 1452020324.0,
+          "distinguished": null,
+          "mod_reports": [],
+          "visited": false,
+          "num_reports": null,
+          "ups": 14
+        }
+      }
+    ],
+    "after": "t3_3zlkqm",
+    "before": null
+  }
+}
