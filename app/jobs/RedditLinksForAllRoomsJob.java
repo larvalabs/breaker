@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Created by matt on 1/5/16.
  */
-@Every("1m")
+@Every("1min")
 public class RedditLinksForAllRoomsJob extends Job {
 
     @Override
