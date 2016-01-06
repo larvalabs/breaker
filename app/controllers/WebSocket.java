@@ -2,32 +2,28 @@ package controllers;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.gson.JsonSyntaxException;
 import com.larvalabs.redditchat.Constants;
 import com.larvalabs.redditchat.dataobj.JsonChatRoom;
 import com.larvalabs.redditchat.dataobj.JsonMessage;
-import com.larvalabs.redditchat.dataobj.JsonUser;
 import com.larvalabs.redditchat.realtime.ChatRoomStream;
 import com.larvalabs.redditchat.util.Util;
-import com.sun.tools.internal.jxc.apt.Const;
 import jobs.SaveNewMessageJob;
-import org.jboss.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
-import org.jsoup.Jsoup;
-import org.jsoup.safety.Whitelist;
-import play.*;
-import play.libs.F;
-import play.libs.F.*;
+import models.ChatRoom;
+import models.ChatUser;
+import models.ChatUserRoomJoin;
+import play.Logger;
+import play.libs.F.EventStream;
+import play.libs.F.Promise;
 import play.mvc.Controller;
-import play.mvc.Http.*;
-
-import static play.libs.F.Matcher.*;
-import static play.mvc.Http.WebSocketEvent.*;
-
-import models.*;
+import play.mvc.Http.WebSocketClose;
+import play.mvc.Http.WebSocketFrame;
 import play.mvc.WebSocketController;
 import play.mvc.With;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
 
 @With(ForceSSL.class)
 public class WebSocket extends Controller {
