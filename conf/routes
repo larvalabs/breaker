@@ -8,7 +8,6 @@ GET     /demo                                   Application.enterDemo
 GET     /auth                                   Application.auth
 GET     /logout                                 Application.logout
 GET     /testlogin                              Application.testForceLogin
-GET     /join/{roomName}                           Application.join
 # Doing these specific controller actions so we can support static loading of landing page assets below
 *       /application/{action}                   Application.{action}
 *       /usermanage/{action}                    UserManage.{action}
@@ -25,7 +24,7 @@ GET     /longpolling/room/messages              LongPolling.waitMessages
 POST    /longpolling/room/messages              LongPolling.say  
 GET     /longpolling/room/leave                 LongPolling.leave    
 
-# WebSocket demo
+# WebSocket
 GET     /c                                      WebSocket.room
 GET     /c/{roomName}                           WebSocket.room
 WS      /websocket/room/socket                  WebSocket.ChatRoomSocket.join

@@ -50,19 +50,6 @@ public class Application extends PreloadUserController {
         render();
     }
 
-    public static void join(String roomName) {
-        ChatUser chatUser = connected();
-        if (chatUser == null || chatUser.accessToken == null) {
-            preAuthForRoomJoin(roomName);
-            return;
-        }
-
-        session.remove(SESSION_JOINROOM);
-        ChatRoom chatRoom = ChatRoom.findOrCreateForName(roomName);
-        chatUser.joinChatRoom(chatRoom);
-        WebSocket.room(roomName);
-    }
-
     public static void logout() {
         session.remove(SESSION_UID);
         redirect("/");
@@ -113,7 +100,8 @@ public class Application extends PreloadUserController {
 
             String joiningRoom = session.get(SESSION_JOINROOM);
             if (joiningRoom != null) {
-                join(joiningRoom);
+                session.remove(SESSION_JOINROOM);
+                WebSocket.room(joiningRoom);
             } else {
                 WebSocket.room(null);
             }
