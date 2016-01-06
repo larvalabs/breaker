@@ -9,8 +9,11 @@ import com.larvalabs.redditchat.dataobj.JsonMessage;
 import com.larvalabs.redditchat.dataobj.JsonUser;
 import com.larvalabs.redditchat.realtime.ChatRoomStream;
 import com.larvalabs.redditchat.util.Util;
+import com.sun.tools.internal.jxc.apt.Const;
 import jobs.SaveNewMessageJob;
 import org.jboss.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
 import play.*;
 import play.libs.F;
 import play.libs.F.*;
@@ -139,14 +142,18 @@ public class WebSocket extends Controller {
                 // Case: TextEvent received on the socket
                 if (awaitResult instanceof WebSocketFrame) {
                     WebSocketFrame frame = (WebSocketFrame) awaitResult;
-                    if (!frame.isBinary) {
+                    if (!frame.isBinary && frame.textData != null) {
                         String userMessageJson = frame.textData;
 
                         try {
                             Logger.debug("Message received from socket (" + user.username + "): " + userMessageJson);
                             JsonObject msgObj = new JsonParser().parse(userMessageJson).getAsJsonObject();
                             String roomName = msgObj.get("roomName").getAsString();
-                            String message = msgObj.get("message").getAsString();
+                            String message = Util.cleanAndLimitLength(msgObj.get("message").getAsString(), Constants.MAX_MSG_LENGTH);
+                            if (message == null || message.length() == 0) {
+                                Logger.debug("After cleaning message length was 0, dropping.");
+                                continue;
+                            }
                             RoomConnection roomConnection = roomConnections.get(roomName);
                             if (roomConnection != null) {
                                 if (message.toLowerCase().equals("##ping##")) {

@@ -5,6 +5,8 @@ public class Constants {
     public static final String REDDIT_BASE_URL = "https://www.reddit.com";
     public static final String BREAKER_BOT_USERNAME = "breakerbot";
 
+    public static final int MAX_MSG_LENGTH = 500;
+
     public static final String CHATROOM_DEFAULT = "breakerapp";
     public static final String DEFAULT_PROFILE_URL = "/public/img/user-anon.png";
     public static final long MAX_PROFILE_IMAGE_SIZE_BYTES = 300 * 1000;

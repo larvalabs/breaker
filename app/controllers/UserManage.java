@@ -2,6 +2,7 @@ package controllers;
 
 import com.larvalabs.redditchat.Constants;
 import com.larvalabs.redditchat.util.TopAlert;
+import com.larvalabs.redditchat.util.Util;
 import models.ChatUser;
 import org.jets3t.service.S3Service;
 import org.jets3t.service.S3ServiceException;
@@ -34,8 +35,8 @@ public class UserManage extends PreloadUserController {
 
     public static void save(@Max(100) @Email String email, @Max(100) String status, File profileimage) {
         ChatUser user = connected();
-        user.setEmail(email);
-        user.setStatusMessage(status);
+        user.setEmail(Util.clean(email));
+        user.setStatusMessage(Util.clean(status));
 
         if (profileimage != null) {
             if (profileimage.length() > Constants.MAX_PROFILE_IMAGE_SIZE_BYTES) {
