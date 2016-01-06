@@ -68,7 +68,7 @@ public class ChatUser extends Model {
 
     public boolean shadowBan = false;
 
-    @Lob
+    @Column(length=10000)
     public String lastResponseApiMe;
 
     public String statusMessage;

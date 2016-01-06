@@ -3,6 +3,7 @@ package models;
 import play.data.validation.Unique;
 import play.db.jpa.Model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.Table;
@@ -20,9 +21,9 @@ public class RedditLink extends Model {
     private String subreddit;
     private String permalink;
     private String url;
-    @Lob
+    @Column(length=1000)
     private String title;
-    @Lob
+    @Column(length=10000)
     private String json;
 
     public RedditLink(String redditId, String subreddit, String permalink, String url, String title, String json) {
