@@ -77,7 +77,7 @@ public class RedditLinkBotJob extends Job {
                     redditLink.save();
 
                     Message message = new Message(botUser, room,
-                            "New hot post: " + title + " - " + Constants.REDDIT_BASE_URL + "/" + id + " - score: " + score + " - comments: " + comments);
+                            title + " - " + Constants.REDDIT_BASE_URL + "/" + id + " - score: " + score + " - comments: " + comments);
                     message.save();
 
                     ChatRoomStream.get(subredditToProcess).say(JsonMessage.from(message));

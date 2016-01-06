@@ -46,8 +46,8 @@
 
 <script type="text/html" id="message_tmpl">
     <% if(event.type == 'message') { %>
-    <li id="<%= getMessageSelector(event.message.uuid).substring(1) %>" class="list-group-item no-border p-t-s p-b-xs clearfix b-l-3x b-l-info">
-        <a class="avatar thumb pull-left m-r" href="https://reddit.com/u/<%= event.user.username %>" target="_blank">
+    <li id="<%= getMessageSelector(event.message.uuid).substring(1) %>" class="list-group-item no-border p-t-s p-b-xs clearfix b-l-3x b-l-white">
+        <a class="avatar thumb-sm pull-left m-r" href="https://reddit.com/u/<%= event.user.username %>" target="_blank">
             <img src="<%= event.user.profileImageUrl.indexOf('user-anon') > -1 ? '/public/img/user-empty.png' :  event.user.profileImageUrl %>">
         </a>
         <div class="pull-right text-sm text-muted">
@@ -56,7 +56,7 @@
         <div class="clear">
             <div><a class="text-md text-dark-dker" href="https://reddit.com/u/<%= event.user.username %>" target="_blank"><%= event.user.username %></a>
                 <!--<span class="label bg-light m-l-sm ">angular</span>--></div>
-            <div class="m-t-xs "><%= event.message.messageHtml %></div>
+            <div class="m-t-midxs"><%= event.message.messageHtml %></div>
             <% if (event.message.imageLinks && event.message.imageLinks.length > 0) { %>
             <div class="m-t-sm">
                 <a href="<%= event.message.imageLinks[0] %>" target="_blank">
@@ -100,8 +100,8 @@
 </script>
 
 <script type="text/html" id="messageshort_tmpl">
-    <li id="<%= getMessageSelector(event.message.uuid).substring(1) %>" class="list-group-item p-t-none p-b-xs no-border clearfix b-l-3x b-l-info">
-        <a class="avatar thumb pull-left m-r" href="https://reddit.com/u/<%= event.user.username %>" target="_blank">
+    <li id="<%= getMessageSelector(event.message.uuid).substring(1) %>" class="list-group-item p-t-none p-b-xs no-border clearfix b-l-3x b-l-white">
+        <a class="avatar thumb-sm pull-left m-r" href="https://reddit.com/u/<%= event.user.username %>" target="_blank">
             &nbsp;
         </a>
         <div class="clear">
@@ -371,6 +371,7 @@
                                     </ul>
                                     <!-- / list of messages -->
 
+                                    <div id="bottom-spacer" class="padder-v-sm bg-white b-l-3x b-l-white"></div>
                                 </div>
                             </div>
                         </div>
