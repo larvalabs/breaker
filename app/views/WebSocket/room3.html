@@ -460,8 +460,9 @@
     var rooms = [];
     var stayDownObjs = [];
     var lastMessageUsernameForRoom = [];
-    var selectedRoomName;
+    var currentSelectedRoomName;
     var socket;
+    var firstTimeRoomList = true;
 
     var getIndexForRoom = function (roomName) {
         for (var i = 0; i < rooms.length; i++) {
@@ -478,7 +479,7 @@
     };
 
     var getCurrentSelectedRoomObject = function() {
-        return getRoomForName(selectedRoomName);
+        return getRoomForName(currentSelectedRoomName);
     };
 
     var getStaydownForRoom = function (roomName) {
@@ -540,6 +541,14 @@
         return msg;
     };
 
+
+    function styleSelectedRoomInSideBar(roomName) {
+        $('[id^=roomlist_]').removeClass('active');
+        $('[id^=roomlist_]').find('.roomname').removeClass('font-bold');
+        $(getRoomlistEntrySelector(roomName)).addClass('active');
+        $(getRoomlistEntrySelector(roomName)).find('.roomname').addClass('font-bold');
+    }
+
     var selectRoom = function (roomName) {
         console.log("Select room: " + roomName);
 
@@ -551,11 +560,7 @@
         $('[id^=userlistparent_]').hide();
         $('#userlistparent_'+roomName).show();
 
-        // Select correct room in sidebar
-        $('[id^=roomlist_]').removeClass('active');
-        $('[id^=roomlist_]').find('.roomname').removeClass('font-bold');
-        $(getRoomlistEntrySelector(roomName)).addClass('active');
-        $(getRoomlistEntrySelector(roomName)).find('.roomname').addClass('font-bold');
+        styleSelectedRoomInSideBar(roomName);
 
         // Change title
         $('#room-link').text('#' + roomName);
@@ -565,7 +570,7 @@
         resetUnreadCountForRoom(roomName);
         getStaydownForRoom(roomName).checkdown();
 
-        selectedRoomName = roomName;
+        currentSelectedRoomName = roomName;
     };
 
     function resetUnreadCountForRoom(roomName) {
@@ -609,7 +614,7 @@
                 messageElement.val('');
                 var messageObj = makeMessage(messageElement.attr('data-roomname'), message);
                 socket.send(JSON.stringify(messageObj))
-                getStaydownForRoom(selectedRoomName).intend_down = true;
+                getStaydownForRoom(currentSelectedRoomName).intend_down = true;
 
                 e.preventDefault()
             }
@@ -720,15 +725,22 @@
 
                 requestMemberlist(roomObj.name);
             }
-            rooms = event.rooms;
-            for (var i = 0; i < rooms.length; i++) {
-                rooms[i].localUnreadCount = 0;
+
+            if (firstTimeRoomList) {
+                rooms = event.rooms;
+                for (var i = 0; i < rooms.length; i++) {
+                    rooms[i].localUnreadCount = 0;
+                }
+                if (preSelectRoomName) {
+                    selectRoom(preSelectRoomName);
+                } else {
+                    selectRoom(rooms[0].name);
+                }
+
+                firstTimeRoomList = false;
             }
-            if (preSelectRoomName) {
-                selectRoom(preSelectRoomName);
-            } else {
-                selectRoom(rooms[0].name);
-            }
+
+            styleSelectedRoomInSideBar(currentSelectedRoomName);
             setupRoomClicks();
             setupMessageInputHandlers();
         } else if (event.type === 'message') {
@@ -751,7 +763,7 @@
                     updateTitle();
 
                     incrementUnreadCountForRoom(roomName);
-                } else if (roomName != selectedRoomName) {
+                } else if (roomName != currentSelectedRoomName) {
                     incrementUnreadCountForRoom(roomName);
                 }
 
@@ -796,7 +808,7 @@
 
     var previewLoaded = function (e) {
         // Makes the UI feel a little more responsive to trigger a check right when preview loads
-        getStaydownForRoom(selectedRoomName).checkdown();
+        getStaydownForRoom(currentSelectedRoomName).checkdown();
     };
 
     var updateTitle = function () {
@@ -819,7 +831,7 @@
         hasFocus = true;
         numNewMessagesTotal = 0;
         updateTitle();
-        resetUnreadCountForRoom(selectedRoomName);
+        resetUnreadCountForRoom(currentSelectedRoomName);
     };
 
     if (/*@cc_on!@*/false) { // check for Internet Explorer
