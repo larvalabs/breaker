@@ -50,6 +50,18 @@ public class Application extends PreloadUserController {
         render();
     }
 
+    public static void create(String roomName) {
+        ChatUser chatUser = connected();
+        if (chatUser == null || chatUser.accessToken == null) {
+            index();
+            return;
+        }
+
+        ChatRoom chatRoom = ChatRoom.findOrCreateForName(roomName);
+        chatUser.joinChatRoom(chatRoom);
+        WebSocket.room(roomName);
+    }
+
     public static void logout() {
         session.remove(SESSION_UID);
         redirect("/");
