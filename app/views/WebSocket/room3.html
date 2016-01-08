@@ -32,12 +32,12 @@
 
 <script type="text/html" id="userentry_tmpl">
     <li id="<%= getUserEntrySelector(roomName, user.username).substring(1) %>" class="list-group-item">
-        <a herf class="pull-left thumb-sm avatar m-r">
+        <a href="https://reddit.com/u/<%= user.username %>" class="pull-left thumb-sm avatar m-r" target="_blank">
             <img src="<%= user.profileImageUrl %>" alt="..." class="img-circle">
             <i class="on b-white bottom"></i>
         </a>
         <div class="clear">
-            <div><a href><%= user.username %></a></div>
+            <div><a href="https://reddit.com/u/<%= user.username %>" target="_blank"><%= user.username %></a></div>
             <small class="text-muted"><%= user.statusMessage ? user.statusMessage : '&nbsp;' %></small>
         </div>
     </li>
