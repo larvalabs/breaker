@@ -35,6 +35,9 @@ public class ChatRoom extends Model {
 
     public boolean needsScoreRecalc;
 
+    public boolean open = false;
+    public int numNeededToOpen = Constants.NUM_PEOPLE_TO_OPEN_ROOM;
+
     @ManyToMany(mappedBy = "watchedRooms", fetch = FetchType.LAZY)
     public Set<ChatUser> watchers = new HashSet<ChatUser>();
 
@@ -108,6 +111,22 @@ public class ChatRoom extends Model {
             this.needsScoreRecalc = needsScoreRecalc;
             save();
         }
+    }
+
+    public boolean isOpen() {
+        return open;
+    }
+
+    public void setOpen(boolean open) {
+        this.open = open;
+    }
+
+    public int getNumNeededToOpen() {
+        return numNeededToOpen;
+    }
+
+    public void setNumNeededToOpen(int numNeededToOpen) {
+        this.numNeededToOpen = numNeededToOpen;
     }
 
     public Set<ChatUser> getWatchers() {

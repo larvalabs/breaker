@@ -20,10 +20,7 @@ import play.mvc.Http.WebSocketFrame;
 import play.mvc.WebSocketController;
 import play.mvc.With;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @With(ForceSSL.class)
 public class WebSocket extends Controller {
@@ -42,16 +39,27 @@ public class WebSocket extends Controller {
 
     public static void room(String roomName) {
         ChatUser user = getUser();
+        ChatRoom room = null;
+        if (roomName != null) {
+            room = ChatRoom.findOrCreateForName(roomName);
+            if (!room.isOpen()) {
+                Logger.info("Room "+roomName+" not open, directing to room wait page.");
+                Application.roomWait(roomName, null);
+                return;
+            }
+        }
+
         if (user == null) {
             Application.preAuthForRoomJoin(roomName);
             return;
         }
-        if (roomName == null) {
+        if (roomName == null || room == null) {
             if (user.getChatRoomJoins().size() == 0) {
-                user.joinChatRoom(ChatRoom.findByName(Constants.CHATROOM_DEFAULT));
+                room = ChatRoom.findByName(Constants.CHATROOM_DEFAULT);
+                user.joinChatRoom(room);
             }
         } else {
-            user.joinChatRoom(ChatRoom.findByName(roomName));
+            user.joinChatRoom(room);
         }
         render("WebSocket/room3.html", user, roomName);
     }
@@ -90,17 +98,22 @@ public class WebSocket extends Controller {
             List<ChatUserRoomJoin> chatRoomJoins = user.getChatRoomJoins();
 
             HashMap<String, RoomConnection> roomConnections = new HashMap<java.lang.String, RoomConnection>();
+            ArrayList<JsonChatRoom> jsonChatRoomsList = new ArrayList<JsonChatRoom>();
 
             {
-                JsonChatRoom[] jsonChatRooms = new JsonChatRoom[chatRoomJoins.size()];
                 int i = 0;
                 for (ChatUserRoomJoin chatRoomJoin : chatRoomJoins) {
                     ChatRoom room = chatRoomJoin.getRoom();
-                    jsonChatRooms[i] = JsonChatRoom.from(room);
-                    Logger.debug("Connecting to chat room stream for " + room.getName());
-                    addConnection(user, connectionId, roomConnections, room);
-                    i++;
+                    if (room.isOpen()) {
+                        jsonChatRoomsList.add(JsonChatRoom.from(room));
+                        Logger.debug("Connecting to chat room stream for " + room.getName());
+                        addConnection(user, connectionId, roomConnections, room);
+                        i++;
+                    }
                 }
+
+                JsonChatRoom[] jsonChatRooms = jsonChatRoomsList.toArray(new JsonChatRoom[]{});
+
                 Arrays.sort(jsonChatRooms, new Comparator<JsonChatRoom>() {
                     @Override
                     public int compare(JsonChatRoom o1, JsonChatRoom o2) {

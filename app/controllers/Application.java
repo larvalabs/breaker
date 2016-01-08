@@ -3,6 +3,7 @@ package controllers;
 import com.google.gson.JsonObject;
 import models.ChatRoom;
 import models.ChatUser;
+import models.ChatUserRoomJoin;
 import org.apache.commons.codec.binary.Base64;
 import play.*;
 import play.libs.OAuth2;
@@ -27,6 +28,7 @@ public class Application extends PreloadUserController {
     public static final String COOKIE_CHATTOKEN = "chattoken";
 
     public static final String SESSION_JOINROOM = "joinroomname";
+    public static final String SESSION_WAITROOM = "waitroomname";
 
     public static void testForceLogin() {
         setUserInSession(ChatUser.findByUsername("chattest1"));
@@ -80,6 +82,93 @@ public class Application extends PreloadUserController {
         }
     }
 
+    public static void roomWait(String roomName, Boolean accept) {
+        if (roomName == null) {
+            index();
+            return;
+        }
+
+        boolean accepting = false;
+        if (accept != null && accept) {
+            accepting = true;
+        }
+
+        ChatUser user = connected();
+        ChatRoom room = ChatRoom.findOrCreateForName(roomName);
+
+        if (accepting) {
+            if (user == null) {
+                // this is a logged out user trying to wait for this room, go to auth
+                Logger.debug("User not logged in, redirecting to auth.");
+                session.put(SESSION_WAITROOM, roomName);
+                auth();
+                return;
+            } else {
+                // this is a logged in user trying to wait for this room, wait it up
+                if (ChatUserRoomJoin.findByUserAndRoom(user, room) == null) {
+                    Logger.debug("User not already waiting for this room, reducing count needed.");
+                    room.setNumNeededToOpen(room.getNumNeededToOpen() - 1);
+                    if (room.getNumNeededToOpen() == 0) {
+                        room.setOpen(true);
+                    }
+                    room.save();
+                    user.joinChatRoom(room);
+                }
+
+                roomWait(roomName, null);
+            }
+        } else {
+            if (user != null) {
+                if (ChatUserRoomJoin.findByUserAndRoom(user, room) != null) {
+                    Logger.debug("User already waiting for this room, show accept.");
+                    render("Application/roomWaitAccept.html", user, room);
+                    return;
+                } else {
+                    render(user, room);
+                    return;
+                }
+            } else {
+                render(user, room);
+                return;
+            }
+        }
+
+
+    }
+
+/*
+    public static void roomWaitAccept(String roomName) {
+        if (roomName == null) {
+            index();
+            return;
+        }
+
+        if (user == null) {
+            session.put(SESSION_WAITROOM, roomName);
+            auth();
+        } else {
+            ChatRoom room = ChatRoom.findByName(roomName);
+            if (ChatUserRoomJoin.findByUserAndRoom(user, room) == null) {
+                Logger.debug("User not already waiting for this room, reducing count needed.");
+                room.setNumNeededToOpen(room.getNumNeededToOpen() - 1);
+                if (room.getNumNeededToOpen() == 0) {
+                    room.setOpen(true);
+                }
+                room.save();
+                user.joinChatRoom(room);
+            }
+
+
+            if (room.getNumNeededToOpen() == 0) {
+                // todo make template
+                render("Application/roomWaitOpen.html", user, room);
+            } else {
+                render(user, room);
+            }
+        }
+    }
+    */
+
     public static void auth() {
         Logger.debug("Received auth response.");
         if (OAuth2.isCodeResponse()) {
@@ -111,9 +200,13 @@ public class Application extends PreloadUserController {
             }
 
             String joiningRoom = session.get(SESSION_JOINROOM);
+            String waitingRoom = session.get(SESSION_WAITROOM);
             if (joiningRoom != null) {
                 session.remove(SESSION_JOINROOM);
                 WebSocket.room(joiningRoom);
+            } else if (waitingRoom != null) {
+                session.remove(SESSION_WAITROOM);
+                roomWait(waitingRoom, true);
             } else {
                 WebSocket.room(null);
             }

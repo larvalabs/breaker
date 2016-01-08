@@ -10,6 +10,7 @@ public class Constants {
     public static final String CHATROOM_DEFAULT = "breakerapp";
     public static final String DEFAULT_PROFILE_URL = "/public/img/user-anon.png";
     public static final long MAX_PROFILE_IMAGE_SIZE_BYTES = 300 * 1000;
+    public static final int NUM_PEOPLE_TO_OPEN_ROOM = 5;
 
     public enum Flair {
         DEV_SAME_ROOM(0x1F451),

@@ -7,6 +7,7 @@ GET     /test                                   Application.test
 GET     /demo                                   Application.enterDemo
 GET     /auth                                   Application.auth
 GET     /logout                                 Application.logout
+GET     /openroom/{roomName}                    Application.roomWait
 GET     /testlogin                              Application.testForceLogin
 # Doing these specific controller actions so we can support static loading of landing page assets below
 *       /application/{action}                   Application.{action}

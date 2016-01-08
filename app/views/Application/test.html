@@ -8,9 +8,9 @@
     <p>Logged in user: ${user.username}</p>
     #{/if}
 
-    <p><a href="@{Application.join('breakerapp')}">breakerapp chat (eventual default)</a></p>
-    <p><a href="@{Application.join('webdev')}">webdev chat</a></p>
-    <p><a href="@{Application.join('hockey')}">hockey chat</a></p>
+    <p><a href="@{WebSocket.room('breakerapp')}">breakerapp chat (eventual default)</a></p>
+    <p><a href="@{WebSocket.room('webdev')}">webdev chat</a></p>
+    <p><a href="@{WebSocket.room('hockey')}">hockey chat</a></p>
     <p></p>
     <p><a href="@{Application.testForceLogin()}">login as chattest1</a></p>
     <p><a href="@{Application.logout()}">logout</a></p>
