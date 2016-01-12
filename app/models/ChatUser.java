@@ -50,7 +50,7 @@ public class ChatUser extends Model {
 
     public String profileImageKey;
 
-    public String notificationPreference;
+    public String notificationPreference = PREFVAL_NOTIFICATION_EVERYTHING;
 
     @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(name = "user_starredroom")

@@ -33,10 +33,13 @@ public class UserManage extends PreloadUserController {
         render(user);
     }
 
-    public static void save(@Max(100) @Email String email, @Max(100) String status, File profileimage) {
+    public static void save(@Max(100) @Email String email, @Max(100) String status, String notificationPref, File profileimage) {
         ChatUser user = connected();
         user.setEmail(Util.clean(email));
         user.setStatusMessage(Util.clean(status));
+        if (notificationPref != null) {
+            user.setNotificationPreference(notificationPref);
+        }
 
         if (profileimage != null) {
             if (profileimage.length() > Constants.MAX_PROFILE_IMAGE_SIZE_BYTES) {
