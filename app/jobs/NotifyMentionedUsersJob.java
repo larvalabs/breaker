@@ -41,10 +41,12 @@ public class NotifyMentionedUsersJob extends Job {
                 Logger.info("User mentioned: " + mentionedUser.getUsername() + " in message id " + message.getId());
                 if (mentionedUser.isNotificationEnabledForMention()) {
 
-                    String subject = "You were mentioneed in "+chatRoom.getName() + " chat";
+                    String subject = "You were mentioned in "+chatRoom.getName() + " chat";
                     String content = message.getUser().getUsername() + " mentioned you in " + chatRoom.getName() + " chat:\n\n "
                             + "\"" + message.getMessageText() + "\"\n\n"
-                            + "Go to " + url + " to response.";
+                            + "Go to " + url + " to respond.\n\n"
+                            + "\n"
+                            + "Notification preferences at https://www.breakerapp.com/usermanage/prefs";
                     RedditUtil.sendPrivateMessageFromBot(mentionedUser.getUsername(), subject, content);
                 }
             }
