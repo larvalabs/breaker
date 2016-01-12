@@ -13,6 +13,8 @@
 
 <link href="@{'/public/stylesheets/messenger.css'}" rel="stylesheet" type="text/css" />
 <link href="@{'/public/stylesheets/messenger-theme-flat.css'}" rel="stylesheet" type="text/css" />
+<link href="@{'/public/stylesheets/jquery.mentionsInput.css'}" rel="stylesheet" type="text/css" />
+<link href="@{'/public/stylesheets/screen.css'}" rel="stylesheet" type="text/css" />
 #{/set}
 
 <body>
@@ -377,8 +379,8 @@
                         </div>
 
                         <div class="padder padder-v b-t b-light text-center">
-                            <input type="text" class="form-control input-message"
-                                   placeholder="Type a message to ${roomName}...">
+                            <textarea type="text" class="form-control input-message mention"
+                                   placeholder="Type a message to ${roomName}..."></textarea>
                         </div>
 
                     </div>
@@ -440,6 +442,10 @@
 <script src="@{'/public/js/ui-nav.js'}"></script>
 <script src="@{'/public/js/ui-toggle.js'}"></script>
 <script src="@{'/public/js/ui-client.js'}"></script>
+
+<script src="@{'/public/javascripts/underscore-min.js'}"></script>
+<script src="@{'/public/javascripts/jquery.mentionsInput.js'}"></script>
+<script src="@{'/public/javascripts/jquery.elastic.source.js'}"></script>
 
 <script src="@{'/public/javascripts/reconnecting-websocket.min.js'}" type="text/javascript"
         charset="${_response_encoding}"></script>
@@ -531,6 +537,7 @@
 
             display(eventObj);
         };
+
     });
 
 
@@ -721,6 +728,54 @@
                     // Clone and configure user list for this room
                     var userlistParentClone = $('#userlistparent').first().clone().appendTo('#rightcol');
                     userlistParentClone.attr('id', getUserListParentSelector(roomObj.name));
+
+                    // User mentions
+                    $(parentClone).find('textarea.mention').mentionsInput({
+                        onDataRequest:function (mode, query, callback) {
+
+                            $.getJSON('@{Application.userSearch()}?roomName='+roomObj.name+'&query='+query, function(responseData) {
+                                var responseObj = responseData;
+                                var responseObjs = [];
+
+                                function addUsersFromResponse(userArray) {
+                                    for (var i = 0; i < userArray.length; i++) {
+                                        var userObj = userArray[i];
+                                        var respUserObj = {
+                                            id: userObj.id,
+                                            name: '@' + userObj.username,
+                                            avatar: userObj.profileImageUrl,
+                                            type: 'contact'
+                                        };
+                                        responseObjs.push(respUserObj);
+                                    }
+                                }
+
+                                addUsersFromResponse(responseObj.onlineUsers);
+                                addUsersFromResponse(responseObj.offlineUsers);
+//                                responseData = _.filter(responseData, function(item) { return item.name.toLowerCase().indexOf(query.toLowerCase()) > -1 });
+                                callback.call(this, responseObjs);
+                            });
+
+/*
+                            var data = [
+                                { id:1, name:'@pents900', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'type':'contact' },
+                                { id:2, name:'skwex', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'type':'contact' },
+                                { id:3, name:'megamatt2000', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'type':'contact' },
+                                { id:4, name:'Kasper Hulthin', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'type':'contact' },
+                                { id:5, name:'Andreas Haugstrup', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'type':'contact' },
+                                { id:6, name:'Pete Lacey', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'type':'contact' },
+                                { id:7, name:'kenneth@auchenberg.dk', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'type':'contact' },
+                                { id:8, name:'Pete Awesome Lacey', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'type':'contact' },
+                                { id:9, name:'Kenneth Hulthin', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'type':'contact' }
+                            ];
+
+                            data = _.filter(data, function(item) { return item.name.toLowerCase().indexOf(query.toLowerCase()) > -1 });
+
+                            callback.call(this, data);
+*/
+                        }
+                    });
+
                 }
 
                 requestMemberlist(roomObj.name);

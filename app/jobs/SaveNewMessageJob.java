@@ -15,6 +15,7 @@ public class SaveNewMessageJob extends Job<Message> {
     private ChatUser user;
     private String roomName;
     private String messageText;
+    private Message savedMessage;
 
     public SaveNewMessageJob(String uuid, ChatUser user, String roomName, String messageText) {
         this.uuid = uuid;
@@ -27,8 +28,18 @@ public class SaveNewMessageJob extends Job<Message> {
     public Message doJobWithResult() throws Exception {
         Logger.info("Saving message to room " + roomName);
         ChatRoom chatRoom = ChatRoom.findByName(roomName);
-        Message message = new Message(uuid, user, chatRoom, messageText);
-        message.save();
-        return message;
+        savedMessage = new Message(uuid, user, chatRoom, messageText);
+        savedMessage.save();
+
+        return savedMessage;
+    }
+
+    @Override
+    public void after() {
+        super.after();
+
+        if (messageText.contains("@")) {
+            new NotifyMentionedUsersJob(savedMessage.getId()).now();
+        }
     }
 }

@@ -7,4 +7,11 @@ require:
     - com.amazonaws -> aws-java-sdk 1.1.9
     - net.java.dev.jets3t -> jets3t 0.8.1
     - org.jsoup -> jsoup 1.8.3
-#    - com.amazonaws -> aws-java-sdk-s3 1.10.44
+    - net.dean.jraw -> JRAW 0.8.0
+
+repositories:
+    - jcenter:
+        type: iBiblio
+        root: "http://jcenter.bintray.com"
+        contains:
+            - net.dean.jraw -> *

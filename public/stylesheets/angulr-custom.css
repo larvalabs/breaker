@@ -33,3 +33,8 @@
     padding-top: 10px;
     padding-bottom: 10px;
 }
+
+.input-message {
+    padding-top: 9px !important;
+    height: 40px !important;
+}

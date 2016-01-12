@@ -1,10 +1,12 @@
 package controllers;
 
 import com.google.gson.JsonObject;
+import com.larvalabs.redditchat.dataobj.JsonUserSearch;
 import models.ChatRoom;
 import models.ChatUser;
 import models.ChatUserRoomJoin;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.StringUtils;
 import play.*;
 import play.libs.OAuth2;
 import play.libs.WS;
@@ -254,4 +256,26 @@ public class Application extends PreloadUserController {
         return headers;
     }
 
+    public static void userSearch(String roomName, String query) {
+        Logger.info("Searching in room " + roomName + " for user " + query);
+        ChatRoom room = ChatRoom.findByName(roomName);
+        if (room == null) {
+            renderText("Not found.");
+            return;
+        }
+
+        if (StringUtils.isEmpty(query)) {
+            renderText("Query empty.");
+            return;
+        }
+
+        // todo this will eventually be too slow, but for now fuuuuuuugettiboutit
+        List<ChatUser> users = room.getUsers();
+        TreeSet<String> usernamesPresent = room.getUsernamesPresent();
+        JsonUserSearch userSearch = JsonUserSearch.make(roomName, query, users, usernamesPresent);
+//        Logger.debug("Present  count: " + userSearch.onlineUsers.length);
+//        Logger.debug("Online user count: " + userSearch.onlineUsers.length);
+//        Logger.debug("Offline user count: " + userSearch.offlineUsers.length);
+        renderJSON(userSearch);
+    }
 }
