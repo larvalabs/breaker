@@ -634,15 +634,17 @@
     };
 
     // Ping socket
-    setInterval(function () {
-        if (socket.readyState == 1) {
-            // console.log("Sending ping.");
-            var messageObj = makeMessage(rooms[0].name, "##ping##");
-            socket.send(JSON.stringify(messageObj));
-        } else {
-            console.log("Can't ping, connection not open.");
-        }
-    }, 10000);
+    var startPing = function(roomName) {
+        setInterval(function () {
+            if (socket.readyState == 1) {
+                // console.log("Sending ping.");
+                var messageObj = makeMessage(roomName, "##ping##");
+                socket.send(JSON.stringify(messageObj));
+            } else {
+                console.log("Can't ping, connection not open.");
+            }
+        }, 20000);
+    };
 
     // Uncomment this block to test network disconnect/reconnect
 /*
@@ -729,53 +731,59 @@
                     var userlistParentClone = $('#userlistparent').first().clone().appendTo('#rightcol');
                     userlistParentClone.attr('id', getUserListParentSelector(roomObj.name));
 
-                    // User mentions
-                    $(parentClone).find('textarea.mention').mentionsInput({
-                        onDataRequest:function (mode, query, callback) {
+                    var setupMentions = function() {
+                        var thisRoomObj = roomObj;
 
-                            $.getJSON('@{Application.userSearch()}?roomName='+roomObj.name+'&query='+query, function(responseData) {
-                                var responseObj = responseData;
-                                var responseObjs = [];
+                        // User mentions
+                        $(parentClone).find('textarea.mention').mentionsInput({
+                            onDataRequest:function (mode, query, callback) {
 
-                                function addUsersFromResponse(userArray) {
-                                    for (var i = 0; i < userArray.length; i++) {
-                                        var userObj = userArray[i];
-                                        var respUserObj = {
-                                            id: userObj.id,
-                                            name: '@' + userObj.username,
-                                            avatar: userObj.profileImageUrl,
-                                            type: 'contact'
-                                        };
-                                        responseObjs.push(respUserObj);
+                                $.getJSON('@{Application.userSearch()}?roomName='+thisRoomObj.name+'&query='+query, function(responseData) {
+                                    var responseObj = responseData;
+                                    var responseObjs = [];
+
+                                    function addUsersFromResponse(userArray) {
+                                        for (var i = 0; i < userArray.length; i++) {
+                                            var userObj = userArray[i];
+                                            var respUserObj = {
+                                                id: userObj.id,
+                                                name: '@' + userObj.username,
+                                                avatar: userObj.profileImageUrl,
+                                                type: 'contact'
+                                            };
+                                            responseObjs.push(respUserObj);
+                                        }
                                     }
-                                }
 
-                                addUsersFromResponse(responseObj.onlineUsers);
-                                addUsersFromResponse(responseObj.offlineUsers);
+                                    addUsersFromResponse(responseObj.onlineUsers);
+                                    addUsersFromResponse(responseObj.offlineUsers);
 //                                responseData = _.filter(responseData, function(item) { return item.name.toLowerCase().indexOf(query.toLowerCase()) > -1 });
-                                callback.call(this, responseObjs);
-                            });
+                                    callback.call(this, responseObjs);
+                                });
 
-/*
-                            var data = [
-                                { id:1, name:'@pents900', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'type':'contact' },
-                                { id:2, name:'skwex', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'type':'contact' },
-                                { id:3, name:'megamatt2000', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'type':'contact' },
-                                { id:4, name:'Kasper Hulthin', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'type':'contact' },
-                                { id:5, name:'Andreas Haugstrup', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'type':'contact' },
-                                { id:6, name:'Pete Lacey', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'type':'contact' },
-                                { id:7, name:'kenneth@auchenberg.dk', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'type':'contact' },
-                                { id:8, name:'Pete Awesome Lacey', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'type':'contact' },
-                                { id:9, name:'Kenneth Hulthin', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'type':'contact' }
-                            ];
+                                /*
+                                 var data = [
+                                 { id:1, name:'@pents900', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'type':'contact' },
+                                 { id:2, name:'skwex', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'type':'contact' },
+                                 { id:3, name:'megamatt2000', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'type':'contact' },
+                                 { id:4, name:'Kasper Hulthin', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'type':'contact' },
+                                 { id:5, name:'Andreas Haugstrup', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'type':'contact' },
+                                 { id:6, name:'Pete Lacey', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'type':'contact' },
+                                 { id:7, name:'kenneth@auchenberg.dk', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'type':'contact' },
+                                 { id:8, name:'Pete Awesome Lacey', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'type':'contact' },
+                                 { id:9, name:'Kenneth Hulthin', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'type':'contact' }
+                                 ];
 
-                            data = _.filter(data, function(item) { return item.name.toLowerCase().indexOf(query.toLowerCase()) > -1 });
+                                 data = _.filter(data, function(item) { return item.name.toLowerCase().indexOf(query.toLowerCase()) > -1 });
 
-                            callback.call(this, data);
-*/
-                        }
-                    });
+                                 callback.call(this, data);
+                                 */
+                            }
+                        });
+                    };
+                    setupMentions();
 
+                    startPing(roomObj.name);
                 }
 
                 requestMemberlist(roomObj.name);
