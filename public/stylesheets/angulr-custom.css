@@ -5,6 +5,14 @@
     vertical-align: middle;
 }
 
+.floatleft {
+    float:left;
+}
+
+.fillwidth {
+    width: 100%;
+}
+
 .p-t-s {
     padding-small: 4px !important;
 }

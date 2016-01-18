@@ -59,6 +59,10 @@ public class ChatUser extends Model {
     public Set<ChatRoom> watchedRooms = new HashSet<ChatRoom>();
 
     @ManyToMany(cascade = CascadeType.PERSIST)
+    @JoinTable(name = "user_moderatorroom")
+    public Set<ChatRoom> moderatedRooms = new HashSet<ChatRoom>();
+
+    @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(name = "user_flagging_user")
     public Set<ChatUser> flaggingUsers = new HashSet<ChatUser>();
 
@@ -189,6 +193,14 @@ public class ChatUser extends Model {
 
     public void setWatchedRooms(Set<ChatRoom> watchedRooms) {
         this.watchedRooms = watchedRooms;
+    }
+
+    public Set<ChatRoom> getModeratedRooms() {
+        return moderatedRooms;
+    }
+
+    public void setModeratedRooms(Set<ChatRoom> moderatedRooms) {
+        this.moderatedRooms = moderatedRooms;
     }
 
     public Set<ChatUser> getFlaggingUsers() {
@@ -366,6 +378,10 @@ public class ChatUser extends Model {
         return flagCount >= Constants.THRESHOLD_USER_FLAG;
     }
 
+    public boolean isModerator(ChatRoom chatRoom) {
+        return getModeratedRooms().contains(chatRoom);
+    }
+
     public void watchRoom(ChatRoom room) {
         watchedRooms.add(room);
         save();
@@ -373,6 +389,16 @@ public class ChatUser extends Model {
 
     public void stopWatching(ChatRoom room) {
         watchedRooms.remove(room);
+        save();
+    }
+
+    public void moderateRoom(ChatRoom room) {
+        moderatedRooms.add(room);
+        save();
+    }
+
+    public void stopModerating(ChatRoom room) {
+        moderatedRooms.remove(room);
         save();
     }
 

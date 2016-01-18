@@ -12,6 +12,7 @@ GET     /testlogin                              Application.testForceLogin
 # Doing these specific controller actions so we can support static loading of landing page assets below
 *       /application/{action}                   Application.{action}
 *       /usermanage/{action}                    UserManage.{action}
+*       /roommanage/{action}                    RoomManage.{action}
 
 # Refresh demo
 GET     /refresh                                Refresh.index

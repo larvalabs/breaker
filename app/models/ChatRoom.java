@@ -25,7 +25,6 @@ public class ChatRoom extends Model {
     @Column(unique = true)
     public String name;
 
-    public String iconUrl;
     public int iconUrlSource = ICON_SOURCE_NONE;
     public boolean noIconAvailableFromStore = false;
     public Date iconRetrieveDate;
@@ -44,6 +43,15 @@ public class ChatRoom extends Model {
     @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(name = "user_bannedroom")
     public Set<ChatUser> bannedUsers = new HashSet<ChatUser>();
+
+    // Moderator stuff
+    @ManyToMany(mappedBy = "moderatedRooms", fetch = FetchType.LAZY)
+    public Set<ChatUser> moderators = new HashSet<ChatUser>();
+
+    public String iconUrl;
+    public String banner;
+    public int karmaThreshold;
+    public int sidebarColor;
 
     public ChatRoom(String name) {
         this.name = name;
@@ -92,6 +100,30 @@ public class ChatRoom extends Model {
 
     public void setNoIconAvailableFromStore(boolean noIconAvailableFromStore) {
         this.noIconAvailableFromStore = noIconAvailableFromStore;
+    }
+
+    public String getBanner() {
+        return banner;
+    }
+
+    public void setBanner(String banner) {
+        this.banner = banner;
+    }
+
+    public int getKarmaThreshold() {
+        return karmaThreshold;
+    }
+
+    public void setKarmaThreshold(int karmaThreshold) {
+        this.karmaThreshold = karmaThreshold;
+    }
+
+    public int getSidebarColor() {
+        return sidebarColor;
+    }
+
+    public void setSidebarColor(int sidebarColor) {
+        this.sidebarColor = sidebarColor;
     }
 
     public long getNumberOfUsers() {
@@ -149,6 +181,14 @@ public class ChatRoom extends Model {
         this.bannedUsers = bannedUsers;
     }
 
+    public Set<ChatUser> getModerators() {
+        return moderators;
+    }
+
+    public void setModerators(Set<ChatUser> moderators) {
+        this.moderators = moderators;
+    }
+
     // Do stuff zone
 
     public static ChatRoom findByName(String name) {
@@ -179,6 +219,10 @@ public class ChatRoom extends Model {
         Collections.reverse(itemAndAfterItems);
         itemAndAfterItems.addAll(beforeItems);
         return itemAndAfterItems;
+    }
+
+    public boolean isModerator(ChatUser user) {
+        return getModerators().contains(user);
     }
 
     public List<Message> getMessagesWithoutBannedBefore(ChatUser loggedInUser, long beforeMessageId, int limit) {
