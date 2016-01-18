@@ -76,11 +76,13 @@ public class WebSocket extends Controller {
         public ChatRoom room;
         public ChatRoomStream roomStream;
         public EventStream<ChatRoomStream.Event> eventStream;
+        public boolean isModerator;
 
-        public RoomConnection(ChatRoom room, ChatRoomStream roomStream, EventStream<ChatRoomStream.Event> eventStream) {
+        public RoomConnection(ChatRoom room, ChatRoomStream roomStream, EventStream<ChatRoomStream.Event> eventStream, boolean isModerator) {
             this.room = room;
             this.roomStream = roomStream;
             this.eventStream = eventStream;
+            this.isModerator = isModerator;
         }
     }
 
@@ -93,7 +95,6 @@ public class WebSocket extends Controller {
                 disconnect();
                 return;
             }
-
             String connectionId = Util.getUUID();
             List<ChatUserRoomJoin> chatRoomJoins = user.getChatRoomJoins();
 
@@ -170,6 +171,9 @@ public class WebSocket extends Controller {
                                     //                        Logger.debug("Ping msg - skipping.");
                                 } else if (message.toLowerCase().equals("##memberlist##")) {
                                     Logger.debug("User " + user.username + " requested member list.");
+                                    // Send room info
+                                    outbound.send(new ChatRoomStream.RoomInfo(JsonChatRoom.from(roomConnection.room, user), roomConnection.room.getBanner(), roomConnection.room.getIconUrl(), roomConnection.room.getSidebarColor(), roomConnection.isModerator).toJson());
+                                    // Now send member list.
                                     outbound.send(new ChatRoomStream.MemberList(JsonChatRoom.from(roomConnection.room, user),
                                             roomConnection.room.getPresentJsonUsers()).toJson());
                                 } else {
@@ -244,9 +248,10 @@ public class WebSocket extends Controller {
                 Logger.debug("First connection for " + user.username + ", broadcasting join for connectionId " + connectionId);
             }
             room.userPresent(user, connectionId);
+            boolean isModerator = room.isModerator(user);
             EventStream<ChatRoomStream.Event> roomMessagesStream = roomStream.join(room, user, broadcastJoin);
 
-            roomConnections.put(room.name, new RoomConnection(room, roomStream, roomMessagesStream));
+            roomConnections.put(room.name, new RoomConnection(room, roomStream, roomMessagesStream, isModerator));
         }
 
     }

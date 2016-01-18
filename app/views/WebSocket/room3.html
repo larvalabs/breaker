@@ -158,10 +158,14 @@
             -->
             <!-- / buttons -->
 
-            <ul class="nav navbar-nav hidden-sm">
+            <span class="m-t-xs m-r-sm floatleft">
+                <img id="room-icon" width="40" height="40"/>
+            </span>
 
-                <li class="m-t-xs m-b-xxs middle">
-                    <h1 id="room-title" class="m-n font-thin h4 text-black"><a id="room-link" href="#" target="_blank">#roomname</a></h1>
+            <ul class="nav navbar-nav hidden-sm" >
+
+                <li class="m-t-xs m-b-xxs middle" >
+                    <span id="room-title" class="h4 m-n font-thin h4 text-black"><a id="room-link" href="#" target="_blank">#roomname</a></span> <span><a id="room-pref" class="hidden">(customize)</a></span><br/>
                     <small id="room-modmessage" class="text-muted">
                         Message from the moderators to you, the user.
                     </small>
@@ -843,6 +847,24 @@
             }
         } else if (event.type === 'leave') {
             $(getUserEntrySelector(event.room.name, event.user.username)).remove();
+        } else if (event.type === 'roominfo') {
+            if (event.banner) {
+                $('#room-modmessage').text(event.banner);
+            } else {
+                $('#room-modmessage').text('');
+            }
+            if (event.iconUrl) {
+                $('#room-icon').attr('src', event.iconUrl);
+                $('#room-icon').show();
+            } else {
+                $('#room-icon').hide();
+            }
+            if (event.isModerator) {
+                $('#room-pref').attr('href', '@{RoomManage.roomPrefs}?roomName=' + event.room.name);
+                $('#room-pref').removeClass('hidden');
+            } else {
+                $('#room-pref').addClass('hidden');
+            }
         } else if (event.type === 'memberlist') {
             console.log("Member list for " + event.room.name);
             var arrayLength = event.users.length;

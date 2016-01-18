@@ -1,0 +1,279 @@
+#{extends 'main.html' /}
+#{set title:'Room Preferences' /}
+
+#{set 'moreScripts'}
+<link rel="stylesheet" href="@{'/public/libs/assets/animate.css/animate.css'}" type="text/css"/>
+<link rel="stylesheet" href="@{'/public/libs/assets/font-awesome/css/font-awesome.min.css'}" type="text/css"/>
+<link rel="stylesheet" href="@{'/public/libs/assets/simple-line-icons/css/simple-line-icons.css'}" type="text/css"/>
+<link rel="stylesheet" href="@{'/public/libs/jquery/bootstrap/dist/css/bootstrap.css'}" type="text/css"/>
+
+<link rel="stylesheet" href="@{'/public/css/font.css'}" type="text/css"/>
+<link rel="stylesheet" href="@{'/public/css/app.css'}" type="text/css"/>
+<link rel="stylesheet" href="@{'/public/stylesheets/angulr-custom.css'}" type="text/css"/>
+
+<link href="@{'/public/stylesheets/messenger.css'}" rel="stylesheet" type="text/css" />
+<link href="@{'/public/stylesheets/messenger-theme-flat.css'}" rel="stylesheet" type="text/css" />
+#{/set}
+
+<body>
+
+<div class="app app-header-fixed app-aside-fixed">
+
+    <!-- header -->
+    <header id="header" class="app-header navbar" role="menu">
+        <!-- navbar header -->
+        <div class="navbar-header bg-dark">
+            <button class="pull-right visible-xs dk" ui-toggle-class="show" target=".navbar-collapse">
+                <i class="glyphicon glyphicon-cog"></i>
+            </button>
+            <button class="pull-right visible-xs" ui-toggle-class="off-screen" target=".app-aside" ui-scroll="app">
+                <i class="glyphicon glyphicon-align-justify"></i>
+            </button>
+            <!-- brand -->
+            <a href="@{Application.index()}" class="navbar-brand text-lt">
+                <i class="fa fa-terminal"></i>
+                <!--<img src="/public/img/logo.png" alt="." class="hide">-->
+                <span class="hidden-folded m-l-xs">breaker</span>
+            </a>
+            <!-- / brand -->
+        </div>
+        <!-- / navbar header -->
+
+        <!-- navbar collapse -->
+        <div class="collapse pos-rlt navbar-collapse box-shadow bg-white-only">
+            <!-- buttons -->
+            <!--
+                        <div class="nav navbar-nav hidden-xs">
+                            <a href="#" class="btn no-shadow navbar-btn" ui-toggle-class="app-aside-folded" target=".app">
+                                <i class="fa fa-dedent fa-fw text"></i>
+                                <i class="fa fa-indent fa-fw text-active"></i>
+                            </a>
+                            <a href="#" class="btn no-shadow navbar-btn" ui-toggle-class="show" target="#aside-user">
+                                <i class="icon-user fa-fw"></i>
+                            </a>
+                        </div>
+            -->
+            <!-- / buttons -->
+
+            <ul class="nav navbar-nav hidden-sm">
+
+                <li class="m-t-xs m-b-xxs middle">
+                    <h1 id="room-title" class="m-n font-thin h4 text-black"><a id="room-link" href="#" target="_blank"></a></h1>
+                    <small id="room-modmessage" class="text-muted">
+
+                    </small>
+                </li>
+
+            </ul>
+
+            <!-- nabar right -->
+            <ul class="nav navbar-nav navbar-right">
+
+                <li class="dropdown v-middle">
+                    <a href="#" data-toggle="dropdown" class="dropdown-toggle clear" data-toggle="dropdown">
+                      <span class="thumb-sm avatar pull-right m-t-n-sm m-b-n-sm m-l-sm">
+                        <img src="${user.getProfileImageUrl()}" alt="...">
+                        <i class="on md b-white bottom"></i>
+                      </span>
+                        <span class="hidden-sm hidden-md">${user.username}</span> <b class="caret"></b>
+                    </a>
+                    <!-- dropdown -->
+                    <ul class="dropdown-menu w">
+                        <li>
+                            <a ui-sref="access.signin" href="@{Application.logout}">Logout</a>
+                        </li>
+                    </ul>
+                    <!-- / dropdown -->
+                </li>
+            </ul>
+            <!-- / navbar right -->
+        </div>
+        <!-- / navbar collapse -->
+    </header>
+    <!-- / header -->
+
+
+    <!-- aside -->
+    <aside id="aside" class="app-aside hidden-xs bg-dark">
+        <div class="aside-wrap">
+            <div class="navi-wrap">
+                <!-- user -->
+                <div class="clearfix hidden-xs text-center hide" id="aside-user">
+                    <div class="dropdown wrapper">
+                        <a href="app.page.profile">
+                <span class="thumb-lg w-auto-folded avatar m-t-sm">
+                  <img src="/public/img/user-anon.png" class="img-full" alt="...">
+                </span>
+                        </a>
+                        <a href="#" data-toggle="dropdown" class="dropdown-toggle hidden-folded">
+                <span class="clear">
+                  <span class="block m-t-sm">
+                    <strong class="font-bold text-lt">John.Smith</strong>
+                    <b class="caret"></b>
+                  </span>
+                  <span class="text-muted text-xs block">Art Director</span>
+                </span>
+                        </a>
+                        <!-- dropdown -->
+                        <ul class="dropdown-menu animated fadeInRight w hidden-folded">
+                            <li class="wrapper b-b m-b-sm bg-info m-t-n-xs">
+                                <span class="arrow top hidden-folded arrow-info"></span>
+                                <div>
+                                    <p>300mb of 500mb used</p>
+                                </div>
+                                <div class="progress progress-xs m-b-none dker">
+                                    <div class="progress-bar bg-white" data-toggle="tooltip" data-original-title="50%"
+                                         style="width: 50%"></div>
+                                </div>
+                            </li>
+                            <li>
+                                <a href>Settings</a>
+                            </li>
+                            <li>
+                                <a href="page_profile.html">Profile</a>
+                            </li>
+                            <li>
+                                <a href>
+                                    <span class="badge bg-danger pull-right">3</span>
+                                    Notifications
+                                </a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a href="page_signin.html">Logout</a>
+                            </li>
+                        </ul>
+                        <!-- / dropdown -->
+                    </div>
+                    <div class="line dk hidden-folded"></div>
+                </div>
+                <!-- / user -->
+
+                <!-- nav -->
+                <nav ui-nav class="navi clearfix">
+                    <ul id="roomlist" class="nav">
+                        <li class="hidden-folded padder m-t m-b-sm text-muted text-xs">
+                            <span></span>
+                        </li>
+
+<!--
+                        <li>
+                            <a href="mail.html">
+                                <b class="label bg-info pull-right">9</b>
+                                &lt;!&ndash;<i class="glyphicon glyphicon-envelope icon text-info-lter"></i>&ndash;&gt;
+                                <span class="font-bold">#${roomName}</span>
+                            </a>
+                        </li>
+-->
+                    </ul>
+                </nav>
+
+            </div>
+        </div>
+    </aside>
+    <!-- / aside -->
+
+
+    <!-- content -->
+    <div id="content" class="app-content" role="main">
+        <div class="app-content-body app-content-full h-full">
+
+
+            <!-- hbox layout -->
+            <div class="hbox hbox-auto-xs bg-light " ng-init="
+                  app.settings.asideFolded = true;
+                  app.settings.asideFixed = true;
+                  app.settings.asideDock = false;
+                  app.settings.container = false;
+                  app.hideAside = false
+                  ">
+                <!-- column -->
+                <div id="centercol" class="col">
+
+                    #{alerts /}
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading font-bold m-t-sm">
+                            Room Preferences (Moderators Only)
+                        </div>
+                        <div class="panel-body">
+                            <form class="form-horizontal" method="post" enctype="multipart/form-data" action="@{RoomManage.savePrefs()}">
+
+                                <input type="hidden" name="roomId" value="${chatRoom.id}"/>
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Banner</label>
+                                    <div class="col-sm-10">
+                                        <input name="banner" type="text" class="form-control" value="${chatRoom.banner}" placeholder="Banner message above chat for all users.">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Icon URL</label>
+                                    <div class="col-sm-10">
+                                        <input name="iconUrl" type="text" class="form-control" value="${chatRoom.iconUrl}" placeholder="Optional URL to an image icon for this chat room.">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Minimum Karma to Chat</label>
+                                    <div class="col-sm-10">
+                                        <input name="karmaThreshold" type="text" class="form-control" value="${chatRoom.karmaThreshold}" placeholder="Minimum karma users must have to participate in chat.">
+                                    </div>
+                                </div>
+
+                                <div class="line line-dashed b-b line-lg pull-in"></div>
+                                <div class="form-group">
+                                    <div class="col-sm-4 col-sm-offset-2">
+                                        <a href="@{WebSocket.room()}" class="btn btn-default">Cancel</a>
+                                        <button type="submit" class="btn btn-primary">Save changes</button>
+                                    </div>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- /column -->
+
+            </div>
+            <!-- /hbox layout -->
+
+
+        </div>
+    </div>
+    <!-- /content -->
+
+    <!-- footer -->
+    <!--
+        <footer id="footer" class="app-footer" role="footer">
+            <div class="wrapper b-t bg-light">
+                <span class="pull-right">2.1.0 <a href ui-scroll="app" class="m-l-sm text-muted"><i
+                        class="fa fa-long-arrow-up"></i></a></span>
+                &copy; 2015 Copyright.
+            </div>
+        </footer>
+    -->
+    <!-- / footer -->
+
+
+</div>
+
+<script src="@{'/public/libs/jquery/bootstrap/dist/js/bootstrap.js'}"></script>
+<script src="@{'/public/js/ui-load.js'}"></script>
+<script src="@{'/public/js/ui-jp.config.js'}"></script>
+<script src="@{'/public/js/ui-jp.js'}"></script>
+<script src="@{'/public/js/ui-nav.js'}"></script>
+<script src="@{'/public/js/ui-toggle.js'}"></script>
+<script src="@{'/public/js/ui-client.js'}"></script>
+
+<script src="@{'/public/javascripts/reconnecting-websocket.min.js'}" type="text/javascript"
+        charset="${_response_encoding}"></script>
+<script src="@{'/public/javascripts/staydown.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+<script src="@{'/public/javascripts/jquery.timeago.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+<script src="@{'/public/javascripts/messenger.min.js'}" type="text/javascript"></script>
+<script src="@{'/public/javascripts/messenger-theme-flat.js'}" type="text/javascript"></script>
+
+
+</body>
