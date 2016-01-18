@@ -118,6 +118,17 @@
         </div>
     </li>
 </script>
+
+<script type="text/html" id="servermessage_tmpl">
+    <li id="<%= getMessageSelector(event.message.uuid).substring(1) %>" class="list-group-item p-t-none p-b-xs no-border clearfix b-l-3x b-l-white">
+        <a class="avatar thumb-sm pull-left m-r" target="_blank">
+            &nbsp;
+        </a>
+        <div class="clear">
+            <div class="m-t-xs "><i><%= event.message %></i></div>
+        </div>
+    </li>
+</script>
 <!-- end templates -->
 
 <div class="app app-header-fixed app-aside-fixed">
@@ -761,23 +772,6 @@
                                     callback.call(this, responseObjs);
                                 });
 
-                                /*
-                                 var data = [
-                                 { id:1, name:'@pents900', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'type':'contact' },
-                                 { id:2, name:'skwex', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'type':'contact' },
-                                 { id:3, name:'megamatt2000', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'type':'contact' },
-                                 { id:4, name:'Kasper Hulthin', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'type':'contact' },
-                                 { id:5, name:'Andreas Haugstrup', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'type':'contact' },
-                                 { id:6, name:'Pete Lacey', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'type':'contact' },
-                                 { id:7, name:'kenneth@auchenberg.dk', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'type':'contact' },
-                                 { id:8, name:'Pete Awesome Lacey', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'type':'contact' },
-                                 { id:9, name:'Kenneth Hulthin', 'avatar':'http://cdn0.4dots.com/i/customavatars/avatar7112_1.gif', 'type':'contact' }
-                                 ];
-
-                                 data = _.filter(data, function(item) { return item.name.toLowerCase().indexOf(query.toLowerCase()) > -1 });
-
-                                 callback.call(this, data);
-                                 */
                             }
                         });
                     };
@@ -836,6 +830,10 @@
             setLastMessageUsernameForRoom(event.room.name, event.user.username);
 
             jQuery(getMessageSelector(event.message.uuid)+' .timeago').timeago();
+        } else if (event.type === 'servermessage') {
+            var msgTemplateId = 'servermessage_tmpl';
+            var msg = tmpl(msgTemplateId, {event: event});
+            $(getThreadSelector(event.room.name)).append(msg);
         } else if (event.type === 'join') {
             if ($(getUserEntrySelector(event.room.name, event.user.username)).length == 0) {
                 $(getUserListSelector(event.room.name)).append(tmpl('userentry_tmpl',

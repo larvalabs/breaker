@@ -62,7 +62,12 @@ public class Application extends PreloadUserController {
         }
 
         ChatRoom chatRoom = ChatRoom.findOrCreateForName(roomName);
-        chatUser.joinChatRoom(chatRoom);
+        try {
+            chatUser.joinChatRoom(chatRoom);
+        } catch (ChatUser.UserBannedException e) {
+            index();
+            return;
+        }
         WebSocket.room(roomName);
     }
 
@@ -114,7 +119,11 @@ public class Application extends PreloadUserController {
                         room.setOpen(true);
                     }
                     room.save();
-                    user.joinChatRoom(room);
+                    try {
+                        user.joinChatRoom(room);
+                    } catch (ChatUser.UserBannedException e) {
+                        Logger.error(e, "User banned, can't wait to open.");
+                    }
                 }
 
                 roomWait(roomName, null);

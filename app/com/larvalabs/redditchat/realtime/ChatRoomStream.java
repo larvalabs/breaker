@@ -5,6 +5,7 @@ import java.util.*;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.larvalabs.redditchat.ChatCommands;
 import com.larvalabs.redditchat.dataobj.JsonChatRoom;
 import com.larvalabs.redditchat.dataobj.JsonMessage;
 import com.larvalabs.redditchat.dataobj.JsonUser;
@@ -14,6 +15,7 @@ import models.ChatUser;
 import models.Message;
 import play.Logger;
 import play.libs.F.*;
+import play.server.Server;
 
 public class ChatRoomStream {
 
@@ -117,6 +119,8 @@ public class ChatRoomStream {
         public static final String TYPE_MEMBERLIST = "memberlist";
         public static final String TYPE_JOIN = "join";
         public static final String TYPE_MESSAGE = "message";
+        public static final String TYPE_SERVERMESSAGE = "servermessage";
+        public static final String TYPE_SERVERCOMMAND = "servercommand";
         public static final String TYPE_LEAVE = "leave";
 
         public Event() {
@@ -145,6 +149,11 @@ public class ChatRoomStream {
                 return gson.fromJson(jsonStr, Message.class);
             } else if (type.equals(TYPE_LEAVE)) {
                 return gson.fromJson(jsonStr, Leave.class);
+            } else if (type.equals(TYPE_SERVERMESSAGE)) {
+                // Note these server commands are normally only sent locally to the websocket
+                return gson.fromJson(jsonStr, ServerMessage.class);
+            } else if (type.equals(TYPE_SERVERCOMMAND)) {
+                return gson.fromJson(jsonStr, ServerCommand.class);
             }
             Logger.error("Even");
             return null;
@@ -220,7 +229,25 @@ public class ChatRoomStream {
         }
         
     }
-    
+
+    public static class ServerMessage extends Event {
+        public String message;
+
+        public ServerMessage(JsonChatRoom room, String message) {
+            super(TYPE_SERVERMESSAGE, room);
+            this.message = message;
+        }
+    }
+
+    public static class ServerCommand extends Event {
+        public ChatCommands.Command command;
+
+        public ServerCommand(JsonChatRoom room, ChatCommands.Command command) {
+            super(TYPE_SERVERCOMMAND, room);
+            this.command = command;
+        }
+    }
+
     // ~~~~~~~~~ Chat room factory
 
     private static HashMap<String, ChatRoomStream> rooms = new HashMap<String, ChatRoomStream>();

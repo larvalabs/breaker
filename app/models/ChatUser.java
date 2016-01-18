@@ -3,7 +3,6 @@ package models;
 import com.larvalabs.redditchat.Constants;
 import com.larvalabs.redditchat.util.Util;
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.annotations.Index;
 import play.Logger;
 import play.Play;
 import play.db.DB;
@@ -14,7 +13,6 @@ import javax.persistence.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Entity
@@ -301,11 +299,17 @@ public class ChatUser extends Model {
         return ChatUser.find("username", username).first();
     }
 
-    public void joinChatRoom(ChatRoom chatRoom) {
+    public void joinChatRoom(ChatRoom chatRoom) throws UserBannedException {
         if (chatRoom == null) {
             Logger.warn("Chat room was null, cannot join.");
             return;
         }
+
+        if (chatRoom.getBannedUsers().contains(this)) {
+            Logger.warn("User " + username + " can't join room because banned: " + chatRoom.getName());
+            throw new UserBannedException();
+        }
+
         ChatUserRoomJoin join = ChatUserRoomJoin.findByUserAndRoom(this, chatRoom);
         if (join != null) {
             return;
@@ -316,6 +320,17 @@ public class ChatUser extends Model {
         chatRoom.numberOfUsers++;
         chatRoom.save();
         Logger.info("User " + username + ": " + chatRoom.name + " : " + chatRoom.numberOfUsers);
+    }
+
+    public void leaveChatRoom(ChatRoom chatRoom) {
+        ChatUserRoomJoin join = ChatUserRoomJoin.findByUserAndRoom(this, chatRoom);
+        if (join != null) {
+            Logger.debug("Not a member of that room.");
+            return;
+        }
+
+        join.delete();
+        Logger.info(username + " no longer member of " + chatRoom.name);
     }
 
     public List<ChatUserRoomJoin> getChatRoomJoins() {
@@ -465,5 +480,8 @@ public class ChatUser extends Model {
             user.save();
         }
         return user;
+    }
+
+    public class UserBannedException extends Exception {
     }
 }

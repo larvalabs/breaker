@@ -2,6 +2,7 @@ package controllers;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.larvalabs.redditchat.ChatCommands;
 import com.larvalabs.redditchat.Constants;
 import com.larvalabs.redditchat.dataobj.JsonChatRoom;
 import com.larvalabs.redditchat.dataobj.JsonMessage;
@@ -56,10 +57,20 @@ public class WebSocket extends Controller {
         if (roomName == null || room == null) {
             if (user.getChatRoomJoins().size() == 0) {
                 room = ChatRoom.findByName(Constants.CHATROOM_DEFAULT);
-                user.joinChatRoom(room);
+                try {
+                    user.joinChatRoom(room);
+                } catch (ChatUser.UserBannedException e) {
+                    // todo show message that they're banned
+                    Application.index();
+                }
             }
         } else {
-            user.joinChatRoom(room);
+            try {
+                user.joinChatRoom(room);
+            } catch (ChatUser.UserBannedException e) {
+                // todo show message that they're banned
+                Application.index();
+            }
         }
         render("WebSocket/room3.html", user, roomName);
     }
@@ -76,11 +87,13 @@ public class WebSocket extends Controller {
         public ChatRoom room;
         public ChatRoomStream roomStream;
         public EventStream<ChatRoomStream.Event> eventStream;
+        public boolean canPost;
 
-        public RoomConnection(ChatRoom room, ChatRoomStream roomStream, EventStream<ChatRoomStream.Event> eventStream) {
+        public RoomConnection(ChatUser user, ChatRoom room, ChatRoomStream roomStream, EventStream<ChatRoomStream.Event> eventStream) {
             this.room = room;
             this.roomStream = roomStream;
             this.eventStream = eventStream;
+            this.canPost = room.userCanPost(user);
         }
     }
 
@@ -106,8 +119,8 @@ public class WebSocket extends Controller {
                     ChatRoom room = chatRoomJoin.getRoom();
                     if (room.isOpen()) {
                         jsonChatRoomsList.add(JsonChatRoom.from(room));
-                        Logger.debug("Connecting to chat room stream for " + room.getName());
                         addConnection(user, connectionId, roomConnections, room);
+                        Logger.debug("Connecting to chat room stream for " + room.getName()+", canpost "+room.userCanPost(user));
                         i++;
                     }
                 }
@@ -130,108 +143,112 @@ public class WebSocket extends Controller {
             // Loop while the socket is open
             while (inbound.isOpen()) {
 
-                Promise[] roomEventPromises = new Promise[roomConnections.size() + 1];
-                roomEventPromises[0] = inbound.nextEvent();
-                int i = 1;
-                for (RoomConnection roomConnection : roomConnections.values()) {
-                    roomEventPromises[i] = roomConnection.eventStream.nextEvent();
-                    i++;
-                }
+                awaitAndProcessInput(user, connectionId, roomConnections);
 
-                Object awaitResult = await(Promise.waitAny(roomEventPromises));
+            }
 
-                // Wait for an event (either something coming on the inbound socket channel, or ChatRoom messages)
-/*
-                Either<WebSocketEvent, ChatRoomStream.Event> e = await(Promise.waitEither(
-                        inbound.nextEvent(),
-                        Promise.waitAny(roomEventPromises)
-                ));
-*/
+        }
 
-                // Case: TextEvent received on the socket
-                if (awaitResult instanceof WebSocketFrame) {
-                    WebSocketFrame frame = (WebSocketFrame) awaitResult;
-                    if (!frame.isBinary && frame.textData != null) {
-                        String userMessageJson = frame.textData;
+        private static void awaitAndProcessInput(ChatUser user, String connectionId, HashMap<String, RoomConnection> roomConnections) {
+            Promise[] roomEventPromises = new Promise[roomConnections.size() + 1];
+            roomEventPromises[0] = inbound.nextEvent();
+            int i = 1;
+            for (RoomConnection roomConnection : roomConnections.values()) {
+                roomEventPromises[i] = roomConnection.eventStream.nextEvent();
+                i++;
+            }
 
-                        try {
-                            Logger.debug("Message received from socket (" + user.username + "): " + userMessageJson);
-                            JsonObject msgObj = new JsonParser().parse(userMessageJson).getAsJsonObject();
-                            String roomName = msgObj.get("roomName").getAsString();
-                            String message = Util.cleanAndLimitLength(msgObj.get("message").getAsString(), Constants.MAX_MSG_LENGTH);
-                            if (message == null || message.length() == 0) {
-                                Logger.debug("After cleaning message length was 0, dropping.");
-                                continue;
-                            }
-                            RoomConnection roomConnection = roomConnections.get(roomName);
-                            if (roomConnection != null) {
-                                if (message.toLowerCase().equals("##ping##")) {
-                                    roomConnection.room.userPresent(user, connectionId);
-                                    //                        Logger.debug("Ping msg - skipping.");
-                                } else if (message.toLowerCase().equals("##memberlist##")) {
-                                    Logger.debug("User " + user.username + " requested member list.");
-                                    outbound.send(new ChatRoomStream.MemberList(JsonChatRoom.from(roomConnection.room, user),
-                                            roomConnection.room.getPresentJsonUsers()).toJson());
-                                } else {
+            Object awaitResult = await(Promise.waitAny(roomEventPromises));
+
+            // Case: TextEvent received on the socket
+            if (awaitResult instanceof WebSocketFrame) {
+                WebSocketFrame frame = (WebSocketFrame) awaitResult;
+                if (!frame.isBinary && frame.textData != null) {
+                    String userMessageJson = frame.textData;
+
+                    try {
+                        Logger.debug("Message received from socket (" + user.username + "): " + userMessageJson);
+                        JsonObject msgObj = new JsonParser().parse(userMessageJson).getAsJsonObject();
+                        String roomName = msgObj.get("roomName").getAsString();
+                        String message = Util.cleanAndLimitLength(msgObj.get("message").getAsString(), Constants.MAX_MSG_LENGTH);
+                        if (message == null || message.length() == 0) {
+                            Logger.debug("After cleaning message length was 0, dropping.");
+                            return;
+                        }
+                        RoomConnection roomConnection = roomConnections.get(roomName);
+                        if (roomConnection != null) {
+                            if (message.toLowerCase().equals("##ping##")) {
+                                roomConnection.room.userPresent(user, connectionId);
+                                //                        Logger.debug("Ping msg - skipping.");
+                            } else if (message.toLowerCase().equals("##memberlist##")) {
+                                Logger.debug("User " + user.username + " requested member list.");
+                                outbound.send(new ChatRoomStream.MemberList(JsonChatRoom.from(roomConnection.room, user),
+                                        roomConnection.room.getPresentJsonUsers()).toJson());
+                            } else if (ChatCommands.isCommand(message)) {
+                                ChatCommands.execCommand(roomConnection.room, message, roomConnection.roomStream, outbound);
+                            } else {
+                                if (roomConnection.canPost) {
                                     String uuid = Util.getUUID();
                                     JsonMessage jsonMessage = JsonMessage.makePresavedMessage(uuid, user, roomConnection.room, message);
                                     new SaveNewMessageJob(uuid, user, roomName, message).now();
                                     roomConnection.roomStream.say(jsonMessage);
+                                } else {
+                                    Logger.info("User " + user.getUsername() + " cannot post to " + roomName);
+                                    // Direct message to user who tried to send this
+                                    sendLocalServerMessage(roomConnection, "You cannot post to this room.");
                                 }
-                            } else {
-                                Logger.error("Could not find room connection.");
                             }
-                        } catch (Exception e1) {
-                            Logger.error(e1, "Error handling user message, discarding.");
+                        } else {
+                            Logger.error("Could not find room connection.");
+                        }
+                    } catch (Exception e1) {
+                        Logger.error(e1, "Error handling user message, discarding.");
+                    }
+                }
+
+            } else if (awaitResult instanceof WebSocketClose) {
+                // Case: The socket has been closed
+                Logger.info("Socket closed: " + user.getUsername() + ":" + connectionId);
+                for (RoomConnection roomConnection : roomConnections.values()) {
+                    roomConnection.room.userNotPresent(user, connectionId);
+                    // If this was the last connection that user had to the room then broadcast they've left
+                    if (!roomConnection.room.isUserPresent(user)) {
+                        Logger.debug("Last connection for " + user.username + " on channel " + roomConnection.room.getName() + " disconnected, broadcasting leave.");
+                        roomConnection.roomStream.leave(roomConnection.room, user);
+                    }
+                }
+                disconnect();
+
+            } else if (awaitResult instanceof ChatRoomStream.Event) {
+
+                if (awaitResult instanceof ChatRoomStream.ServerCommand) {
+                    // Case: A command affecting users
+                    ChatRoomStream.ServerCommand commandEvent = (ChatRoomStream.ServerCommand) awaitResult;
+                    if (commandEvent.command.username != null && commandEvent.command.username.equals(user.username)) {
+                        Logger.info("Received " + commandEvent.command.type + " for this user.");
+                        if (commandEvent.command.type == ChatCommands.CommandType.KICK) {
+                            Logger.info(user.username + " has been kicked from " + commandEvent.room.name);
+
+                            RoomConnection roomConnection = roomConnections.get(commandEvent.room.name);
+                            user.leaveChatRoom(roomConnection.room);
+                            roomConnections.remove(commandEvent.room.name);
+                            // todo send event to UI
+
+                            sendLocalServerMessage(roomConnection, commandEvent.command.username + " was kicked.");
                         }
                     }
-
-                } else if (awaitResult instanceof WebSocketClose) {
-                    // Case: The socket has been closed
-                    Logger.info("Socket closed: " + user.getUsername() + ":" + connectionId);
-                    for (RoomConnection roomConnection : roomConnections.values()) {
-                        roomConnection.room.userNotPresent(user, connectionId);
-                        // If this was the last connection that user had to the room then broadcast they've left
-                        if (!roomConnection.room.isUserPresent(user)) {
-                            Logger.debug("Last connection for " + user.username + " on channel " + roomConnection.room.getName() + " disconnected, broadcasting leave.");
-                            roomConnection.roomStream.leave(roomConnection.room, user);
-                        }
-                    }
-                    disconnect();
-
-                } else if (awaitResult instanceof ChatRoomStream.Event) {
-
+                } else {
                     // Case: New message on a chat room
                     ChatRoomStream.Event event = (ChatRoomStream.Event) awaitResult;
                     String json = event.toJson();
                     Logger.debug("Sending event to " + user.username + ":" + connectionId + " - " + json);
                     outbound.send(json);
-
                 }
-
-
-                // Note: This for loop stuff is the way that the play guys try to avoid
-                // casting and things like that. I dunno. I just replaced it with some
-                // ifs because I found it hard to read.
-/*
-                // Case: Someone joined the room
-                for (ChatRoomStream.Join joined : ClassOf(ChatRoomStream.Join.class).match(e._2)) {
-                    outbound.send("join:%s", joined.user);
-                }
-
-                for (ChatRoomStream.Message message : ClassOf(ChatRoomStream.Message.class).match(e._2)) {
-                    new SaveNewMessageJob(user, roomName, message.text);
-                    outbound.send("message:%s:%s", message.user, message.text);
-                }
-
-                // Case: Someone left the room
-                for (ChatRoomStream.Leave left : ClassOf(ChatRoomStream.Leave.class).match(e._2)) {
-                    outbound.send("leave:%s", left.user);
-                }
-*/
-
             }
+        }
 
+        private static void sendLocalServerMessage(RoomConnection roomConnection, String message) {
+            outbound.send(new ChatRoomStream.ServerMessage(JsonChatRoom.from(roomConnection.room), message).toJson());
         }
 
         private static void addConnection(ChatUser user, String connectionId, HashMap<String, RoomConnection> roomConnections, ChatRoom room) {
@@ -246,7 +263,7 @@ public class WebSocket extends Controller {
             room.userPresent(user, connectionId);
             EventStream<ChatRoomStream.Event> roomMessagesStream = roomStream.join(room, user, broadcastJoin);
 
-            roomConnections.put(room.name, new RoomConnection(room, roomStream, roomMessagesStream));
+            roomConnections.put(room.name, new RoomConnection(user, room, roomStream, roomMessagesStream));
         }
 
     }

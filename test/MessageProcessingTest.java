@@ -1,3 +1,4 @@
+import com.larvalabs.redditchat.ChatCommands;
 import com.larvalabs.redditchat.dataobj.JsonChatRoom;
 import com.larvalabs.redditchat.dataobj.JsonMessage;
 import com.larvalabs.redditchat.dataobj.JsonUser;
@@ -43,5 +44,21 @@ public class MessageProcessingTest extends UnitTest {
             assertEquals(1, testMsg.imageLinks.length);
             assertEquals("http://imgur.com/8543kjhdf.png", testMsg.imageLinks[0]);
         }
+    }
+
+    @Test
+    public void testCommandHandling() throws Exception {
+        ChatUser user1 = new ChatUser("user1uid");
+        user1.save();
+        ChatRoom room1 = new ChatRoom("testroom");
+        room1.save();
+        user1.joinChatRoom(room1);
+
+        String message = "/ban @user1uid ";
+        assertTrue(ChatCommands.isCommand(message));
+        ChatCommands.Command command = ChatCommands.getCommand(message);
+        assertTrue(command.type == ChatCommands.CommandType.BAN);
+        assertEquals("user1uid", command.username);
+//        ChatCommands.execCommand(room1, message, null, null);
     }
 }

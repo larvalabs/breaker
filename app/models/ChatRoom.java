@@ -41,6 +41,10 @@ public class ChatRoom extends Model {
     @ManyToMany(mappedBy = "watchedRooms", fetch = FetchType.LAZY)
     public Set<ChatUser> watchers = new HashSet<ChatUser>();
 
+    @ManyToMany(cascade = CascadeType.PERSIST)
+    @JoinTable(name = "user_bannedroom")
+    public Set<ChatUser> bannedUsers = new HashSet<ChatUser>();
+
     public ChatRoom(String name) {
         this.name = name;
         this.numberOfUsers = 0;
@@ -135,6 +139,14 @@ public class ChatRoom extends Model {
 
     public void setWatchers(Set<ChatUser> watchers) {
         this.watchers = watchers;
+    }
+
+    public Set<ChatUser> getBannedUsers() {
+        return bannedUsers;
+    }
+
+    public void setBannedUsers(Set<ChatUser> bannedUsers) {
+        this.bannedUsers = bannedUsers;
     }
 
     // Do stuff zone
@@ -394,5 +406,17 @@ public class ChatRoom extends Model {
             }
         }
         return topRooms;
+    }
+
+    public boolean userCanPost(ChatUser chatUser) {
+        ChatUserRoomJoin roomJoin = ChatUserRoomJoin.findByUserAndRoom(chatUser, this);
+        if (roomJoin == null) {
+            return false;
+        }
+        if (getBannedUsers().contains(chatUser)) {
+            Logger.debug("User " + chatUser.getUsername() + " is banned from " + name + " and cannot post.");
+            return false;
+        }
+        return true;
     }
 }
