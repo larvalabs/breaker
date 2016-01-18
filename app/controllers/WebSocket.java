@@ -119,7 +119,7 @@ public class WebSocket extends Controller {
                 for (ChatUserRoomJoin chatRoomJoin : chatRoomJoins) {
                     ChatRoom room = chatRoomJoin.getRoom();
                     if (room.isOpen()) {
-                        jsonChatRoomsList.add(JsonChatRoom.from(room));
+                        jsonChatRoomsList.add(JsonChatRoom.from(room, user));
                         addConnection(user, connectionId, roomConnections, room);
                         Logger.debug("Connecting to chat room stream for " + room.getName()+", canpost "+room.userCanPost(user));
                         i++;
@@ -183,9 +183,6 @@ public class WebSocket extends Controller {
                                 //                        Logger.debug("Ping msg - skipping.");
                             } else if (message.toLowerCase().equals("##memberlist##")) {
                                 Logger.debug("User " + user.username + " requested member list.");
-
-                                // Send room info
-                                outbound.send(new ChatRoomStream.RoomInfo(JsonChatRoom.from(roomConnection.room, user), roomConnection.room.getBanner(), roomConnection.room.getIconUrl(), roomConnection.room.getSidebarColor(), roomConnection.isModerator).toJson());
 
                                 outbound.send(new ChatRoomStream.MemberList(JsonChatRoom.from(roomConnection.room, user),
                                         roomConnection.room.getPresentJsonUsers()).toJson());

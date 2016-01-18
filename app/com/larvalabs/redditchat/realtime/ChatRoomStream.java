@@ -116,7 +116,6 @@ public class ChatRoomStream {
 
         public static final String TYPE_ROOMLIST = "roomlist";
         public static final String TYPE_MEMBERLIST = "memberlist";
-        public static final String TYPE_ROOMINFO = "roominfo";
         public static final String TYPE_JOIN = "join";
         public static final String TYPE_MESSAGE = "message";
         public static final String TYPE_SERVERMESSAGE = "servermessage";
@@ -184,26 +183,6 @@ public class ChatRoomStream {
             super(TYPE_MEMBERLIST, room);
             this.users = users;
         }
-    }
-
-    public static class RoomInfo extends Event {
-
-        public String banner;
-        public String iconUrl;
-        public int sidebarColor;
-        public boolean isModerator;
-
-        public RoomInfo() {
-        }
-
-        public RoomInfo(JsonChatRoom room, String banner, String iconUrl, int sidebarColor, boolean isModerator) {
-            super(TYPE_ROOMINFO, room);
-            this.banner = banner == null ? "" : banner;
-            this.iconUrl = iconUrl == null ? "" : iconUrl;
-            this.sidebarColor = sidebarColor;
-            this.isModerator = isModerator;
-        }
-
     }
 
     public static class Join extends Event {

@@ -50,6 +50,8 @@ public class ChatRoom extends Model {
 
     public String iconUrl;
     public String banner;
+
+
     public int karmaThreshold;
     public int sidebarColor;
 

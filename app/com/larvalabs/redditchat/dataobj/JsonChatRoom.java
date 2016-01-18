@@ -27,6 +27,8 @@ public class JsonChatRoom {
     public String iconUrl;
     public int iconUrlSource;
     public boolean noIconAvailableFromStore;
+    public String banner;
+    public boolean isUserModerator;
 
     public boolean watching;
 
@@ -35,7 +37,8 @@ public class JsonChatRoom {
     public JsonMessage[] messages;
 
     public JsonChatRoom(long id, String name, long numberUsers,
-                        long numberNewMessagesForUser, boolean starred, long liveUserCount, String iconUrl, int iconUrlSource, boolean noIconAvailableFromStore) {
+                        long numberNewMessagesForUser, boolean starred, long liveUserCount, String iconUrl, int iconUrlSource, boolean noIconAvailableFromStore,
+                        String banner, boolean isUserModerator) {
         this.id = id;
         this.name = name;
         this.numberUsers = numberUsers;
@@ -45,6 +48,8 @@ public class JsonChatRoom {
         this.iconUrl = iconUrl;
         this.iconUrlSource = iconUrlSource;
         this.noIconAvailableFromStore = noIconAvailableFromStore;
+        this.banner = banner;
+        this.isUserModerator = isUserModerator;
     }
 
     /**
@@ -56,7 +61,7 @@ public class JsonChatRoom {
         JsonChatRoom jsonChatRoom = new JsonChatRoom(room.getId(), room.name,
                 room.numberOfUsers,
                 0, false, room.getCurrentUserCount(), room.getIconUrl(),
-                room.getIconUrlSource(), room.isNoIconAvailableFromStore());
+                room.getIconUrlSource(), room.isNoIconAvailableFromStore(), room.getBanner(), false);
         return jsonChatRoom;
     }
 
@@ -72,7 +77,7 @@ public class JsonChatRoom {
         JsonChatRoom jsonChatRoom = new JsonChatRoom(room.getId(), room.name,
                 room.numberOfUsers,
                 unreadCount, loggedInUser.isRoomStarred(room), room.getCurrentUserCount(), room.getIconUrl(),
-                room.getIconUrlSource(), room.isNoIconAvailableFromStore());
+                room.getIconUrlSource(), room.isNoIconAvailableFromStore(), room.getBanner(), room.isModerator(loggedInUser));
         if (loadWatcherStatus) {
             jsonChatRoom.watching = room.getWatchers().contains(loggedInUser);
         }

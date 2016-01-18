@@ -589,6 +589,26 @@
         $('#room-link').attr('href', 'https://reddit.com/r/'+roomName);
         $('#room-modmessage').text('[A message from the ' + roomName+ ' mods to you.]');
 
+        var room = getRoomForName(roomName);
+        // Do room info stuff
+        if (room.banner) {
+            $('#room-modmessage').text(room.banner);
+        } else {
+            $('#room-modmessage').text('');
+        }
+        if (room.iconUrl) {
+            $('#room-icon').attr('src', room.iconUrl);
+            $('#room-icon').show();
+        } else {
+            $('#room-icon').hide();
+        }
+        if (room.isUserModerator) {
+            $('#room-pref').attr('href', '@{RoomManage.roomPrefs}?roomName=' + room.name);
+            $('#room-pref').removeClass('hidden');
+        } else {
+            $('#room-pref').addClass('hidden');
+        }
+
         resetUnreadCountForRoom(roomName);
         getStaydownForRoom(roomName).checkdown();
 
@@ -845,24 +865,6 @@
             }
         } else if (event.type === 'leave') {
             $(getUserEntrySelector(event.room.name, event.user.username)).remove();
-        } else if (event.type === 'roominfo') {
-            if (event.banner) {
-                $('#room-modmessage').text(event.banner);
-            } else {
-                $('#room-modmessage').text('');
-            }
-            if (event.iconUrl) {
-                $('#room-icon').attr('src', event.iconUrl);
-                $('#room-icon').show();
-            } else {
-                $('#room-icon').hide();
-            }
-            if (event.isModerator) {
-                $('#room-pref').attr('href', '@{RoomManage.roomPrefs}?roomName=' + event.room.name);
-                $('#room-pref').removeClass('hidden');
-            } else {
-                $('#room-pref').addClass('hidden');
-            }
         } else if (event.type === 'memberlist') {
             console.log("Member list for " + event.room.name);
             var arrayLength = event.users.length;
