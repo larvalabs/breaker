@@ -19,6 +19,21 @@
     margin-right: 10px;
 }
 
+.roomselect {
+    white-space: nowrap;
+}
+
+.roomlistentry {
+}
+
+.roomname {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 140px;
+    display: inline-block;
+}
+
 .p-t-s {
     padding-small: 4px !important;
 }
