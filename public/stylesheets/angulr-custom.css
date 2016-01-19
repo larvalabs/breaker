@@ -13,6 +13,12 @@
     width: 100%;
 }
 
+.roomIconSmall {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+}
+
 .p-t-s {
     padding-small: 4px !important;
 }
