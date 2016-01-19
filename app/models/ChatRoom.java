@@ -463,6 +463,10 @@ public class ChatRoom extends Model {
             Logger.debug("User " + chatUser.getUsername() + " is banned from " + name + " and cannot post.");
             return false;
         }
+        if (chatUser.getLinkKarma() < getKarmaThreshold()) {
+            Logger.debug("User is below karma threshold.");
+            return false;
+        }
         return true;
     }
 }
