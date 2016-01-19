@@ -2,6 +2,7 @@ package controllers;
 
 import com.google.gson.JsonObject;
 import com.larvalabs.redditchat.dataobj.JsonUserSearch;
+import com.larvalabs.redditchat.util.Util;
 import models.ChatRoom;
 import models.ChatUser;
 import models.ChatUserRoomJoin;
@@ -10,7 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import play.*;
 import play.libs.OAuth2;
 import play.libs.WS;
-import play.mvc.*;
+import play.mvc.Scope;
 
 import java.util.*;
 
@@ -37,6 +38,13 @@ public class Application extends PreloadUserController {
         test();
     }
 
+    public static void fakeOtherUser() throws ChatUser.UserBannedException {
+        ChatUser user = new ChatUser(Util.getUUID());
+        user.setUsername("chattest2");
+        user.save();
+        user.joinChatRoom(ChatRoom.findByName("breakerapp"));
+
+    }
 
     public static void index() {
         ChatUser chatUser = connected();

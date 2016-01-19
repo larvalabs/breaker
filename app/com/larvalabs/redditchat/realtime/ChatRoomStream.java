@@ -52,7 +52,8 @@ public class ChatRoomStream {
      */
     public EventStream<ChatRoomStream.Event> join(ChatRoom room, ChatUser user, boolean broadcastJoin) {
         if (broadcastJoin) {
-            publishEvent(new Join(JsonChatRoom.from(room), JsonUser.fromUser(user)), true);
+            JsonUser jsonUser = JsonUser.fromUserForRoom(user, room);
+            publishEvent(new Join(JsonChatRoom.from(room), jsonUser), true);
         }
         return chatEvents.eventStream();
     }
@@ -61,7 +62,7 @@ public class ChatRoomStream {
 //        String[] usernames = room.getUsernamesPresent().toArray(new String[]{});
 //        TreeSet<ChatUser> users = room.getPresentUserObjects();
 //        Logger.info("Sending member list of length " + users.size());
-        publishEvent(new MemberList(JsonChatRoom.from(room), room.getPresentJsonUsers()), true);
+        publishEvent(new MemberList(JsonChatRoom.from(room), room.getAllUsersWithOnlineStatus()), true);
     }
     
     /**

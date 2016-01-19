@@ -73,7 +73,8 @@ public class RedditLinkBotJob extends Job {
                 RedditLink existingLink = RedditLink.findByRedditId(id);
                 if (existingLink == null) {
                     Logger.debug("Link hasn't been posted, posting...");
-                    RedditLink redditLink = new RedditLink(id, subreddit, permaLink, url, title, itemObj.toString());
+                    // todo maybe store full json in the future, skip for now
+                    RedditLink redditLink = new RedditLink(id, subreddit, permaLink, url, title, "");
                     redditLink.save();
 
                     Message message = new Message(botUser, room,

@@ -21,6 +21,9 @@ public class JsonUser {
 
     // Optionally filled
     public String accessToken;
+    public boolean online;
+    // Filled in when part of a user list for a room
+    public boolean modForRoom;
 
     // Filled in when requesting full user profile
     public JsonMessage[] recentMessages;
@@ -51,6 +54,19 @@ public class JsonUser {
         return new JsonUser(user.getId(), user.username, user.notificationPreference,
                 user.getLastSeenDate(), user.getLastSeenDate().getTime(),
                 user.getLikeCount(), user.getProfileImageUrl(), user.getStatusMessage());
+    }
+
+    /**
+     * Adds information to user specific to a chat room, mainly online status and moderator flag.
+     * @param user
+     * @param room
+     * @return
+     */
+    public static JsonUser fromUserForRoom(ChatUser user, ChatRoom room) {
+        JsonUser jsonUser = fromUser(user);
+        jsonUser.online = room.isUserPresent(user);
+        jsonUser.modForRoom = room.isModerator(user);
+        return jsonUser;
     }
 
     public static JsonUser fromUserWithFullDetails(ChatUser user, ChatUser loggedInUser) {

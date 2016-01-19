@@ -36,10 +36,10 @@
     <li id="<%= getUserEntrySelector(roomName, user.username).substring(1) %>" class="list-group-item">
         <a href="https://reddit.com/u/<%= user.username %>" class="pull-left thumb-sm avatar m-r" target="_blank">
             <img src="<%= user.profileImageUrl %>" alt="..." class="img-circle">
-            <i class="on b-white bottom"></i>
+            <i class="<%= user.online ? 'on' : 'off' %> b-white bottom"></i>
         </a>
         <div class="clear">
-            <div><a href="https://reddit.com/u/<%= user.username %>" target="_blank"><%= user.username %></a></div>
+            <div class="<%= user.modForRoom ? 'text-primary-dker' : '' %>"><a href="https://reddit.com/u/<%= user.username %>" target="_blank"><%= user.username %></a></div>
             <small class="text-muted"><%= user.statusMessage ? user.statusMessage : '&nbsp;' %></small>
         </div>
     </li>
@@ -56,7 +56,7 @@
             <span class="hidden-xs timeago" title="<%= new Date(event.timestamp).toISOString() %>">less than</span>
         </div>
         <div class="clear">
-            <div><a class="text-md text-dark-dker" href="https://reddit.com/u/<%= event.user.username %>" target="_blank"><%= event.user.username %></a>
+            <div><a class="text-md <%= event.user.modForRoom ? 'text-primary-dker' : 'text-dark-dker' %>" href="https://reddit.com/u/<%= event.user.username %>" target="_blank"><%= event.user.username %></a>
                 <!--<span class="label bg-light m-l-sm ">angular</span>--></div>
             <div class="m-t-midxs"><%= event.message.messageHtml %></div>
             <% if (event.message.imageLinks && event.message.imageLinks.length > 0) { %>
@@ -409,9 +409,15 @@
                             <div class="cell scrollable hover">
                                 <div class="cell-inner">
                                     <div role="tabpanel" class="tab-pane active" id="tab-1">
+                                        <div id='modparent' class="wrapper-md m-b-n-md">
+                                            <div class="m-b-sm text-md">Mods</div>
+                                            <ul id='modlist' class="list-group no-bg no-borders pull-in m-b-sm">
+                                                <!-- Filled in dynamically -->
+                                            </ul>
+                                        </div>
                                         <div class="wrapper-md">
                                             <div class="m-b-sm text-md">Users</div>
-                                            <ul id='userlist' class="list-group no-bg no-borders pull-in">
+                                            <ul id='userlist' class="list-group no-bg no-borders pull-in m-b-sm">
                                                 <!-- Filled in dynamically -->
                                             </ul>
                                             <!--
@@ -703,6 +709,10 @@
         return '#userlistparent_' + roomName + ' #userlist';
     }
 
+    function getModListSelector(roomName) {
+        return '#userlistparent_' + roomName + ' #modlist';
+    }
+
     function getThreadSelector(roomName) {
         return '#threadparent_' + roomName + ' #thread';
     }
@@ -859,12 +869,10 @@
             var msg = tmpl(msgTemplateId, {event: event});
             $(getThreadSelector(event.room.name)).append(msg);
         } else if (event.type === 'join') {
-            if ($(getUserEntrySelector(event.room.name, event.user.username)).length == 0) {
-                $(getUserListSelector(event.room.name)).append(tmpl('userentry_tmpl',
-                        {roomName: event.room.name, user: event.user}));
-            }
+            updateUserInUserList(event.user, event.room);
         } else if (event.type === 'leave') {
-            $(getUserEntrySelector(event.room.name, event.user.username)).remove();
+            updateUserInUserList(event.user, event.room);
+//            $(getUserEntrySelector(event.room.name, event.user.username)).remove();
         } else if (event.type === 'memberlist') {
             console.log("Member list for " + event.room.name);
             var arrayLength = event.users.length;
@@ -872,24 +880,30 @@
                 var userObj = event.users[i];
                 var username = userObj.username;
 
-                var userHtml = tmpl('userentry_tmpl',
-                        {roomName: event.room.name, user: userObj});
-                var existingElements = $(getUserEntrySelector(event.room.name, username));
-                if (existingElements.length > 0) {
-//                    console.log("Existing user, replacing with new render.");
-                    existingElements.first().replaceWith(userHtml);
-                } else {
-//                    console.log("New user, appending.");
-                    // todo insert at sorted location
-                    $(getUserListSelector(event.room.name)).append(userHtml);
-                }
-
-//                $('#userlist').append();
+                updateUserInUserList(userObj, event.room);
             }
         }
 
 //        $('#thread').scrollTo('max')
     };
+
+    var updateUserInUserList = function (userObj, roomObj) {
+        var userHtml = tmpl('userentry_tmpl', {roomName: roomObj.name, user: userObj});
+        var existingElements = $(getUserEntrySelector(roomObj.name, userObj.username));
+        if (existingElements.length > 0) {
+//                    console.log("Existing user, replacing with new render.");
+            existingElements.first().replaceWith(userHtml);
+        } else {
+//                    console.log("New user, appending.");
+            // todo insert at sorted location
+            if (userObj.modForRoom) {
+                $(getModListSelector(roomObj.name)).append(userHtml);
+            } else {
+                $(getUserListSelector(roomObj.name)).append(userHtml);
+            }
+        }
+
+    }
 
     var previewLoaded = function (e) {
         // Makes the UI feel a little more responsive to trigger a check right when preview loads

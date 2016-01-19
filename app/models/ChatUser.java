@@ -510,4 +510,10 @@ public class ChatUser extends Model {
 
     public class UserBannedException extends Exception {
     }
+
+    @Override
+    public String toString() {
+        return "User: " + getId() + ":" + getUsername();
+    }
+
 }

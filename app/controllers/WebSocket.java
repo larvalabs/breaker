@@ -138,8 +138,6 @@ public class WebSocket extends Controller {
                 Logger.info("Room list json: " + roomListJson);
                 outbound.send(roomListJson);
             }
-//            ChatRoom room = ChatRoom.findByName(roomName);
-//            ChatRoomStream roomStream = ChatRoomStream.get(roomName);
 
             // Loop while the socket is open
             while (inbound.isOpen()) {
@@ -185,7 +183,7 @@ public class WebSocket extends Controller {
                                 Logger.debug("User " + user.username + " requested member list.");
 
                                 outbound.send(new ChatRoomStream.MemberList(JsonChatRoom.from(roomConnection.room, user),
-                                        roomConnection.room.getPresentJsonUsers()).toJson());
+                                        roomConnection.room.getAllUsersWithOnlineStatus()).toJson());
                             } else if (ChatCommands.isCommand(message)) {
                                 try {
                                     ChatCommands.execCommand(user, roomConnection.room, message, roomConnection.roomStream, outbound);

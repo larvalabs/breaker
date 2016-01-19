@@ -343,6 +343,18 @@ public class ChatRoom extends Model {
         return users;
     }
 
+    public JsonUser[] getAllUsersWithOnlineStatus() {
+        TreeSet<ChatUser> presentUserObjects = getPresentUserObjects();
+        List<ChatUser> allUsers = getUsers();
+        JsonUser[] users = new JsonUser[allUsers.size()];
+        int i = 0;
+        for (ChatUser user : allUsers) {
+            users[i] = JsonUser.fromUserForRoom(user, this);
+            i++;
+        }
+        return users;
+    }
+
     // note: could consider doing this as a separate set of just usernames
     public TreeSet<String> getUsernamesPresent() {
         try {
@@ -468,5 +480,10 @@ public class ChatRoom extends Model {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "Room: " + getId() + ":" + getName();
     }
 }
