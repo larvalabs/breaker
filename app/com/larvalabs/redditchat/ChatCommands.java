@@ -18,18 +18,28 @@ public class ChatCommands {
     public static final String COMMAND_CHAR = "/";
 
     public enum CommandType {
-        KICK("kick"),
-        BAN("ban"),
-        UNBAN("unban");
+        KICK("kick", true),
+        BAN("ban", true),
+        UNBAN("unban", true);
 
         String commandString;
+        boolean modOnly;
 
-        CommandType(String commandString) {
+        CommandType(String commandString, boolean modOnly) {
             this.commandString = commandString;
+            this.modOnly = modOnly;
         }
 
         public String getCommandString() {
             return commandString;
+        }
+
+        public boolean canExecute(ChatUser user, ChatRoom room) {
+            if (!modOnly) {
+                return true;
+            } else {
+                return room.isModerator(user);
+            }
         }
 
         public static CommandType getType(String message) {
@@ -90,22 +100,36 @@ public class ChatCommands {
         return null;
     }
 
-    public static void execCommand(ChatRoom room, String message, ChatRoomStream stream, Http.Outbound socket) {
-        if (!isCommand(message) || getCommand(message) == null) {
+    public static void execCommand(ChatUser executingUser, ChatRoom room, String message,
+                                   ChatRoomStream stream, Http.Outbound socket) throws NotEnoughPermissionsException, CommandNotRecognizedException {
+        if (!isCommand(message)) {
             Logger.debug("Error processing message, notifying user.");
             socket.send(new ChatRoomStream.ServerMessage(JsonChatRoom.from(room), "Error processing command.").toJson());
             return;
         }
 
         Command command = getCommand(message);
+        if (command == null) {
+            throw new CommandNotRecognizedException();
+        }
+
+        // Reload objects since they might be detached if coming from websocket
+        executingUser = ChatUser.findByUsername(executingUser.username);
+        room = ChatRoom.findByName(room.name);
+
+        // Check has permission
+        if (!command.type.canExecute(executingUser, room)) {
+            Logger.info(executingUser.username + " can't execute " + command.type + " in room " + room.name);
+            throw new NotEnoughPermissionsException();
+        }
+
         if (command.type == CommandType.BAN || command.type == CommandType.UNBAN) {
             ChatUser user = ChatUser.findByUsername(command.username);
             if (user != null) {
                 // Need to load new copies of the objects to be able to save via JPA
-                ChatRoom loadedRoom = ChatRoom.findByName(room.name);
-                ChatUser loadedUser = ChatUser.findByUsername(command.username);
-                loadedRoom.getBannedUsers().add(loadedUser);
-                loadedRoom.save();
+                ChatUser commandTargetUser = ChatUser.findByUsername(command.username);
+                room.getBannedUsers().add(commandTargetUser);
+                room.save();
 
                 ChatUserRoomJoin join = ChatUserRoomJoin.findByUserAndRoom(user, room);
                 join.delete();
@@ -122,5 +146,11 @@ public class ChatCommands {
             socket.send(new ChatRoomStream.ServerMessage(JsonChatRoom.from(room), "User " + command.username + " kicked.").toJson());
             stream.publishEvent(new ChatRoomStream.ServerCommand(JsonChatRoom.from(room), command), true);
         }
+    }
+
+    public static class CommandNotRecognizedException extends Exception {
+    }
+
+    public static class NotEnoughPermissionsException extends Exception {
     }
 }

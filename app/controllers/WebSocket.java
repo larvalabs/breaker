@@ -187,7 +187,13 @@ public class WebSocket extends Controller {
                                 outbound.send(new ChatRoomStream.MemberList(JsonChatRoom.from(roomConnection.room, user),
                                         roomConnection.room.getPresentJsonUsers()).toJson());
                             } else if (ChatCommands.isCommand(message)) {
-                                ChatCommands.execCommand(roomConnection.room, message, roomConnection.roomStream, outbound);
+                                try {
+                                    ChatCommands.execCommand(user, roomConnection.room, message, roomConnection.roomStream, outbound);
+                                } catch (ChatCommands.NotEnoughPermissionsException e) {
+                                    sendLocalServerMessage(roomConnection, "You don't have permission to execute this command.");
+                                } catch (ChatCommands.CommandNotRecognizedException e) {
+                                    sendLocalServerMessage(roomConnection, "Command not recognized.");
+                                }
                             } else {
                                 if (roomConnection.canPost) {
                                     String uuid = Util.getUUID();
