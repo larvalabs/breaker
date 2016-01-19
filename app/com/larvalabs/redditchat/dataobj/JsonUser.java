@@ -18,6 +18,7 @@ public class JsonUser {
     public long totalLikes;     // Likes this user has received on messages
     public String profileImageUrl;
     public String statusMessage;
+    public boolean bot;
 
     // Optionally filled
     public String accessToken;
@@ -39,7 +40,7 @@ public class JsonUser {
     public JsonChatRoom[] developerForRooms;
 
     public JsonUser(long id, String username, String notificationPreference, Date lastSeen,
-                    long lastSeenLongUTC, long totalLikes, String profileImageUrl, String statusMessage) {
+                    long lastSeenLongUTC, long totalLikes, String profileImageUrl, String statusMessage, boolean bot) {
         this.id = id;
         this.username = username;
         this.notificationPreference = notificationPreference;
@@ -48,12 +49,13 @@ public class JsonUser {
         this.totalLikes = totalLikes;
         this.profileImageUrl = profileImageUrl;
         this.statusMessage = statusMessage;
+        this.bot = bot;
     }
 
     public static JsonUser fromUser(ChatUser user) {
         return new JsonUser(user.getId(), user.username, user.notificationPreference,
                 user.getLastSeenDate(), user.getLastSeenDate().getTime(),
-                user.getLikeCount(), user.getProfileImageUrl(), user.getStatusMessage());
+                user.getLikeCount(), user.getProfileImageUrl(), user.getStatusMessage(), user.isBot());
     }
 
     /**

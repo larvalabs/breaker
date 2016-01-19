@@ -850,13 +850,17 @@
                 console.log("New message, appending.");
 
                 var roomName = event.room.name;
-                if (!hasFocus) {
-                    numNewMessagesTotal++;
-                    updateTitle();
 
-                    incrementUnreadCountForRoom(roomName);
-                } else if (roomName != currentSelectedRoomName) {
-                    incrementUnreadCountForRoom(roomName);
+                // If not a bot message, update msg counts
+                if (!event.user.bot) {
+                    if (!hasFocus) {
+                        numNewMessagesTotal++;
+                        updateTitle();
+
+                        incrementUnreadCountForRoom(roomName);
+                    } else if (roomName != currentSelectedRoomName) {
+                        incrementUnreadCountForRoom(roomName);
+                    }
                 }
 
                 $(getThreadSelector(event.room.name)).append(msg);
