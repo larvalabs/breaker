@@ -75,6 +75,8 @@ public class ChatUser extends Model {
 
     public String statusMessage;
 
+    public boolean bot;
+
     public ChatUser(String uid) {
         this.uid = uid;
     }
@@ -284,6 +286,14 @@ public class ChatUser extends Model {
             return true;
         }
         return false;
+    }
+
+    public boolean isBot() {
+        return bot;
+    }
+
+    public void setBot(boolean bot) {
+        this.bot = bot;
     }
 
     // Static stuff
