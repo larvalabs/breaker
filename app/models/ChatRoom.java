@@ -227,6 +227,10 @@ public class ChatRoom extends Model {
         return getModerators().contains(user) || user.isAdmin();
     }
 
+    public boolean isRedditModerator(ChatUser user) {
+        return getModerators().contains(user);
+    }
+
     public List<Message> getMessagesWithoutBannedBefore(ChatUser loggedInUser, long beforeMessageId, int limit) {
         return Message.find(BASE_MSG_QUERY + " and id < ? order by id desc", this, loggedInUser, beforeMessageId).fetch(limit);
     }

@@ -67,7 +67,7 @@ public class JsonUser {
     public static JsonUser fromUserForRoom(ChatUser user, ChatRoom room) {
         JsonUser jsonUser = fromUser(user);
         jsonUser.online = room.isUserPresent(user);
-        jsonUser.modForRoom = room.isModerator(user);
+        jsonUser.modForRoom = room.isRedditModerator(user);
         return jsonUser;
     }
 
