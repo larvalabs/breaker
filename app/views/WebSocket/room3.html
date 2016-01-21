@@ -495,7 +495,7 @@
     var getIndexForRoom = function (roomName) {
         for (var i = 0; i < rooms.length; i++) {
             var roomObj = rooms[i];
-            if (roomName === roomObj.name) {
+            if (roomName.toLowerCase() === roomObj.name.toLowerCase()) {
                 return i;
             }
         }
@@ -702,31 +702,38 @@
     };
 
     function getUserEntrySelector(roomName, username) {
+        roomName = roomName.toLowerCase();
         return '#userlist_' + roomName + '_' + username;
     }
 
     // Display a message
     function getUserListSelector(roomName) {
+        roomName = roomName.toLowerCase();
         return '#userlistparent_' + roomName + ' #userlist';
     }
 
     function getModListSelector(roomName) {
+        roomName = roomName.toLowerCase();
         return '#userlistparent_' + roomName + ' #modlist';
     }
 
     function getThreadSelector(roomName) {
+        roomName = roomName.toLowerCase();
         return '#threadparent_' + roomName + ' #thread';
     }
 
     function getUserListParentSelector(roomName) {
+        roomName = roomName.toLowerCase();
         return 'userlistparent_' + roomName;
     }
 
     function getThreadParentId(roomName) {
+        roomName = roomName.toLowerCase();
         return 'threadparent_' + roomName;
     }
 
     function getRoomlistEntrySelector(roomName) {
+        roomName = roomName.toLowerCase();
         return '#roomlist_' + roomName;
     }
 
