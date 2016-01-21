@@ -255,6 +255,12 @@ public class ChatRoom extends Model {
         for (ChatUserRoomJoin chatUserRoomJoin : joins) {
             users.add(chatUserRoomJoin.user);
         }
+        Collections.sort(users, new Comparator<ChatUser>() {
+            @Override
+            public int compare(ChatUser o1, ChatUser o2) {
+                return o1.getUsername().toLowerCase().compareTo(o2.getUsername().toLowerCase());
+            }
+        });
         return users;
     }
 
