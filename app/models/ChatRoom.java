@@ -258,7 +258,7 @@ public class ChatRoom extends Model {
         Collections.sort(users, new Comparator<ChatUser>() {
             @Override
             public int compare(ChatUser o1, ChatUser o2) {
-                return o1.getUsername().compareTo(o2.getUsername());
+                return o1.getUsername().toLowerCase().compareTo(o2.getUsername().toLowerCase());
             }
         });
         return users;
