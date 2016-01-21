@@ -585,6 +585,7 @@
     }
 
     var selectRoom = function (roomName) {
+        roomName = roomName.toLowerCase();
         console.log("Select room: " + roomName);
 
         // Hide all thread views, then show selected message thread
