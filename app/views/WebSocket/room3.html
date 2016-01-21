@@ -22,7 +22,7 @@
 <!-- Templates -->
 
 <script type="text/html" id="roomentry_tmpl">
-    <li id="<%= getRoomlistEntrySelector(roomObj.name).substring(1) %>">
+    <li id="<%= getRoomlistEntrySelector(roomObj.name).substring(1) %>" class="roomlistentry">
         <a href="#" class="roomselect" data-roomname="<%= roomObj.name %>">
             <img class="roomIconSmall" src="<%= roomObj.iconUrl ? roomObj.iconUrl : '/public/images/blank.png' %>"/>
             <b class="unreadcount label bg-info pull-right"></b>
