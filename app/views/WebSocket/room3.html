@@ -912,38 +912,14 @@
 
     var updateUserInUserList = function (userObj, roomObj) {
         var userHtml = tmpl('userentry_tmpl', {roomName: roomObj.name, user: userObj});
-//        var userEntrySelector = getUserEntrySelector(roomObj.name, userObj.name);
-//        var userEntryId = userEntrySelector.substring(1, userEntrySelector.length);
-//        console.log("User entry id: " + userEntryId);
         $(getUserEntrySelector(roomObj.name, userObj.username)).remove();
 
         if (userObj.modForRoom) {
             insertUserInCorrectPlace(getModListSelector(roomObj.name), userHtml);
-//            $(getModListSelector(roomObj.name)).append(userHtml);
         } else if (userObj.online) {
             insertUserInCorrectPlace(getOnlineListSelector(roomObj.name), userHtml);
-//            $(getOnlineListSelector(roomObj.name)).append(userHtml);
         } else {
             insertUserInCorrectPlace(getUserListSelector(roomObj.name), userHtml);
-/*
-            var children = $(getUserListSelector(roomObj.name)).children();
-            var userToInsertBefore;
-            for (var i=0; i<children.length; i++) {
-                var child = $(children.get(i));
-                if (userEntryId.toLowerCase() < child.attr('id').toLowerCase()) {
-                    userToInsertBefore = child;
-                    break;
-                }
-
-            }
-            if (userToInsertBefore) {
-                console.log("sort; Inserting " + userObj.username + " before " + userToInsertBefore.attr('id')+" in room "+roomObj.name);
-                userToInsertBefore.before(userHtml);
-            } else {
-                console.log("sort; Appending " + userObj.username + " in room "+roomObj.name);
-                $(getUserListSelector(roomObj.name)).append(userHtml);
-            }
-*/
         }
 
     };
