@@ -13,7 +13,12 @@ import play.libs.OAuth2;
 import play.libs.WS;
 import play.mvc.Scope;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.*;
+import java.util.List;
 
 public class Application extends PreloadUserController {
 
@@ -294,5 +299,35 @@ public class Application extends PreloadUserController {
 //        Logger.debug("Online user count: " + userSearch.onlineUsers.length);
 //        Logger.debug("Offline user count: " + userSearch.offlineUsers.length);
         renderJSON(userSearch);
+    }
+
+    public static void testImage() throws IOException {
+        // Create image
+        int width=200, height=200;
+        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+
+        // Get drawing context
+        Graphics2D g2d = image.createGraphics();
+
+        // Fill background with white
+        g2d.setColor(Color.WHITE);
+        g2d.fillRect(0, 0, width, height);
+
+        // Draw a smiley face
+        g2d.setColor(Color.YELLOW);
+        g2d.fillOval(10, 10, 180, 180);
+        g2d.setColor(Color.BLACK);
+        g2d.fillOval(40, 40, 40, 40);
+        g2d.fillOval(120, 40, 40, 40);
+        g2d.fillRect(50, 150, 100, 10);
+
+        // Dispose context
+        g2d.dispose();
+
+        // Write image to the output stream
+//        ServletOutputStream os = response.getOutputStream();
+
+        response.setContentTypeIfNotSet("image/png");
+        ImageIO.write(image, "png", response.out);
     }
 }
