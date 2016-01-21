@@ -16,6 +16,7 @@ import play.mvc.Scope;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
@@ -301,31 +302,42 @@ public class Application extends PreloadUserController {
         renderJSON(userSearch);
     }
 
-    public static void testImage() throws IOException {
+    public static void redditButton(String roomName) throws IOException, FontFormatException {
+        Logger.info("Generating sidebar button for room " + roomName);
+        ChatRoom room = ChatRoom.findByName(roomName);
+        if (room == null) {
+            renderText("Not found.");
+            return;
+        }
+
         // Create image
-        int width=200, height=200;
-        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        int width = 260, height = 45;
+        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+
+        BufferedImage backgroundImage = ImageIO.read(new File("public/images/sidebar-buttonback.png"));
 
         // Get drawing context
+        Font sourceSans = Font.createFont(Font.TRUETYPE_FONT, new File("fonts/SourceSansPro-Regular.otf"));
+        Font normalFont = sourceSans.deriveFont(14f);
+        Font sourceSansBold = Font.createFont(Font.TRUETYPE_FONT, new File("fonts/SourceSansPro-Bold.otf"));
+        Font bigFont = sourceSansBold.deriveFont(16f);
         Graphics2D g2d = image.createGraphics();
+        RenderingHints rh = new RenderingHints(
+                RenderingHints.KEY_TEXT_ANTIALIASING,
+                RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        rh.add(new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON));
+        rh.add(new RenderingHints(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON));
+        g2d.setRenderingHints(rh);
 
-        // Fill background with white
+        g2d.drawImage(backgroundImage, 0, 0, null);
         g2d.setColor(Color.WHITE);
-        g2d.fillRect(0, 0, width, height);
-
-        // Draw a smiley face
-        g2d.setColor(Color.YELLOW);
-        g2d.fillOval(10, 10, 180, 180);
-        g2d.setColor(Color.BLACK);
-        g2d.fillOval(40, 40, 40, 40);
-        g2d.fillOval(120, 40, 40, 40);
-        g2d.fillRect(50, 150, 100, 10);
+        g2d.setFont(bigFont);
+        g2d.drawString("/r/"+room.getName()+" chat", 70, 21);
+        g2d.setFont(normalFont);
+        g2d.drawString(room.getNumberOfUsers() + " members", 70, 37);
 
         // Dispose context
         g2d.dispose();
-
-        // Write image to the output stream
-//        ServletOutputStream os = response.getOutputStream();
 
         response.setContentTypeIfNotSet("image/png");
         ImageIO.write(image, "png", response.out);
