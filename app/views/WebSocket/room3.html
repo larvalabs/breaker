@@ -416,8 +416,14 @@
                                                 <!-- Filled in dynamically -->
                                             </ul>
                                         </div>
+                                        <div id='onlineparent' class="wrapper-md m-b-n-md">
+                                            <div class="m-b-sm text-md">Here Now</div>
+                                            <ul id='onlinelist' class="list-group no-bg no-borders pull-in m-b-sm">
+                                                <!-- Filled in dynamically -->
+                                            </ul>
+                                        </div>
                                         <div class="wrapper-md">
-                                            <div class="m-b-sm text-md">Users</div>
+                                            <div class="m-b-sm text-md">All Users</div>
                                             <ul id='userlist' class="list-group no-bg no-borders pull-in m-b-sm">
                                                 <!-- Filled in dynamically -->
                                             </ul>
@@ -717,6 +723,11 @@
         return '#userlistparent_' + roomName + ' #modlist';
     }
 
+    function getOnlineListSelector(roomName) {
+        roomName = roomName.toLowerCase();
+        return '#userlistparent_' + roomName + ' #onlinelist';
+    }
+
     function getThreadSelector(roomName) {
         roomName = roomName.toLowerCase();
         return '#threadparent_' + roomName + ' #thread';
@@ -901,21 +912,63 @@
 
     var updateUserInUserList = function (userObj, roomObj) {
         var userHtml = tmpl('userentry_tmpl', {roomName: roomObj.name, user: userObj});
-        var existingElements = $(getUserEntrySelector(roomObj.name, userObj.username));
-        if (existingElements.length > 0) {
-//                    console.log("Existing user, replacing with new render.");
-            existingElements.first().replaceWith(userHtml);
+//        var userEntrySelector = getUserEntrySelector(roomObj.name, userObj.name);
+//        var userEntryId = userEntrySelector.substring(1, userEntrySelector.length);
+//        console.log("User entry id: " + userEntryId);
+        $(getUserEntrySelector(roomObj.name, userObj.username)).remove();
+
+        if (userObj.modForRoom) {
+            insertUserInCorrectPlace(getModListSelector(roomObj.name), userHtml);
+//            $(getModListSelector(roomObj.name)).append(userHtml);
+        } else if (userObj.online) {
+            insertUserInCorrectPlace(getOnlineListSelector(roomObj.name), userHtml);
+//            $(getOnlineListSelector(roomObj.name)).append(userHtml);
         } else {
-//                    console.log("New user, appending.");
-            // todo insert at sorted location
-            if (userObj.modForRoom) {
-                $(getModListSelector(roomObj.name)).append(userHtml);
+            insertUserInCorrectPlace(getUserListSelector(roomObj.name), userHtml);
+/*
+            var children = $(getUserListSelector(roomObj.name)).children();
+            var userToInsertBefore;
+            for (var i=0; i<children.length; i++) {
+                var child = $(children.get(i));
+                if (userEntryId.toLowerCase() < child.attr('id').toLowerCase()) {
+                    userToInsertBefore = child;
+                    break;
+                }
+
+            }
+            if (userToInsertBefore) {
+                console.log("sort; Inserting " + userObj.username + " before " + userToInsertBefore.attr('id')+" in room "+roomObj.name);
+                userToInsertBefore.before(userHtml);
             } else {
+                console.log("sort; Appending " + userObj.username + " in room "+roomObj.name);
                 $(getUserListSelector(roomObj.name)).append(userHtml);
             }
+*/
         }
 
-    }
+    };
+
+    var insertUserInCorrectPlace = function (userListSelector, userToInsertHtml) {
+        var userEntryId = $(userToInsertHtml).attr('id');
+        var children = $(userListSelector).children();
+        var userToInsertBefore;
+        for (var i=0; i<children.length; i++) {
+            var child = $(children.get(i));
+            if (userEntryId.toLowerCase() < child.attr('id').toLowerCase()) {
+                userToInsertBefore = child;
+                break;
+            }
+
+        }
+        if (userToInsertBefore) {
+            console.log("sort; Inserting " + userEntryId + " before " + userToInsertBefore.attr('id')+" in list "+userListSelector);
+            userToInsertBefore.before(userToInsertHtml);
+        } else {
+            console.log("sort; Appending " + userEntryId + " in list "+userListSelector);
+            $(userListSelector).append(userToInsertHtml);
+        }
+
+    };
 
     var previewLoaded = function (e) {
         // Makes the UI feel a little more responsive to trigger a check right when preview loads
