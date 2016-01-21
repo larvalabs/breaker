@@ -334,7 +334,8 @@ public class Application extends PreloadUserController {
         g2d.setFont(bigFont);
         g2d.drawString("/r/"+room.getName()+" chat", 70, 21);
         g2d.setFont(normalFont);
-        g2d.drawString(room.getNumberOfUsers() + " members", 70, 37);
+//        g2d.drawString(room.getNumberOfUsers() + " members", 70, 37);
+        g2d.drawString("click to join", 70, 37);
 
         // Dispose context
         g2d.dispose();
