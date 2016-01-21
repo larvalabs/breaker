@@ -14,7 +14,7 @@ public class RoomManage extends PreloadUserController {
         ChatRoom chatRoom = ChatRoom.findByName(roomName);
         if (chatRoom == null) {
             error("Room '" + roomName + "' not found.");
-        } else if (!user.getModeratedRooms().contains(chatRoom)) {
+        } else if (!chatRoom.isModerator(user)) {
             error("Not a moderator of '" + roomName + "'.");
         } else {
             render(chatRoom);
@@ -24,7 +24,7 @@ public class RoomManage extends PreloadUserController {
     public static void savePrefs(Long roomId, String banner, String iconUrl, Integer karmaThreshold) {
         ChatUser user = connected();
         ChatRoom chatRoom = ChatRoom.findById(roomId);
-        if (!user.getModeratedRooms().contains(chatRoom)) {
+        if (!chatRoom.isModerator(user)) {
             error("Not a moderator of '" + chatRoom.getName() + "'.");
         } else {
             chatRoom.setBanner(banner);

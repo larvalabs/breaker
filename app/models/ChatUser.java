@@ -31,6 +31,8 @@ public class ChatUser extends Model {
     @Column(unique = true)
     public String uid;
 
+    public boolean admin = false;
+
     public String accessToken;
     public String refreshToken;
 
@@ -99,6 +101,14 @@ public class ChatUser extends Model {
 
     public void setUid(String uid) {
         this.uid = uid;
+    }
+
+    public boolean isAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
     }
 
     public String getAccessToken() {
@@ -389,7 +399,7 @@ public class ChatUser extends Model {
     }
 
     public boolean isModerator(ChatRoom chatRoom) {
-        return getModeratedRooms().contains(chatRoom);
+        return admin || getModeratedRooms().contains(chatRoom);
     }
 
     public void watchRoom(ChatRoom room) {

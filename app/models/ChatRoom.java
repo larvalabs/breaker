@@ -224,7 +224,7 @@ public class ChatRoom extends Model {
     }
 
     public boolean isModerator(ChatUser user) {
-        return getModerators().contains(user);
+        return getModerators().contains(user) || user.isAdmin();
     }
 
     public List<Message> getMessagesWithoutBannedBefore(ChatUser loggedInUser, long beforeMessageId, int limit) {
