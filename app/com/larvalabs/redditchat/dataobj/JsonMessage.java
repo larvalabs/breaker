@@ -132,8 +132,8 @@ public class JsonMessage {
                         localLinks.add(linkStr);
                         // todo this is budget
                         String linkStrLower = linkStr.toLowerCase();
-                        if (linkStrLower.endsWith("jpg") || linkStrLower.endsWith("jpeg") ||
-                                linkStrLower.endsWith("png") || linkStrLower.endsWith("gif")) {
+                        if (linkStrLower.endsWith(".jpg") || linkStrLower.endsWith(".jpeg") ||
+                                linkStrLower.endsWith(".png") || linkStrLower.endsWith(".gif")) {
                             localImageLinks.add(linkStr);
                         }
                         sb.append("<a class=\"text-info\" href=\"");
