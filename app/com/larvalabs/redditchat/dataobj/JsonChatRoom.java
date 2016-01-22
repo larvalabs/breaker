@@ -32,13 +32,15 @@ public class JsonChatRoom {
 
     public boolean watching;
 
+    public long lastSeenMessageTime;
+
     // Filled when getting messages
     public String[] usernamesPresent;
     public JsonMessage[] messages;
 
     public JsonChatRoom(long id, String name, long numberUsers,
                         long numberNewMessagesForUser, boolean starred, long liveUserCount, String iconUrl, int iconUrlSource, boolean noIconAvailableFromStore,
-                        String banner, boolean isUserModerator) {
+                        String banner, boolean isUserModerator, long lastSeenMessageTime) {
         this.id = id;
         this.name = name;
         this.numberUsers = numberUsers;
@@ -50,6 +52,7 @@ public class JsonChatRoom {
         this.noIconAvailableFromStore = noIconAvailableFromStore;
         this.banner = banner;
         this.isUserModerator = isUserModerator;
+        this.lastSeenMessageTime = lastSeenMessageTime;
     }
 
     /**
@@ -61,7 +64,8 @@ public class JsonChatRoom {
         JsonChatRoom jsonChatRoom = new JsonChatRoom(room.getId(), room.name,
                 room.numberOfUsers,
                 0, false, room.getCurrentUserCount(), room.getIconUrl(),
-                room.getIconUrlSource(), room.isNoIconAvailableFromStore(), room.getBanner(), false);
+                room.getIconUrlSource(), room.isNoIconAvailableFromStore(), room.getBanner(), false,
+                0);
         return jsonChatRoom;
     }
 
@@ -74,10 +78,12 @@ public class JsonChatRoom {
         if (unreadCountsByRoomId != null && unreadCountsByRoomId.containsKey(room.id)) {
             unreadCount = unreadCountsByRoomId.get(room.id);
         }
+        ChatUserRoomJoin join = ChatUserRoomJoin.findByUserAndRoom(loggedInUser, room);
         JsonChatRoom jsonChatRoom = new JsonChatRoom(room.getId(), room.name,
                 room.numberOfUsers,
                 unreadCount, loggedInUser.isRoomStarred(room), room.getCurrentUserCount(), room.getIconUrl(),
-                room.getIconUrlSource(), room.isNoIconAvailableFromStore(), room.getBanner(), room.isModerator(loggedInUser));
+                room.getIconUrlSource(), room.isNoIconAvailableFromStore(), room.getBanner(), room.isModerator(loggedInUser),
+                join.getLastSeenMessageTime());
         if (loadWatcherStatus) {
             jsonChatRoom.watching = room.getWatchers().contains(loggedInUser);
         }

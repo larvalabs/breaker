@@ -34,8 +34,8 @@ public class Message extends Model {
     public String imageKey;
     public int imageKeyType = IMAGETYPE_SCREENSHOT;
 
-    @Index(name="createDate")
-    public Date createDate;
+    @Index(name = "createDate")
+    public Date createDate = new Date();
 
     public int flagCount;
 

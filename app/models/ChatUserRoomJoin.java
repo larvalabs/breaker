@@ -24,6 +24,7 @@ public class ChatUserRoomJoin extends Model {
     public ChatRoom room;
 
     public long lastSeenMessageId;
+    public long lastSeenMessageTime;
 
     public ChatUserRoomJoin(ChatUser user, ChatRoom room) {
         this.user = user;
@@ -53,6 +54,14 @@ public class ChatUserRoomJoin extends Model {
 
     public void setLastSeenMessageId(long lastSeenMessageId) {
         this.lastSeenMessageId = lastSeenMessageId;
+    }
+
+    public long getLastSeenMessageTime() {
+        return lastSeenMessageTime;
+    }
+
+    public void setLastSeenMessageTime(long lastSeenMessageTime) {
+        this.lastSeenMessageTime = lastSeenMessageTime;
     }
 
     ///

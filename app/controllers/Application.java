@@ -302,6 +302,28 @@ public class Application extends PreloadUserController {
         renderJSON(userSearch);
     }
 
+    public static void markMessagesSeen(String roomName) {
+        ChatUser user = connected();
+        if (user == null) {
+            Logger.debug("Can't mark room read, user isn't logged in.");
+            error();
+            return;
+        }
+
+        ChatRoom room = ChatRoom.findByName(roomName);
+        if (room == null) {
+            Logger.debug("Can't mark room read, room name " + roomName + " not found.");
+            error();
+            return;
+        }
+        ChatUserRoomJoin join = ChatUserRoomJoin.findByUserAndRoom(user, room);
+        join.setLastSeenMessageTime(System.currentTimeMillis());
+        join.save();
+
+        Logger.debug(user.username + " last read time for " + roomName + " now " + join.getLastSeenMessageTime());
+        ok();
+    }
+
     public static void redditButton(String roomName, String imageFilename) throws IOException, FontFormatException {
         Logger.info("Generating sidebar button for room " + roomName);
         ChatRoom room = ChatRoom.findByName(roomName);

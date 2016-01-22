@@ -59,6 +59,8 @@ public class JsonMessage {
         this.user = user;
         this.room = room;
         this.message = message;
+        this.createDate = new Date();
+        this.createDateLongUTC = createDate.getTime();
         processMessage();
     }
 

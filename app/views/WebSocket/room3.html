@@ -667,6 +667,22 @@
         getStaydownForRoom(roomName).checkdown();
 
         currentSelectedRoomName = roomName;
+
+        markMessagesReadOnServer(roomName);
+    };
+
+    var isMessageNew = function(msgObj) {
+        var roomObj = getRoomForName(msgObj.room.name);
+        if (msgObj.createDateLongUTC > roomObj.lastSeenMessageTime) {
+            return true;
+        }
+        return false;
+    };
+
+    var markMessagesReadOnServer = function (roomName) {
+        $.getJSON('@{Application.markMessagesSeen()}?roomName=' + roomName, function (responseData) {
+            console.log("Messages marked read.");
+        });
     };
 
     function resetUnreadCountForRoom(roomName) {
@@ -901,6 +917,9 @@
                 msgTemplateId = 'messageshort_tmpl';
             }
             var msg = tmpl(msgTemplateId, {event: event});
+
+            var messageIsNew = isMessageNew(event.message);
+
             if (doesMessageElementExist(event.message.uuid)) {
 //                console.log("Existing message, replacing with new render.");
                 var msgObjects = $(getMessageSelector(event.message.uuid));
@@ -912,12 +931,12 @@
 
                 // If not a bot message, update msg counts
                 if (!event.user.bot) {
-                    if (!hasFocus) {
+                    if (!hasFocus && messageIsNew) {
                         numNewMessagesTotal++;
                         updateTitle();
 
                         incrementUnreadCountForRoom(roomName);
-                    } else if (roomName != currentSelectedRoomName) {
+                    } else if (roomName != currentSelectedRoomName && messageIsNew) {
                         incrementUnreadCountForRoom(roomName);
                     }
                 }
@@ -928,6 +947,11 @@
             setLastMessageUsernameForRoom(event.room.name, event.user.username);
 
             jQuery(getMessageSelector(event.message.uuid)+' .timeago').timeago();
+
+            if (messageIsNew) {
+                markMessagesReadOnServer(event.room.name);
+            }
+
         } else if (event.type === 'servermessage') {
             var msgTemplateId = 'servermessage_tmpl';
             var msg = tmpl(msgTemplateId, {event: event});
