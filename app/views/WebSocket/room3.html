@@ -585,16 +585,16 @@
     }
 
     var selectRoom = function (roomName) {
-        roomName = roomName.toLowerCase();
+//        roomName = roomName.toLowerCase();
         console.log("Select room: " + roomName);
 
         // Hide all thread views, then show selected message thread
         $('[id^=threadparent_]').hide();
-        $('#threadparent_'+roomName).show();
+        $('#'+getThreadParentId(roomName)).show();
 
         // Hide all user lists, then show user list for selected room
         $('[id^=userlistparent_]').hide();
-        $('#userlistparent_'+roomName).show();
+        $('#'+getUserListParentId(roomName)).show();
 
         styleSelectedRoomInSideBar(roomName);
 
@@ -734,7 +734,7 @@
         return '#threadparent_' + roomName + ' #thread';
     }
 
-    function getUserListParentSelector(roomName) {
+    function getUserListParentId(roomName) {
         roomName = roomName.toLowerCase();
         return 'userlistparent_' + roomName;
     }
@@ -794,7 +794,7 @@
 
                     // Clone and configure user list for this room
                     var userlistParentClone = $('#userlistparent').first().clone().appendTo('#rightcol');
-                    userlistParentClone.attr('id', getUserListParentSelector(roomObj.name));
+                    userlistParentClone.attr('id', getUserListParentId(roomObj.name));
 
                     var setupMentions = function() {
                         var thisRoomObj = roomObj;
