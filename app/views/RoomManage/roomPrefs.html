@@ -234,6 +234,50 @@
                         </div>
                     </div>
 
+                    <div class="panel panel-default">
+                        <div class="panel-heading font-bold m-t-sm">
+                            How to add a custom button to your subreddit's sidebar
+                        </div>
+                        <div class="panel-body">
+                            <form class="form-horizontal" >
+
+                                <input type="hidden" name="roomId" value="${chatRoom.id}"/>
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label"><b>1.</b> Download button</label>
+                                    <div class="col-sm-10">
+                                        <img src="@{Application.redditButton(chatRoom.name, "redditbutton.png")}"/>
+                                        <span class="help-block m-b-none">Right click and save this to your computer as redditbutton.png</span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label"><b>2.</b> Add sidebar link</label>
+                                    <div class="col-sm-10">
+                                        <textarea class="form-control">[Join /r/${chatRoom.name} Chat](http://www.breakerapp.com/c/${chatRoom.name})</textarea>
+                                        <span class="help-block m-b-none">Add this to your sidebar.</span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label"><b>3.</b> Add theme CSS</label>
+                                    <div class="col-sm-10">
+                                        <textarea class="form-control" rows="8">.side .md [href*="http://www.breakerapp.com/c/${chatRoom.name}"] {
+  display: block;
+  height: 45px;
+  width: 260px;
+  text-indent:-9999px;
+  background-image: url(%%redditbutton%%);
+}
+</textarea>
+                                        <span class="help-block m-b-none">Upload your button image to reddit and then add this CSS to your stylesheet.</span>
+                                    </div>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+
                 </div>
                 <!-- /column -->
 

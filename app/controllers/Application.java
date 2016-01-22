@@ -302,7 +302,7 @@ public class Application extends PreloadUserController {
         renderJSON(userSearch);
     }
 
-    public static void redditButton(String roomName) throws IOException, FontFormatException {
+    public static void redditButton(String roomName, String imageFilename) throws IOException, FontFormatException {
         Logger.info("Generating sidebar button for room " + roomName);
         ChatRoom room = ChatRoom.findByName(roomName);
         if (room == null) {
