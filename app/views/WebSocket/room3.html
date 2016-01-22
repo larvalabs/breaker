@@ -23,7 +23,7 @@
 
 <script type="text/html" id="roomentry_tmpl">
     <li id="<%= getRoomlistEntrySelector(roomObj.name).substring(1) %>" class="roomlistentry">
-        <a href="#" class="roomselect" data-roomname="<%= roomObj.name %>">
+        <a class="roomselect" data-roomname="<%= roomObj.name %>">
             <img class="roomIconSmall" src="<%= roomObj.iconUrl ? roomObj.iconUrl : '/public/images/blank.png' %>"/>
             <b class="unreadcount label bg-info pull-right"></b>
             <!--<i class="glyphicon glyphicon-envelope icon text-info-lter"></i>-->
@@ -522,6 +522,12 @@
 
     var numNewMessagesTotal = 0;
     var preSelectRoomName = '${roomName}';
+    // Hash room parameter takes precedence over server side param
+/*
+    if (window.location.hash) {
+        preSelectRoomName = window.location.hash.substring(1, window.location.hash.length);
+    }
+*/
     var hasFocus = true;
     var rooms = [];
     var stayDownObjs = [];
@@ -619,6 +625,8 @@
     var selectRoom = function (roomName) {
 //        roomName = roomName.toLowerCase();
         console.log("Select room: " + roomName);
+//        window.location.hash = roomName;
+        window.history.replaceState({}, 'Breaker: ', '/c/' + roomName);
 
         // Hide all thread views, then show selected message thread
         $('[id^=threadparent_]').hide();
