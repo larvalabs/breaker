@@ -241,8 +241,6 @@
                         <div class="panel-body">
                             <form class="form-horizontal" >
 
-                                <input type="hidden" name="roomId" value="${chatRoom.id}"/>
-
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label"><b>1.</b> Download button</label>
                                     <div class="col-sm-10">
@@ -271,6 +269,26 @@
 }
 </textarea>
                                         <span class="help-block m-b-none">Upload your button image to reddit and then add this CSS to your stylesheet.</span>
+                                    </div>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading font-bold m-t-sm">
+                            Moderator commands
+                        </div>
+                        <div class="panel-body">
+                            <form class="form-horizontal">
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">User management</label>
+                                    <div class="col-sm-10">
+                                        <span class="help-block m-b-none"><b>/kick @username</b> - Kick someone from the room temporarily</span>
+                                        <span class="help-block m-b-none"><b>/ban @username</b> - Kick and ban someone from rejoining the room</span>
+                                        <span class="help-block m-b-none"><b>/unban @username</b> - Revoke a user ban allowing them to join again</span>
                                     </div>
                                 </div>
 
