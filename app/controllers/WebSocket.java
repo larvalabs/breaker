@@ -54,8 +54,10 @@ public class WebSocket extends Controller {
             Application.preAuthForRoomJoin(roomName);
             return;
         }
+
+        List<ChatUserRoomJoin> chatRoomJoins = user.getChatRoomJoins();
         if (roomName == null || room == null) {
-            if (user.getChatRoomJoins().size() == 0) {
+            if (chatRoomJoins.size() == 0) {
                 room = ChatRoom.findByName(Constants.CHATROOM_DEFAULT);
                 try {
                     user.joinChatRoom(room);
@@ -72,7 +74,38 @@ public class WebSocket extends Controller {
                 Application.index();
             }
         }
-        render("WebSocket/room3.html", user, roomName);
+
+        // Links to other suggested rooms
+        List<ChatRoom> activeRooms = new ArrayList<ChatRoom>();
+        {
+            ChatRoom breakerapp = ChatRoom.findByName("breakerapp");
+            if (!existsInJoins(chatRoomJoins, breakerapp)) {
+                activeRooms.add(breakerapp);
+            }
+        }
+        {
+            ChatRoom breakerapp = ChatRoom.findByName("SideProject");
+            if (!existsInJoins(chatRoomJoins, breakerapp)) {
+                activeRooms.add(breakerapp);
+            }
+        }
+        {
+            ChatRoom breakerapp = ChatRoom.findByName("webdev");
+            if (!existsInJoins(chatRoomJoins, breakerapp)) {
+                activeRooms.add(breakerapp);
+            }
+        }
+
+        render("WebSocket/room3.html", user, roomName, activeRooms);
+    }
+
+    private static boolean existsInJoins(List<ChatUserRoomJoin> joins, ChatRoom room) {
+        for (ChatUserRoomJoin join : joins) {
+            if (join.room.equals(room)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
