@@ -1045,8 +1045,8 @@ body {
 
 @media (max-width: 767px) {
   body {
-    height: auto;
-    min-height: 100%;
+    /*height: auto;*/
+    /*min-height: 100%;*/
   }
   .navbar-fixed-bottom {
     position: fixed;
@@ -1055,9 +1055,9 @@ body {
     float: none;
   }
   .app-content-full {
-    position: relative;
-    top: 0;
-    width: 100% !important;
+    /*position: relative;*/
+    /*top: 0;*/
+    /*width: 100% !important;*/
   }
   .hbox-auto-xs {
     display: block;
