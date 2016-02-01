@@ -27,6 +27,7 @@ public class Application extends PreloadUserController {
     public static final String REDDIT_SECRET = Play.configuration.getProperty("oauth.reddit.secret");
     public static final String REDDIT_CALLBACK = Play.configuration.getProperty("oauth.reddit.callbackurl");
     public static final String REDDIT_SCOPE = WS.encode("identity,mysubreddits");
+    // https://ssl.reddit.com/api/v1/authorize.compact
     public static final String REDDIT_AUTHORIZATION_URL = "https://www.reddit.com/api/v1/authorize?client_id=" + REDDIT_CLIENTID + "&response_type=code" +
             "&state=iuknjvdihu&redirect_uri=" + REDDIT_CALLBACK + "&duration=permanent&scope=" + REDDIT_SCOPE;
     public static final String REDDIT_TOKEN_URL = "https://www.reddit.com/api/v1/access_token";
@@ -226,14 +227,17 @@ public class Application extends PreloadUserController {
 
             String joiningRoom = session.get(SESSION_JOINROOM);
             String waitingRoom = session.get(SESSION_WAITROOM);
+            // NOTE: These soecific redirect calls are because the iframe https requirements are causing problems
+            // with whatever play does for normal redirects
             if (joiningRoom != null) {
                 session.remove(SESSION_JOINROOM);
-                WebSocket.room(joiningRoom);
+                redirect("/c/" + joiningRoom);
             } else if (waitingRoom != null) {
                 session.remove(SESSION_WAITROOM);
-                roomWait(waitingRoom, true);
+                redirect("/openroom/" + waitingRoom + "?accept=true");
+//                roomWait(waitingRoom, true);
             } else {
-                WebSocket.room(null);
+                redirect("/c");
             }
         }
         redirect(REDDIT_AUTHORIZATION_URL);
