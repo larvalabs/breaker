@@ -39,6 +39,7 @@ public class Application extends PreloadUserController {
 
     public static final String SESSION_JOINROOM = "joinroomname";
     public static final String SESSION_WAITROOM = "waitroomname";
+    public static final String HTTPS_WWW_BREAKERAPP_COM = "https://www.breakerapp.com";
 
     public static void testForceLogin() {
         setUserInSession(ChatUser.findByUsername("chattest1"));
@@ -231,13 +232,24 @@ public class Application extends PreloadUserController {
             // with whatever play does for normal redirects
             if (joiningRoom != null) {
                 session.remove(SESSION_JOINROOM);
-                redirect("/c/" + joiningRoom);
+                if (Play.mode.isProd()) {
+                    redirect(HTTPS_WWW_BREAKERAPP_COM + "/c/" + joiningRoom);
+                } else {
+                    WebSocket.room(joiningRoom);
+                }
             } else if (waitingRoom != null) {
                 session.remove(SESSION_WAITROOM);
-                redirect("/openroom/" + waitingRoom + "?accept=true");
-//                roomWait(waitingRoom, true);
+                if (Play.mode.isProd()) {
+                    redirect(HTTPS_WWW_BREAKERAPP_COM + "/openroom/" + waitingRoom + "?accept=true");
+                } else {
+                    roomWait(waitingRoom, true);
+                }
             } else {
-                redirect("/c");
+                if (Play.mode.isProd()) {
+                    redirect(HTTPS_WWW_BREAKERAPP_COM + "/c");
+                } else {
+                    WebSocket.room(null);
+                }
             }
         }
         redirect(REDDIT_AUTHORIZATION_URL);
