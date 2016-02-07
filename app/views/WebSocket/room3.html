@@ -598,7 +598,7 @@
 
         // Message received on the socket
         socket.onmessage = function (event) {
-            console.log(event.data);
+//            console.log(event.data);
             var eventObj = JSON.parse(event.data);
 
             display(eventObj);
@@ -814,7 +814,7 @@
     }
 
     var display = function (event) {
-        console.log("Received event: " + event.type);
+//        console.log("Received event: " + event.type);
         if (event.type === 'roomlist') {
             $('#threadparent').hide();
             $('#userlistparent').hide();
@@ -848,12 +848,51 @@
 
                     lastMessageUsernameForRoom.push('');
 
+                    var linkTitles = [];
+                    var linkHrefs = [];
+
+                    function receiveMessage(event) {
+                        // do something with event.data;
+                        console.log("Received window event: " + event+" from origin "+event.origin);
+                        var pageData = event.data;
+                        console.log("Has titles: " + pageData.titles.length);
+                        console.log("Has links: " + pageData.links.length);
+                        linkTitles = pageData.titles;
+                        linkHrefs = pageData.links;
+                    }
+
+                    window.addEventListener("message", receiveMessage, false);
+
                     // Clone and configure user list for this room
                     var userlistParentClone = $('#userlistparent').first().clone().appendTo('#rightcol');
                     userlistParentClone.attr('id', getUserListParentId(roomObj.name));
 
                     var setupMentions = function() {
                         var thisRoomObj = roomObj;
+
+                        // Link mentions
+                        $(parentClone).find('textarea.mention').mentionsInput({
+                            triggerChar: '#',
+                            onDataRequest:function (mode, query, callback) {
+
+                                var respObjs = [];
+
+                                for (var i = 0; i < linkTitles.length; i++) {
+                                    var title = linkTitles[i];
+                                    if (title.toLowerCase().indexOf(query.toLowerCase()) == 0) {
+                                        var respUserObj = {
+                                            id: linkHrefs[i],
+                                            name: title+' | '+linkHrefs[i],
+                                            avatar: '',
+                                            type: 'link'
+                                        };
+                                        respObjs.push(respUserObj);
+                                    }
+                                }
+
+                                callback.call(this, respObjs);
+                            }
+                        });
 
                         // User mentions
                         $(parentClone).find('textarea.mention').mentionsInput({
@@ -884,6 +923,7 @@
 
                             }
                         });
+
                     };
                     setupMentions();
 
