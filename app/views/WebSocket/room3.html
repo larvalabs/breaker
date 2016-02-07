@@ -872,29 +872,60 @@
 
                         // Link mentions
                         $(parentClone).find('textarea.mention').mentionsInput({
-                            triggerChar: '#',
-                            onDataRequest:function (mode, query, callback) {
+                            triggerChar: ['@', '#'],
+                            onDataRequest:function (mode, query, callback, triggerChar) {
 
-                                var respObjs = [];
+                                console.log("Mention for trigger " + triggerChar);
 
-                                for (var i = 0; i < linkTitles.length; i++) {
-                                    var title = linkTitles[i];
-                                    if (title.toLowerCase().indexOf(query.toLowerCase()) == 0) {
-                                        var respUserObj = {
-                                            id: linkHrefs[i],
-                                            name: title+' | '+linkHrefs[i],
-                                            avatar: '',
-                                            type: 'link'
-                                        };
-                                        respObjs.push(respUserObj);
+                                if (triggerChar == '#') {
+                                    var respObjs = [];
+
+                                    for (var i = 0; i < linkTitles.length; i++) {
+                                        var title = linkTitles[i];
+                                        if (title.toLowerCase().indexOf(query.toLowerCase()) == 0) {
+                                            var respUserObj = {
+                                                id: linkHrefs[i],
+                                                name: title+' | '+linkHrefs[i],
+                                                avatar: '',
+                                                type: 'link'
+                                            };
+                                            respObjs.push(respUserObj);
+                                        }
                                     }
+
+                                    callback.call(this, respObjs);
+
+                                } else if (triggerChar == '@') {
+                                    $.getJSON('@{Application.userSearch()}?roomName='+thisRoomObj.name+'&query='+query, function(responseData) {
+                                        var responseObj = responseData;
+                                        var responseObjs = [];
+
+                                        function addUsersFromResponse(userArray) {
+                                            for (var i = 0; i < userArray.length; i++) {
+                                                var userObj = userArray[i];
+                                                var respUserObj = {
+                                                    id: userObj.id,
+                                                    name: '@' + userObj.username,
+                                                    avatar: userObj.profileImageUrl,
+                                                    type: 'contact'
+                                                };
+                                                responseObjs.push(respUserObj);
+                                            }
+                                        }
+
+                                        addUsersFromResponse(responseObj.onlineUsers);
+                                        addUsersFromResponse(responseObj.offlineUsers);
+//                                responseData = _.filter(responseData, function(item) { return item.name.toLowerCase().indexOf(query.toLowerCase()) > -1 });
+                                        callback.call(this, responseObjs);
+                                    });
+
                                 }
 
-                                callback.call(this, respObjs);
                             }
                         });
 
                         // User mentions
+/*
                         $(parentClone).find('textarea.mention').mentionsInput({
                             onDataRequest:function (mode, query, callback) {
 
@@ -923,6 +954,7 @@
 
                             }
                         });
+*/
 
                     };
                     setupMentions();
