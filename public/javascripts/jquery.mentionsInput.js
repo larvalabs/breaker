@@ -17,7 +17,7 @@
     onDataRequest : $.noop,
     minChars      : 1,
     showAvatars   : true,
-    elastic       : true,
+    elastic       : false,
 	display		  : 'name',
     classes       : {
       autoCompleteItemActive : "active"
@@ -233,6 +233,13 @@
         return;
       }
 
+      if (e.keyCode === KEY.ESC) {
+        //resetBuffer();
+        //currentDataQuery = '';
+        hideAutoComplete();
+        return;
+      }
+
       if (!elmAutocompleteList.is(':visible')) {
         return true;
       }
@@ -319,6 +326,12 @@
         }
         elmListItem = elmListItem.appendTo(elmDropDownList);
       });
+
+      //console.log("Height: " + elmDropDownList.height());
+      //console.log("Input height: " + elmWrapperBox.height());
+      var totalHeight = elmDropDownList.height() + elmWrapperBox.height();
+      elmAutocompleteList.css('margin-top', '-' + totalHeight + 'px');
+      //$(elmAutocompleteList).css('margin-top', '-200px');
 
       elmAutocompleteList.show();
       elmDropDownList.show();
