@@ -306,13 +306,18 @@
       elmAutocompleteList.empty();
       var elmDropDownList = $("<ul>").appendTo(elmAutocompleteList).hide();
 
-      _.each(results, function (item) {
+      _.each(results, function (item, index) {
         var elmListItem = $(settings.templates.autocompleteListItem({
           'id'      : utils.htmlEncode(item.id),
           'display' : utils.htmlEncode(item[settings.display]),
           'type'    : utils.htmlEncode(item.type),
           'content' : utils.highlightTerm(utils.htmlEncode((item.name)), query)
         }));
+
+        //If the index is 0
+        if (index === 0) {
+          selectAutoCompleteItem(elmListItem);
+        }
 
         if (settings.showAvatars) {
           var elmIcon;
