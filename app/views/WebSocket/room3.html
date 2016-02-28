@@ -855,10 +855,12 @@
                         // do something with event.data;
                         console.log("Received window event: " + event+" from origin "+event.origin);
                         var pageData = event.data;
-                        console.log("Has titles: " + pageData.titles.length);
-                        console.log("Has links: " + pageData.links.length);
-                        linkTitles = pageData.titles;
-                        linkHrefs = pageData.links;
+                        if (pageData && pageData.titles) {
+                            console.log("Has titles: " + pageData.titles.length);
+                            console.log("Has links: " + pageData.links.length);
+                            linkTitles = pageData.titles;
+                            linkHrefs = pageData.links;
+                        }
                     }
 
                     window.addEventListener("message", receiveMessage, false);
