@@ -887,7 +887,7 @@
                                         if (title.toLowerCase().indexOf(query.toLowerCase()) == 0) {
                                             var respUserObj = {
                                                 id: linkHrefs[i],
-                                                name: title+' | '+linkHrefs[i],
+                                                name: title+' | '+linkHrefs[i].trim(),
                                                 avatar: '',
                                                 type: 'link'
                                             };

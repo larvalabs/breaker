@@ -174,6 +174,10 @@
       // Set correct focus and selection
       elmInputBox.focus();
       utils.setCaratPosition(elmInputBox[0], startEndIndex);
+
+      // Scroll textarea to bottom after insert
+      console.log("Scrolling " + elmInputBox.scrollTop + " to " + elmInputBox.scrollHeight);
+      elmInputBox[0].scrollTop = elmInputBox[0].scrollHeight
     }
 
     function getInputBoxValue() {
