@@ -877,7 +877,7 @@
                             triggerChar: ['@', '#'],
                             onDataRequest:function (mode, query, callback, triggerChar) {
 
-                                console.log("Mention for trigger " + triggerChar);
+                                console.log("Mention for trigger " + triggerChar+": "+query);
 
                                 if (triggerChar == '#') {
                                     var respObjs = [];
@@ -894,6 +894,8 @@
                                             respObjs.push(respUserObj);
                                         }
                                     }
+
+                                    window.parent.postMessage({titleQuery: query}, '*');
 
                                     callback.call(this, respObjs);
 
@@ -923,6 +925,14 @@
 
                                 }
 
+                            },
+                            cancelled: function() {
+                                console.log("Autocomplete cancelled.");
+                                window.parent.postMessage({titleQueryCancelled: true}, '*');
+                            },
+                            itemSelected: function(item) {
+                                console.log("Item selected :"+item);
+                                window.parent.postMessage({titleQueryCancelled: true}, '*');
                             }
                         });
 

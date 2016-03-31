@@ -17,8 +17,10 @@
     onDataRequest : $.noop,
     minChars      : 1,
     showAvatars   : true,
+    itemSelected  : null,
+    cancelled     : null,
     elastic       : false,
-	display		  : 'name',
+	  display 		  : 'name',
     classes       : {
       autoCompleteItemActive : "active"
     },
@@ -189,6 +191,10 @@
 
       addMention(elmTarget.attr('data-display'), elmTarget.attr('data-ref-id'), elmTarget.attr('data-ref-type'));
 
+      if (settings.itemSelected) {
+        settings.itemSelected(elmTarget.attr('data-display'));
+      }
+
       return false;
     }
 
@@ -240,6 +246,9 @@
       if (e.keyCode === KEY.ESC) {
         //resetBuffer();
         //currentDataQuery = '';
+        if (settings.cancelled) {
+          settings.cancelled();
+        }
         hideAutoComplete();
         return;
       }
