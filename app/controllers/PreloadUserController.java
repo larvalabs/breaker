@@ -4,10 +4,12 @@ import models.ChatUser;
 import play.Logger;
 import play.mvc.Before;
 import play.mvc.Controller;
+import play.mvc.With;
 
 /**
  * Created by matt on 1/3/16.
  */
+@With(ForceSSL.class)
 public class PreloadUserController extends Controller {
 
     public static final String SESSION_UID = "uid";

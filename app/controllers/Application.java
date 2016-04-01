@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.util.*;
 import java.util.List;
 
-@With(ForceSSL.class)
 public class Application extends PreloadUserController {
 
     public static final String REDDIT_CLIENTID = Play.configuration.getProperty("oauth.reddit.clientid");
@@ -230,28 +229,14 @@ public class Application extends PreloadUserController {
 
             String joiningRoom = session.get(SESSION_JOINROOM);
             String waitingRoom = session.get(SESSION_WAITROOM);
-            // NOTE: These soecific redirect calls are because the iframe https requirements are causing problems
-            // with whatever play does for normal redirects
             if (joiningRoom != null) {
                 session.remove(SESSION_JOINROOM);
-                if (Play.mode.isProd()) {
-                    redirect(HTTPS_WWW_BREAKERAPP_COM + "/c/" + joiningRoom);
-                } else {
-                    WebSocket.room(joiningRoom);
-                }
+                WebSocket.room(joiningRoom);
             } else if (waitingRoom != null) {
                 session.remove(SESSION_WAITROOM);
-                if (Play.mode.isProd()) {
-                    redirect(HTTPS_WWW_BREAKERAPP_COM + "/openroom/" + waitingRoom + "?accept=true");
-                } else {
-                    roomWait(waitingRoom, true);
-                }
+                roomWait(waitingRoom, true);
             } else {
-                if (Play.mode.isProd()) {
-                    redirect(HTTPS_WWW_BREAKERAPP_COM + "/c");
-                } else {
-                    WebSocket.room(null);
-                }
+                WebSocket.room(null);
             }
         }
         redirect(REDDIT_AUTHORIZATION_URL);
