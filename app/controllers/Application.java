@@ -12,6 +12,7 @@ import play.*;
 import play.libs.OAuth2;
 import play.libs.WS;
 import play.mvc.Scope;
+import play.mvc.With;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -21,6 +22,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.List;
 
+@With(ForceSSL.class)
 public class Application extends PreloadUserController {
 
     public static final String REDDIT_CLIENTID = Play.configuration.getProperty("oauth.reddit.clientid");
