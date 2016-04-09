@@ -242,7 +242,7 @@ public class ChatRoom extends Model {
      * @return
      */
     public List<Message> getMessages(int limit) {
-        return Message.find("room = ? order by id desc", this).fetch(limit);
+        return Message.find("room = ? and deleted != true order by id desc", this).fetch(limit);
     }
 
     public List<Message> getMessages(long beforeMessageId, int limit) {
