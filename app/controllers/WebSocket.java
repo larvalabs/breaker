@@ -58,7 +58,7 @@ public class WebSocket extends Controller {
         List<ChatUserRoomJoin> chatRoomJoins = user.getChatRoomJoins();
         if (roomName == null || room == null) {
             if (chatRoomJoins.size() == 0) {
-                room = ChatRoom.findByName(Constants.CHATROOM_DEFAULT);
+                room = ChatRoom.findOrCreateForName(Constants.CHATROOM_DEFAULT);
                 try {
                     user.joinChatRoom(room);
                 } catch (ChatUser.UserBannedException e) {
@@ -78,19 +78,19 @@ public class WebSocket extends Controller {
         // Links to other suggested rooms
         List<ChatRoom> activeRooms = new ArrayList<ChatRoom>();
         {
-            ChatRoom breakerapp = ChatRoom.findByName("breakerapp");
+            ChatRoom breakerapp = ChatRoom.findOrCreateForName("breakerapp");
             if (!existsInJoins(chatRoomJoins, breakerapp)) {
                 activeRooms.add(breakerapp);
             }
         }
         {
-            ChatRoom breakerapp = ChatRoom.findByName("SideProject");
+            ChatRoom breakerapp = ChatRoom.findOrCreateForName("SideProject");
             if (!existsInJoins(chatRoomJoins, breakerapp)) {
                 activeRooms.add(breakerapp);
             }
         }
         {
-            ChatRoom breakerapp = ChatRoom.findByName("webdev");
+            ChatRoom breakerapp = ChatRoom.findOrCreateForName("webdev");
             if (!existsInJoins(chatRoomJoins, breakerapp)) {
                 activeRooms.add(breakerapp);
             }
