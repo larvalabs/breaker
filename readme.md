@@ -20,7 +20,9 @@ The WebSocket.ChatRoomSocket works by first loading a bunch of information about
 Object awaitResult = await(Promise.waitAny(roomEventPromises));
 ```
 
-So when woken up, the websocket is receiving a message from either it's local connection (awaitResult instanceof WebSocketFrame) or from someone else connected to the room (awaitResult instanceof ChatRoomStream.Event). It also is queued in a job to be saved to the database if necessary. It's also posted to a redis queue in case there are other servers in the cluster with clients connected.
+So when woken up, the websocket is receiving a message from either it's local connection (awaitResult instanceof WebSocketFrame) or from someone else connected to the room (awaitResult instanceof ChatRoomStream.Event). If the message is from the local websocket connection (and so a new message), it is queued in a SaveNewMessageJob to be saved to the database. It's also posted to a redis queue in case there are other servers in the cluster with clients connected.
+
+Note: Avoiding contacting the database in order to process and distribute a message seems to be the key to a responsive server. When everything is happening locally in memory it's very fast, even on a fairly low powered heroku instance.
 
 #### ChatRoomStream
 
@@ -29,6 +31,20 @@ ChatRoomStream is basically a list of recent ChatRoomStream.Event instances (mes
 #### RedisQueueJob
 
 This is the long-running job that's each server's connection to the redis queue.
+
+### Frontend
+
+The frontend is a super simple jquery single page type thing. There's an ultra-simple javascript templating system that generates pieces of the page (messages, user status entries, etc). It's slightly budget but it works ok. It's all in room3.html. I used a template for the design which is probably not coded that well, is fairly complicated to work with, and has some bugs. A whole range of front end changes are up for discussion.
+
+### Misc
+
+#### RedditLinkBotJob
+
+There's a bot job that goes out and look up new top links for the room and posts them. This is slightly distracting, and a bit of a downside in inactive rooms. Up for discussion if we should even be running it anymore.
+
+#### NotifyMentionedUsersJob
+
+If the SaveNewMessageJob notices that there might a user mention in the message it triggers NotifyMentionedUsersJob to send PMs to all mentioned users on reddit. The account that sends these mentions out might have gotten banned because people were spamming out mentions, which is another thing to figure out in general.
 
 Postgres via Brew instructions
 ===
