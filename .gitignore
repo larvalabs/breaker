@@ -20,7 +20,7 @@ solr/data
 *.fnm
 *.tvd
 *.
-*.
+*.iml
 *.doc
 *.tvf
 *.tvx
