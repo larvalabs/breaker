@@ -1,0 +1,3 @@
+/ Scroll textarea after inserting link
+/ Save show/hide toggle in local storage
+/ Highlight links in reddit page when autocompleting
