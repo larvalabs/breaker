@@ -1,11 +1,31 @@
 ## Installation instructions
 
-1. Download and install Play 1.x: https://playframework.com/documentation/1.4.x/install
-2. Install Postgres
-3. Install Redis
-4. Clone this repo somewhere
-5. Inside the newly cloned folder, run "play deps"
-6. Try "play run" and see what kind of errors you get. Might need to tweak that DB connection params in application.conf if you've installed the databases differently.
+1. Download Play 1.3.1: https://downloads.typesafe.com/play/1.3.1/play-1.3.1.zip
+2. Add play-1.3.1 directory to PATH
+3. Install Postgres
+4. Install Redis
+5. Clone this repo somewhere
+6. Inside the newly cloned folder, run "play deps"
+7. Update database credentials (see [Database](#database) below)
+8. `play run`
+
+## Database
+
+The PostgreSQL database settings are in `application.conf`. To setup your PostgreSQL database (defaults included after colon):
+
+`$ createdb <database_name:redditchat>`  
+`$ psql <database_name:redditchat>`  
+`psql$ CREATE ROLE <username:matt> superuser;`  
+`psql$ CREATE USER <username:matt>;`  
+`psql$ GRANT ROOT TO <username:matt>;`  
+`psql$ GRANT ROOT TO <username:matt>;`  
+
+You can now connect to the database at:
+
+`postgres://<username:matt>@localhost/<database_name:redditchat>`
+
+The schema will be created on page load. Note: you should set the default rooms to `open` in the `chatroom` table. 
+
 
 ## Overview
 
