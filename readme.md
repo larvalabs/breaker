@@ -1,3 +1,12 @@
+## Installation instructions
+
+1. Download and install Play 1.x: https://playframework.com/documentation/1.4.x/install
+2. Install Postgres
+3. Install Redis
+4. Clone this repo somewhere
+5. Inside the newly cloned folder, run "play deps"
+6. Try "play run" and see what kind of errors you get. Might need to tweak that DB connection params in application.conf if you've installed the databases differently.
+
 ## Overview
 
 ### Backend
