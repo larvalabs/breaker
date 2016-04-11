@@ -151,7 +151,7 @@ public class WebSocket extends Controller {
                 int i = 0;
                 for (ChatUserRoomJoin chatRoomJoin : chatRoomJoins) {
                     ChatRoom room = chatRoomJoin.getRoom();
-                    if (room.isOpen()) {
+                    if (Constants.CHATROOM_DEFAULT.equals(room.name) || room.isOpen()) {
                         jsonChatRoomsList.add(JsonChatRoom.from(room, user));
                         addConnection(user, connectionId, roomConnections, room);
                         Logger.debug("Connecting to chat room stream for " + room.getName()+", canpost "+room.userCanPost(user));
