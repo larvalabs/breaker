@@ -1,40 +1,22 @@
-import io from 'socket.io';
+import store from './redux/store/store.js'
+import * as socketActions from './redux/actions/socket-actions.js'
 
 var socket = null;
 
 function init(websocketUrl) {
-  // See https://github.com/joewalnes/reconnecting-websocket for options:;
   websocketUrl = websocketUrl.replace('ws:', 'wss:');
   socket = new ReconnectingWebSocket(websocketUrl);
-  // socket.debug = true;
 
   socket.onopen = function (event) {
-//        console.log("Socket state: "+socket.readyState);
-    if (!firstConnect) {
-      Messenger().post({
-        message: 'Connected!',
-        type: 'success'
-      });
-    }
-    firstConnect = false;
-
-    $('.input-message').prop("disabled", false);
+    store.dispatch(socketActions.onSocketOpen(firstConnect))
   };
 
   socket.onclose = function (event) {
-    Messenger().post({
-      message: 'Disconnected from server, will retry...',
-      type: 'error'
-    });
-    $('.input-message').prop("disabled", true);
+    store.dispatch(socketActions.onSocketClose())
   };
 
-  // Message received on the socket
   socket.onmessage = function (event) {
-//            console.log(event.data);
-    var eventObj = JSON.parse(event.data);
-
-    display(eventObj);
+    store.dispatch(socketActions.onSocketMessage(JSON.parse(event.data)))
   };
 }
 
