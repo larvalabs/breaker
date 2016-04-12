@@ -1,17 +1,21 @@
-import React from "react";
-import Header from './Header.jsx'
-import Sidebar from './Sidebar.jsx'
-import Main from './Main.jsx'
+import React, { Component, PropTypes } from 'react'
+import { Provider } from 'react-redux';
 
-export default React.createClass({
-  render: function() {
+import configureStore from '../redux/store/configureStore.js';
+import AsyncApp from './AsyncApp.jsx';
+import DevTools from './DevTools.js'
+
+const store = configureStore(window.__INITIAL_STATE__);
+
+export default class App extends Component {
+  render() {
     return (
-        <div className="app app-header-fixed app-aside-fixed">
-
-          <Header user={User}/>
-          <Sidebar activeRooms={ActiveRooms}/>
-          <Main />
-        </div>
+        <Provider store={store}>
+          <div>
+            <AsyncApp />
+            <DevTools />
+          </div>
+        </Provider>
     );
-  }
-});
+  };
+}

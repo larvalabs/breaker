@@ -9,7 +9,8 @@ export default React.createClass({
       },
       room: {
         icon: null
-      }
+      },
+      roomName: null
     }
   },
   renderProfileMenu: function(){
@@ -53,13 +54,24 @@ export default React.createClass({
     return <ul className="nav navbar-nav hidden-sm" >
 
       <li className="m-t-xs m-b-xxs middle" >
-        <span id="room-title" className="h4 m-n font-thin h4 text-black"><a id="room-link" href="#" target="_blank">#roomname</a></span> <span><a id="room-pref" className="hidden">(customize)</a></span><br/>
+        <span id="room-title" className="h4 m-n font-thin h4 text-black">
+          <a href={"https://reddit.com/r/" + this.props.roomName} target="_blank">#{this.props.roomName}</a></span>
+        {this.renderModCustomize()}
+        <br/>
         <small id="room-modmessage" className="text-muted">
           Message from the moderators to you, the user.
         </small>
       </li>
 
     </ul>
+  },
+  renderModCustomize: function () {
+    if(!this.props.room.isUserModerator){
+      return null;
+    }
+    return <span>
+      <a id="room-pref" className="hidden">(customize)</a>
+    </span>
   },
   renderRoomIcon: function() {
     if (this.props.room.icon){

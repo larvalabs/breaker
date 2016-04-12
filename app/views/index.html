@@ -26,6 +26,15 @@
         var User = ${userString.raw()};
         var RoomName = "${roomName}";
         var ActiveRooms = ${activeRoomsString.raw()};
+        var WebsocketUrl = '@@{WebSocket.ChatRoomSocket.join()}';
+
+        window.__INITIAL_STATE__ = {
+            user: User,
+            roomName: RoomName,
+            activeRooms: ActiveRooms,
+            websocketUrl: WebsocketUrl
+        }
+
     </script>
     <script src="/dist/bundle.js"></script>
     <script src="@{'/public/libs/jquery/bootstrap/dist/js/bootstrap.js'}"></script>

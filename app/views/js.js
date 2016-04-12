@@ -48,46 +48,6 @@ var setLastMessageUsernameForRoom = function (roomName, username) {
   lastMessageUsernameForRoom[getIndexForRoom(roomName)] = username;
 };
 
-// Connect socket after DOM ready
-// not totally sure if this is necessary but seems sensible
-$(function() {
-  // See https://github.com/joewalnes/reconnecting-websocket for options:
-  var websocketUrl = '@@{WebSocket.ChatRoomSocket.join()}';
-  websocketUrl = websocketUrl.replace('ws:', 'wss:');
-  socket = new ReconnectingWebSocket(websocketUrl);
-  // socket.debug = true;
-
-  socket.onopen = function (event) {
-//        console.log("Socket state: "+socket.readyState);
-    if (!firstConnect) {
-      Messenger().post({
-        message: 'Connected!',
-        type: 'success'
-      });
-    }
-    firstConnect = false;
-
-    $('.input-message').prop("disabled", false);
-  };
-
-  socket.onclose = function (event) {
-    Messenger().post({
-      message: 'Disconnected from server, will retry...',
-      type: 'error'
-    });
-    $('.input-message').prop("disabled", true);
-  };
-
-  // Message received on the socket
-  socket.onmessage = function (event) {
-//            console.log(event.data);
-    var eventObj = JSON.parse(event.data);
-
-    display(eventObj);
-  };
-
-});
-
 
 var makeMessage = function (roomName, message) {
   var msg = {};
@@ -121,8 +81,8 @@ var selectRoom = function (roomName) {
   styleSelectedRoomInSideBar(roomName);
 
   // Change title
-  $('#room-link').text('#' + roomName);
-  $('#room-link').attr('href', 'https://reddit.com/r/'+roomName);
+  // $('#room-link').text('#' + roomName);
+  // $('#room-link').attr('href', 'https://reddit.com/r/'+roomName);
   $('#room-modmessage').text('[A message from the ' + roomName+ ' mods to you.]');
 
   var room = getRoomForName(roomName);
@@ -138,6 +98,8 @@ var selectRoom = function (roomName) {
   // } else {
   //   $('#room-icon').hide();
   // }
+  
+  
   if (room.isUserModerator) {
     $('#room-pref').attr('href', '@{RoomManage.roomPrefs}?roomName=' + room.name);
     $('#room-pref').removeClass('hidden');
