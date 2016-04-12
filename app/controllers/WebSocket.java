@@ -1,11 +1,13 @@
 package controllers;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.larvalabs.redditchat.ChatCommands;
 import com.larvalabs.redditchat.Constants;
 import com.larvalabs.redditchat.dataobj.JsonChatRoom;
 import com.larvalabs.redditchat.dataobj.JsonMessage;
+import com.larvalabs.redditchat.dataobj.JsonUser;
 import com.larvalabs.redditchat.realtime.ChatRoomStream;
 import com.larvalabs.redditchat.util.Util;
 import jobs.SaveNewMessageJob;
@@ -36,6 +38,69 @@ public class WebSocket extends Controller {
             Logger.info("No user id in session.");
             return null;
         }
+    }
+
+    public static void reactRoom(String roomName){
+        ChatUser user = getUser();
+        ChatRoom room = null;
+        if (roomName != null) {
+            room = ChatRoom.findOrCreateForName(roomName);
+            if (!room.isOpen()) {
+                Logger.info("Room "+roomName+" not open, directing to room wait page.");
+                Application.roomWait(roomName, null);
+                return;
+            }
+        }
+
+        if (user == null) {
+            Application.preAuthForRoomJoin(roomName);
+            return;
+        }
+
+        List<ChatUserRoomJoin> chatRoomJoins = user.getChatRoomJoins();
+        if (roomName == null || room == null) {
+            if (chatRoomJoins.size() == 0) {
+                room = ChatRoom.findByName(Constants.CHATROOM_DEFAULT);
+                try {
+                    user.joinChatRoom(room);
+                } catch (ChatUser.UserBannedException e) {
+                    // todo show message that they're banned
+                    Application.index();
+                }
+            }
+        } else {
+            try {
+                user.joinChatRoom(room);
+            } catch (ChatUser.UserBannedException e) {
+                // todo show message that they're banned
+                Application.index();
+            }
+        }
+
+        // Links to other suggested rooms
+        List<ChatRoom> activeRooms = new ArrayList<ChatRoom>();
+        {
+            ChatRoom breakerapp = ChatRoom.findByName("breakerapp");
+            if (!existsInJoins(chatRoomJoins, breakerapp)) {
+                activeRooms.add(breakerapp);
+            }
+        }
+        {
+            ChatRoom breakerapp = ChatRoom.findByName("SideProject");
+            if (!existsInJoins(chatRoomJoins, breakerapp)) {
+                activeRooms.add(breakerapp);
+            }
+        }
+        {
+            ChatRoom breakerapp = ChatRoom.findByName("webdev");
+            if (!existsInJoins(chatRoomJoins, breakerapp)) {
+                activeRooms.add(breakerapp);
+            }
+        }
+
+        String userString = new Gson().toJson(JsonUser.fromUser(user));
+        String activeRoomsString = new Gson().toJson(activeRooms);
+        render("index.html", user, userString, roomName, activeRoomsString);
     }
 
     public static void room(String roomName) {

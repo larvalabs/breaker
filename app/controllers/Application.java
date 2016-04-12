@@ -10,19 +10,21 @@ import models.ChatUserRoomJoin;
 import net.dean.jraw.ApiException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
-import play.*;
+import play.Logger;
+import play.Play;
 import play.libs.OAuth2;
 import play.libs.WS;
 import play.mvc.Scope;
-import play.mvc.With;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeSet;
 
 public class Application extends PreloadUserController {
 
@@ -66,6 +68,18 @@ public class Application extends PreloadUserController {
             // static landing
             redirect("/");
         }
+    }
+
+    public static void react() {
+        ChatUser chatUser = connected();
+        if (chatUser != null) {
+            // go to chat
+            WebSocket.reactRoom(null);
+        } else {
+            // static landing
+            redirect("/");
+        }
+
     }
 
     public static void test() {

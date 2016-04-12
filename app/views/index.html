@@ -1,0 +1,49 @@
+#{extends 'main.html' /}
+#{set title:'Chat room' /}
+
+#{set 'moreScripts'}
+<link rel="stylesheet" href="@{'/public/libs/assets/animate.css/animate.css'}" type="text/css"/>
+<link rel="stylesheet" href="@{'/public/libs/assets/font-awesome/css/font-awesome.min.css'}" type="text/css"/>
+<link rel="stylesheet" href="@{'/public/libs/assets/simple-line-icons/css/simple-line-icons.css'}" type="text/css"/>
+<link rel="stylesheet" href="@{'/public/libs/jquery/bootstrap/dist/css/bootstrap.css'}" type="text/css"/>
+
+<link rel="stylesheet" href="@{'/public/css/font.css'}" type="text/css"/>
+<link rel="stylesheet" href="@{'/public/css/app.css'}" type="text/css"/>
+<link rel="stylesheet" href="@{'/public/stylesheets/angulr-custom.css'}" type="text/css"/>
+
+<link href="@{'/public/stylesheets/messenger.css'}" rel="stylesheet" type="text/css" />
+<link href="@{'/public/stylesheets/messenger-theme-flat.css'}" rel="stylesheet" type="text/css" />
+<link href="@{'/public/stylesheets/jquery.mentionsInput.css'}" rel="stylesheet" type="text/css" />
+<link href="@{'/public/stylesheets/screen.css'}" rel="stylesheet" type="text/css" />
+#{/set}
+
+<body>
+    <div id="root">
+
+    </div>
+    <script type="text/javascript">
+
+        var User = ${userString.raw()};
+        var RoomName = "${roomName}";
+        var ActiveRooms = ${activeRoomsString.raw()};
+    </script>
+    <script src="/dist/bundle.js"></script>
+    <script src="@{'/public/libs/jquery/bootstrap/dist/js/bootstrap.js'}"></script>
+    <script src="@{'/public/js/ui-load.js'}"></script>
+    <script src="@{'/public/js/ui-jp.config.js'}"></script>
+    <script src="@{'/public/js/ui-jp.js'}"></script>
+    <script src="@{'/public/js/ui-nav.js'}"></script>
+    <script src="@{'/public/js/ui-toggle.js'}"></script>
+    <script src="@{'/public/js/ui-client.js'}"></script>
+
+    <script src="@{'/public/javascripts/underscore-min.js'}"></script>
+    <script src="@{'/public/javascripts/jquery.mentionsInput.js'}"></script>
+    <script src="@{'/public/javascripts/jquery.elastic.source.js'}"></script>
+
+    <script src="@{'/public/javascripts/reconnecting-websocket.min.js'}" type="text/javascript"
+            charset="${_response_encoding}"></script>
+    <script src="@{'/public/javascripts/staydown.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+    <script src="@{'/public/javascripts/jquery.timeago.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+    <script src="@{'/public/javascripts/messenger.min.js'}" type="text/javascript"></script>
+    <script src="@{'/public/javascripts/messenger-theme-flat.js'}" type="text/javascript"></script>
+</body>
