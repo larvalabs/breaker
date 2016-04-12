@@ -3,12 +3,19 @@ import * as socketActions from './redux/actions/socket-actions.js'
 
 var socket = null;
 
+var makeMessage = function (roomName, message) {
+  var msg = {};
+  msg.roomName = roomName;
+  msg.message = message;
+  return msg;
+};
+
 function init(websocketUrl) {
   websocketUrl = websocketUrl.replace('ws:', 'wss:');
   socket = new ReconnectingWebSocket(websocketUrl);
 
   socket.onopen = function (event) {
-    store.dispatch(socketActions.onSocketOpen(firstConnect))
+    store.dispatch(socketActions.onSocketOpen())
   };
 
   socket.onclose = function (event) {
@@ -16,7 +23,15 @@ function init(websocketUrl) {
   };
 
   socket.onmessage = function (event) {
-    store.dispatch(socketActions.onSocketMessage(JSON.parse(event.data)))
+    const eventData = JSON.parse(event.data);
+
+    // Hack
+    if(eventData.type === "roomlist"){
+      var messageObj = makeMessage(RoomName, '##memberlist##');
+      socket.send(JSON.stringify(messageObj));
+    }
+
+    store.dispatch(socketActions.onSocketMessage(eventData))
   };
 }
 

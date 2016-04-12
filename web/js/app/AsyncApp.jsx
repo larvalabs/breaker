@@ -11,7 +11,7 @@ class AsyncApp extends Component {
     return (
       <div className="app app-header-fixed app-aside-fixed">
         <Header user={user} roomName={roomName}/>
-        <Sidebar activeRooms={ActiveRooms}/>
+        <Sidebar activeRooms={activeRooms}/>
         <Main />
       </div>
     );
@@ -21,9 +21,9 @@ class AsyncApp extends Component {
 function mapStateToProps(state) {
   console.log("state", state);
   return {
-    user: state.user,
-    activeRooms: state.activeRooms,
-    roomName: state.roomName
+    user: state.initial.user,
+    activeRooms: state.initial.activeRooms,
+    roomName: state.initial.roomName
   }
 }
 

@@ -24,17 +24,20 @@
     <script src="@{'/public/javascripts/reconnecting-websocket.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
     <script type="text/javascript">
 
-        var User = ${userString.raw()};
-        var RoomName = "${roomName}";
-        var ActiveRooms = ${activeRoomsString.raw()};
-        var WebsocketUrl = '@@{WebSocket.ChatRoomSocket.join()}';
+        var WebsocketUrl = '@@{WebSocket.ChatRoomSocket.join()}',
+            RoomName = "${roomName}";
 
         window.__INITIAL_STATE__ = {
-            user: User,
-            roomName: RoomName,
-            activeRooms: ActiveRooms,
-            websocketUrl: WebsocketUrl
-        }
+            initial: {
+                user: ${userString.raw()},
+                roomName: "${roomName}",
+                activeRooms: ${activeRoomsString.raw()}
+            },
+            members: {},
+            rooms: {},
+            users: {},
+            messages: {}
+        };
 
     </script>
     <script src="/dist/bundle.js"></script>
