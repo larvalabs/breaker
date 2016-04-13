@@ -442,12 +442,12 @@
                             <div class="cell scrollable hover">
                                 <div class="cell-inner">
                                     <div role="tabpanel" class="tab-pane active" id="tab-1">
-                                        <div id='modparent' class="wrapper-md m-b-n-md">
-                                            <div class="m-b-sm text-md">Mods</div>
-                                            <ul id='modlist' class="list-group no-bg no-borders pull-in m-b-sm">
-                                                <!-- Filled in dynamically -->
-                                            </ul>
-                                        </div>
+                                        *{<div id='modparent' class="wrapper-md m-b-n-md">}*
+                                            *{<div class="m-b-sm text-md">Mods</div>}*
+                                            *{<ul id='modlist' class="list-group no-bg no-borders pull-in m-b-sm">}*
+                                                *{<!-- Filled in dynamically -->}*
+                                            *{</ul>}*
+                                        *{</div>}*
                                         <div id='onlineparent' class="wrapper-md m-b-n-md">
                                             <div class="m-b-sm text-md">Here Now</div>
                                             <ul id='onlinelist' class="list-group no-bg no-borders pull-in m-b-sm">
@@ -455,7 +455,7 @@
                                             </ul>
                                         </div>
                                         <div class="wrapper-md">
-                                            <div class="m-b-sm text-md">All Users</div>
+                                            <div class="m-b-sm text-md">Offline</div>
                                             <ul id='userlist' class="list-group no-bg no-borders pull-in m-b-sm">
                                                 <!-- Filled in dynamically -->
                                             </ul>
