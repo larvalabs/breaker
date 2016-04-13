@@ -5200,7 +5200,8 @@ a.text-#000000:hover {
 /* dark:  #2E7DBD */
 
 /*#15274F*/
-.sandersforpresident .bg-dark {
+.sandersforpresident .bg-dark,
+.sandersforpresident .bg-dark.dk, .bg-dark .dk {
   background-color: #2E7DBD;
 }
 
@@ -5224,4 +5225,8 @@ a.text-#000000:hover {
 
 .sandersforpresident .bg-info {
   background-color: #EA504E;
+}
+
+.sandersforpresident i.glyphicon {
+  color: #fff;
 }
