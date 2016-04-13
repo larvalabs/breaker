@@ -35,3 +35,6 @@ public/newsite/compass/.sass-cache
 
 # User-specific stuff:
 .idea/
+node_modules
+*.iml
+public/dist/
