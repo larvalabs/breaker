@@ -32,6 +32,7 @@
     text-overflow: ellipsis;
     max-width: 140px;
     display: inline-block;
+    vertical-align: middle;
 }
 
 .p-t-s {

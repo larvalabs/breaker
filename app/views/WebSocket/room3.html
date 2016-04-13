@@ -132,7 +132,7 @@
 </script>
 <!-- end templates -->
 
-<div class="app app-header-fixed app-aside-fixed">
+<div class="app app-header-fixed app-aside-fixed ${roomName}">
 
     <!-- header -->
     <header id="header" class="app-header navbar" role="menu">
@@ -355,37 +355,37 @@
 -->
                     </ul>
 
-                    #{if activeRooms && activeRooms.size() > 0}
+                    *{#{if activeRooms && activeRooms.size() > 0}}*
 
-                    <li class="line dk"></li>
+                    *{<li class="line dk"></li>}*
 
-                    <ul id="toproomlist" class="nav">
-                        <li class="hidden-folded padder m-t m-b-sm text-muted text-xs">
-                            <span>Suggested Active Rooms</span>
-                        </li>
+                    *{<ul id="toproomlist" class="nav">}*
+                        *{<li class="hidden-folded padder m-t m-b-sm text-muted text-xs">}*
+                            *{<span>Suggested Active Rooms</span>}*
+                        *{</li>}*
 
-                        <li class="roomlistentry">
-                            #{list items:activeRooms, as:'activeRoom'}
-                            <a href="@{WebSocket.room(activeRoom.name)}">
-                                <img class="roomIconSmall" src="${ activeRoom.iconUrl != null ? activeRoom.iconUrl : '/public/images/blank.png' }"/>
-                                <b class="unreadcount label bg-info pull-right"></b>
-                                <!--<i class="glyphicon glyphicon-envelope icon text-info-lter"></i>-->
-                                <span class="roomname">#${ activeRoom.name }</span>
-                            </a>
-                            #{/list}
-                        </li>
+                        *{<li class="roomlistentry">}*
+                            *{#{list items:activeRooms, as:'activeRoom'}}*
+                            *{<a href="@{WebSocket.room(activeRoom.name)}">}*
+                                *{<img class="roomIconSmall" src="${ activeRoom.iconUrl != null ? activeRoom.iconUrl : '/public/images/blank.png' }"/>}*
+                                *{<b class="unreadcount label bg-info pull-right"></b>}*
+                                *{<!--<i class="glyphicon glyphicon-envelope icon text-info-lter"></i>-->}*
+                                *{<span class="roomname">#${ activeRoom.name }</span>}*
+                            *{</a>}*
+                            *{#{/list}}*
+                        *{</li>}*
 
-<!--
-                        <li>
-                            <a href="mail.html">
-                                <b class="label bg-info pull-right">9</b>
-                                &lt;!&ndash;<i class="glyphicon glyphicon-envelope icon text-info-lter"></i>&ndash;&gt;
-                                <span class="font-bold">#${roomName}</span>
-                            </a>
-                        </li>
--->
-                    </ul>
-                    #{/if}
+*{<!--}*
+                        *{<li>}*
+                            *{<a href="mail.html">}*
+                                *{<b class="label bg-info pull-right">9</b>}*
+                                *{&lt;!&ndash;<i class="glyphicon glyphicon-envelope icon text-info-lter"></i>&ndash;&gt;}*
+                                *{<span class="font-bold">#${roomName}</span>}*
+                            *{</a>}*
+                        *{</li>}*
+*{-->}*
+                    *{</ul>}*
+                    *{#{/if}}*
                 </nav>
 
             </div>
