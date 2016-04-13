@@ -5204,8 +5204,14 @@ a.text-#000000:hover {
   background-color: #2E7DBD;
 }
 
-.sandersforpresident .bg-dark .nav > li:hover > a, .sandersforpresident .bg-dark .nav > li:focus > a, .sandersforpresident .bg-dark .nav > li.active > a {
+.sandersforpresident .bg-dark .nav > li:hover > a,
+.sandersforpresident .bg-dark .nav > li:focus > a,
+.sandersforpresident .bg-dark .nav > li.active > a {
   background-color: #0063A2;
+}
+
+.sandersforpresident .bg-dark .nav > li > a {
+  color: #fff;
 }
 
 .sandersforpresident .bg-dark .text-muted {
@@ -5214,4 +5220,8 @@ a.text-#000000:hover {
 
 .sandersforpresident .bg-dark .text-lt {
   color: #fff !important;
+}
+
+.sandersforpresident .bg-info {
+  background-color: #EA504E;
 }

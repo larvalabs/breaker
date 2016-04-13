@@ -132,7 +132,7 @@
 </script>
 <!-- end templates -->
 
-<div class="app app-header-fixed app-aside-fixed ${roomName}">
+<div id="room-root" class="app app-header-fixed app-aside-fixed ${roomName}">
 
     <!-- header -->
     <header id="header" class="app-header navbar" role="menu">
@@ -662,6 +662,9 @@
         } else {
             $('#room-pref').addClass('hidden');
         }
+
+        $('#room-root').removeClass().addClass('app app-header-fixed app-aside-fixed ' + room.name);
+
 
         resetUnreadCountForRoom(roomName);
         getStaydownForRoom(roomName).checkdown();
