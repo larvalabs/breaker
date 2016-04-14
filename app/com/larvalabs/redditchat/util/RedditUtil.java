@@ -43,4 +43,9 @@ public class RedditUtil {
         return redditClient;
     }
 
+    public static void main(String[] args) throws ApiException {
+//        RedditClient redditClient = getRedditClient();
+        sendPrivateMessageFromBot("rickiibeta", "Testing from cmdline", "Testing content.");
+
+    }
 }
