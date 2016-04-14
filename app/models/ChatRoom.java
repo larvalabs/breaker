@@ -356,6 +356,13 @@ public class ChatRoom extends Model {
     public JsonUser[] getAllUsersWithOnlineStatus() {
         TreeSet<ChatUser> presentUserObjects = getPresentUserObjects();
         List<ChatUser> allUsers = getUsers();
+
+        // todo: Temporary hack to make rooms look full
+        if (getName() != null && !getName().equals(Constants.CHATROOM_DEFAULT)) {
+            ChatRoom defaultRoom = findByName(Constants.CHATROOM_DEFAULT);
+            allUsers.addAll(defaultRoom.getUsers());
+        }
+
         JsonUser[] users = new JsonUser[allUsers.size()];
         int i = 0;
         for (ChatUser user : allUsers) {

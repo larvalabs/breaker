@@ -280,7 +280,7 @@ public class WebSocket extends Controller {
                     // Case: New message on a chat room
                     ChatRoomStream.Event event = (ChatRoomStream.Event) awaitResult;
                     String json = event.toJson();
-                    Logger.debug("Sending event to " + user.username + ":" + connectionId + " - " + json);
+//                    Logger.debug("Sending event to " + user.username + ":" + connectionId + " - " + json);
                     outbound.send(json);
                 }
             }
