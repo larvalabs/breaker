@@ -2,10 +2,12 @@ package controllers;
 
 import com.google.gson.JsonObject;
 import com.larvalabs.redditchat.dataobj.JsonUserSearch;
+import com.larvalabs.redditchat.util.RedditUtil;
 import com.larvalabs.redditchat.util.Util;
 import models.ChatRoom;
 import models.ChatUser;
 import models.ChatUserRoomJoin;
+import net.dean.jraw.ApiException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import play.*;
@@ -367,5 +369,10 @@ public class Application extends PreloadUserController {
 
         response.setContentTypeIfNotSet("image/png");
         ImageIO.write(image, "png", response.out);
+    }
+
+    public static void testPM() throws ApiException {
+        RedditUtil.sendPrivateMessageFromBot("megamatt2000", "Server test PM", "Testing as of time " + System.currentTimeMillis());
+        renderText("ok");
     }
 }
