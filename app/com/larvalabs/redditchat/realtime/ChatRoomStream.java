@@ -1,7 +1,5 @@
 package com.larvalabs.redditchat.realtime;
 
-import java.util.*;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -13,8 +11,14 @@ import jobs.RedisQueueJob;
 import models.ChatRoom;
 import models.ChatUser;
 import play.Logger;
-import play.libs.F.*;
-import play.server.Server;
+import play.libs.F.ArchivedEventStream;
+import play.libs.F.EventStream;
+import play.libs.F.IndexedEvent;
+import play.libs.F.Promise;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 
 public class ChatRoomStream {
 
@@ -29,6 +33,7 @@ public class ChatRoomStream {
     }
 
     private void loadOldMessages() {
+        Logger.debug("Loading old messages for room: " + name);
         ChatRoom room = ChatRoom.findByName(name);
         List<models.Message> messages = room.getMessages(PRELOAD_NUM_MSGS_ON_STARTUP);
         // We're pushing onto a queue here so go in sqeuential order
@@ -36,6 +41,7 @@ public class ChatRoomStream {
         for (models.Message message : messages) {
             chatEvents.publish(new Message(JsonMessage.from(message)));
         }
+        Logger.debug("Old messages sent to room: " + name);
     }
 
     public String getName() {
