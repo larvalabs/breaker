@@ -2,6 +2,7 @@ package models;
 
 import com.larvalabs.redditchat.Constants;
 import com.larvalabs.redditchat.dataobj.JsonUser;
+import com.sun.istack.internal.Nullable;
 import play.Logger;
 import play.db.DB;
 import play.db.jpa.Model;
@@ -354,7 +355,7 @@ public class ChatRoom extends Model {
     }
 
     public JsonUser[] getAllUsersWithOnlineStatus() {
-        TreeSet<ChatUser> presentUserObjects = getPresentUserObjects();
+//        TreeSet<ChatUser> presentUserObjects = getPresentUserObjects();
         List<ChatUser> allUsers = getUsers();
 
         // todo: Temporary hack to make rooms look full
@@ -366,7 +367,7 @@ public class ChatRoom extends Model {
         JsonUser[] users = new JsonUser[allUsers.size()];
         int i = 0;
         for (ChatUser user : allUsers) {
-            users[i] = JsonUser.fromUserForRoom(user, this);
+            users[i] = JsonUser.fromUserForRoom(user, this, getUsernamesPresent());
             i++;
         }
         return users;
@@ -396,9 +397,25 @@ public class ChatRoom extends Model {
         }
     }
 
-
+    /**
+     * Check if the username is present, loads the list of usernames present.
+     * @param user
+     * @return
+     */
     public boolean isUserPresent(ChatUser user) {
-        TreeSet<String> usernamesPresent = getUsernamesPresent();
+        return isUserPresent(user, null);
+    }
+
+    /**
+     * Check if the username is present, optionally loads the usernames present.
+     * @param user
+     * @param usernamesPresent if null, load usernames present from redis
+     * @return
+     */
+    public boolean isUserPresent(ChatUser user, @Nullable  Set<String> usernamesPresent) {
+        if (usernamesPresent == null) {
+            usernamesPresent = getUsernamesPresent();
+        }
         return usernamesPresent.contains(user.username);
 /*
         try {

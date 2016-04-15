@@ -1,11 +1,13 @@
 package com.larvalabs.redditchat.dataobj;
 
 import com.larvalabs.redditchat.Constants;
+import com.sun.istack.internal.Nullable;
 import controllers.Application;
 import models.ChatRoom;
 import models.ChatUser;
 import play.Logger;
 
+import javax.validation.constraints.Null;
 import java.util.*;
 
 public class JsonUser {
@@ -58,15 +60,19 @@ public class JsonUser {
                 user.getLikeCount(), user.getProfileImageUrl(), user.getStatusMessage(), user.isBot());
     }
 
+    public static JsonUser fromUserForRoom(ChatUser user, ChatRoom room) {
+        return fromUserForRoom(user, room, null);
+    }
+
     /**
      * Adds information to user specific to a chat room, mainly online status and moderator flag.
      * @param user
      * @param room
      * @return
      */
-    public static JsonUser fromUserForRoom(ChatUser user, ChatRoom room) {
+    public static JsonUser fromUserForRoom(ChatUser user, ChatRoom room, @Nullable Set<String> usernamesPresent) {
         JsonUser jsonUser = fromUser(user);
-        jsonUser.online = room.isUserPresent(user);
+        jsonUser.online = room.isUserPresent(user, usernamesPresent);
         jsonUser.modForRoom = room.isRedditModerator(user);
         return jsonUser;
     }
