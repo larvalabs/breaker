@@ -742,6 +742,7 @@
     };
 
     // Ping socket
+    var pingStarted = false;
     var startPing = function(roomName) {
         setInterval(function () {
             if (socket.readyState == 1) {
@@ -974,7 +975,10 @@
                     };
                     setupMentions();
 
-                    startPing(roomObj.name);
+                    if (!pingStarted) {
+                        startPing(roomObj.name);
+                        pingStarted = true;
+                    }
                 }
 
                 requestMemberlist(roomObj.name);
