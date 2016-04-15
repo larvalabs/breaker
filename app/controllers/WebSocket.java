@@ -7,6 +7,7 @@ import com.larvalabs.redditchat.Constants;
 import com.larvalabs.redditchat.dataobj.JsonChatRoom;
 import com.larvalabs.redditchat.dataobj.JsonMessage;
 import com.larvalabs.redditchat.realtime.ChatRoomStream;
+import com.larvalabs.redditchat.util.Stats;
 import com.larvalabs.redditchat.util.Util;
 import jobs.SaveNewMessageJob;
 import models.ChatRoom;
@@ -231,6 +232,7 @@ public class WebSocket extends Controller {
                                     JsonMessage jsonMessage = JsonMessage.makePresavedMessage(uuid, user, roomConnection.room, message);
                                     new SaveNewMessageJob(uuid, user, roomName, message).now();
                                     roomConnection.roomStream.say(jsonMessage);
+                                    Stats.count(Stats.StatKey.MESSAGE, 1);
                                 } else {
                                     Logger.info("User " + user.getUsername() + " cannot post to " + roomName);
                                     // Direct message to user who tried to send this
