@@ -24,7 +24,7 @@ class ChatBox extends Component {
 
         <div className="padder padder-v b-t b-light text-center">
                             <textarea type="text" className="form-control input-message mention"
-                                      placeholder="Type a message to ${roomName}..." />
+                                      placeholder={`Type a message to ${this.props.roomName}...`} />
         </div>
 
       </div>
@@ -46,7 +46,8 @@ function mapStateToProps(state) {
   console.log("messages", messages);
   return {
     messages: messages,
-    users: state.users
+    users: state.users,
+    roomName: state.initial.roomName
   }
 }
 
