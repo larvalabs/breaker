@@ -43,6 +43,8 @@ function messages(state={}, action) {
   switch (action.type) {
     case (socketTypes.SOCK_MESSAGE): {
       var message = Object.assign({}, action.message.message);
+      message.username = message.user.username;
+      message.room = message.room.name;
       delete message.user;
       delete message.room;
       return Object.assign({}, state, {

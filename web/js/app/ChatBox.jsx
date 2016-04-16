@@ -1,7 +1,9 @@
-import React, {Component} from 'react'
+import React, {Component} from 'react';
+import { connect } from 'react-redux';
+import ChatMessage from './ChatMessage.jsx'
 
 
-export default class ChatBox extends Component {
+class ChatBox extends Component {
   render() {
     return <div id="centercol" className="col">
 
@@ -11,6 +13,8 @@ export default class ChatBox extends Component {
             <div className="cell-inner">
 
               <ul id="thread" className="list-group list-group-lg no-radius m-b-none m-t-n-xxs">
+                {this.props.messages.filter((message) => message)
+                    .map((message) => <ChatMessage message={message} user={this.props.users[message.username]}/>)}
               </ul>
 
               <div id="bottom-spacer" className="padder-v-sm bg-white b-l-3x b-l-white"></div>
@@ -27,3 +31,23 @@ export default class ChatBox extends Component {
     </div>
   }
 }
+
+
+ChatBox.defaultProps = {
+  messages: []
+};
+
+function mapStateToProps(state) {
+  var messages = [];
+  if(state.messages.hasOwnProperty(state.initial.roomName)){
+    messages = state.messages[state.initial.roomName]
+  }
+
+  console.log("messages", messages);
+  return {
+    messages: messages,
+    users: state.users
+  }
+}
+
+export default connect(mapStateToProps)(ChatBox)
