@@ -23,13 +23,15 @@ import java.util.List;
 public class ChatRoomStream {
 
     public static final int STREAM_SIZE = 20;
-    public static final int PRELOAD_NUM_MSGS_ON_STARTUP = STREAM_SIZE / 2;
+    public static final int PRELOAD_NUM_MSGS_ON_STARTUP = STREAM_SIZE;
 
     private String name;
 
-    public ChatRoomStream(String name) {
+    public ChatRoomStream(String name, boolean loadOldMessages) {
         this.name = name;
-        loadOldMessages();
+        if (loadOldMessages) {
+            loadOldMessages();
+        }
     }
 
     private void loadOldMessages() {
@@ -262,7 +264,7 @@ public class ChatRoomStream {
     public static ChatRoomStream getEventStream(String name) {
         ChatRoomStream chatRoomStream = eventStreams.get(name);
         if (chatRoomStream == null) {
-            chatRoomStream = new ChatRoomStream(name);
+            chatRoomStream = new ChatRoomStream(name, false);
             eventStreams.put(name, chatRoomStream);
         }
         return chatRoomStream;
@@ -271,7 +273,7 @@ public class ChatRoomStream {
     public static ChatRoomStream getMessageStream(String name) {
         ChatRoomStream chatRoomStream = messageStreams.get(name);
         if (chatRoomStream == null) {
-            chatRoomStream = new ChatRoomStream(name);
+            chatRoomStream = new ChatRoomStream(name, true);
             messageStreams.put(name, chatRoomStream);
         }
         return chatRoomStream;
