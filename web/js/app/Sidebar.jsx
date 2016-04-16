@@ -1,10 +1,13 @@
 import React from 'react';
 import SidebarUser from './SidebarUser.jsx'
+import SidebarRoomListElm from './SidebarRoomListElm.jsx'
+import Config from '../config.js'
 
 export default React.createClass({
   getDefaultProps: function(){
     return {
-      activeRooms: []
+      activeRooms: [],
+      roomList: []
     }
   },
   renderYourRooms: function(){
@@ -12,9 +15,14 @@ export default React.createClass({
       <li className="hidden-folded padder m-t m-b-sm text-muted text-xs">
         <span>Your Rooms</span>
       </li>
+      {Object.keys(this.props.roomList).map((value, index) => <SidebarRoomListElm room={this.props.roomList[value]} />)}
     </ul>
   },
   renderSuggestedRooms: function(){
+    if(!Config.features.suggestedRooms){
+      return null;
+    }
+
     if (this.props.activeRooms.length === 0 ) {
       return null
     }

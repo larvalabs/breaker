@@ -7,11 +7,11 @@ import Main from './Main.jsx'
 
 class AsyncApp extends Component {
   render(){
-    const { user, activeRooms, roomName } = this.props;
+    const { user, activeRooms, roomName , rooms} = this.props;
     return (
       <div className="app app-header-fixed app-aside-fixed">
         <Header user={user} roomName={roomName}/>
-        <Sidebar activeRooms={activeRooms}/>
+        <Sidebar activeRooms={activeRooms} roomList={rooms}/>
         <Main />
       </div>
     );
@@ -23,7 +23,8 @@ function mapStateToProps(state) {
   return {
     user: state.initial.user,
     activeRooms: state.initial.activeRooms,
-    roomName: state.initial.roomName
+    roomName: state.initial.roomName,
+    rooms: state.rooms
   }
 }
 

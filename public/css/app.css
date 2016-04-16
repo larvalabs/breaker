@@ -5202,7 +5202,8 @@ a.text-#000000:hover {
 
 /*#15274F*/
 .sandersforpresident .bg-dark,
-.sandersforpresident .bg-dark.dk, .bg-dark .dk {
+.sandersforpresident .bg-dark.dk,
+.sandersforpresident .bg-dark .dk {
   background-color: #2E7DBD;
 }
 
