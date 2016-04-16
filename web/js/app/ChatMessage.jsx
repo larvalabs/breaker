@@ -1,4 +1,5 @@
 import React, {Component} from 'react'
+var TimeAgo = require('react-timeago').default
 
 export default class ChatMessage extends Component {
   renderUserImage() {
@@ -17,7 +18,7 @@ export default class ChatMessage extends Component {
   renderTime() {
     // TODO: Timeago
     return <div className="pull-right text-sm text-muted">
-      <span className="hidden-xs timeago" title={new Date(this.props.message.createDateLongUTC).toISOString()}>Timeago</span>
+      <TimeAgo date={new Date(this.props.message.createDateLongUTC).toISOString()} />
     </div>
   }
   renderUsername() {
