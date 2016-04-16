@@ -22,7 +22,7 @@ import java.util.List;
 
 public class ChatRoomStream {
 
-    public static final int STREAM_SIZE = 100;
+    public static final int STREAM_SIZE = 20;
     public static final int PRELOAD_NUM_MSGS_ON_STARTUP = STREAM_SIZE / 2;
 
     private String name;
@@ -256,16 +256,26 @@ public class ChatRoomStream {
 
     // ~~~~~~~~~ Chat room factory
 
-    private static HashMap<String, ChatRoomStream> rooms = new HashMap<String, ChatRoomStream>();
+    private static HashMap<String, ChatRoomStream> eventStreams = new HashMap<String, ChatRoomStream>();
+    private static HashMap<String, ChatRoomStream> messageStreams = new HashMap<String, ChatRoomStream>();
 
-    public static ChatRoomStream get(String name) {
-        ChatRoomStream chatRoomStream = rooms.get(name);
+    public static ChatRoomStream getEventStream(String name) {
+        ChatRoomStream chatRoomStream = eventStreams.get(name);
         if (chatRoomStream == null) {
             chatRoomStream = new ChatRoomStream(name);
-            rooms.put(name, chatRoomStream);
+            eventStreams.put(name, chatRoomStream);
         }
         return chatRoomStream;
     }
     
+    public static ChatRoomStream getMessageStream(String name) {
+        ChatRoomStream chatRoomStream = messageStreams.get(name);
+        if (chatRoomStream == null) {
+            chatRoomStream = new ChatRoomStream(name);
+            messageStreams.put(name, chatRoomStream);
+        }
+        return chatRoomStream;
+    }
+
 }
 

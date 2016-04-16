@@ -54,7 +54,7 @@ public class Application extends PreloadUserController {
         user.setUsername("chattest2");
         user.save();
         user.joinChatRoom(ChatRoom.findByName("breakerapp"));
-
+        WebSocket.room("breakerapp");
     }
 
     public static void index() {
