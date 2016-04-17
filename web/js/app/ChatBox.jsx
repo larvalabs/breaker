@@ -25,7 +25,6 @@ class ChatBox extends Component {
   }
 
   onMessageInput() {
-    debugger;
     this.state.staydown.intend_down = true;
   }
 

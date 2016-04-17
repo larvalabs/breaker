@@ -6,6 +6,10 @@ class ChatMessageInput extends Component {
   constructor(props) {
     super(props);
     this.handleKeyPress = this.handleKeyPress.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.state = {
+      messageText: null
+    }
   }
 
   handleKeyPress(event) {
@@ -16,9 +20,14 @@ class ChatMessageInput extends Component {
         message: event.target.value,
         roomName: this.props.roomName
       }));
-
+      this.setState({
+        messageText: ""
+      });
       this.props.onMessageInput();
     }
+  }
+  handleChange(event) {
+    this.setState({messageText: event.target.value})
   }
   render() {
     return <div className="padder padder-v b-t b-light text-center">
@@ -26,7 +35,9 @@ class ChatMessageInput extends Component {
                   style={{resize: "none"}}
                   className="form-control input-message mention"
                   placeholder={`Type a message to ${this.props.roomName}...`}
-                  onKeyPress={this.handleKeyPress}/>
+                  onKeyPress={this.handleKeyPress}
+                  onChange={this.handleChange}
+                  value={this.state.messageText} />
     </div>
   }
 }
