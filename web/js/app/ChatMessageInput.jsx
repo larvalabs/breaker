@@ -14,7 +14,6 @@ class ChatMessageInput extends Component {
 
   handleKeyPress(event) {
     if(event.key == 'Enter'){
-      console.log('enter press here! ', event.target.value);
       event.preventDefault();
       this.props.dispatch(sendNewMessage({
         message: event.target.value,

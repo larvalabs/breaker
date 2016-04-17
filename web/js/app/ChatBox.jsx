@@ -66,7 +66,6 @@ function mapStateToProps(state) {
     messages = state.messages[state.initial.roomName]
   }
 
-  console.log("messages", messages);
   return {
     messages: messages,
     users: state.users,

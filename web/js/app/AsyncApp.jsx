@@ -19,7 +19,6 @@ class AsyncApp extends Component {
 }
 
 function mapStateToProps(state) {
-  console.log("state", state);
   return {
     user: state.initial.user,
     activeRooms: state.initial.activeRooms,
