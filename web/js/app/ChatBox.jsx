@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import { connect } from 'react-redux';
 import ChatMessage from './ChatMessage.jsx'
 import ChatMessageInput from './ChatMessageInput.jsx'
-
+import StayDown from 'staydown'
 
 class ChatBox extends Component {
   constructor(props) {
