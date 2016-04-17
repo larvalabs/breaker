@@ -45,7 +45,7 @@ export default class ChatMessage extends Component {
     return null;
   }
   render(){
-    return <li className="list-group-item no-border p-t-s p-b-xs clearfix b-l-3x b-l-white">
+    return <li key={this.props.message.id} className="list-group-item no-border p-t-s p-b-xs clearfix b-l-3x b-l-white">
       {this.renderUserImage()}
       {this.renderTime()}
       <div className="clear">

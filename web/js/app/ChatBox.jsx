@@ -62,14 +62,14 @@ ChatBox.defaultProps = {
 
 function mapStateToProps(state) {
   var messages = [];
-  if(state.messages.hasOwnProperty(state.initial.roomName)){
-    messages = state.messages[state.initial.roomName]
+  if(state.messages.get(state.initial.get('roomName'))){
+    messages = state.messages.get(state.initial.get('roomName')).toJS()
   }
 
   return {
     messages: messages,
-    users: state.users,
-    roomName: state.initial.roomName
+    users: state.users.toJS(),
+    roomName: state.initial.get('roomName')
   }
 }
 

@@ -13,7 +13,7 @@ export default React.createClass({
   },
   renderYourRooms: function(){
     return <ul id="roomlist" className="nav">
-      <li className="hidden-folded padder m-t m-b-sm text-muted text-xs">
+      <li key="your-rooms" className="hidden-folded padder m-t m-b-sm text-muted text-xs">
         <span>Your Rooms</span>
       </li>
       {Object.keys(this.props.roomList).map((value, index) => {

@@ -1,16 +1,15 @@
 import * as socketTypes from '../constants/socket-constants.js'
+import Immutable from 'immutable'
 
-function users(state={}, action) {
+function users(state=Immutable.Map(), action) {
   switch (action.type) {
     case (socketTypes.SOCK_MESSAGE): {
-      return Object.assign({}, state, {
-        [action.message.user.username]: action.message.user
-      });
+      return state.set(action.message.user.username, Immutable.fromJS(action.message.user));
     }
     case (socketTypes.SOCK_MEMBERS): {
-      var nextState = Object.assign({}, state);
+      var nextState = state;
       for (var user of action.message.users) {
-        nextState[user.username] = user;
+        nextState = nextState.set(user.username, Immutable.fromJS(user));
       }
       return nextState;
     }
@@ -19,18 +18,16 @@ function users(state={}, action) {
   }
 }
 
-function rooms(state={}, action) {
+function rooms(state=Immutable.Map(), action) {
   switch (action.type) {
     case (socketTypes.SOCK_MESSAGE):
     case (socketTypes.SOCK_MEMBERS): {
-      return Object.assign({}, state, {
-        [action.message.room.name]: action.message.room
-      });
+      return state.set(action.message.room.name, Immutable.fromJS(action.message.room));
     }
     case (socketTypes.SOCK_ROOM_LIST): {
-      var nextState = Object.assign({}, state);
+      var nextState = state;
       for (var room of action.message.rooms) {
-        nextState[room.name] = room;
+        nextState = nextState.set(room.name, Immutable.fromJS(room));
       }
       return nextState;
     }
@@ -39,36 +36,34 @@ function rooms(state={}, action) {
   }
 }
 
-function messages(state={}, action) {
+function messages(state=Immutable.Map(), action) {
   switch (action.type) {
     case (socketTypes.SOCK_MESSAGE): {
-      var message = Object.assign({}, action.message.message);
-      message.username = message.user.username;
-      message.room = message.room.name;
-      delete message.user;
-      delete message.room;
-      return Object.assign({}, state, {
-        [action.message.room.name]: [].concat(state[action.message.room.name]).concat(message)
-      });
+      var message = Immutable.fromJS(action.message.message)
+          .set('username', action.message.user.username)
+          .set('room', action.message.room.name)
+          .delete('user')
+          .delete('room');
+      
+      return state.set(action.message.room.name, state.get(action.message.room.name, Immutable.List()).push(message));
     }
     default:
       return state
   }
 }
 
-function members(state={}, action) {
+function members(state=Immutable.Map(), action) {
   switch(action.type){
     case (socketTypes.SOCK_MEMBERS): {
-      return Object.assign({}, state, {
-        [action.message.room.name]: action.message.users.map(user => user.username)
-      });
+      let listOfMembers = action.message.users.map(user => user.username);
+      return state.set(action.message.room.name, Immutable.fromJS(listOfMembers))
     }
     default:
       return state;
   }
 }
 
-function initial(state={}, action) {
+function initial(state=Immutable.Map(), action) {
   return state;
 }
 

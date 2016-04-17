@@ -8,7 +8,7 @@ class ChatMessageInput extends Component {
     this.handleKeyPress = this.handleKeyPress.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.state = {
-      messageText: null
+      messageText: undefined
     }
   }
 

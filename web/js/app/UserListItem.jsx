@@ -3,7 +3,7 @@ import React, {Component} from 'react'
 export default class UserListItem extends Component {
 
   render(){
-    return <li className="list-group-item">
+    return <li key={this.props.user.id} className="list-group-item">
       <a href={"https://reddit.com/u/" + this.props.user.username} className="pull-left thumb-sm avatar m-r" target="_blank">
         <img src={this.props.user.profileImageUrl} alt="..." className="img-circle"/>
         <i className={ (this.props.user.online ? 'on' : 'off' ) + " b-white bottom"} />
