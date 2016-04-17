@@ -229,6 +229,10 @@ public class WebSocket extends Controller {
 
                                 outbound.send(new ChatRoomStream.MemberList(JsonChatRoom.from(roomConnection.room, user),
                                         roomConnection.room.getAllUsersWithOnlineStatus()).toJson());
+                            } else if (message.toLowerCase().equals("##markmessagesread##")) {
+                                Logger.debug("User " + user.username + " marking messages read for " + roomName);
+
+                                roomConnection.room.markMessagesReadForUser(user);
                             } else if (ChatCommands.isCommand(message)) {
                                 try {
                                     ChatCommands.execCommand(user, roomConnection.room, message, roomConnection.chatRoomEventStream, outbound);

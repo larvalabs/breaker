@@ -26,13 +26,7 @@ public class RecurringStatsJob extends Job {
         Stats.sample(Stats.StatKey.REQUESTS_ACTIVE, Invoker.executor.getActiveCount());
         Stats.sample(Stats.StatKey.REQUESTS_QUEUED, Invoker.executor.getQueue().size());
 
-        // This sucks
-        List<ChatRoom> allRooms = ChatRoom.findAll();
-        HashSet<String> usernames = new HashSet<String>();
-        for (ChatRoom chatRoom : allRooms) {
-            usernames.addAll(chatRoom.getUsernamesPresent());
-        }
-        Stats.sample(Stats.StatKey.USERS_CONNECTED, usernames.size());
+        Stats.sample(Stats.StatKey.USERS_CONNECTED, ChatRoom.getAllOnlineUsersForAllRooms().size());
 
         Logger.info("Stats job runtime: " + (System.currentTimeMillis() - start));
     }

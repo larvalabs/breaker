@@ -683,9 +683,14 @@
     };
 
     var markMessagesReadOnServer = function (roomName) {
+        var messageObj = makeMessage(roomName, "##markmessagesread##");
+        socket.send(JSON.stringify(messageObj));
+
+/*
         $.getJSON('@{Application.markMessagesSeen()}?roomName=' + roomName, function (responseData) {
             console.log("Messages marked read.");
         });
+*/
     };
 
     function resetUnreadCountForRoom(roomName) {
