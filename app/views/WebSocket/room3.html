@@ -1002,7 +1002,7 @@
             setupRoomClicks();
             setupMessageInputHandlers();
         } else if (event.type === 'message') {
-            console.log("Message uuid : " + event.message.uuid);
+//            console.log("Message uuid : " + event.message.uuid);
             var msgTemplateId = 'message_tmpl';
             if (getLastMessageUsernameForRoom(event.room.name) === event.user.username) {
                 msgTemplateId = 'messageshort_tmpl';
@@ -1016,7 +1016,7 @@
                 var msgObjects = $(getMessageSelector(event.message.uuid));
                 msgObjects.first().replaceWith(msg);
             } else {
-                console.log("New message, appending.");
+//                console.log("New message, appending.");
 
                 var roomName = event.room.name;
 
@@ -1048,12 +1048,14 @@
             var msg = tmpl(msgTemplateId, {event: event});
             $(getThreadSelector(event.room.name)).append(msg);
         } else if (event.type === 'join') {
+            console.log("event: " + event.user.username + " joined " + event.room.name);
             updateUserInUserList(event.user, event.room);
         } else if (event.type === 'leave') {
+            console.log("event: " + event.user.username + " left " + event.room.name);
             updateUserInUserList(event.user, event.room);
 //            $(getUserEntrySelector(event.room.name, event.user.username)).remove();
         } else if (event.type === 'memberlist') {
-            console.log("Member list for " + event.room.name);
+            console.log("Member list for " + event.room.name + " size " + event.users.length);
             var arrayLength = event.users.length;
             for (var i = 0; i < arrayLength; i++) {
                 var userObj = event.users[i];
@@ -1093,10 +1095,10 @@
 
         }
         if (userToInsertBefore) {
-            console.log("sort; Inserting " + userEntryId + " before " + userToInsertBefore.attr('id')+" in list "+userListSelector);
+//            console.log("sort; Inserting " + userEntryId + " before " + userToInsertBefore.attr('id')+" in list "+userListSelector);
             userToInsertBefore.before(userToInsertHtml);
         } else {
-            console.log("sort; Appending " + userEntryId + " in list "+userListSelector);
+//            console.log("sort; Appending " + userEntryId + " in list "+userListSelector);
             $(userListSelector).append(userToInsertHtml);
         }
 

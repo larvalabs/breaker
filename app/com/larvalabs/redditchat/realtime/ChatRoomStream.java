@@ -11,6 +11,7 @@ import jobs.RedisQueueJob;
 import models.ChatRoom;
 import models.ChatUser;
 import play.Logger;
+import play.libs.F;
 import play.libs.F.ArchivedEventStream;
 import play.libs.F.EventStream;
 import play.libs.F.IndexedEvent;
@@ -22,15 +23,36 @@ import java.util.List;
 
 public class ChatRoomStream {
 
+    public static class NoHistoryArchivedEventStream extends ArchivedEventStream<ChatRoomStream.Event> {
+
+        public NoHistoryArchivedEventStream(int archiveSize) {
+            super(archiveSize);
+        }
+
+        @Override
+        public synchronized EventStream<Event> eventStream() {
+            EventStream<Event> archivedEventStream = super.eventStream();
+            while (archivedEventStream.nextEvent().getOrNull() != null) {
+                Logger.info("Clearing stream history...");
+            }
+            return archivedEventStream;
+        }
+    }
+
     public static final int STREAM_SIZE = 20;
     public static final int PRELOAD_NUM_MSGS_ON_STARTUP = STREAM_SIZE;
 
+    private ArchivedEventStream<ChatRoomStream.Event> chatEvents;
+
     private String name;
 
-    public ChatRoomStream(String name, boolean loadOldMessages) {
+    public ChatRoomStream(String name, boolean isMessageStream) {
         this.name = name;
-        if (loadOldMessages) {
+        if (isMessageStream) {
+            chatEvents = new ArchivedEventStream<ChatRoomStream.Event>(STREAM_SIZE);
             loadOldMessages();
+        } else {
+            chatEvents = new NoHistoryArchivedEventStream(STREAM_SIZE);
         }
     }
 
@@ -51,9 +73,7 @@ public class ChatRoomStream {
     }
 
     // ~~~~~~~~~ Let's chat!
-    
-    final ArchivedEventStream<ChatRoomStream.Event> chatEvents = new ArchivedEventStream<ChatRoomStream.Event>(STREAM_SIZE);
-    
+
     /**
      * For WebSocket, when a user join the room we return a continuous event stream
      * of ChatEvent
