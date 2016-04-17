@@ -12,7 +12,7 @@ export default class UserListItem extends Component {
         <div className={this.props.user.modForRoom ? 'text-primary-dker' : ''}>
           <a href={"https://reddit.com/u/" + this.props.user.username} target="_blank">{this.props.user.username}</a>
         </div>
-        <small className="text-muted">{this.props.user.statusMessage ? this.props.user.statusMessage : ''}</small>
+        <small className="text-muted">{this.props.user.statusMessage ? this.props.user.statusMessage : '\u00a0'}</small>
       </div>
     </li>
   }
