@@ -7,7 +7,8 @@ export default React.createClass({
   getDefaultProps: function(){
     return {
       activeRooms: [],
-      roomList: []
+      roomList: [],
+      roomName: null
     }
   },
   renderYourRooms: function(){
@@ -15,7 +16,10 @@ export default React.createClass({
       <li className="hidden-folded padder m-t m-b-sm text-muted text-xs">
         <span>Your Rooms</span>
       </li>
-      {Object.keys(this.props.roomList).map((value, index) => <SidebarRoomListElm room={this.props.roomList[value]} />)}
+      {Object.keys(this.props.roomList).map((value, index) => {
+        let room = this.props.roomList[value];
+        return <SidebarRoomListElm room={room} active={room.name == this.props.roomName}/>
+      })}
     </ul>
   },
   renderSuggestedRooms: function(){

@@ -11,7 +11,7 @@ class AsyncApp extends Component {
     return (
       <div className="app app-header-fixed app-aside-fixed">
         <Header user={user} roomName={roomName}/>
-        <Sidebar activeRooms={activeRooms} roomList={rooms}/>
+        <Sidebar activeRooms={activeRooms} roomList={rooms} roomName={roomName}/>
         <Main />
       </div>
     );
