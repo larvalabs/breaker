@@ -33,7 +33,7 @@ public class ChatRoomStream {
         public synchronized EventStream<Event> eventStream() {
             EventStream<Event> archivedEventStream = super.eventStream();
             while (archivedEventStream.nextEvent().getOrNull() != null) {
-                Logger.info("Clearing stream history...");
+//                Logger.info("Clearing stream history...");
             }
             return archivedEventStream;
         }

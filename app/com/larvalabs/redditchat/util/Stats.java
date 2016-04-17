@@ -13,7 +13,8 @@ public class Stats {
         MESSAGE("messages"),
         USERS_CONNECTED("users.connected"),
         REQUESTS_ACTIVE("requests.active"),
-        REQUESTS_QUEUED("requests.queued");
+        REQUESTS_QUEUED("requests.queued"),
+        WEBSOCKET_CONNECT("websocket.connect"); // Using this until I can find a place to get all connected sockets
 
         private String key;
 

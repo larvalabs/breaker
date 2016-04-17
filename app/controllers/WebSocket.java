@@ -177,6 +177,8 @@ public class WebSocket extends Controller {
                 outbound.send(roomListJson);
             }
 
+            Stats.count(Stats.StatKey.WEBSOCKET_CONNECT, 1);
+
             // Loop while the socket is open
             while (inbound.isOpen()) {
 
@@ -217,7 +219,10 @@ public class WebSocket extends Controller {
                         RoomConnection roomConnection = roomConnections.get(roomName);
                         if (roomConnection != null) {
                             if (message.toLowerCase().equals("##ping##")) {
-                                roomConnection.room.userPresent(user, connectionId);
+                                for (RoomConnection connection : roomConnections.values()) {
+                                    connection.room.userPresent(user, connectionId);
+                                }
+                                // todo also add to global users connected set for easier stats
                                 //                        Logger.debug("Ping msg - skipping.");
                             } else if (message.toLowerCase().equals("##memberlist##")) {
                                 Logger.debug("User " + user.username + " requested member list.");
