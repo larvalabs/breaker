@@ -9,6 +9,7 @@ import com.larvalabs.redditchat.dataobj.JsonChatRoom;
 import com.larvalabs.redditchat.dataobj.JsonMessage;
 import com.larvalabs.redditchat.dataobj.JsonUser;
 import com.larvalabs.redditchat.realtime.ChatRoomStream;
+import com.larvalabs.redditchat.util.Stats;
 import com.larvalabs.redditchat.util.Util;
 import jobs.SaveNewMessageJob;
 import models.ChatRoom;
@@ -186,15 +187,19 @@ public class WebSocket extends Controller {
 
     private static class RoomConnection {
         public ChatRoom room;
-        public ChatRoomStream roomStream;
+        public ChatRoomStream chatRoomEventStream;
+        public ChatRoomStream chatRoomMessageStream;
         public EventStream<ChatRoomStream.Event> eventStream;
+        public EventStream<ChatRoomStream.Event> messageStream;
         public boolean isModerator;
         public boolean canPost;
 
-        public RoomConnection(ChatUser user, ChatRoom room, ChatRoomStream roomStream, EventStream<ChatRoomStream.Event> eventStream, boolean isModerator) {
+        public RoomConnection(ChatUser user, ChatRoom room, ChatRoomStream chatRoomEventStream, ChatRoomStream chatRoomMessageStream, EventStream<ChatRoomStream.Event> eventStream, EventStream<ChatRoomStream.Event> messageStream, boolean isModerator) {
             this.room = room;
-            this.roomStream = roomStream;
+            this.chatRoomEventStream = chatRoomEventStream;
+            this.chatRoomMessageStream = chatRoomMessageStream;
             this.eventStream = eventStream;
+            this.messageStream = messageStream;
             this.isModerator = isModerator;
             this.canPost = room.userCanPost(user);
         }
@@ -240,6 +245,8 @@ public class WebSocket extends Controller {
                 outbound.send(roomListJson);
             }
 
+            Stats.count(Stats.StatKey.WEBSOCKET_CONNECT, 1);
+
             // Loop while the socket is open
             while (inbound.isOpen()) {
 
@@ -250,11 +257,13 @@ public class WebSocket extends Controller {
         }
 
         private static void awaitAndProcessInput(ChatUser user, String connectionId, HashMap<String, RoomConnection> roomConnections) {
-            Promise[] roomEventPromises = new Promise[roomConnections.size() + 1];
+            Promise[] roomEventPromises = new Promise[(roomConnections.size() * 2) + 1];
             roomEventPromises[0] = inbound.nextEvent();
             int i = 1;
             for (RoomConnection roomConnection : roomConnections.values()) {
                 roomEventPromises[i] = roomConnection.eventStream.nextEvent();
+                i++;
+                roomEventPromises[i] = roomConnection.messageStream.nextEvent();
                 i++;
             }
 
@@ -278,16 +287,23 @@ public class WebSocket extends Controller {
                         RoomConnection roomConnection = roomConnections.get(roomName);
                         if (roomConnection != null) {
                             if (message.toLowerCase().equals("##ping##")) {
-                                roomConnection.room.userPresent(user, connectionId);
+                                for (RoomConnection connection : roomConnections.values()) {
+                                    connection.room.userPresent(user, connectionId);
+                                }
+                                // todo also add to global users connected set for easier stats
                                 //                        Logger.debug("Ping msg - skipping.");
                             } else if (message.toLowerCase().equals("##memberlist##")) {
                                 Logger.debug("User " + user.username + " requested member list.");
 
                                 outbound.send(new ChatRoomStream.MemberList(JsonChatRoom.from(roomConnection.room, user),
                                         roomConnection.room.getAllUsersWithOnlineStatus()).toJson());
+                            } else if (message.toLowerCase().equals("##markmessagesread##")) {
+                                Logger.debug("User " + user.username + " marking messages read for " + roomName);
+
+                                roomConnection.room.markMessagesReadForUser(user);
                             } else if (ChatCommands.isCommand(message)) {
                                 try {
-                                    ChatCommands.execCommand(user, roomConnection.room, message, roomConnection.roomStream, outbound);
+                                    ChatCommands.execCommand(user, roomConnection.room, message, roomConnection.chatRoomEventStream, outbound);
                                 } catch (ChatCommands.NotEnoughPermissionsException e) {
                                     sendLocalServerMessage(roomConnection, "You don't have permission to execute this command.");
                                 } catch (ChatCommands.CommandNotRecognizedException e) {
@@ -298,7 +314,8 @@ public class WebSocket extends Controller {
                                     String uuid = Util.getUUID();
                                     JsonMessage jsonMessage = JsonMessage.makePresavedMessage(uuid, user, roomConnection.room, message);
                                     new SaveNewMessageJob(uuid, user, roomName, message).now();
-                                    roomConnection.roomStream.say(jsonMessage);
+                                    roomConnection.chatRoomMessageStream.say(jsonMessage);
+                                    Stats.count(Stats.StatKey.MESSAGE, 1);
                                 } else {
                                     Logger.info("User " + user.getUsername() + " cannot post to " + roomName);
                                     // Direct message to user who tried to send this
@@ -321,7 +338,7 @@ public class WebSocket extends Controller {
                     // If this was the last connection that user had to the room then broadcast they've left
                     if (!roomConnection.room.isUserPresent(user)) {
                         Logger.debug("Last connection for " + user.username + " on channel " + roomConnection.room.getName() + " disconnected, broadcasting leave.");
-                        roomConnection.roomStream.leave(roomConnection.room, user);
+                        roomConnection.chatRoomEventStream.leave(roomConnection.room, user);
                     }
                 }
                 disconnect();
@@ -359,7 +376,8 @@ public class WebSocket extends Controller {
         }
 
         private static void addConnection(ChatUser user, String connectionId, HashMap<String, RoomConnection> roomConnections, ChatRoom room) {
-            ChatRoomStream roomStream = ChatRoomStream.get(room.name);
+            ChatRoomStream eventStream = ChatRoomStream.getEventStream(room.name);
+            ChatRoomStream messageStream = ChatRoomStream.getMessageStream(room.name);
 
             // Socket connected, join the chat room
             // If this is the first connection this user has to the room then broadcast
@@ -369,9 +387,10 @@ public class WebSocket extends Controller {
             }
             room.userPresent(user, connectionId);
             boolean isModerator = room.isModerator(user);
-            EventStream<ChatRoomStream.Event> roomMessagesStream = roomStream.join(room, user, broadcastJoin);
+            EventStream<ChatRoomStream.Event> roomEventsStream = eventStream.join(room, user, broadcastJoin);
+            EventStream<ChatRoomStream.Event> roomMessagesStream = messageStream.join(room, user, broadcastJoin);
 
-            roomConnections.put(room.name, new RoomConnection(user, room, roomStream, roomMessagesStream, isModerator));
+            roomConnections.put(room.name, new RoomConnection(user, room, eventStream, messageStream, roomMessagesStream, roomEventsStream, isModerator));
         }
 
     }

@@ -55,6 +55,9 @@
             <div class="m-t-lg">
                 <a href="@{Websocket.room("breakerapp")}"><button type="submit" class="btn btn-lg btn-info btn-block">Go to /r/breakerapp chat</button></a>
             </div>
+                #{if user.isAdmin()}
+                <p class="text-center m-t"><small><a href="@{Application.adminOpenRoom(room.name)}">Admin: Open Room</a></small></p>
+                #{/if}
             #{/if}
             #{else}
             <div class="m-t-lg">

@@ -56,7 +56,7 @@ public class Application extends PreloadUserController {
         user.setUsername("chattest2");
         user.save();
         user.joinChatRoom(ChatRoom.findByName("breakerapp"));
-
+        WebSocket.room("breakerapp");
     }
 
     public static void index() {
@@ -115,7 +115,21 @@ public class Application extends PreloadUserController {
             // This is generally a direct link from a subreddit, so introduce things a bit
             ChatUser chatUser = connected();
             session.put(SESSION_JOINROOM, roomName);
-            render(chatUser, roomName);
+            ChatRoom room = ChatRoom.findByName(roomName);
+            String usernamesPresentStr = null;
+            int userCount = 0;
+            if (room != null) {
+                TreeSet<String> usernamesPresent = room.getUsernamesPresent();
+                if (usernamesPresent != null && usernamesPresent.size() > 0) {
+                    userCount = usernamesPresent.size();
+                    usernamesPresentStr = "";
+                    for (String username : usernamesPresent) {
+                        usernamesPresentStr += username + ", ";
+                    }
+                    usernamesPresentStr = usernamesPresentStr.substring(0, usernamesPresentStr.length() - 2);
+                }
+            }
+            render(chatUser, roomName, usernamesPresentStr, userCount);
         } else {
             // This is probably a generic signup request from the homepage
             auth();
@@ -383,6 +397,19 @@ public class Application extends PreloadUserController {
 
         response.setContentTypeIfNotSet("image/png");
         ImageIO.write(image, "png", response.out);
+    }
+
+    public static void adminOpenRoom(String roomName) {
+        ChatUser user = connected();
+        if (user.isAdmin()) {
+            ChatRoom room = ChatRoom.findByName(roomName);
+            room.setOpen(true);
+            room.setNumNeededToOpen(0);
+            room.save();
+            WebSocket.room(roomName);
+        } else {
+            error();
+        }
     }
 
     public static void testPM() throws ApiException {

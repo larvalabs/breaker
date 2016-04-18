@@ -2,6 +2,8 @@ package models;
 
 import com.larvalabs.redditchat.Constants;
 import com.larvalabs.redditchat.dataobj.JsonUser;
+import com.sun.istack.internal.Nullable;
+import jobs.SaveLastReadTimeForAllPendingJob;
 import play.Logger;
 import play.db.DB;
 import play.db.jpa.Model;
@@ -16,11 +18,15 @@ import java.util.*;
 @Table(name = "chatroom")
 public class ChatRoom extends Model {
 
+    public static final double CHANCE_CLEAN_REDIS_PRESENCE = 0.1;
+    private static Random random = new Random();
+
     public static final String SUBREDDIT_ANDROID = "android";
 
     public static final int ICON_SOURCE_NONE = 0;
     public static final int ICON_SOURCE_PLAY_STORE = 1;
     public static final int ICON_SOURCE_HIAPK = 2;
+    public static final String REDISKEY_PRESENCE_GLOBAL = "presence__global";
 
     @Column(unique = true)
     public String name;
@@ -354,7 +360,7 @@ public class ChatRoom extends Model {
     }
 
     public JsonUser[] getAllUsersWithOnlineStatus() {
-        TreeSet<ChatUser> presentUserObjects = getPresentUserObjects();
+//        TreeSet<ChatUser> presentUserObjects = getPresentUserObjects();
         List<ChatUser> allUsers = getUsers();
 
         // todo: Temporary hack to make rooms look full
@@ -366,7 +372,7 @@ public class ChatRoom extends Model {
         JsonUser[] users = new JsonUser[allUsers.size()];
         int i = 0;
         for (ChatUser user : allUsers) {
-            users[i] = JsonUser.fromUserForRoom(user, this);
+            users[i] = JsonUser.fromUserForRoom(user, this, getUsernamesPresent());
             i++;
         }
         return users;
@@ -391,14 +397,30 @@ public class ChatRoom extends Model {
 */
             return usernamesPresent;
         } catch (Exception e) {
-            Logger.error("Error contacting redis.");
+            Logger.error(e, "Error contacting redis.");
             return new TreeSet<String>();
         }
     }
 
-
+    /**
+     * Check if the username is present, loads the list of usernames present.
+     * @param user
+     * @return
+     */
     public boolean isUserPresent(ChatUser user) {
-        TreeSet<String> usernamesPresent = getUsernamesPresent();
+        return isUserPresent(user, null);
+    }
+
+    /**
+     * Check if the username is present, optionally loads the usernames present.
+     * @param user
+     * @param usernamesPresent if null, load usernames present from redis
+     * @return
+     */
+    public boolean isUserPresent(ChatUser user, @Nullable Set<String> usernamesPresent) {
+        if (usernamesPresent == null) {
+            usernamesPresent = getUsernamesPresent();
+        }
         return usernamesPresent.contains(user.username);
 /*
         try {
@@ -415,14 +437,76 @@ public class ChatRoom extends Model {
         try {
             int time = (int) (System.currentTimeMillis() / 1000);
             Redis.zadd(getRedisPresenceKeyForRoom(), time, getUsernameAndConnectionString(user, connectionId));
-            cleanPresenceSet();             // todo remove later
+            if (random.nextFloat() < CHANCE_CLEAN_REDIS_PRESENCE) {
+                // this is just housekeeping to keep the sets from getting too big
+                cleanPresenceSet();
+            }
+            userPresentGlobal(user);
         } catch (Exception e) {
-            Logger.error("Error contacting redis.");
+            Logger.error(e, "Error contacting redis.");
         }
     }
 
     private String getUsernameAndConnectionString(ChatUser user, String connectionId) {
         return user.username + ":" + connectionId;
+    }
+
+    /**
+     * Add to list of all online users across rooms
+     * @param user
+     */
+    private void userPresentGlobal(ChatUser user) {
+        try {
+            int time = (int) (System.currentTimeMillis() / 1000);
+            Redis.zadd(REDISKEY_PRESENCE_GLOBAL, time, user.getUsername());
+            if (random.nextFloat() < CHANCE_CLEAN_REDIS_PRESENCE) {
+                // this is just housekeeping to keep the sets from getting too big
+                cleanPresenceSetGlobal();
+            }
+        } catch (Exception e) {
+            Logger.error(e, "Error contacting redis.");
+        }
+    }
+
+    private void userNotPresentGlobal(ChatUser user) {
+        try {
+            Redis.zrem(REDISKEY_PRESENCE_GLOBAL, user.getUsername());
+        } catch (Exception e) {
+            Logger.error(e, "Error contacting redis.");
+        }
+    }
+
+    /**
+     * Housekeeping to keep list sizes under control
+     */
+    private void cleanPresenceSetGlobal() {
+        try {
+            int time = (int) (System.currentTimeMillis() / 1000);
+            Long removed = Redis.zremrangeByScore(REDISKEY_PRESENCE_GLOBAL, 0, time - Constants.PRESENCE_TIMEOUT_SEC * 2);
+//            Logger.debug("Clean of presence set for " + name + " removed " + removed + " elements.");
+        } catch (Exception e) {
+            Logger.error(e, "Error contacting redis.");
+        }
+    }
+
+    /**
+     * This might be better in another class
+     * @return List of all online usernames, across all rooms.
+     */
+    public static TreeSet<String> getAllOnlineUsersForAllRooms() {
+        try {
+            int time = (int) (System.currentTimeMillis() / 1000);
+            Set<String> usersPresent = Redis.zrangeByScore(REDISKEY_PRESENCE_GLOBAL, time - Constants.PRESENCE_TIMEOUT_SEC, time);
+            TreeSet<String> usernamesPresent = new TreeSet<String>();
+            for (String username : usersPresent) {
+                usernamesPresent.add(username);
+            }
+
+            return usernamesPresent;
+        } catch (Exception e) {
+            Logger.error(e, "Error contacting redis.");
+            return new TreeSet<String>();
+        }
     }
 
     /**
@@ -437,12 +521,13 @@ public class ChatRoom extends Model {
     public void userNotPresent(ChatUser user, String connectionId) {
         try {
             Redis.zrem(getRedisPresenceKeyForRoom(), getUsernameAndConnectionString(user, connectionId));
+            userNotPresentGlobal(user);
         } catch (Exception e) {
             Logger.error(e, "Error contacting redis.");
         }
     }
 
-    public void cleanPresenceSet() {
+    private void cleanPresenceSet() {
         try {
             int time = (int) (System.currentTimeMillis() / 1000);
             Long removed = Redis.zremrangeByScore(getRedisPresenceKeyForRoom(), 0, time - Constants.PRESENCE_TIMEOUT_SEC * 2);
@@ -450,6 +535,31 @@ public class ChatRoom extends Model {
         } catch (Exception e) {
             Logger.error(e, "Error contacting redis.");
         }
+    }
+
+    private String makeKeyForLastReadTime(ChatUser user) {
+        return "lastread-"+name+"-"+user.getUsername();
+    }
+
+    public void markMessagesReadForUser(ChatUser user) {
+        try {
+            Redis.set(makeKeyForLastReadTime(user), ""+System.currentTimeMillis());
+            SaveLastReadTimeForAllPendingJob.addPendingUsername(user.getUsername(), name);
+        } catch (Exception e) {
+            Logger.error(e, "Error contacting redis.");
+        }
+    }
+
+    public long getLastMessageReadTimeForUser(ChatUser user) {
+        try {
+            String lastTime = Redis.get(makeKeyForLastReadTime(user));
+            if (lastTime != null) {
+                return Long.parseLong(lastTime);
+            }
+        } catch (Exception e) {
+            Logger.error(e, "Error contacting redis.");
+        }
+        return 0;
     }
 
     public static List<ChatRoom> getTopRooms(boolean hardware, int days, int limit) {

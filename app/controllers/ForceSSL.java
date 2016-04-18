@@ -23,7 +23,7 @@ public class ForceSSL extends Controller {
      */
     protected static void redirectIfNeeded(Http.Request request) {
         if (request.headers.get("x-forwarded-proto") != null) {
-            Logger.info("Found x-forwarded header :" + request.headers.get("x-forwarded-proto"));
+//            Logger.info("Found x-forwarded header :" + request.headers.get("x-forwarded-proto"));
             request.secure = request.headers.get("x-forwarded-proto").values.contains("https");
         }
         if (!request.secure) {
