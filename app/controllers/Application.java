@@ -371,6 +371,19 @@ public class Application extends PreloadUserController {
         ImageIO.write(image, "png", response.out);
     }
 
+    public static void adminOpenRoom(String roomName) {
+        ChatUser user = connected();
+        if (user.isAdmin()) {
+            ChatRoom room = ChatRoom.findByName(roomName);
+            room.setOpen(true);
+            room.setNumNeededToOpen(0);
+            room.save();
+            WebSocket.room(roomName);
+        } else {
+            error();
+        }
+    }
+
     public static void testPM() throws ApiException {
         RedditUtil.sendPrivateMessageFromBot("megamatt2000", "Server test PM", "Testing as of time " + System.currentTimeMillis());
         renderText("ok");
