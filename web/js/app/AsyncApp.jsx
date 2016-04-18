@@ -20,7 +20,6 @@ class AsyncApp extends Component {
 
 function mapStateToProps(state) {
 
-  let initial = state.get('initial', {}).toJS();
   return {
     user: state.getIn(['initial', 'user']),
     activeRooms: state.getIn(['initial', 'activeRooms']),

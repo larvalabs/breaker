@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import UserListItem from './UserListItem.jsx';
 import { connect } from 'react-redux';
+import Immutable from 'immutable'
+
 
 class UserListBox extends Component {
   render(){
@@ -19,7 +21,7 @@ class UserListBox extends Component {
                   <div className="m-b-sm text-md">Here Now</div>
                   <ul id='onlinelist' className="list-group no-bg no-borders pull-in m-b-sm">
                     {
-                      this.props.members.filter((member) => member.online)
+                      this.props.members.filter((member) => member.get('online', false))
                         .map((member) => <UserListItem user={member} />)
                     }
                   </ul>
@@ -28,7 +30,7 @@ class UserListBox extends Component {
                   <div className="m-b-sm text-md">All Users</div>
                   <ul id='userlist' className="list-group no-bg no-borders pull-in m-b-sm">
                     {
-                      this.props.members.filter((member) => !member.online)
+                      this.props.members.filter((member) => !member.get('online', false))
                         .map((member) => <UserListItem user={member} />)
                     }
                   </ul>
@@ -47,16 +49,11 @@ UserListBox.defaultProps = {
 };
 
 function mapStateToProps(state) {
-  let members = [];
   let roomName = state.getIn(['initial', 'roomName']);
-  let roomMembers = state.getIn(['members', roomName]);
-
-  if(roomMembers){
-    members = roomMembers.map((username) => state.getIn(['users', username]).toJS())
-  }
+  let roomMemberList = state.getIn(['members', roomName], Immutable.List());
 
   return {
-    members: members
+    members: roomMemberList.map((username) => state.getIn(['users', username]))
   }
 }
 
