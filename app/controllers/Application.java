@@ -101,7 +101,21 @@ public class Application extends PreloadUserController {
             // This is generally a direct link from a subreddit, so introduce things a bit
             ChatUser chatUser = connected();
             session.put(SESSION_JOINROOM, roomName);
-            render(chatUser, roomName);
+            ChatRoom room = ChatRoom.findByName(roomName);
+            String usernamesPresentStr = null;
+            int userCount = 0;
+            if (room != null) {
+                TreeSet<String> usernamesPresent = room.getUsernamesPresent();
+                if (usernamesPresent != null && usernamesPresent.size() > 0) {
+                    userCount = usernamesPresent.size();
+                    usernamesPresentStr = "";
+                    for (String username : usernamesPresent) {
+                        usernamesPresentStr += username + ", ";
+                    }
+                    usernamesPresentStr = usernamesPresentStr.substring(0, usernamesPresentStr.length() - 2);
+                }
+            }
+            render(chatUser, roomName, usernamesPresentStr, userCount);
         } else {
             // This is probably a generic signup request from the homepage
             auth();
