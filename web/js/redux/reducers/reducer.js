@@ -1,5 +1,6 @@
 import * as socketTypes from '../constants/socket-constants.js'
 import Immutable from 'immutable'
+import { combineReducers } from 'redux-immutable';
 
 function users(state=Immutable.Map(), action) {
   switch (action.type) {
@@ -67,12 +68,12 @@ function initial(state=Immutable.Map(), action) {
   return state;
 }
 
-export default function rootReducer(state={}, action){
-  return {
-    initial: initial(state.initial, action),
-    members: members(state.members, action),
-    users: users(state.users, action),
-    rooms: rooms(state.rooms, action),
-    messages: messages(state.messages, action)
-  }
-}
+const App = combineReducers({
+  initial,
+  members,
+  users,
+  rooms,
+  messages
+});
+
+export default App;

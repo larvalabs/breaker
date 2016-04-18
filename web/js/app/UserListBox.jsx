@@ -47,10 +47,14 @@ UserListBox.defaultProps = {
 };
 
 function mapStateToProps(state) {
-  var members = [];
-  if(state.members.get(state.initial.get('roomName'))){
-    members = state.members.get(state.initial.get('roomName')).map((username) => state.users.get(username).toJS())
+  let members = [];
+  let roomName = state.getIn(['initial', 'roomName']);
+  let roomMembers = state.getIn(['members', roomName]);
+
+  if(roomMembers){
+    members = roomMembers.map((username) => state.users.get(username).toJS())
   }
+
   return {
     members: members
   }
