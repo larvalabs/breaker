@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import ChatMessage from './ChatMessage.jsx'
 import ChatMessageInput from './ChatMessageInput.jsx'
 import StayDown from 'staydown'
+import Immutable from 'immutable'
 
 class ChatBox extends Component {
   constructor(props) {
@@ -11,7 +12,6 @@ class ChatBox extends Component {
   }
 
   componentDidMount() {
-    // TODO: this needs to be imported
     var staydown = new StayDown({
       target: $('#thread_scrollparent')[0],
       interval: 500
@@ -28,6 +28,18 @@ class ChatBox extends Component {
     this.state.staydown.intend_down = true;
   }
 
+  renderThreadMessage(props, message){
+    return <ChatMessage message={message} user={props.users.get(message.get('username'))}/>
+  }
+
+  renderThread(props) {
+    let filteredMessages = props.messages.filter((message) => message);
+
+    return <ul id="thread" className="list-group list-group-lg no-radius m-b-none m-t-n-xxs">
+      {filteredMessages.map((message) => this.renderThreadMessage(this.props, message))}
+    </ul>
+  }
+
   render() {
     return <div id="centercol" className="col">
 
@@ -36,11 +48,7 @@ class ChatBox extends Component {
           <div id="thread_scrollparent" className="cell">
             <div className="cell-inner">
 
-              <ul id="thread" className="list-group list-group-lg no-radius m-b-none m-t-n-xxs">
-                {this.props.messages.filter((message) => message)
-                    .map((message) => <ChatMessage message={message}
-                                                   user={this.props.users[message.username]} />)}
-              </ul>
+              {this.renderThread(this.props)}
 
               <div id="bottom-spacer" className="padder-v-sm bg-white b-l-3x b-l-white"></div>
             </div>
@@ -61,15 +69,11 @@ ChatBox.defaultProps = {
 };
 
 function mapStateToProps(state) {
-  let messages = [];
   let roomName = state.getIn(['initial', 'roomName']);
-  if(state.getIn(['messages', roomName])){
-    messages = state.getIn(['messages', roomName]).toJS()
-  }
 
   return {
-    messages: messages,
-    users: state.get('users').toJS(),
+    messages: state.getIn(['messages', roomName], Immutable.List()),
+    users: state.get('users'),
     roomName: roomName
   }
 }
