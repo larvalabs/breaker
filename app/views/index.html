@@ -27,6 +27,8 @@
         var WebsocketUrl = '@@{WebSocket.ChatRoomSocket.join()}',
             RoomName = "${roomName}";
 
+        window.__ENVIRONMENT__ = "${environment}";
+
         window.__INITIAL_STATE__ = {
             initial: {
                 user: ${userString.raw()},

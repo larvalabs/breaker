@@ -1,6 +1,9 @@
 let Config = {
   features: {
     suggestedRooms: false
+  },
+  environment: {
+    prod: window.__ENVIRONMENT__ == "production"
   }
 };
 

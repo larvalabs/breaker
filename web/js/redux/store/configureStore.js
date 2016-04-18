@@ -3,13 +3,20 @@ import thunk from 'redux-thunk';
 import rootReducer from '../reducers/reducer';
 import DevTools from '../../app/DevTools.js'
 import Immutable from 'immutable'
+import Config from '../../config'
 
-// TODO: hide devtools in prod
 export default function configureStore(initialState = Immutable.Map()) {
-  let finalCreateStore = compose(
+  let finalCreateStore;
+
+  if(Config.environment.prod){
+    finalCreateStore = applyMiddleware(thunk)(createStore);
+  } else {
+    finalCreateStore = compose(
         applyMiddleware(thunk),
         DevTools.instrument()
     )(createStore);
+  }
+
 
   return finalCreateStore(rootReducer, initialState);
 }

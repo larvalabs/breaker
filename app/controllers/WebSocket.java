@@ -15,6 +15,7 @@ import models.ChatRoom;
 import models.ChatUser;
 import models.ChatUserRoomJoin;
 import play.Logger;
+import play.Play;
 import play.libs.F.EventStream;
 import play.libs.F.Promise;
 import play.mvc.Controller;
@@ -100,7 +101,9 @@ public class WebSocket extends Controller {
 
         String userString = new Gson().toJson(JsonUser.fromUser(user));
         String activeRoomsString = new Gson().toJson(activeRooms);
-        render("index.html", user, userString, roomName, activeRoomsString);
+        String environment = Play.mode.isProd() ? "production" : "dev";
+
+        render("index.html", user, userString, roomName, activeRoomsString, environment);
     }
 
     public static void room(String roomName) {
