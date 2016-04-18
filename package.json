@@ -4,6 +4,7 @@
   "version": "0.0.1",
   "homepage": "http://breakerapp.com",
   "scripts": {
+    "start": "",
     "postinstall": "webpack --progress -p --config=webpack.config.prod.js"
   },
   "pre-commit": [],
