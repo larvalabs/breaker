@@ -1,12 +1,10 @@
 import React from "react";
+import Immuable from 'immutable'
 
 export default React.createClass({
   getDefaultProps: function() {
     return {
-      user: {
-        profileImageUrl: null,
-        username: null
-      },
+      user: Immuable.Map(),
       room: {
         icon: null
       },
@@ -19,10 +17,10 @@ export default React.createClass({
       <li className="dropdown v-middle">
         <a href="#" data-toggle="dropdown" className="dropdown-toggle clear" data-toggle="dropdown">
           <span className="thumb-sm avatar pull-right m-t-n-sm m-b-n-sm m-l-sm">
-            <img src={this.props.user.profileImageUrl} alt="..." />
+            <img src={this.props.user.get('profileImageUrl')} alt="..." />
               <i className="on md b-white bottom" />
           </span>
-          <span className="hidden-sm hidden-md">{this.props.user.username}</span> <b className="caret" />
+          <span className="hidden-sm hidden-md">{this.props.user.get('username')}</span> <b className="caret" />
         </a>
         <ul className="dropdown-menu w">
 

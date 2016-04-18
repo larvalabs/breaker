@@ -22,9 +22,9 @@ function mapStateToProps(state) {
 
   let initial = state.get('initial', {}).toJS();
   return {
-    user: initial.user,
+    user: state.getIn(['initial', 'user']),
     activeRooms: state.getIn(['initial', 'activeRooms']),
-    roomName: initial.roomName,
+    roomName: state.getIn(['initial', 'roomName']),
     rooms: state.get('rooms')
   }
 }
