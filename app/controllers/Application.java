@@ -72,7 +72,7 @@ public class Application extends PreloadUserController {
 
     public static void react() {
         ChatUser chatUser = connected();
-        if (chatUser != null) {
+        if (chatUser != null && chatUser.isAdmin()) {
             // go to chat
             WebSocket.reactRoom(null);
         } else {
