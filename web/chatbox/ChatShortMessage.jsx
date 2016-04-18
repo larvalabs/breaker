@@ -6,30 +6,10 @@ var TimeAgo = require('react-timeago').default
 export default class ChatMessage extends Component {
   renderUserImage() {
     let userLink = `https://reddit.com/u/${this.props.user.get('username')}`;
-    let profileImage = this.props.user.get('profileImageUrl');
-
-    // TODO: seems like a hack here
-    if (this.props.user.get('profileImageUrl').indexOf('user-anon') > -1){
-      profileImage = '/public/img/user-empty.png';
-    }
 
     return <a className="avatar thumb-sm pull-left m-r" href={userLink} target="_blank">
-      <img src={profileImage} />
+      &nbsp;
     </a>
-  }
-  renderTime() {
-    // TODO: Timeago
-    return <div className="pull-right text-sm text-muted">
-      <TimeAgo date={new Date(this.props.message.get('createDateLongUTC')).toISOString()} />
-    </div>
-  }
-  renderUsername() {
-    let modClass = this.props.user.get('modForRoom') ? 'text-md text-primary-dker' : 'text-md text-dark-dker';
-    return <div>
-        <a className={modClass} href={`https://reddit.com/u/${this.props.user.get('username')}`} target="_blank">
-          {this.props.user.get('username')}</a>
-      </div>
-
   }
   renderMessage() {
     return <div className="m-t-midxs" dangerouslySetInnerHTML={{__html: this.props.message.get('messageHtml')}}>
@@ -47,14 +27,12 @@ export default class ChatMessage extends Component {
     return null;
   }
   render(){
-    let liClasses = "list-group-item no-border p-t-s p-b-xs clearfix b-l-3x b-l-white";
+    let liClasses = "list-group-item p-t-none p-b-xs no-border clearfix b-l-3x b-l-white";
 
     return (
       <li key={this.props.message.get('id')} className={liClasses}>
         {this.renderUserImage()}
-        {this.renderTime()}
         <div className="clear">
-          {this.renderUsername()}
           {this.renderMessage()}
           {this.renderLinks()}
         </div>
@@ -66,5 +44,4 @@ export default class ChatMessage extends Component {
 ChatMessage.defaultProps = {
   message: Immutable.Map(),
   user: Immutable.Map(),
-  root: true
 };
