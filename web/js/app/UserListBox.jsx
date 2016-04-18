@@ -52,7 +52,7 @@ function mapStateToProps(state) {
   let roomMembers = state.getIn(['members', roomName]);
 
   if(roomMembers){
-    members = roomMembers.map((username) => state.users.get(username).toJS())
+    members = roomMembers.map((username) => state.getIn(['users', username]).toJS())
   }
 
   return {
