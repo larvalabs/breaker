@@ -5,10 +5,11 @@ import com.sun.istack.internal.Nullable;
 import controllers.Application;
 import models.ChatRoom;
 import models.ChatUser;
-import play.Logger;
 
 import javax.validation.constraints.Null;
 import java.util.*;
+import java.util.Date;
+import java.util.List;
 
 public class JsonUser {
 

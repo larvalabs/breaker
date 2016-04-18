@@ -4,6 +4,7 @@
 
 # Login
 GET     /test                                   Application.test
+GET     /react                                  Application.react
 GET     /demo                                   Application.enterDemo
 GET     /auth                                   Application.auth
 GET     /logout                                 Application.logout
@@ -29,11 +30,15 @@ GET     /longpolling/room/leave                 LongPolling.leave
 # WebSocket
 GET     /c                                      WebSocket.room
 GET     /c/{roomName}                           WebSocket.room
+GET     /r/                                     WebSocket.reactRoom
+GET     /r/{roomName}                           WebSocket.reactRoom
 WS      /websocket/room/socket                  WebSocket.ChatRoomSocket.join
 
 # Map static resources from the /app/public folder to the /public path
 GET     /public/                                staticDir:public
 GET     /libs/                                  staticDir:public/libs
+GET     /dist/                                  staticDir:public/dist
+GET     /app/                                   staticDir:public/app
 GET     /                                       staticDir:public/landing
 
 # Catch all

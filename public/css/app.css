@@ -664,10 +664,11 @@ body {
 }
 
 .app {
-  position: relative;
-  width: 100%;
-  height: auto;
-  min-height: 100%;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
 }
 
 .app:before {
@@ -5201,7 +5202,8 @@ a.text-#000000:hover {
 
 /*#15274F*/
 .sandersforpresident .bg-dark,
-.sandersforpresident .bg-dark.dk, .bg-dark .dk {
+.sandersforpresident .bg-dark.dk,
+.sandersforpresident .bg-dark .dk {
   background-color: #2E7DBD;
 }
 

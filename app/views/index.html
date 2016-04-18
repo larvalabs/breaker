@@ -1,0 +1,46 @@
+#{extends 'main.html' /}
+#{set title:'Chat room' /}
+
+#{set 'moreScripts'}
+<link rel="stylesheet" href="@{'/public/libs/assets/animate.css/animate.css'}" type="text/css"/>
+<link rel="stylesheet" href="@{'/public/libs/assets/font-awesome/css/font-awesome.min.css'}" type="text/css"/>
+<link rel="stylesheet" href="@{'/public/libs/assets/simple-line-icons/css/simple-line-icons.css'}" type="text/css"/>
+<link rel="stylesheet" href="@{'/public/libs/jquery/bootstrap/dist/css/bootstrap.css'}" type="text/css"/>
+
+<link rel="stylesheet" href="@{'/public/css/font.css'}" type="text/css"/>
+<link rel="stylesheet" href="@{'/public/css/app.css'}" type="text/css"/>
+<link rel="stylesheet" href="@{'/public/stylesheets/angulr-custom.css'}" type="text/css"/>
+
+<link href="@{'/public/stylesheets/messenger.css'}" rel="stylesheet" type="text/css" />
+<link href="@{'/public/stylesheets/messenger-theme-flat.css'}" rel="stylesheet" type="text/css" />
+<link href="@{'/public/stylesheets/jquery.mentionsInput.css'}" rel="stylesheet" type="text/css" />
+<link href="@{'/public/stylesheets/screen.css'}" rel="stylesheet" type="text/css" />
+#{/set}
+
+<body>
+    <div id="root">
+
+    </div>
+    <script src="@{'/public/javascripts/reconnecting-websocket.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+    <script type="text/javascript">
+
+        var WebsocketUrl = '@@{WebSocket.ChatRoomSocket.join()}',
+            RoomName = "${roomName}";
+
+        window.__ENVIRONMENT__ = "${environment}";
+
+        window.__INITIAL_STATE__ = {
+            initial: {
+                user: ${userString.raw()},
+                roomName: "${roomName}",
+                activeRooms: ${activeRoomsString.raw()}
+            },
+            members: {},
+            rooms: {},
+            users: {},
+            messages: {}
+        };
+
+    </script>
+    <script src="/dist/bundle.js"></script>
+</body>
