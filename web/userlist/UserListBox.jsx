@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
-import UserListItem from './UserListItem.jsx';
 import { connect } from 'react-redux';
 import Immutable from 'immutable'
+
+import UserListItem from './UserListItem.jsx';
 
 
 class UserListBox extends Component {

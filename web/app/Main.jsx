@@ -1,6 +1,6 @@
 import React from 'react';
-import ChatBox from './ChatBox'
-import UserListBox from './UserListBox'
+import ChatBox from '../chatbox/ChatBox'
+import UserListBox from '../userlist/UserListBox'
 
 export default React.createClass({
   render: function() {

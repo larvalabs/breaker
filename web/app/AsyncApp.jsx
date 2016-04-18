@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 
 import Header from './Header'
-import Sidebar from './Sidebar'
+import Sidebar from '../sidebar/Sidebar'
 import Main from './Main'
 
 class AsyncApp extends Component {

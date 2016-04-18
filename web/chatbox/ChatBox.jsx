@@ -1,9 +1,11 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux';
-import ChatMessage from './ChatMessage'
-import ChatMessageInput from './ChatMessageInput'
 import StayDown from 'staydown'
 import Immutable from 'immutable'
+
+import ChatMessage from './ChatMessage'
+import ChatMessageInput from './ChatMessageInput'
+
 
 class ChatBox extends Component {
   constructor(props) {

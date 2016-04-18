@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import { connect } from 'react-redux';
 import {sendNewMessage} from '../redux/actions/chat-actions'
 
+
 class ChatMessageInput extends Component {
   constructor(props) {
     super(props);
