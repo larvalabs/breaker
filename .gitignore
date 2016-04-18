@@ -41,4 +41,4 @@ public/newsite/compass/.sass-cache
 node_modules
 
 # Webpack output
-/public/dist/bundle.js
+/public/dist/
