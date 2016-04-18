@@ -3,7 +3,9 @@
   "author": "",
   "version": "0.0.1",
   "homepage": "http://breakerapp.com",
-  "scripts": {},
+  "scripts": {
+    "postinstall": "webpack --progress -p --config=webpack.config.prod.js"
+  },
   "pre-commit": [],
   "bugs": {
     "url": ""
