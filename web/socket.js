@@ -1,5 +1,6 @@
 import store from './redux/store/store'
 import * as socketActions from './redux/actions/socket-actions'
+import Config from './config'
 
 var socket = null;
 
@@ -27,7 +28,7 @@ function init(websocketUrl) {
 
     // Hack
     if(eventData.type === "roomlist"){
-      var messageObj = makeMessage(RoomName, '##memberlist##');
+      var messageObj = makeMessage(Config.room_name, '##memberlist##');
       socket.send(JSON.stringify(messageObj));
     }
 
