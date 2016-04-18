@@ -1,7 +1,7 @@
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 import rootReducer from '../reducers/reducer';
-import DevTools from '../../app/DevTools.js'
+import DevTools from '../../app/DevTools'
 import Immutable from 'immutable'
 import Config from '../../config'
 

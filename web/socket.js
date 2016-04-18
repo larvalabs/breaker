@@ -1,5 +1,5 @@
-import store from './redux/store/store.js'
-import * as socketActions from './redux/actions/socket-actions.js'
+import store from './redux/store/store'
+import * as socketActions from './redux/actions/socket-actions'
 
 var socket = null;
 

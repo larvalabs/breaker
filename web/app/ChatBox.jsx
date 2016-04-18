@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux';
-import ChatMessage from './ChatMessage.jsx'
-import ChatMessageInput from './ChatMessageInput.jsx'
+import ChatMessage from './ChatMessage'
+import ChatMessageInput from './ChatMessageInput'
 import StayDown from 'staydown'
 import Immutable from 'immutable'
 

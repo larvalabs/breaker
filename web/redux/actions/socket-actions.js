@@ -1,4 +1,4 @@
-import * as actions from '../constants/socket-constants.js';
+import * as actions from '../constants/socket-constants';
 
 const MESSAGE_TYPE_ROOM_LIST = "roomlist";
 const MESSAGE_TYPE_MESSAGE = "message";

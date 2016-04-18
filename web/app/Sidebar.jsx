@@ -1,7 +1,7 @@
 import React from 'react';
-import SidebarUser from './SidebarUser.jsx'
-import SidebarRoomListElm from './SidebarRoomListElm.jsx'
-import Config from '../config.js'
+import SidebarUser from './SidebarUser'
+import SidebarRoomListElm from './SidebarRoomListElm'
+import Config from '../config'
 import Immutable from 'immutable'
 
 export default React.createClass({

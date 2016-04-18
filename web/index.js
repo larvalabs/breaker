@@ -1,7 +1,7 @@
 import ReactDOM from "react-dom";
 import React from "react";
-import App from "./js/app/App.jsx";
-import startSocket from './js/socket.js';
+import App from "./app/App";
+import startSocket from './socket';
 
 startSocket(WebsocketUrl);
 

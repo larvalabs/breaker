@@ -1,4 +1,4 @@
-import * as socketTypes from '../constants/socket-constants.js'
+import * as socketTypes from '../constants/socket-constants'
 import Immutable from 'immutable'
 import { combineReducers } from 'redux-immutable';
 
