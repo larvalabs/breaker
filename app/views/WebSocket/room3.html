@@ -409,7 +409,7 @@
 
                         <div class="padder padder-v b-t b-light text-center">
                             #{if user.isGuest()}
-                            <a href="@{Application.auth()}"><button type="submit" class="btn btn-lg btn-info btn-block"><i class="fa fa-reddit btn-addon pull-left"></i>&nbsp;&nbsp;Sign in with Reddit to chat</button></a>
+                            <a href="@{Application.startAuthForGuest(roomName)}"><button type="submit" class="btn btn-lg btn-info btn-block"><i class="fa fa-reddit btn-addon pull-left"></i>&nbsp;&nbsp;Sign in with Reddit to chat</button></a>
                             #{/if}
                             #{else}
                             <textarea type="text" class="form-control input-message mention"

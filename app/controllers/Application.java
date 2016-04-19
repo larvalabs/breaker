@@ -227,6 +227,11 @@ public class Application extends PreloadUserController {
     }
     */
 
+    public static void startAuthForGuest(String roomName) {
+        session.put(SESSION_JOINROOM, roomName);
+        auth();
+    }
+
     public static void auth() {
         Logger.debug("Received auth response.");
         if (OAuth2.isCodeResponse()) {
