@@ -1,6 +1,5 @@
 import React, {Component} from 'react'
 import Immutable from 'immutable'
-var TimeAgo = require('react-timeago').default
 
 
 export default class ChatMessage extends Component {

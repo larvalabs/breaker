@@ -26,10 +26,32 @@ export function onSocketMessage(message) {
   }
 }
 
-export function onSocketOpen(firstConnect) {
-  return { type: actions.SOCK_OPEN, firstConnect };
+
+function onSocketOpen() {
+  return { type: actions.SOCK_OPEN };
 }
 
-export function onSocketClose(message) {
-  return { type: actions.SOCK_CLOSE, message };
+function onSocketClose() {
+  return { type: actions.SOCK_CLOSE };
+}
+
+export function handleSocketOpen(store, socket) {
+  return dispatch => {
+
+    let initialRoom = store.getState().getIn(['initial', 'roomName']);
+    socket.startRoomPing(initialRoom);
+    socket.sendMemeberList(initialRoom);
+
+    dispatch(onSocketOpen())
+  }
+}
+
+export function handleSocketClose(store, socket) {
+  return dispatch => {
+
+    let initialRoom = store.getState().getIn(['initial', 'roomName']);
+    socket.stopRoomPing(initialRoom);
+    
+    dispatch(onSocketClose())
+  }
 }

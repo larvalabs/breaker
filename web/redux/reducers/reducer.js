@@ -5,7 +5,13 @@ import { combineReducers } from 'redux-immutable';
 function users(state=Immutable.Map(), action) {
   switch (action.type) {
     case (socketTypes.SOCK_MESSAGE): {
-      return state.set(action.message.user.username, Immutable.fromJS(action.message.user));
+
+      // Hack since the message user object doesn't include mod information
+      if(!state.get(action.message.user.username)) {
+        return state.set(action.message.user.username, Immutable.fromJS(action.message.user));
+      }
+
+      return state
     }
     case (socketTypes.SOCK_MEMBERS): {
       var nextState = state;
@@ -56,8 +62,16 @@ function messages(state=Immutable.Map(), action) {
 function members(state=Immutable.Map(), action) {
   switch(action.type){
     case (socketTypes.SOCK_MEMBERS): {
-      let listOfMembers = action.message.users.map(user => user.username);
-      return state.set(action.message.room.name, Immutable.fromJS(listOfMembers))
+      let listOfModMembers = action.message.users.filter(user => user.modForRoom).map(user => user.username);
+      let listOfOnlineMembers = action.message.users.filter(user => !user.modForRoom && user.online).map(user => user.username);
+      let listOfOffline = action.message.users.filter(user => !user.modForRoom && !user.online).map(user => user.username);
+      let newMemberList = Immutable.Map({
+        online: Immutable.Set(listOfOnlineMembers).toList(),
+        offline: Immutable.Set(listOfOffline).toList(),
+        mods: Immutable.Set(listOfModMembers).toList()
+      });
+
+      return state.set(action.message.room.name, newMemberList);
     }
     default:
       return state;
