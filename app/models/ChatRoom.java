@@ -58,7 +58,7 @@ public class ChatRoom extends Model {
     public String banner;
 
 
-    public int karmaThreshold;
+    public int karmaThreshold = Constants.DEFAULT_MIN_KARMA_REQUIRED_TO_POST;
     public int sidebarColor;
 
     public ChatRoom(String name) {
@@ -602,7 +602,7 @@ public class ChatRoom extends Model {
             Logger.debug("User " + chatUser.getUsername() + " is banned from " + name + " and cannot post.");
             return false;
         }
-        if (chatUser.getLinkKarma() < getKarmaThreshold()) {
+        if (chatUser.getLinkKarma() + chatUser.getCommentKarma() < getKarmaThreshold()) {
             Logger.debug("User is below karma threshold.");
             return false;
         }
