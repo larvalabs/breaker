@@ -6,9 +6,12 @@ import controllers.WebSocket;
 import models.ChatRoom;
 import models.ChatUser;
 import models.ChatUserRoomJoin;
+import models.Message;
 import org.apache.commons.lang.StringUtils;
 import play.Logger;
 import play.mvc.Http;
+
+import java.util.List;
 
 /**
  * Created by matt on 1/18/16.
@@ -128,11 +131,26 @@ public class ChatCommands {
             if (user != null) {
                 // Need to load new copies of the objects to be able to save via JPA
                 ChatUser commandTargetUser = ChatUser.findByUsername(command.username);
-                room.getBannedUsers().add(commandTargetUser);
+                if (command.type == CommandType.BAN) {
+                    room.getBannedUsers().add(commandTargetUser);
+
+                    List<Message> messagesByUser = room.getMessagesByUser(commandTargetUser, 100);
+                    if (messagesByUser != null) {
+                        Logger.info("Marking " + messagesByUser.size() + " messages as deleted for banned user " + commandTargetUser.getUsername());
+                        for (Message messageToDel : messagesByUser) {
+                            messageToDel.setDeleted(true);
+                            messageToDel.save();
+                        }
+                    }
+                } else {
+                    room.getBannedUsers().remove(commandTargetUser);
+                }
                 room.save();
 
                 ChatUserRoomJoin join = ChatUserRoomJoin.findByUserAndRoom(user, room);
-                join.delete();
+                if (join != null) {
+                    join.delete();
+                }
 
                 if (command.type == CommandType.BAN) {
                     socket.send(new ChatRoomStream.ServerMessage(JsonChatRoom.from(room), "User " + command.username + " has been banned.").toJson());
