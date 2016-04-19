@@ -5,16 +5,19 @@ import Header from './Header'
 import Sidebar from '../sidebar/Sidebar'
 import Main from './Main'
 import Immutable from 'immutable'
+import ChatDocumentTitle from './ChatDocumentTitle'
 
 class AsyncApp extends Component {
   render(){
-    const { user, activeRooms, roomName , rooms, room, userIsMod} = this.props;
+    const { user, activeRooms, roomName , rooms, room, userIsMod, unreadCounts} = this.props;
     return (
-      <div className={`app app-header-fixed app-aside-fixed ${this.props.roomName}`}>
-        <Header user={user} roomName={roomName} room={room} userIsMod={userIsMod}/>
-        <Sidebar activeRooms={activeRooms} roomList={rooms} roomName={roomName}/>
-        <Main />
-      </div>
+      <ChatDocumentTitle>
+        <div className={`app app-header-fixed app-aside-fixed ${this.props.roomName}`}>
+          <Header user={user} roomName={roomName} room={room} userIsMod={userIsMod}/>
+          <Sidebar activeRooms={activeRooms} roomList={rooms} roomName={roomName} unreadCounts={unreadCounts}/>
+          <Main />
+        </div>
+      </ChatDocumentTitle>
     );
   }
 }
@@ -34,7 +37,8 @@ function mapStateToProps(state) {
     activeRooms: state.getIn(['initial', 'activeRooms']),
     roomName: roomName,
     rooms: state.get('rooms'),
-    room: state.getIn(['rooms', roomName], Immutable.Map())
+    room: state.getIn(['rooms', roomName], Immutable.Map()),
+    unreadCounts: state.get('unreadCounts')
   }
 }
 
