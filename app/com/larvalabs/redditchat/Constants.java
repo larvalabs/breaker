@@ -4,6 +4,7 @@ public class Constants {
 
     public static final String REDDIT_BASE_URL = "https://www.reddit.com";
     public static final String BREAKER_BOT_USERNAME = "breakerbot";
+    public static final String USERNAME_GUEST = "guest";
 
     public static final int MAX_MSG_LENGTH = 500;
 

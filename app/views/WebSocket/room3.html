@@ -237,39 +237,20 @@
                     </a>
                     <!-- dropdown -->
                     <ul class="dropdown-menu w">
-<!--
-                        <li class="wrapper b-b m-b-sm bg-light m-t-n-xs">
-                            <div>
-                                <p>300mb of 500mb used</p>
-                            </div>
-                            <div class="progress progress-xs m-b-none dker">
-                                <div class="progress-bar progress-bar-info" data-toggle="tooltip"
-                                     data-original-title="50%" style="width: 50%"></div>
-                            </div>
-                        </li>
+                        #{if user.isGuest()}
                         <li>
-                            <a href>
-                                <span class="badge bg-danger pull-right">30%</span>
-                                <span>Settings</span>
-                            </a>
+                            <a ui-sref="access.signin" href="@{Application.auth()}">Sign in</a>
                         </li>
-                        <li>
-                            <a ui-sref="app.page.profile">Profile</a>
-                        </li>
-                        <li>
-                            <a ui-sref="app.docs">
-                                <span class="label bg-info pull-right">new</span>
-                                Help
-                            </a>
-                        </li>
-                        <li class="divider"></li>
--->
+                        #{/if}
+                        #{else}
                         <li>
                             <a ui-sref="access.signin" href="@{UserManage.prefs()}">Preferences</a>
                         </li>
                         <li>
                             <a ui-sref="access.signin" href="@{Application.logout}">Logout</a>
                         </li>
+                        #{/else}
+
                     </ul>
                     <!-- / dropdown -->
                 </li>
@@ -427,8 +408,13 @@
                         </div>
 
                         <div class="padder padder-v b-t b-light text-center">
+                            #{if user.isGuest()}
+                            <a href="@{Application.auth()}"><button type="submit" class="btn btn-lg btn-info btn-block"><i class="fa fa-reddit btn-addon pull-left"></i>&nbsp;&nbsp;Sign in with Reddit to chat</button></a>
+                            #{/if}
+                            #{else}
                             <textarea type="text" class="form-control input-message mention"
                                    placeholder="Type a message to ${roomName}..."></textarea>
+                            #{/else}
                         </div>
 
                     </div>

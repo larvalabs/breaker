@@ -28,7 +28,7 @@ import play.mvc.With;
 import java.util.*;
 
 @With(ForceSSL.class)
-public class WebSocket extends Controller {
+public class WebSocket extends PreloadUserController {
 
     private static ChatUser getUser() {
         ChatUser user;
@@ -43,7 +43,7 @@ public class WebSocket extends Controller {
     }
 
     public static void reactRoom(String roomName){
-        ChatUser user = getUser();
+        ChatUser user = connected();
         ChatRoom room = null;
         if (roomName != null) {
             room = ChatRoom.findOrCreateForName(roomName);
@@ -108,7 +108,7 @@ public class WebSocket extends Controller {
     }
 
     public static void room(String roomName) {
-        ChatUser user = getUser();
+        ChatUser user = connected();
         ChatRoom room = null;
         if (roomName != null) {
             room = ChatRoom.findOrCreateForName(roomName);
@@ -120,8 +120,15 @@ public class WebSocket extends Controller {
         }
 
         if (user == null) {
-            Application.preAuthForRoomJoin(roomName);
-            return;
+//            Application.preAuthForRoomJoin(roomName);
+//            return;
+            user = ChatUser.findOrCreate(Constants.USERNAME_GUEST);
+            try {
+                user.joinChatRoom(room);
+            } catch (ChatUser.UserBannedException e) {
+                Logger.error("Preview user banned.");
+            }
+            setUserInSession(user);
         }
 
         List<ChatUserRoomJoin> chatRoomJoins = user.getChatRoomJoins();

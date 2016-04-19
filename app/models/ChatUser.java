@@ -319,6 +319,8 @@ public class ChatUser extends Model {
         if (user == null) {
             Logger.debug("Creating new user object for " + username);
             user = createNew();
+            user.setUsername(username);
+            user.save();
         }
         return user;
     }
@@ -526,6 +528,10 @@ public class ChatUser extends Model {
             user.save();
         }
         return user;
+    }
+
+    public boolean isGuest() {
+        return Constants.USERNAME_GUEST.equals(username);
     }
 
     public class UserBannedException extends Exception {
