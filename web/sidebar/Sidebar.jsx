@@ -2,7 +2,6 @@ import React from 'react';
 import Config from '../config'
 import Immutable from 'immutable'
 
-import SidebarUser from './SidebarUser'
 import SidebarRoomListElm from './SidebarRoomListElm'
 
 export default React.createClass({
@@ -51,7 +50,6 @@ export default React.createClass({
       <aside id="aside" className="app-aside hidden-xs bg-dark">
         <div className="aside-wrap">
           <div className="navi-wrap">
-            <SidebarUser />
             <nav ui-nav className="navi clearfix">
               {this.renderYourRooms()}
               {this.renderSuggestedRooms()}
