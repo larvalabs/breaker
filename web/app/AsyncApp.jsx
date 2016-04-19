@@ -4,13 +4,14 @@ import { connect } from 'react-redux'
 import Header from './Header'
 import Sidebar from '../sidebar/Sidebar'
 import Main from './Main'
+import Immutable from 'immutable'
 
 class AsyncApp extends Component {
   render(){
-    const { user, activeRooms, roomName , rooms} = this.props;
+    const { user, activeRooms, roomName , rooms, room, userIsMod} = this.props;
     return (
-      <div className="app app-header-fixed app-aside-fixed">
-        <Header user={user} roomName={roomName}/>
+      <div className={`app app-header-fixed app-aside-fixed ${this.props.roomName}`}>
+        <Header user={user} roomName={roomName} room={room} userIsMod={userIsMod}/>
         <Sidebar activeRooms={activeRooms} roomList={rooms} roomName={roomName}/>
         <Main />
       </div>
@@ -19,12 +20,21 @@ class AsyncApp extends Component {
 }
 
 function mapStateToProps(state) {
+  let roomName = state.getIn(['initial', 'roomName']);
+  let user = state.getIn(['initial', 'user']);
+  let members = state.getIn(['members']);
 
+  let userIsMod;
+  if (members && members.get('breakerapp')) {
+    userIsMod = !!state.getIn(['members', roomName, 'mods', user.get('username')]);
+  }
   return {
-    user: state.getIn(['initial', 'user']),
+    user: user,
+    userIsMod: userIsMod,
     activeRooms: state.getIn(['initial', 'activeRooms']),
-    roomName: state.getIn(['initial', 'roomName']),
-    rooms: state.get('rooms')
+    roomName: roomName,
+    rooms: state.get('rooms'),
+    room: state.getIn(['rooms', roomName], Immutable.Map())
   }
 }
 

@@ -1,14 +1,14 @@
 import React from "react";
-import Immuable from 'immutable'
+import Immutable from 'immutable'
+import Config from '../config'
 
 export default React.createClass({
   getDefaultProps: function() {
     return {
-      user: Immuable.Map(),
-      room: {
-        icon: null
-      },
-      roomName: null
+      user: Immutable.Map(),
+      room: Immutable.Map(),
+      roomName: null,
+      userIsMod: false
     }
   },
   renderProfileMenu: function(){
@@ -49,6 +49,9 @@ export default React.createClass({
     </div>
   },
   renderRoomTitle: function() {
+    if(!this.props.room.get('name')){
+      return null;
+    }
     return <ul className="nav navbar-nav hidden-sm" >
 
       <li className="m-t-xs m-b-xxs middle" >
@@ -57,24 +60,24 @@ export default React.createClass({
         {this.renderModCustomize()}
         <br/>
         <small id="room-modmessage" className="text-muted">
-          Message from the moderators to you, the user.
+          {this.props.room.get('banner') ? this.props.room.get('banner') : Config.settings.default_banner}
         </small>
       </li>
 
     </ul>
   },
   renderModCustomize: function () {
-    if(!this.props.room.isUserModerator){
+    if(!this.props.userIsMod){
       return null;
     }
     return <span>
-      <a id="room-pref" className="hidden">(customize)</a>
+      <a id="room-pref" href={`/roommanage/roomprefs?roomName=${this.props.roomName}`}> (customize)</a>
     </span>
   },
   renderRoomIcon: function() {
-    if (this.props.room.icon){
+    if (this.props.room.get('iconUrl')){
       return <span className="m-t-xs m-r-sm floatleft">
-            <img id="room-icon" width="40" height="40"/>
+            <img src={this.props.room.get('iconUrl')}  width="40" height="40"/>
         </span>
     } else {
       return null;
