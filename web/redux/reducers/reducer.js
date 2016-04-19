@@ -4,14 +4,12 @@ import { combineReducers } from 'redux-immutable';
 
 function users(state=Immutable.Map(), action) {
   switch (action.type) {
+    case (socketTypes.SOCK_LEAVE):
+    case (socketTypes.SOCK_JOIN): {
+      return state.set(action.message.user.username, Immutable.Map(action.message.user))
+    }
     case (socketTypes.SOCK_MESSAGE): {
-
-      // Hack since the message user object doesn't include mod information
-      if(!state.get(action.message.user.username)) {
-        return state.set(action.message.user.username, Immutable.fromJS(action.message.user));
-      }
-
-      return state
+      return state.set(action.message.user.username, Immutable.fromJS(action.message.user));
     }
     case (socketTypes.SOCK_MEMBERS): {
       var nextState = state;
@@ -59,6 +57,32 @@ function messages(state=Immutable.Map(), action) {
   }
 }
 
+function moveMemberOfflineState(state, action){
+  return moveMemberStates(state, action, 'online', 'offline');
+}
+
+function moveMemberOnlineState(state, action){
+  return moveMemberStates(state, action, 'offline', 'online');
+}
+
+function moveMemberStates(state, action, remove, add){
+  // Remove previous state
+  let newState = state.updateIn([action.message.room.name, remove], o => {
+    if(!o) {
+      return Immutable.Set([]);
+    }
+    return o.remove(action.message.user.username)
+  });
+
+  // Add current state
+  return newState.updateIn([action.message.room.name, add], o => {
+    if(!o){
+      return Immutable.Set([action.message.user.username]);
+    }
+    return o.add(action.message.user.username);
+  });
+}
+
 function members(state=Immutable.Map(), action) {
   switch(action.type){
     case (socketTypes.SOCK_MEMBERS): {
@@ -66,12 +90,26 @@ function members(state=Immutable.Map(), action) {
       let listOfOnlineMembers = action.message.users.filter(user => !user.modForRoom && user.online).map(user => user.username);
       let listOfOffline = action.message.users.filter(user => !user.modForRoom && !user.online).map(user => user.username);
       let newMemberList = Immutable.Map({
-        online: Immutable.Set(listOfOnlineMembers).toList(),
-        offline: Immutable.Set(listOfOffline).toList(),
-        mods: Immutable.Set(listOfModMembers).toList()
+        online: Immutable.Set(listOfOnlineMembers),
+        offline: Immutable.Set(listOfOffline),
+        mods: Immutable.Set(listOfModMembers)
       });
 
       return state.set(action.message.room.name, newMemberList);
+    }
+    case (socketTypes.SOCK_JOIN): {
+      if(state.getIn([action.message.room.name, 'mods', action.message.user.username])){
+        return state
+      }
+
+      return moveMemberOnlineState(state, action);
+    }
+    case (socketTypes.SOCK_LEAVE): {
+      if(state.getIn([action.message.room.name, 'mods', action.message.user.username])){
+        return state
+      }
+
+      return moveMemberOfflineState(state, action);
     }
     default:
       return state;
