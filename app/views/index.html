@@ -2,7 +2,7 @@
 
 <html>
     <head>
-        <title>Chat room</title>
+        <title></title>
         <meta http-equiv="Content-Type" content="text/html; charset=${_response_encoding}">
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 
@@ -44,9 +44,11 @@
                 members: {},
                 rooms: {},
                 users: {},
-                messages: {}
+                messages: {},
+                unreadCounts: {
+                    __HAS_FOCUS__: document.hasFocus(),
+                }
             };
-
         </script>
     </head>
     <body>
