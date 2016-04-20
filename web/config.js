@@ -7,7 +7,8 @@ let Config = {
   },
   settings: {
     ping_timeout: 20000,
-    default_banner: "Message from the moderators to you, the user."
+    default_banner: "Message from the moderators to you, the user.",
+    dev_tools: window.__USER_ADMIN__ || window.__ENVIRONMENT__ !== "production"
   },
   websocket_url: window.__WEBSOCKET_URL__,
   room_name: window.__ROOM_NAME__

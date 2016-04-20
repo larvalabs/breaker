@@ -8,17 +8,7 @@ import Config from '../config'
 
 export default class App extends Component {
   render() {
-    if(Config.environment.prod){
-      return (
-          <Provider store={store}>
-            <div>
-              <AsyncApp/>
-            </div>
-          </Provider>
-      );
-    } else {
-      
-      // Include DevTools
+    if(Config.settings.dev_tools){
       return (
           <Provider store={store}>
             <div>
@@ -27,7 +17,14 @@ export default class App extends Component {
             </div>
           </Provider>
       );
+    } else {
+      return (
+          <Provider store={store}>
+            <div>
+              <AsyncApp/>
+            </div>
+          </Provider>
+      );
     }
-    
   };
 }
