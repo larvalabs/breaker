@@ -120,7 +120,7 @@ function members(state=Immutable.Map(), action) {
 function unreadCounts(state=Immutable.Map(), action) {
   switch(action.type){
     case(socketTypes.SOCK_MESSAGE): {
-      if(!state.get('__HAS_FOCUS__')){
+      if(!state.get('__HAS_FOCUS__') && !action.message.user.bot){
         return state.update(action.message.room.name, 0, c => c + 1)
       }
 
