@@ -4,10 +4,18 @@
 2. Add play-1.3.1 directory to PATH
 3. Install Postgres
 4. Install Redis
-5. Clone this repo somewhere
-6. Inside the newly cloned folder, run "play deps"
-7. Update database credentials (see [Database](#database) below)
-8. `play run`
+5. Install npm and webpack
+6. Clone this repo somewhere
+7. Inside the newly cloned folder, run "play deps"
+8. Update database credentials (see [Database](#database) below)
+9. `npm install && webpack`
+10. `play run`
+
+## Web Client
+
+The web client is a single-page [React](https://facebook.github.io/react/) app using [Redux](http://redux.js.org/) and [Immutable.js](https://facebook.github.io/immutable-js/), built with [Webpack](https://webpack.github.io/). 
+
+To build the client, you need to install all the dependencies with `npm install`, and then compile the project by running `webpack`. This will build the `public/dist/bundle.js` file that contains the application.
 
 ## Database
 

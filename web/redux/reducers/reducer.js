@@ -1,4 +1,5 @@
 import * as socketTypes from '../constants/socket-constants'
+import * as chatTypes from '../constants/chat-constants'
 import Immutable from 'immutable'
 import { combineReducers } from 'redux-immutable';
 
@@ -116,6 +117,26 @@ function members(state=Immutable.Map(), action) {
   }
 }
 
+function unreadCounts(state=Immutable.Map(), action) {
+  switch(action.type){
+    case(socketTypes.SOCK_MESSAGE): {
+      if(!state.get('__HAS_FOCUS__')){
+        return state.update(action.message.room.name, 0, c => c + 1)
+      }
+
+      return state
+    }
+    case(chatTypes.CHAT_BLURRED): {
+      return state.set('__HAS_FOCUS__', false);
+    }
+    case(chatTypes.CHAT_FOCUSED): {
+      return state.set(action.roomName, 0).set('__HAS_FOCUS__', true);
+    }default: {
+      return state
+    }
+  }
+}
+
 function initial(state=Immutable.Map(), action) {
   return state;
 }
@@ -125,7 +146,8 @@ const App = combineReducers({
   members,
   users,
   rooms,
-  messages
+  messages,
+  unreadCounts
 });
 
 export default App;

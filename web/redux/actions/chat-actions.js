@@ -11,3 +11,11 @@ export function sendNewMessage(messageObj) {
     dispatch(chatMessageSent(messageObj))
   }
 }
+
+export function chatBlurred(roomName) {
+  return { type: actions.CHAT_BLURRED, roomName };
+}
+
+export function chatFocused(roomName) {
+  return { type: actions.CHAT_FOCUSED, roomName };
+}
