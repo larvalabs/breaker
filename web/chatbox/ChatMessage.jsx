@@ -36,7 +36,7 @@ export default class ChatMessage extends Component {
     </div>
   }
   renderLinks(){
-    if(this.props.message.get('imageLinks', Immutable.List()).length > 0) {
+    if(this.props.message.get('imageLinks', Immutable.List()).size > 0) {
       return <div className="m-t-sm">
         <a href={this.props.message.getIn(['imageLinks', 0])} target="_blank">
         <img src={this.props.message.getIn(['imageLinks', 0])} className="image-preview"/>

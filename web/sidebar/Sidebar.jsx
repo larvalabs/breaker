@@ -32,7 +32,7 @@ export default React.createClass({
       return null;
     }
 
-    if (this.props.activeRooms.length === 0 ) {
+    if (this.props.activeRooms.size === 0 ) {
       return null
     }
   
