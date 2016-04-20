@@ -69,9 +69,10 @@ class ChatBox extends Component {
             </div>
           </div>
         </div>
-
-        <ChatMessageInput roomName={this.props.roomName}
-                          onMessageInput={this.onMessageInput} />
+        <div className="padder padder-v b-t b-light text-center">
+          <ChatMessageInput roomName={this.props.roomName}
+                            onMessageInput={this.onMessageInput} />
+        </div>
 
       </div>
     </div>

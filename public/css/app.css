@@ -5232,3 +5232,27 @@ a.text-#000000:hover {
 .sandersforpresident i.glyphicon {
   color: #fff;
 }
+
+/* Autocomplete styles */
+
+.suggestionsContainer {
+  position: absolute;
+  bottom: 44px;
+  background: #fff;
+  width: 50%;
+  text-align: left;
+  padding: 5px 0;
+  border: 1px solid #23b7e5;
+  border-bottom: 1px solid #dee5e7;
+}
+
+.suggestion {
+  padding: 5px 5px 5px 10px;
+  list-style: none;
+}
+
+.suggestionFocused {
+  background: #23b7e5;
+  color: #fff;
+  font-weight: 600;
+}
