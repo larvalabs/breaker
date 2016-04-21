@@ -35,6 +35,7 @@
             window.__WEBSOCKET_URL__ = "@@{WebSocket.ChatRoomSocket.join()}";
             window.__ROOM_NAME__ = "${roomName}";
             window.__USER_ADMIN__ = "${user.isAdmin()}";
+            window.__USER_GUEST__ = "${user.isGuest()}";
 
             window.__INITIAL_STATE__ = {
                 message: {
@@ -42,7 +43,7 @@
                 initial: {
                     user: ${userString.raw()},
                     roomName: "${roomName}",
-                    activeRooms: ${activeRoomsString.raw()}
+                    activeRooms: []
                 },
                 members: {},
                 rooms: {},

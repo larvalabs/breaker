@@ -54,8 +54,13 @@ public class WebSocket extends PreloadUserController {
         }
 
         if (user == null) {
-            Application.preAuthForRoomJoin(roomName);
-            return;
+            user = ChatUser.findOrCreate(Constants.USERNAME_GUEST);
+            try {
+                user.joinChatRoom(room);
+            } catch (ChatUser.UserBannedException e) {
+                Logger.error("Preview user banned.");
+            }
+            setUserInSession(user);
         }
 
         List<ChatUserRoomJoin> chatRoomJoins = user.getChatRoomJoins();
@@ -100,10 +105,9 @@ public class WebSocket extends PreloadUserController {
         }
 
         String userString = new Gson().toJson(JsonUser.fromUser(user));
-        String activeRoomsString = new Gson().toJson(activeRooms);
         String environment = Play.mode.isProd() ? "production" : "dev";
 
-        render("index.html", user, userString, roomName, activeRoomsString, environment);
+        render("index.html", user, userString, roomName, environment);
     }
 
     public static void roomOld(String roomName) {
@@ -119,8 +123,6 @@ public class WebSocket extends PreloadUserController {
         }
 
         if (user == null) {
-//            Application.preAuthForRoomJoin(roomName);
-//            return;
             user = ChatUser.findOrCreate(Constants.USERNAME_GUEST);
             try {
                 user.joinChatRoom(room);

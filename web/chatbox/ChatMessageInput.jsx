@@ -137,7 +137,7 @@ function mapStateToProps(state) {
   return {
     members,
     roomName,
-    connected
+    connected,
   }
 }
 

@@ -1,4 +1,5 @@
 let Config = {
+  guest: window.__USER_GUEST__,
   admin: window.__USER_ADMIN__,
   features: {
     suggestedRooms: false

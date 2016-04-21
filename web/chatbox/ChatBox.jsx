@@ -7,12 +7,15 @@ import ChatMessage from './ChatMessage'
 import ChatShortMessage from './ChatShortMessage'
 import ChatServerMessage from './ChatServerMessage'
 import ChatMessageInput from './ChatMessageInput'
+import ChatLoginInput from './ChatLoginInput'
+import Config from '../config'
 
 
 class ChatBox extends Component {
   constructor(props) {
     super(props);
     this.onMessageInput = this.onMessageInput.bind(this);
+    this.renderMessageInput = this.renderMessageInput.bind(this);
   }
 
   componentDidMount() {
@@ -73,6 +76,13 @@ class ChatBox extends Component {
     }
     return <div className={`message-box ${type}`}>{props.message.get('body')}</div>
   }
+  renderMessageInput(){
+    if(Config.guest){
+      return <ChatLoginInput roomName={this.props.roomName} />
+    } else {
+      return <ChatMessageInput roomName={this.props.roomName} onMessageInput={this.onMessageInput}/>
+    }
+  }
   render() {
     return <div id="centercol" className="col">
       <div id="threadparent" className="vbox">
@@ -88,8 +98,7 @@ class ChatBox extends Component {
           </div>
         </div>
         <div className="padder padder-v b-t b-light text-center">
-          <ChatMessageInput roomName={this.props.roomName}
-                            onMessageInput={this.onMessageInput} />
+          {this.renderMessageInput()}
         </div>
 
       </div>
