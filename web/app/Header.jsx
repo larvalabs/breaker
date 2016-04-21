@@ -44,7 +44,7 @@ export default React.createClass({
       </button>
       <a href="#" className="navbar-brand text-lt">
         <i className="fa fa-terminal"/>
-        <span className="hidden-folded m-l-xs">breaker</span>
+        <span className="hidden-folded m-l-xs" style={{marginLeft: "10px"}}>breaker</span>
       </a>
     </div>
   },
@@ -67,7 +67,11 @@ export default React.createClass({
     </ul>
   },
   renderModCustomize: function () {
-    if(!this.props.userIsMod){
+    if(!this.props.room.get('name')){
+      return null;
+    }
+
+    if(!this.props.userIsMod && !Config.admin){
       return null;
     }
     return <span>

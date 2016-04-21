@@ -5196,6 +5196,11 @@ a.text-#000000:hover {
   }
 }
 
+
+.roomname.active {
+  font-weight: 600;
+}
+
 /* Autocomplete styles */
 
 .suggestionsContainer {
@@ -5219,6 +5224,7 @@ a.text-#000000:hover {
   color: #fff;
   font-weight: 600;
 }
+
 
 /* Message styles */
 .message-box {

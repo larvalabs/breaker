@@ -102,7 +102,7 @@ class ChatMessageInput extends Component {
       return "Disconnected from server"
     }
 
-    return `Type a message to ${props.roomName}`
+    return `Type a message to #${props.roomName}...`
   }
   render() {
       const { value, suggestions } = this.state;
