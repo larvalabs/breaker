@@ -14,7 +14,7 @@ export default React.createClass({
   renderLogin: function(){
     return <ul className="nav navbar-nav navbar-right">
       <li style={{textAlign: "center", paddingRight: "1em", fontWeight: "600"}}>
-        <a href={`/application/startauthforguest?roomName=${this.props.rooomName}`}>
+        <a href={`/application/startauthforguest?roomName=${this.props.roomName}`}>
             Sign in
         </a>
       </li>
