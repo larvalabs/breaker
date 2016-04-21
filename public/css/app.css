@@ -5196,6 +5196,30 @@ a.text-#000000:hover {
   }
 }
 
+/* Autocomplete styles */
+
+.suggestionsContainer {
+  position: absolute;
+  bottom: 44px;
+  background: #fff;
+  width: 50%;
+  text-align: left;
+  padding: 5px 0;
+  border: 1px solid #23b7e5;
+  border-bottom: 1px solid #dee5e7;
+}
+
+.suggestion {
+  padding: 5px 5px 5px 10px;
+  list-style: none;
+}
+
+.suggestionFocused {
+  background: #23b7e5;
+  color: #fff;
+  font-weight: 600;
+}
+
 /* Custom subreddit style (temporary)*/
 /* light: #098FDC */
 /* dark:  #2E7DBD */
@@ -5233,26 +5257,20 @@ a.text-#000000:hover {
   color: #fff;
 }
 
-/* Autocomplete styles */
-
-.suggestionsContainer {
-  position: absolute;
-  bottom: 44px;
-  background: #fff;
-  width: 50%;
-  text-align: left;
-  padding: 5px 0;
-  border: 1px solid #23b7e5;
-  border-bottom: 1px solid #dee5e7;
+.clevelandcavs .bg-dark,
+.clevelandcavs .bg-dark.dk,
+.clevelandcavs .bg-dark .dk {
+  background-color: #002D62;
 }
 
-.suggestion {
-  padding: 5px 5px 5px 10px;
-  list-style: none;
+.clevelandcavs .bg-dark .nav > li:hover > a,
+.clevelandcavs .bg-dark .nav > li:focus > a,
+.clevelandcavs .bg-dark .nav > li.active > a {
+  background-color: #26437B;
 }
 
-.suggestionFocused {
-  background: #23b7e5;
-  color: #fff;
-  font-weight: 600;
+.clevelandcavs .btn-info {
+  color: #ffffff !important;
+  background-color: #860038;
+  border-color: #860038;
 }
