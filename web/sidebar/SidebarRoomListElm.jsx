@@ -10,7 +10,7 @@ class SidebarRoomListElm extends Component {
     this.onElementClicked = this.onElementClicked.bind(this);
   }
   onElementClicked(){
-    this.props.dispatch(chatActions.changeRoom(this.props.room.get('name')));
+    this.props.dispatch(chatActions.handleChangeRoom(this.props.room.get('name')));
   }
   renderUnreadCount(props){
     if(props.unreadCount > 0) {

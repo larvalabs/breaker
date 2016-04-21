@@ -21,7 +21,7 @@ function init() {
     const eventData = JSON.parse(event.data);
     if(eventData.type === "roomlist"){
       for(let room of eventData.rooms){
-        socket.sendMemeberList(room.name);
+        socket.sendMemberList(room.name);
       }
     } 
     store.dispatch(socketActions.onSocketMessage(eventData))
@@ -52,9 +52,16 @@ function init() {
     }));
   };
   
-  socket.sendMemeberList = function (room) {
+  socket.sendMemberList = function (room) {
     socket.send(JSON.stringify({
       message: "##memberlist##",
+      roomName: room
+    }));
+  };
+
+  socket.sendRoomMessagesSeen = function (room) {
+    socket.send(JSON.stringify({
+      message: "##markmessagesread##",
       roomName: room
     }));
   };

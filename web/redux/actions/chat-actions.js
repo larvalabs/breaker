@@ -20,6 +20,13 @@ export function chatFocused(roomName) {
   return { type: actions.CHAT_FOCUSED, roomName };
 }
 
-export function changeRoom(roomName) {
+function changeRoom(roomName) {
   return {type: actions.CHAT_ROOM_CHANGED, roomName}
+}
+
+export function handleChangeRoom(roomName) {
+  return dispatch => {
+    socket().sendRoomMessagesSeen(roomName);
+    dispatch(changeRoom(roomName))
+  }
 }
