@@ -59,11 +59,19 @@ class ChatBox extends Component {
       }
     </ul>
   }
+  renderMessage(props){
+    let body = props.message.get('body');
+    let type = props.message.get('type');
 
+    if(!body || !type){
+      return null
+    }
+    return <div className={`message-box ${type}`}>{props.message.get('body')}</div>
+  }
   render() {
     return <div id="centercol" className="col">
-
       <div id="threadparent" className="vbox">
+        {this.renderMessage(this.props)}
         <div className="row-row">
           <div id="thread_scrollparent" className="cell">
             <div className="cell-inner">
@@ -95,7 +103,8 @@ function mapStateToProps(state) {
   return {
     messages: state.getIn(['messages', roomName], Immutable.List()),
     users: state.get('users'),
-    roomName: roomName
+    roomName: roomName,
+    message: state.get('message', Immutable.Map())
   }
 }
 

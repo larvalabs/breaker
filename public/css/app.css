@@ -5220,6 +5220,25 @@ a.text-#000000:hover {
   font-weight: 600;
 }
 
+/* Message styles */
+.message-box {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  display: table;
+  padding: 5px;
+  font-weight: 600;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05), 0 1px 0 rgba(0, 0, 0, 0.05);
+  background: #23b7e5;
+  color: #dcf2f8;
+  text-align: center;
+}
+
+.message-box.error {
+  background: #E94F5F;
+  color: #fff;
+}
+
 /* Custom subreddit style (temporary)*/
 /* light: #098FDC */
 /* dark:  #2E7DBD */
