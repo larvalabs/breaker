@@ -5,6 +5,10 @@ import Immutable from 'immutable'
 export default class UserListItem extends Component {
 
   render(){
+    if(this.props.user.get('username') === "guest"){
+      return null;
+    }
+    
     let userLink = `https://reddit.com/u/${this.props.user.get('username')}`;
     let statusMessage = this.props.user.get('statusMessage') ? this.props.user.get('statusMessage') : '\u00a0';
 
