@@ -74,7 +74,7 @@ public class Application extends PreloadUserController {
         ChatUser chatUser = connected();
         if (chatUser != null && chatUser.isAdmin()) {
             // go to chat
-            WebSocket.reactRoom(null);
+            WebSocket.room(null);
         } else {
             // static landing
             redirect("/");

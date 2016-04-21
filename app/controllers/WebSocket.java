@@ -19,7 +19,6 @@ import play.Logger;
 import play.Play;
 import play.libs.F.EventStream;
 import play.libs.F.Promise;
-import play.mvc.Controller;
 import play.mvc.Http.WebSocketClose;
 import play.mvc.Http.WebSocketFrame;
 import play.mvc.WebSocketController;
@@ -42,7 +41,7 @@ public class WebSocket extends PreloadUserController {
         }
     }
 
-    public static void reactRoom(String roomName){
+    public static void room(String roomName){
         ChatUser user = connected();
         ChatRoom room = null;
         if (roomName != null) {
@@ -107,7 +106,7 @@ public class WebSocket extends PreloadUserController {
         render("index.html", user, userString, roomName, activeRoomsString, environment);
     }
 
-    public static void room(String roomName) {
+    public static void roomOld(String roomName) {
         ChatUser user = connected();
         ChatRoom room = null;
         if (roomName != null) {
