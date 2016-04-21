@@ -170,6 +170,20 @@ function message(state=Immutable.Map(), action) {
   }
 }
 
+function ui(state=Immutable.Map({connected: false}), action) {
+  switch(action.type){
+    case(socketTypes.SOCK_CLOSE): {
+      return state.set('connected', false)
+    }
+    case(socketTypes.SOCK_OPEN): {
+      return state.set('connected', true)
+    }
+    default: {
+      return state
+    }
+  }
+}
+
 const App = combineReducers({
   initial,
   members,
@@ -177,7 +191,8 @@ const App = combineReducers({
   rooms,
   messages,
   unreadCounts,
-  message
+  message,
+  ui,
 });
 
 export default App;

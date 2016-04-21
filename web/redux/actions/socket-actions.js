@@ -27,11 +27,11 @@ export function onSocketMessage(message) {
 }
 
 
-function onSocketOpen() {
+export function onSocketOpen() {
   return { type: actions.SOCK_OPEN };
 }
 
-function onSocketClose() {
+export function onSocketClose() {
   return { type: actions.SOCK_CLOSE };
 }
 
