@@ -10,7 +10,7 @@ export default class ChatMessage extends Component {
 
     // TODO: seems like a hack here
     if (this.props.user.get('profileImageUrl').indexOf('user-anon') > -1){
-      profileImage = '/public/img/user-empty.png';
+      profileImage = '/public/img/user-anon.png';
     }
 
     return <a className="avatar thumb-sm pull-left m-r" href={userLink} target="_blank">
