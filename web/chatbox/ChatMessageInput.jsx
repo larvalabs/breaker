@@ -97,10 +97,17 @@ class ChatMessageInput extends Component {
         <span>{suggestion}</span>
     );
   }
+  renderPlaceholder(props){
+    if(!props.connected){
+      return "Disconnected from server"
+    }
+
+    return `Type a message to ${props.roomName}`
+  }
   render() {
       const { value, suggestions } = this.state;
       const inputProps = {
-        placeholder: `Type a message to ${this.props.roomName}`,
+        placeholder: this.renderPlaceholder(this.props),
         value,
         onChange: this.onChange,
         onKeyDown: this.handleKeyPress,
