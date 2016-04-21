@@ -97,13 +97,21 @@ class ChatMessageInput extends Component {
         <span>{suggestion}</span>
     );
   }
+  renderPlaceholder(props){
+    if(!props.connected){
+      return "Disconnected from server"
+    }
+
+    return `Type a message to ${props.roomName}`
+  }
   render() {
       const { value, suggestions } = this.state;
       const inputProps = {
-        placeholder: `Type a message to ${this.props.roomName}`,
+        placeholder: this.renderPlaceholder(this.props),
         value,
         onChange: this.onChange,
-        onKeyDown: this.handleKeyPress
+        onKeyDown: this.handleKeyPress,
+        disabled: !this.props.connected
       };
 
       return <Autosuggest suggestions={suggestions}
@@ -124,10 +132,12 @@ function mapStateToProps(state) {
   let roomName = state.getIn(['initial', 'roomName']);
   let membersMap = state.getIn(['members', roomName], Immutable.Map());
   let members = membersMap.reduce((a, b) => a.union(b), Immutable.OrderedSet()).toList();
+  let connected = state.getIn(['ui', 'connected']);
 
   return {
     members,
-    roomName
+    roomName,
+    connected
   }
 }
 

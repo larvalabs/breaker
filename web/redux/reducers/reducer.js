@@ -97,9 +97,9 @@ function members(state=Immutable.Map(), action) {
       let listOfOnlineMembers = action.message.users.filter(user => !user.modForRoom && user.online).map(user => user.username);
       let listOfOffline = action.message.users.filter(user => !user.modForRoom && !user.online).map(user => user.username);
       let newMemberList = Immutable.Map({
-        online: Immutable.Set(listOfOnlineMembers),
-        offline: Immutable.Set(listOfOffline),
-        mods: Immutable.Set(listOfModMembers)
+        online: Immutable.OrderedSet(listOfOnlineMembers),
+        offline: Immutable.OrderedSet(listOfOffline),
+        mods: Immutable.OrderedSet(listOfModMembers)
       });
 
       return state.set(action.message.room.name, newMemberList);
@@ -153,13 +153,46 @@ function initial(state=Immutable.Map(), action) {
   }
 }
 
+function message(state=Immutable.Map(), action) {
+  switch(action.type){
+    case(socketTypes.SOCK_CLOSE): {
+      return Immutable.Map({
+        type: "error",
+        body: "Disconnected from server, will retry..."
+      })
+    }
+    case(socketTypes.SOCK_OPEN): {
+      return Immutable.Map()
+    }
+    default: {
+      return state
+    }
+  }
+}
+
+function ui(state=Immutable.Map({connected: false}), action) {
+  switch(action.type){
+    case(socketTypes.SOCK_CLOSE): {
+      return state.set('connected', false)
+    }
+    case(socketTypes.SOCK_OPEN): {
+      return state.set('connected', true)
+    }
+    default: {
+      return state
+    }
+  }
+}
+
 const App = combineReducers({
   initial,
   members,
   users,
   rooms,
   messages,
-  unreadCounts
+  unreadCounts,
+  message,
+  ui,
 });
 
 export default App;

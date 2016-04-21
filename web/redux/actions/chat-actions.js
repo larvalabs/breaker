@@ -27,6 +27,7 @@ function changeRoom(roomName) {
 export function handleChangeRoom(roomName) {
   return dispatch => {
     socket().sendRoomMessagesSeen(roomName);
+    window.history.replaceState({}, 'Breaker: ', '/r/' + roomName);
     dispatch(changeRoom(roomName))
   }
 }
