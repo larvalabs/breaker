@@ -19,3 +19,7 @@ export function chatBlurred(roomName) {
 export function chatFocused(roomName) {
   return { type: actions.CHAT_FOCUSED, roomName };
 }
+
+export function changeRoom(roomName) {
+  return {type: actions.CHAT_ROOM_CHANGED, roomName}
+}

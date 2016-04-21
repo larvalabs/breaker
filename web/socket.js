@@ -19,6 +19,11 @@ function init() {
 
   socket.onmessage = function (event) {
     const eventData = JSON.parse(event.data);
+    if(eventData.type === "roomlist"){
+      for(let room of eventData.rooms){
+        socket.sendMemeberList(room.name);
+      }
+    } 
     store.dispatch(socketActions.onSocketMessage(eventData))
   };
   

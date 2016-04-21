@@ -144,7 +144,13 @@ function unreadCounts(state=Immutable.Map(), action) {
 }
 
 function initial(state=Immutable.Map(), action) {
-  return state;
+  switch(action.type){
+    case(chatTypes.CHAT_ROOM_CHANGED):
+      return state.set('roomName', action.roomName);
+    default: {
+      return state
+    }
+  }
 }
 
 const App = combineReducers({

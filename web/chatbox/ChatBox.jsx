@@ -33,7 +33,6 @@ class ChatBox extends Component {
   }
 
   renderThreadMessage(props, message, previous){
-    debugger;
     if(message.get('type') === "servermessage"){
       return <ChatServerMessage message={message} />
     }

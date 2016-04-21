@@ -40,7 +40,6 @@ export function handleSocketOpen(store, socket) {
 
     let initialRoom = store.getState().getIn(['initial', 'roomName']);
     socket.startRoomPing(initialRoom);
-    socket.sendMemeberList(initialRoom);
 
     dispatch(onSocketOpen())
   }
