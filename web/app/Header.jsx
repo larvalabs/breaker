@@ -11,6 +11,15 @@ export default React.createClass({
       userIsMod: false
     }
   },
+  renderLogin: function(){
+    return <ul className="nav navbar-nav navbar-right">
+      <li style={{textAlign: "center", paddingRight: "1em", fontWeight: "600"}}>
+        <a href={`/application/startauthforguest?roomName=${this.props.rooomName}`}>
+            Sign in
+        </a>
+      </li>
+    </ul>
+  },
   renderProfileMenu: function(){
     return <ul className="nav navbar-nav navbar-right">
 
@@ -95,7 +104,7 @@ export default React.createClass({
       <div className="collapse pos-rlt navbar-collapse box-shadow bg-white-only">
         {this.renderRoomIcon()}
         {this.renderRoomTitle()}
-        {this.renderProfileMenu()}
+        {Config.guest ? this.renderLogin() : this.renderProfileMenu()}
       </div>
     </header>
   }
