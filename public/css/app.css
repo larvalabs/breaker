@@ -5201,6 +5201,10 @@ a.text-#000000:hover {
   font-weight: 600;
 }
 
+#thread_scrollparent {
+  background: #fff;
+}
+
 /* Autocomplete styles */
 
 .suggestionsContainer {
