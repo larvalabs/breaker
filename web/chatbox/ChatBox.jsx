@@ -5,6 +5,7 @@ import Immutable from 'immutable'
 
 import ChatMessage from './ChatMessage'
 import ChatShortMessage from './ChatShortMessage'
+import ChatServerMessage from './ChatServerMessage'
 import ChatMessageInput from './ChatMessageInput'
 
 
@@ -32,6 +33,11 @@ class ChatBox extends Component {
   }
 
   renderThreadMessage(props, message, previous){
+    debugger;
+    if(message.get('type') === "servermessage"){
+      return <ChatServerMessage message={message} />
+    }
+    
     if(previous && previous.get('username') === message.get('username')){
       return <ChatShortMessage message={message} user={props.users.get(message.get('username'))}/>
     }
@@ -69,9 +75,10 @@ class ChatBox extends Component {
             </div>
           </div>
         </div>
-
-        <ChatMessageInput roomName={this.props.roomName}
-                          onMessageInput={this.onMessageInput} />
+        <div className="padder padder-v b-t b-light text-center">
+          <ChatMessageInput roomName={this.props.roomName}
+                            onMessageInput={this.onMessageInput} />
+        </div>
 
       </div>
     </div>

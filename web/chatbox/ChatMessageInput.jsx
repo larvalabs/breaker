@@ -1,44 +1,118 @@
 import React, {Component} from 'react';
+import  Autosuggest from 'react-autosuggest';
 import { connect } from 'react-redux';
 import {sendNewMessage} from '../redux/actions/chat-actions'
+import Immutable from 'immutable'
 
+const theme = {
+  "suggestionsContainer" : "suggestionsContainer",
+  "input": "form-control input-message",
+  "suggestion": "suggestion",
+  "suggestionFocused": "suggestionFocused"
+};
+
+// HERE BE DRAGONS
 
 class ChatMessageInput extends Component {
   constructor(props) {
     super(props);
     this.handleKeyPress = this.handleKeyPress.bind(this);
-    this.handleChange = this.handleChange.bind(this);
+    this.onChange = this.onChange.bind(this);
+    this.onSuggestionsUpdateRequested = this.onSuggestionsUpdateRequested.bind(this);
+    this.onSuggestionSelected = this.onSuggestionSelected.bind(this);
+    this.getSuggestionValue = this.getSuggestionValue.bind(this);
+    this.getSuggestions = this.getSuggestions.bind(this);
     this.state = {
-      messageText: undefined
-    }
+      value: '',
+      suggestions: this.getSuggestions('')
+    };
+  }
+  
+  onChange(event, { newValue, method }) {
+    return this.setState({
+      value: newValue
+    })
   }
 
   handleKeyPress(event) {
-    if(event.key == 'Enter'){
+    if(event.key == 'Enter' && !event.isSuggestionSelected){
       event.preventDefault();
       this.props.dispatch(sendNewMessage({
         message: event.target.value,
         roomName: this.props.roomName
       }));
       this.setState({
-        messageText: ""
+        value: ""
       });
       this.props.onMessageInput();
     }
   }
-  handleChange(event) {
-    this.setState({messageText: event.target.value})
+
+  onSuggestionsUpdateRequested({ value, reason }) {
+    this.setState({
+      suggestions: this.getSuggestions(value)
+    });
+  }
+
+  onSuggestionSelected(event, { suggestion, suggestionValue, sectionIndex, method }){
+    if(method=='enter') {
+      // This prevents the handleKeyPress from submitting text
+      //  when selecting an autocomplete
+      event.persist();
+      event.isSuggestionSelected = true;
+    }
+  }
+
+  getSuggestionValue(suggestion) {
+    // When a suggestion is selected, we want to fill in
+    // the suggestion in the rest of the input text.
+    // Note: We assume the suggestion is always at the end.
+    const lastInputTokens = this.state.value.trim().split(" ");
+    const lastToken = lastInputTokens.pop();
+    const lastTokenIsMention = lastToken.length !== 0 && lastToken[0] == "@";
+
+    if(lastTokenIsMention) {
+      let inputWithoutLastToken = lastInputTokens.join(" ");
+      return (inputWithoutLastToken + " @").trim() + suggestion + " "
+    }
+    return suggestion;
+  }
+
+  getSuggestions(value) {
+    const lastInputToken = value.toLowerCase().split(" ").pop();
+    const userIsAttemptingMention = lastInputToken[0] === "@" && lastInputToken.length > 1;
+    if(!userIsAttemptingMention){
+      return []
+    }
+
+    const queryWithoutAt = lastInputToken.slice(1, lastInputToken.length);
+
+    return this.props.members.filter(member => {
+      return member.toLowerCase().slice(0, lastInputToken.length - 1) === queryWithoutAt;
+    }).toJS();
+  }
+
+  renderSuggestion(suggestion) {
+    return (
+        <span>{suggestion}</span>
+    );
   }
   render() {
-    return <div className="padder padder-v b-t b-light text-center">
-        <textarea type="text"
-                  style={{resize: "none"}}
-                  className="form-control input-message mention"
-                  placeholder={`Type a message to ${this.props.roomName}...`}
-                  onKeyPress={this.handleKeyPress}
-                  onChange={this.handleChange}
-                  value={this.state.messageText} />
-    </div>
+      const { value, suggestions } = this.state;
+      const inputProps = {
+        placeholder: `Type a message to ${this.props.roomName}`,
+        value,
+        onChange: this.onChange,
+        onKeyDown: this.handleKeyPress
+      };
+
+      return <Autosuggest suggestions={suggestions}
+                   onSuggestionsUpdateRequested={this.onSuggestionsUpdateRequested}
+                   getSuggestionValue={this.getSuggestionValue}
+                   onSuggestionSelected={this.onSuggestionSelected}
+                   renderSuggestion={this.renderSuggestion}
+                   inputProps={inputProps}
+                   theme={theme}/>;
   }
 }
 
@@ -47,7 +121,13 @@ ChatMessageInput.defaultProps = {
 };
 
 function mapStateToProps(state) {
+  let roomName = state.getIn(['initial', 'roomName']);
+  let membersMap = state.getIn(['members', roomName], Immutable.Map());
+  let members = membersMap.reduce((a, b) => a.union(b), Immutable.OrderedSet()).toList();
+
   return {
+    members,
+    roomName
   }
 }
 

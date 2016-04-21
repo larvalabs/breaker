@@ -8,7 +8,7 @@ import Config from '../../config'
 export default function configureStore(initialState = Immutable.Map()) {
   let finalCreateStore;
 
-  if(Config.environment.prod){
+  if(!Config.settings.dev_tools){
     finalCreateStore = applyMiddleware(thunk)(createStore);
   } else {
     finalCreateStore = compose(

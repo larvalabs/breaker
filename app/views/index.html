@@ -34,6 +34,7 @@
             window.__ENVIRONMENT__ = "${environment}";
             window.__WEBSOCKET_URL__ = "@@{WebSocket.ChatRoomSocket.join()}";
             window.__ROOM_NAME__ = "${roomName}";
+            window.__USER_ADMIN__ = "${user.isAdmin()}";
 
             window.__INITIAL_STATE__ = {
                 initial: {
