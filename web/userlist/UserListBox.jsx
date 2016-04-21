@@ -17,7 +17,7 @@ class UserListBox extends Component {
                   <div className="m-b-sm text-md">Mods</div>
                   <ul id='modlist' className="list-group no-bg no-borders pull-in m-b-sm">
                     {
-                      this.props.members.get('mods', Immutable.List()).sort().map((member) => {
+                      this.props.members.get('mods', Immutable.List()).map((member) => {
                         return <UserListItem user={this.props.users.get(member)}/>
                       })
                     }
@@ -27,7 +27,7 @@ class UserListBox extends Component {
                   <div className="m-b-sm text-md">Here Now</div>
                   <ul id='onlinelist' className="list-group no-bg no-borders pull-in m-b-sm">
                     {
-                      this.props.members.get('online', Immutable.List()).sort().map((member) => {
+                      this.props.members.get('online', Immutable.List()).map((member) => {
                         return <UserListItem user={this.props.users.get(member)}/>
                       })
                     }
@@ -37,7 +37,7 @@ class UserListBox extends Component {
                   <div className="m-b-sm text-md">Offline</div>
                   <ul id='userlist' className="list-group no-bg no-borders pull-in m-b-sm">
                     {
-                      this.props.members.get('offline', Immutable.List()).sort().map((member) => {
+                      this.props.members.get('offline', Immutable.List()).map((member) => {
                         return <UserListItem user={this.props.users.get(member)}/>
                       })
                     }

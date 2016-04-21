@@ -97,9 +97,9 @@ function members(state=Immutable.Map(), action) {
       let listOfOnlineMembers = action.message.users.filter(user => !user.modForRoom && user.online).map(user => user.username);
       let listOfOffline = action.message.users.filter(user => !user.modForRoom && !user.online).map(user => user.username);
       let newMemberList = Immutable.Map({
-        online: Immutable.Set(listOfOnlineMembers),
-        offline: Immutable.Set(listOfOffline),
-        mods: Immutable.Set(listOfModMembers)
+        online: Immutable.OrderedSet(listOfOnlineMembers),
+        offline: Immutable.OrderedSet(listOfOffline),
+        mods: Immutable.OrderedSet(listOfModMembers)
       });
 
       return state.set(action.message.room.name, newMemberList);
