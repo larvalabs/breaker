@@ -28,10 +28,12 @@ POST    /longpolling/room/messages              LongPolling.say
 GET     /longpolling/room/leave                 LongPolling.leave    
 
 # WebSocket
-GET     /c                                      WebSocket.reactRoom
-GET     /c/{roomName}                           WebSocket.reactRoom
-GET     /r/                                     WebSocket.reactRoom
-GET     /r/{roomName}                           WebSocket.reactRoom
+GET     /c                                      WebSocket.room
+GET     /c/{roomName}                           WebSocket.room
+GET     /r/                                     WebSocket.room
+GET     /r/{roomName}                           WebSocket.room
+GET     /old/                                   WebSocket.roomOld
+GET     /old/{roomName}                         WebSocket.roomOld
 WS      /websocket/room/socket                  WebSocket.ChatRoomSocket.join
 
 # Map static resources from the /app/public folder to the /public path

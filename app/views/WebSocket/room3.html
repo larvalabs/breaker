@@ -612,7 +612,7 @@
 //        roomName = roomName.toLowerCase();
         console.log("Select room: " + roomName);
 //        window.location.hash = roomName;
-        window.history.replaceState({}, 'Breaker: ', '/c/' + roomName);
+        window.history.replaceState({}, 'Breaker: ', '/old/' + roomName);
 
         // Hide all thread views, then show selected message thread
         $('[id^=threadparent_]').hide();
