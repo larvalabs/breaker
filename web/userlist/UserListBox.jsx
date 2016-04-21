@@ -18,7 +18,8 @@ class UserListBox extends Component {
                   <ul id='modlist' className="list-group no-bg no-borders pull-in m-b-sm">
                     {
                       this.props.members.get('mods', Immutable.List()).map((member) => {
-                        return <UserListItem user={this.props.users.get(member)}/>
+                        let user = this.props.users.get(member);
+                        return <UserListItem key={user.get('username')} user={user}/>
                       })
                     }
                   </ul>
@@ -28,7 +29,8 @@ class UserListBox extends Component {
                   <ul id='onlinelist' className="list-group no-bg no-borders pull-in m-b-sm">
                     {
                       this.props.members.get('online', Immutable.List()).map((member) => {
-                        return <UserListItem user={this.props.users.get(member)}/>
+                        let user = this.props.users.get(member);
+                        return <UserListItem key={user.get('username')} user={user}/>
                       })
                     }
                   </ul>
@@ -38,7 +40,8 @@ class UserListBox extends Component {
                   <ul id='userlist' className="list-group no-bg no-borders pull-in m-b-sm">
                     {
                       this.props.members.get('offline', Immutable.List()).map((member) => {
-                        return <UserListItem user={this.props.users.get(member)}/>
+                        let user = this.props.users.get(member);
+                        return <UserListItem key={user.get('username')} user={user}/>
                       })
                     }
                   </ul>

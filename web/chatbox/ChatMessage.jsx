@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import Immutable from 'immutable'
-var TimeAgo = require('react-timeago').default
+import TimeAgo from 'react-timeago'
 
 
 export default class ChatMessage extends Component {
@@ -50,7 +50,7 @@ export default class ChatMessage extends Component {
     let liClasses = "list-group-item no-border p-t-s p-b-xs clearfix b-l-3x b-l-white";
 
     return (
-      <li key={this.props.message.get('id')} className={liClasses}>
+      <li className={liClasses}>
         {this.renderUserImage()}
         {this.renderTime()}
         <div className="clear">

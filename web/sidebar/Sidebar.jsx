@@ -20,7 +20,8 @@ export default React.createClass({
       </li>
       {
         this.props.roomList.toArray().map((room) => {
-          return <SidebarRoomListElm room={room}
+          return <SidebarRoomListElm key={room.get('name')}
+                                     room={room}
                                      active={room.get('name') == this.props.roomName}
                                      unreadCount={this.props.unreadCounts.get(room.get('name'))}/>
         })
@@ -43,7 +44,7 @@ export default React.createClass({
             <span>Suggested Active Rooms</span>
           </li>
           {this.props.activeRooms.map((room) => {
-            return <SidebarRoomListElm room={room} active={false}/>
+            return <SidebarRoomListElm key={room.get('name')} room={room} active={false}/>
           })}
       </ul>
     </div>
