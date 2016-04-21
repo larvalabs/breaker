@@ -1,7 +1,17 @@
 import React, {Component} from 'react'
+import { connect } from 'react-redux';
 import Immutable from 'immutable'
 
-export default class SidebarRoomListElm extends Component {
+import * as chatActions from '../redux/actions/chat-actions'
+
+class SidebarRoomListElm extends Component {
+  constructor(props){
+    super(props);
+    this.onElementClicked = this.onElementClicked.bind(this);
+  }
+  onElementClicked(){
+    this.props.dispatch(chatActions.changeRoom(this.props.room.get('name')));
+  }
   renderUnreadCount(props){
     if(props.unreadCount > 0) {
       return <b className="unreadcount label bg-info pull-right">{this.props.unreadCount}</b>
@@ -14,8 +24,10 @@ export default class SidebarRoomListElm extends Component {
       roomIcon = '/public/images/blank.png';
     }
 
-    return <li key={this.props.room.get('name')} className={"roomlistentry" + (this.props.active ? " active" : "")}>
-      <a href={`/r/${this.props.room.get('name')}`}  className="roomselect" data-roomname={this.props.room.get('name')}>
+    let key = this.props.room.get('name');
+    let className = "roomlistentry" + (this.props.active ? " active" : "");
+    return <li key={key} className={className} onClick={this.onElementClicked}>
+      <a className="roomselect" data-roomname={this.props.room.get('name')}>
         {this.renderUnreadCount(this.props)}
         <img className="roomIconSmall" src={roomIcon}/>
         <span className="roomname">#{this.props.room.get('name')}</span>
@@ -29,3 +41,11 @@ SidebarRoomListElm.defaultProps = {
   active: false,
   unreadCount: 0
 };
+
+
+function mapStateToProps(state) {
+  return {
+  }
+}
+
+export default connect(mapStateToProps)(SidebarRoomListElm)
