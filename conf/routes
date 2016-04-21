@@ -28,8 +28,8 @@ POST    /longpolling/room/messages              LongPolling.say
 GET     /longpolling/room/leave                 LongPolling.leave    
 
 # WebSocket
-GET     /c                                      WebSocket.room
-GET     /c/{roomName}                           WebSocket.room
+GET     /c                                      WebSocket.reactRoom
+GET     /c/{roomName}                           WebSocket.reactRoom
 GET     /r/                                     WebSocket.reactRoom
 GET     /r/{roomName}                           WebSocket.reactRoom
 WS      /websocket/room/socket                  WebSocket.ChatRoomSocket.join
