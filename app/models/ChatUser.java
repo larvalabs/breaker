@@ -534,6 +534,15 @@ public class ChatUser extends Model {
         return Constants.USERNAME_GUEST.equals(username);
     }
 
+    public void deleteAllMessages() {
+        // A bit inefficient, but we won't call this much (hopefully)
+        List<Message> messages = Message.find("user = ?", this).fetch(100);
+        for (Message message : messages) {
+            message.setDeleted(true);
+            message.save();
+        }
+    }
+
     public class UserBannedException extends Exception {
     }
 

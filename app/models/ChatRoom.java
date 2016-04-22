@@ -610,6 +610,10 @@ public class ChatRoom extends Model {
             Logger.debug("User is below karma threshold.");
             return false;
         }
+        if (chatUser.isFlagBanned() || chatUser.isShadowBan()) {
+            Logger.debug("User " + chatUser.getUsername() + " is flag or shadow banned.");
+            return false;
+        }
         return true;
     }
 

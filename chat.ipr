@@ -20,6 +20,14 @@
     </annotationProcessing>
   </component>
   <component name="CopyrightManager" default="" />
+  <component name="DataSourceManagerImpl" format="xml" hash="1974918276">
+    <data-source source="LOCAL" name="PostgreSQL - redditchat@localhost" uuid="8574837b-0841-4b77-9ec8-b77692ecaa69">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://localhost:5432/redditchat</jdbc-url>
+    </data-source>
+  </component>
   <component name="Encoding">
     <file url="PROJECT" charset="UTF-8" />
   </component>
@@ -157,5 +165,13 @@
   </component>
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+  </component>
+  <component name="dataSourceStorageLocal">
+    <data-source name="PostgreSQL - redditchat@localhost" uuid="8574837b-0841-4b77-9ec8-b77692ecaa69">
+      <secret-storage>master_key</secret-storage>
+      <user-name>matt</user-name>
+      <schema-pattern>redditchat.pg_catalog redditchat.public</schema-pattern>
+      <default-schemas>redditchat.public</default-schemas>
+    </data-source>
   </component>
 </project>

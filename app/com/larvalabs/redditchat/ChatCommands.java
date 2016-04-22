@@ -21,16 +21,21 @@ public class ChatCommands {
     public static final String COMMAND_CHAR = "/";
 
     public enum CommandType {
-        KICK("kick", true),
-        BAN("ban", true),
-        UNBAN("unban", true);
+        KICK("kick", true, false, true),
+        BAN("ban", true, false, true),
+        UNBAN("unban", true, false, false),
+        SITEBAN("siteban", false, true, true);
 
         String commandString;
         boolean modOnly;
+        boolean adminOnly;
+        boolean closeClientSocket;
 
-        CommandType(String commandString, boolean modOnly) {
+        CommandType(String commandString, boolean modOnly, boolean adminOnly, boolean closeClientSocket) {
             this.commandString = commandString;
             this.modOnly = modOnly;
+            this.adminOnly = adminOnly;
+            this.closeClientSocket = closeClientSocket;
         }
 
         public String getCommandString() {
@@ -38,11 +43,12 @@ public class ChatCommands {
         }
 
         public boolean canExecute(ChatUser user, ChatRoom room) {
-            if (!modOnly) {
-                return true;
-            } else {
+            if (adminOnly) {
+                return user.isAdmin();
+            } else if (modOnly) {
                 return room.isModerator(user);
             }
+            return true;
         }
 
         public static CommandType getType(String message) {
@@ -54,6 +60,9 @@ public class ChatCommands {
             return null;
         }
 
+        public boolean shouldCloseClientSocket() {
+            return closeClientSocket;
+        }
     }
 
     public static class Command {
@@ -157,6 +166,18 @@ public class ChatCommands {
                 } else {
                     socket.send(new ChatRoomStream.ServerMessage(JsonChatRoom.from(room), "User " + command.username + " is now unbanned.").toJson());
                 }
+                stream.publishEvent(new ChatRoomStream.ServerCommand(JsonChatRoom.from(room), command), true);
+            } else {
+                socket.send(new ChatRoomStream.ServerMessage(JsonChatRoom.from(room), "User " + command.username + " was not found.").toJson());
+            }
+        } else if (command.type == CommandType.SITEBAN) {
+            ChatUser user = ChatUser.findByUsername(command.username);
+            if (user != null) {
+                user.setShadowBan(true);
+                user.save();
+                user.deleteAllMessages();
+                socket.send(new ChatRoomStream.ServerMessage(JsonChatRoom.from(room), "User " + command.username + " has been banned.").toJson());
+                stream.publishEvent(new ChatRoomStream.ServerCommand(JsonChatRoom.from(room), command), true);
             } else {
                 socket.send(new ChatRoomStream.ServerMessage(JsonChatRoom.from(room), "User " + command.username + " was not found.").toJson());
             }

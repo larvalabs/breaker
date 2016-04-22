@@ -358,13 +358,12 @@ public class WebSocket extends PreloadUserController {
                     ChatRoomStream.ServerCommand commandEvent = (ChatRoomStream.ServerCommand) awaitResult;
                     if (commandEvent.command.username != null && commandEvent.command.username.equals(user.username)) {
                         Logger.info("Received " + commandEvent.command.type + " for this user.");
-                        if (commandEvent.command.type == ChatCommands.CommandType.KICK) {
-                            Logger.info(user.username + " has been kicked from " + commandEvent.room.name);
+                        if (commandEvent.command.type.shouldCloseClientSocket()) {
+                            Logger.info(user.username + " has been disconnected from " + commandEvent.room.name);
 
                             RoomConnection roomConnection = roomConnections.get(commandEvent.room.name);
                             user.leaveChatRoom(roomConnection.room);
                             roomConnections.remove(commandEvent.room.name);
-                            // todo send event to UI
 
                             sendLocalServerMessage(roomConnection, commandEvent.command.username + " was kicked.");
                         }
