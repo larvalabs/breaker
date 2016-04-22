@@ -5205,6 +5205,19 @@ a.text-#000000:hover {
   background: #fff;
 }
 
+li.chat-message-root:first-child {
+  padding-top: 15px !important;
+}
+
+li.chat-message-root {
+  padding-top: 5px !important;
+}
+
+li.chat-message-root .message-body, li.chat-message-short .message-body, li.chat-message-server .message-body {
+  padding-top: 0px;
+  margin-top: 0px;
+}
+
 /* Autocomplete styles */
 
 .suggestionsContainer {

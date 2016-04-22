@@ -7,12 +7,12 @@ export default class ChatMessage extends Component {
     return <a className="avatar thumb-sm pull-left m-r" target="_blank">&nbsp;</a>
   }
   renderMessage() {
-    return <div className="m-t-midxs">
+    return <div className="message-body m-t-midxs">
       <i>{this.props.message.get('message')}</i>
     </div>
   }
   render(){
-    let liClasses = "list-group-item no-border p-t-s p-b-xs clearfix b-l-3x b-l-white";
+    let liClasses = "chat-message-server list-group-item no-border p-t-s p-b-xs clearfix b-l-3x b-l-white";
 
     return (
       <li className={liClasses}>

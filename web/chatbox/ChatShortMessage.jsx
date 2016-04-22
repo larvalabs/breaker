@@ -11,7 +11,7 @@ export default class ChatMessage extends Component {
     </a>
   }
   renderMessage() {
-    return <div className="m-t-midxs" dangerouslySetInnerHTML={{__html: this.props.message.get('messageHtml')}}>
+    return <div className="message-body m-t-midxs" dangerouslySetInnerHTML={{__html: this.props.message.get('messageHtml')}}>
     </div>
   }
   renderLinks(){
@@ -26,7 +26,7 @@ export default class ChatMessage extends Component {
     return null;
   }
   render(){
-    let liClasses = "list-group-item p-t-none p-b-xs no-border clearfix b-l-3x b-l-white";
+    let liClasses = "chat-message-short list-group-item p-t-none p-b-xs no-border clearfix b-l-3x b-l-white";
 
     return (
       <li key={this.props.message.get('id')} className={liClasses}>
