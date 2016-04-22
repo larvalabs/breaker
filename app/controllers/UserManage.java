@@ -29,6 +29,10 @@ public class UserManage extends PreloadUserController {
 
     public static void prefs() {
         ChatUser user = connected();
+        if (user.isGuest()) {
+            Application.index();
+            return;
+        }
 
         render(user);
     }
