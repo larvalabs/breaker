@@ -53,7 +53,7 @@ public class Application extends PreloadUserController {
 
     public static void fakeOtherUser() throws ChatUser.UserBannedException {
         ChatUser user = new ChatUser(Util.getUUID());
-        user.setUsername("chattest2");
+        user.setUsername("chattest-" + System.currentTimeMillis());
         user.save();
         user.joinChatRoom(ChatRoom.findByName("breakerapp"));
         WebSocket.room("breakerapp");

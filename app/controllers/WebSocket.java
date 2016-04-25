@@ -7,6 +7,7 @@ import com.larvalabs.redditchat.ChatCommands;
 import com.larvalabs.redditchat.Constants;
 import com.larvalabs.redditchat.dataobj.JsonChatRoom;
 import com.larvalabs.redditchat.dataobj.JsonMessage;
+import com.larvalabs.redditchat.dataobj.JsonRoomMembers;
 import com.larvalabs.redditchat.dataobj.JsonUser;
 import com.larvalabs.redditchat.realtime.ChatRoomStream;
 import com.larvalabs.redditchat.util.Stats;
@@ -83,6 +84,37 @@ public class WebSocket extends PreloadUserController {
             }
         }
 
+        Gson gson = new Gson();
+
+        // Get initial state
+        HashMap<String, JsonChatRoom> rooms = new HashMap<String, JsonChatRoom>();
+        HashMap<String, JsonUser> allUsers = new HashMap<String, JsonUser>();
+        HashMap<String, JsonRoomMembers> members = new HashMap<String, JsonRoomMembers>();
+        for (ChatUserRoomJoin chatRoomJoin : chatRoomJoins) {
+            ChatRoom room1 = chatRoomJoin.getRoom();
+            rooms.put(room1.getName(), JsonChatRoom.from(room1));
+
+            // todo pretty inefficient, loading lots of the same user multiple times
+            JsonUser[] allUsersWithOnlineStatus = room1.getAllUsersWithOnlineStatus();
+//            allUsers.addAll(Arrays.asList(allUsersWithOnlineStatus));
+
+            JsonRoomMembers roomMembers = new JsonRoomMembers();
+            for (JsonUser jsonUser : allUsersWithOnlineStatus) {
+                allUsers.put(jsonUser.username, jsonUser);
+                if (jsonUser.modForRoom) {
+                    roomMembers.mods.add(jsonUser.username);
+                } else if (jsonUser.online) {
+                    roomMembers.online.add(jsonUser.username);
+                } else {
+                    roomMembers.offline.add(jsonUser.username);
+                }
+            }
+            members.put(room1.getName(), roomMembers);
+        }
+        String roomsString = gson.toJson(rooms);
+        String usersString = gson.toJson(allUsers);
+        String membersString = gson.toJson(members);
+
         // Links to other suggested rooms
         List<ChatRoom> activeRooms = new ArrayList<ChatRoom>();
         {
@@ -104,10 +136,10 @@ public class WebSocket extends PreloadUserController {
             }
         }
 
-        String userString = new Gson().toJson(JsonUser.fromUser(user));
+        String userString = gson.toJson(JsonUser.fromUser(user));
         String environment = Play.mode.isProd() ? "production" : "dev";
 
-        render("index.html", user, userString, roomName, environment);
+        render("index.html", user, userString, roomName, environment, roomsString, usersString, membersString);
     }
 
     public static void roomOld(String roomName) {

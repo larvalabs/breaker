@@ -45,9 +45,9 @@
                     roomName: "${roomName}",
                     activeRooms: []
                 },
-                members: {},
-                rooms: {},
-                users: {},
+                members: ${membersString.raw()},
+                rooms: ${roomsString.raw()},
+                users: ${usersString.raw()},
                 messages: {},
                 unreadCounts: {
                     __HAS_FOCUS__: document.hasFocus(),

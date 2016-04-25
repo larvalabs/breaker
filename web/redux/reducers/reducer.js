@@ -105,14 +105,20 @@ function members(state=Immutable.Map(), action) {
       return state.set(action.message.room.name, newMemberList);
     }
     case (socketTypes.SOCK_JOIN): {
-      if(state.getIn([action.message.room.name, 'mods', action.message.user.username])){
+      if(state.getIn([action.message.room.name, 'mods']).contains(action.message.user.username)){
+        return state
+      }
+      if(state.getIn([action.message.room.name, 'online']).contains(action.message.user.username)){
         return state
       }
 
       return moveMemberOnlineState(state, action);
     }
     case (socketTypes.SOCK_LEAVE): {
-      if(state.getIn([action.message.room.name, 'mods', action.message.user.username])){
+      if(state.getIn([action.message.room.name, 'mods']).contains(action.message.user.username)){
+        return state
+      }
+      if(state.getIn([action.message.room.name, 'offline']).contains(action.message.user.username)){
         return state
       }
 
