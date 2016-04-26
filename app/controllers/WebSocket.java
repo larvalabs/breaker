@@ -98,13 +98,16 @@ public class WebSocket extends PreloadUserController {
             ChatRoom thisRoom = chatRoomJoin.getRoom();
             rooms.put(thisRoom.getName(), JsonChatRoom.from(thisRoom));
 
-            // todo pretty inefficient, loading lots of the same user multiple times
-            JsonUser[] allUsersWithOnlineStatus = thisRoom.getAllUsersWithOnlineStatus();
-//            allUsers.addAll(Arrays.asList(allUsersWithOnlineStatus));
-
+            TreeSet<String> usernamesPresent = room.getUsernamesPresent();
+            List<ChatUser> roomUsers = room.getUsers();
             JsonRoomMembers roomMembers = new JsonRoomMembers();
-            for (JsonUser jsonUser : allUsersWithOnlineStatus) {
-                allUsers.put(jsonUser.username, jsonUser);
+            for (ChatUser roomUser : roomUsers) {
+                JsonUser jsonUser = allUsers.get(roomUser.getUsername());
+                if (jsonUser == null) {
+                    jsonUser = JsonUser.fromUser(roomUser);
+                    jsonUser.online = usernamesPresent.contains(jsonUser.username);
+                    allUsers.put(roomUser.getUsername(), jsonUser);
+                }
                 if (jsonUser.modForRoom) {
                     roomMembers.mods.add(jsonUser.username);
                 } else if (jsonUser.online) {
@@ -112,6 +115,7 @@ public class WebSocket extends PreloadUserController {
                 } else {
                     roomMembers.offline.add(jsonUser.username);
                 }
+
             }
             members.put(thisRoom.getName(), roomMembers);
 
@@ -123,10 +127,12 @@ public class WebSocket extends PreloadUserController {
             Collections.reverse(roomMessages);
             messages.put(thisRoom.getName(), roomMessages);
         }
+        Logger.info("Websocket join time checkpoint 1 for " + user.getUsername() + ": " + (System.currentTimeMillis() - startTime));
         String roomsString = gson.toJson(rooms);
         String usersString = gson.toJson(allUsers);
         String membersString = gson.toJson(members);
         String messagesString = gson.toJson(messages);
+        Logger.info("Websocket join time checkpoint 2 (post gson) for " + user.getUsername() + ": " + (System.currentTimeMillis() - startTime));
 
         // Links to other suggested rooms
         List<ChatRoom> activeRooms = new ArrayList<ChatRoom>();
