@@ -64,6 +64,16 @@ function messages(state=Immutable.Map(), action) {
   }
 }
 
+
+function ensureTypeIsSet(state, roomName, status){
+  if(!Immutable.Set.isSet(state.getIn([roomName, status]))){
+    return state.setIn([roomName, status], Immutable.Set(
+        state.getIn([roomName, status]))
+    );
+  }
+  return state;
+}
+
 function moveMemberOfflineState(state, action){
   return moveMemberStates(state, action, 'online', 'offline');
 }
@@ -105,24 +115,32 @@ function members(state=Immutable.Map(), action) {
       return state.set(action.message.room.name, newMemberList);
     }
     case (socketTypes.SOCK_JOIN): {
-      if(state.getIn([action.message.room.name, 'mods'], Immutable.Set()).has(action.message.user.username)){
-        return state
-      }
-      if(state.getIn([action.message.room.name, 'online'], Immutable.Set()).has(action.message.user.username)){
-        return state
+      let newState = ensureTypeIsSet(state, action.message.room.name, "mods");
+      newState = ensureTypeIsSet(state, action.message.room.name, "online");
+
+      if(newState.getIn([action.message.room.name, 'mods'], Immutable.Set()).has(action.message.user.username)){
+        return newState
       }
 
-      return moveMemberOnlineState(state, action);
+      if(state.getIn([action.message.room.name, 'online'], Immutable.Set()).has(action.message.user.username)){
+        return newState
+      }
+
+      return moveMemberOnlineState(newState, action);
     }
     case (socketTypes.SOCK_LEAVE): {
-      if(state.getIn([action.message.room.name, 'mods'], Immutable.Set()).has(action.message.user.username)){
-        return state
-      }
-      if(state.getIn([action.message.room.name, 'offline'], Immutable.Set()).has(action.message.user.username)){
-        return state
+      let newState = ensureTypeIsSet(state, action.message.room.name, "mods");
+      newState = ensureTypeIsSet(state, action.message.room.name, "offline");
+
+      if(newState.getIn([action.message.room.name, 'mods'], Immutable.Set()).has(action.message.user.username)){
+        return newState
       }
 
-      return moveMemberOfflineState(state, action);
+      if(newState.getIn([action.message.room.name, 'offline'], Immutable.Set()).has(action.message.user.username)){
+        return newState
+      }
+
+      return moveMemberOfflineState(newState, action);
     }
     default:
       return state;
