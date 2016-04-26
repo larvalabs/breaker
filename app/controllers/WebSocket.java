@@ -214,6 +214,7 @@ public class WebSocket extends PreloadUserController {
                     }
                 }
 
+/*
                 JsonChatRoom[] jsonChatRooms = jsonChatRoomsList.toArray(new JsonChatRoom[]{});
 
                 Arrays.sort(jsonChatRooms, new Comparator<JsonChatRoom>() {
@@ -225,6 +226,7 @@ public class WebSocket extends PreloadUserController {
                 String roomListJson = new ChatRoomStream.RoomList(jsonChatRooms).toJson();
                 Logger.info("Room list json: " + roomListJson);
                 outbound.send(roomListJson);
+*/
             }
 
             Stats.count(Stats.StatKey.WEBSOCKET_CONNECT, 1);
