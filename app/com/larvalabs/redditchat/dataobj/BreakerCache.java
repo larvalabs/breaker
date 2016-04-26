@@ -3,6 +3,7 @@ package com.larvalabs.redditchat.dataobj;
 import com.larvalabs.redditchat.Constants;
 import models.ChatRoom;
 import models.Message;
+import play.Logger;
 import play.cache.Cache;
 
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ public class BreakerCache {
             e.printStackTrace();
         }
         if (roomMessages == null) {
+            Logger.info("Cache miss room messages for " + room.getName());
             roomMessages = new ArrayList<JsonMessage>();
             List<Message> messageList = room.getMessages(Constants.DEFAULT_MESSAGE_LIMIT);
             for (Message message : messageList) {
@@ -39,6 +41,8 @@ public class BreakerCache {
             }
             Collections.reverse(roomMessages);
             Cache.set(getMessagesKey(room.getName()), roomMessages, "1h");
+        } else {
+            Logger.info("Cache hit room messages for " + room.getName());
         }
         return roomMessages;
     }
