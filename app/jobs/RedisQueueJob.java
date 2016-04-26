@@ -1,5 +1,6 @@
 package jobs;
 
+import com.larvalabs.redditchat.dataobj.BreakerCache;
 import com.larvalabs.redditchat.realtime.ChatRoomStream;
 import play.Logger;
 import play.jobs.Job;
@@ -33,6 +34,7 @@ public class RedisQueueJob extends Job {
             } else {
                 ChatRoomStream.getEventStream(event.room.name).publishEventInternal(event);
             }
+            BreakerCache.handleEvent(event);
         }
 
         @Override
@@ -62,7 +64,7 @@ public class RedisQueueJob extends Job {
     }
 
     public static void publish(ChatRoomStream.Event event) {
-        Logger.debug("Sending event to redis");
+//        Logger.debug("Sending event to redis");
         Redis.publish(CHANNEL, event.toJson());
     }
 }
