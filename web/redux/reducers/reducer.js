@@ -78,9 +78,6 @@ function moveMemberStates(state, action, remove, add){
     if(!o) {
       return Immutable.Set([]);
     }
-    if (!o.add) {
-      o = Immutable.Set(o);
-    }
     return o.remove(action.message.user.username)
   });
 
@@ -88,9 +85,6 @@ function moveMemberStates(state, action, remove, add){
   return newState.updateIn([action.message.room.name, add], o => {
     if(!o){
       return Immutable.Set([action.message.user.username]);
-    }
-    if (!o.add) {
-      o = Immutable.Set(o);
     }
     return o.add(action.message.user.username);
   });
@@ -111,20 +105,20 @@ function members(state=Immutable.Map(), action) {
       return state.set(action.message.room.name, newMemberList);
     }
     case (socketTypes.SOCK_JOIN): {
-      if(state.getIn([action.message.room.name, 'mods']).contains(action.message.user.username)){
+      if(state.getIn([action.message.room.name, 'mods'], Immutable.Set()).has(action.message.user.username)){
         return state
       }
-      if(state.getIn([action.message.room.name, 'online']).contains(action.message.user.username)){
+      if(state.getIn([action.message.room.name, 'online'], Immutable.Set()).has(action.message.user.username)){
         return state
       }
 
       return moveMemberOnlineState(state, action);
     }
     case (socketTypes.SOCK_LEAVE): {
-      if(state.getIn([action.message.room.name, 'mods']).contains(action.message.user.username)){
+      if(state.getIn([action.message.room.name, 'mods'], Immutable.Set()).has(action.message.user.username)){
         return state
       }
-      if(state.getIn([action.message.room.name, 'offline']).contains(action.message.user.username)){
+      if(state.getIn([action.message.room.name, 'offline'], Immutable.Set()).has(action.message.user.username)){
         return state
       }
 
