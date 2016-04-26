@@ -118,6 +118,7 @@ public class WebSocket extends PreloadUserController {
             for (Message message : messageList) {
                 roomMessages.add(JsonMessage.from(message));
             }
+            Collections.reverse(roomMessages);
             messages.put(thisRoom.getName(), roomMessages);
         }
         String roomsString = gson.toJson(rooms);

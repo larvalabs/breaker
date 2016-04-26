@@ -78,6 +78,9 @@ function moveMemberStates(state, action, remove, add){
     if(!o) {
       return Immutable.Set([]);
     }
+    if (!o.add) {
+      o = Immutable.Set(o);
+    }
     return o.remove(action.message.user.username)
   });
 
@@ -85,6 +88,9 @@ function moveMemberStates(state, action, remove, add){
   return newState.updateIn([action.message.room.name, add], o => {
     if(!o){
       return Immutable.Set([action.message.user.username]);
+    }
+    if (!o.add) {
+      o = Immutable.Set(o);
     }
     return o.add(action.message.user.username);
   });
