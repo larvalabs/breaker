@@ -44,6 +44,8 @@ public class WebSocket extends PreloadUserController {
     }
 
     public static void room(String roomName){
+        long startTime = System.currentTimeMillis();
+
         ChatUser user = connected();
         ChatRoom room = null;
         if (roomName != null) {
@@ -149,6 +151,8 @@ public class WebSocket extends PreloadUserController {
 
         String userString = gson.toJson(JsonUser.fromUser(user));
         String environment = Play.mode.isProd() ? "production" : "dev";
+
+        Logger.info("Websocket join time for " + user.getUsername() + ": " + (System.currentTimeMillis() - startTime));
 
         render("index.html", user, userString, roomName, environment, roomsString, usersString, membersString, messagesString);
     }
