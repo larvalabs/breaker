@@ -59,5 +59,5 @@ public class Constants {
 
     public static final int USER_FLAG_THRESHOLD = 15;
 
-    public static final int DEFAULT_MESSAGE_LIMIT = 40;
+    public static final int DEFAULT_MESSAGE_LIMIT = 20;
 }

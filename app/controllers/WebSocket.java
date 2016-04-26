@@ -16,6 +16,7 @@ import jobs.SaveNewMessageJob;
 import models.ChatRoom;
 import models.ChatUser;
 import models.ChatUserRoomJoin;
+import models.Message;
 import play.Logger;
 import play.Play;
 import play.libs.F.EventStream;
@@ -90,12 +91,13 @@ public class WebSocket extends PreloadUserController {
         HashMap<String, JsonChatRoom> rooms = new HashMap<String, JsonChatRoom>();
         HashMap<String, JsonUser> allUsers = new HashMap<String, JsonUser>();
         HashMap<String, JsonRoomMembers> members = new HashMap<String, JsonRoomMembers>();
+        HashMap<String, ArrayList<JsonMessage>> messages = new HashMap<String, ArrayList<JsonMessage>>();
         for (ChatUserRoomJoin chatRoomJoin : chatRoomJoins) {
-            ChatRoom room1 = chatRoomJoin.getRoom();
-            rooms.put(room1.getName(), JsonChatRoom.from(room1));
+            ChatRoom thisRoom = chatRoomJoin.getRoom();
+            rooms.put(thisRoom.getName(), JsonChatRoom.from(thisRoom));
 
             // todo pretty inefficient, loading lots of the same user multiple times
-            JsonUser[] allUsersWithOnlineStatus = room1.getAllUsersWithOnlineStatus();
+            JsonUser[] allUsersWithOnlineStatus = thisRoom.getAllUsersWithOnlineStatus();
 //            allUsers.addAll(Arrays.asList(allUsersWithOnlineStatus));
 
             JsonRoomMembers roomMembers = new JsonRoomMembers();
@@ -109,11 +111,19 @@ public class WebSocket extends PreloadUserController {
                     roomMembers.offline.add(jsonUser.username);
                 }
             }
-            members.put(room1.getName(), roomMembers);
+            members.put(thisRoom.getName(), roomMembers);
+
+            ArrayList<JsonMessage> roomMessages = new ArrayList<JsonMessage>();
+            List<Message> messageList = thisRoom.getMessages(Constants.DEFAULT_MESSAGE_LIMIT);
+            for (Message message : messageList) {
+                roomMessages.add(JsonMessage.from(message));
+            }
+            messages.put(thisRoom.getName(), roomMessages);
         }
         String roomsString = gson.toJson(rooms);
         String usersString = gson.toJson(allUsers);
         String membersString = gson.toJson(members);
+        String messagesString = gson.toJson(messages);
 
         // Links to other suggested rooms
         List<ChatRoom> activeRooms = new ArrayList<ChatRoom>();
@@ -139,7 +149,7 @@ public class WebSocket extends PreloadUserController {
         String userString = gson.toJson(JsonUser.fromUser(user));
         String environment = Play.mode.isProd() ? "production" : "dev";
 
-        render("index.html", user, userString, roomName, environment, roomsString, usersString, membersString);
+        render("index.html", user, userString, roomName, environment, roomsString, usersString, membersString, messagesString);
     }
 
     public static void roomOld(String roomName) {

@@ -9,7 +9,7 @@ export default class ChatMessage extends Component {
     let profileImage = this.props.user.get('profileImageUrl');
 
     // TODO: seems like a hack here
-    if (this.props.user.get('profileImageUrl').indexOf('user-anon') > -1){
+    if (profileImage && profileImage.indexOf('user-anon') > -1){
       profileImage = '/public/img/user-anon.png';
     }
 
