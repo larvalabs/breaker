@@ -365,7 +365,7 @@ public class ChatRoom extends Model {
 
     public JsonUser[] getAllUsersWithOnlineStatus() {
 //        TreeSet<ChatUser> presentUserObjects = getPresentUserObjects();
-        List<ChatUser> allUsers = getUsers();
+        HashSet<ChatUser> allUsers = new HashSet<ChatUser>(getUsers());
 
         // todo: Temporary hack to make rooms look full
         if (getName() != null && !getName().equals(Constants.CHATROOM_DEFAULT)) {

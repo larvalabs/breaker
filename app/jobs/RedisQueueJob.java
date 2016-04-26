@@ -26,7 +26,7 @@ public class RedisQueueJob extends Job {
     private static class RedisListener extends JedisPubSub {
         @Override
         public void onMessage(String channel, String message) {
-            Logger.debug("Received message on redis channel " + channel + ": " + message);
+//            Logger.debug("Received message on redis channel " + channel + ": " + message);
             ChatRoomStream.Event event = ChatRoomStream.Event.fromJson(message);
             if (event instanceof ChatRoomStream.Message) {
                 ChatRoomStream.getMessageStream(event.room.name).publishEventInternal(event);

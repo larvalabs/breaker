@@ -7,7 +7,11 @@ import net.dean.jraw.http.oauth.Credentials;
 import net.dean.jraw.http.oauth.OAuthData;
 import net.dean.jraw.http.oauth.OAuthException;
 import net.dean.jraw.managers.InboxManager;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.methods.GetMethod;
 import play.Logger;
+
+import java.io.IOException;
 
 /**
  * Created by matt on 1/12/16.
@@ -43,9 +47,17 @@ public class RedditUtil {
         return redditClient;
     }
 
-    public static void main(String[] args) throws ApiException {
+    public static void main(String[] args) throws ApiException, IOException {
 //        RedditClient redditClient = getRedditClient();
-        sendPrivateMessageFromBot("rickiibeta", "Testing from cmdline", "Testing content.");
+//        sendPrivateMessageFromBot("rickiibeta", "Testing from cmdline", "Testing content.");
 
+        HttpClient httpclient = new HttpClient();
+        GetMethod httpget = new GetMethod("https://reddit.com/");
+        try {
+            httpclient.executeMethod(httpget);
+            System.out.println(httpget.getStatusLine());
+        } finally {
+            httpget.releaseConnection();
+        }
     }
 }

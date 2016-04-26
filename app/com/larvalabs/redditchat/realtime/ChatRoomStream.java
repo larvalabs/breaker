@@ -39,21 +39,15 @@ public class ChatRoomStream {
         }
     }
 
-    public static final int STREAM_SIZE = 20;
+    public static final int STREAM_SIZE = 0;
     public static final int PRELOAD_NUM_MSGS_ON_STARTUP = STREAM_SIZE;
 
-    private ArchivedEventStream<ChatRoomStream.Event> chatEvents;
+    private EventStream<ChatRoomStream.Event> chatEvents = new EventStream<Event>();
 
     private String name;
 
     public ChatRoomStream(String name, boolean isMessageStream) {
         this.name = name;
-        if (isMessageStream) {
-            chatEvents = new ArchivedEventStream<ChatRoomStream.Event>(STREAM_SIZE);
-            loadOldMessages();
-        } else {
-            chatEvents = new NoHistoryArchivedEventStream(STREAM_SIZE);
-        }
     }
 
     private void loadOldMessages() {
@@ -83,7 +77,7 @@ public class ChatRoomStream {
             JsonUser jsonUser = JsonUser.fromUserForRoom(user, room);
             publishEvent(new Join(JsonChatRoom.from(room), jsonUser), true);
         }
-        return chatEvents.eventStream();
+        return chatEvents;
     }
 
     public void sendMemberList(ChatRoom room) {
@@ -123,17 +117,21 @@ public class ChatRoomStream {
      * For long polling, as we are sometimes disconnected, we need to pass 
      * the last event seen id, to be sure to not miss any message
      */
+/*
     public Promise<List<IndexedEvent<ChatRoomStream.Event>>> nextMessages(long lastReceived) {
         return chatEvents.nextEvents(lastReceived);
     }
-    
+*/
+
     /**
      * For active refresh, we need to retrieve the whole message archive at
      * each refresh
      */
+/*
     public List<ChatRoomStream.Event> archive() {
         return chatEvents.archive();
     }
+*/
 
     // ~~~~~~~~~ Chat room events
 

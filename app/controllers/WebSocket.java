@@ -7,6 +7,7 @@ import com.larvalabs.redditchat.ChatCommands;
 import com.larvalabs.redditchat.Constants;
 import com.larvalabs.redditchat.dataobj.JsonChatRoom;
 import com.larvalabs.redditchat.dataobj.JsonMessage;
+import com.larvalabs.redditchat.dataobj.JsonRoomMembers;
 import com.larvalabs.redditchat.dataobj.JsonUser;
 import com.larvalabs.redditchat.realtime.ChatRoomStream;
 import com.larvalabs.redditchat.util.Stats;
@@ -15,6 +16,7 @@ import jobs.SaveNewMessageJob;
 import models.ChatRoom;
 import models.ChatUser;
 import models.ChatUserRoomJoin;
+import models.Message;
 import play.Logger;
 import play.Play;
 import play.libs.F.EventStream;
@@ -42,6 +44,8 @@ public class WebSocket extends PreloadUserController {
     }
 
     public static void room(String roomName){
+        long startTime = System.currentTimeMillis();
+
         ChatUser user = connected();
         ChatRoom room = null;
         if (roomName != null) {
@@ -83,6 +87,53 @@ public class WebSocket extends PreloadUserController {
             }
         }
 
+        Gson gson = new Gson();
+
+        // Get initial state
+        HashMap<String, JsonChatRoom> rooms = new HashMap<String, JsonChatRoom>();
+        HashMap<String, JsonUser> allUsers = new HashMap<String, JsonUser>();
+        HashMap<String, JsonRoomMembers> members = new HashMap<String, JsonRoomMembers>();
+        HashMap<String, ArrayList<JsonMessage>> messages = new HashMap<String, ArrayList<JsonMessage>>();
+        for (ChatUserRoomJoin chatRoomJoin : chatRoomJoins) {
+            ChatRoom thisRoom = chatRoomJoin.getRoom();
+            rooms.put(thisRoom.getName(), JsonChatRoom.from(thisRoom));
+
+            TreeSet<String> usernamesPresent = room.getUsernamesPresent();
+            List<ChatUser> roomUsers = room.getUsers();
+            JsonRoomMembers roomMembers = new JsonRoomMembers();
+            for (ChatUser roomUser : roomUsers) {
+                JsonUser jsonUser = allUsers.get(roomUser.getUsername());
+                if (jsonUser == null) {
+                    jsonUser = JsonUser.fromUser(roomUser);
+                    jsonUser.online = usernamesPresent.contains(jsonUser.username);
+                    allUsers.put(roomUser.getUsername(), jsonUser);
+                }
+                if (jsonUser.modForRoom) {
+                    roomMembers.mods.add(jsonUser.username);
+                } else if (jsonUser.online) {
+                    roomMembers.online.add(jsonUser.username);
+                } else {
+                    roomMembers.offline.add(jsonUser.username);
+                }
+
+            }
+            members.put(thisRoom.getName(), roomMembers);
+
+            ArrayList<JsonMessage> roomMessages = new ArrayList<JsonMessage>();
+            List<Message> messageList = thisRoom.getMessages(Constants.DEFAULT_MESSAGE_LIMIT);
+            for (Message message : messageList) {
+                roomMessages.add(JsonMessage.from(message));
+            }
+            Collections.reverse(roomMessages);
+            messages.put(thisRoom.getName(), roomMessages);
+        }
+        Logger.info("Websocket join time checkpoint 1 for " + user.getUsername() + ": " + (System.currentTimeMillis() - startTime));
+        String roomsString = gson.toJson(rooms);
+        String usersString = gson.toJson(allUsers);
+        String membersString = gson.toJson(members);
+        String messagesString = gson.toJson(messages);
+        Logger.info("Websocket join time checkpoint 2 (post gson) for " + user.getUsername() + ": " + (System.currentTimeMillis() - startTime));
+
         // Links to other suggested rooms
         List<ChatRoom> activeRooms = new ArrayList<ChatRoom>();
         {
@@ -104,10 +155,12 @@ public class WebSocket extends PreloadUserController {
             }
         }
 
-        String userString = new Gson().toJson(JsonUser.fromUser(user));
+        String userString = gson.toJson(JsonUser.fromUser(user));
         String environment = Play.mode.isProd() ? "production" : "dev";
 
-        render("index.html", user, userString, roomName, environment);
+        Logger.info("Websocket join time for " + user.getUsername() + ": " + (System.currentTimeMillis() - startTime));
+
+        render("index.html", user, userString, roomName, environment, roomsString, usersString, membersString, messagesString);
     }
 
     public static void roomOld(String roomName) {

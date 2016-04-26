@@ -12,7 +12,8 @@ public class JsonMessage {
 
     public long id;
     public String uuid;
-    public JsonUser user;
+    @Deprecated public JsonUser user;   // todo remove this once the front end officially doesn't need it
+    public String username;
     public String message;
     public String imageUrl;
     public String imageThumbUrl;
@@ -42,6 +43,7 @@ public class JsonMessage {
         this.id = id;
         this.uuid = uuid;
         this.user = user;
+        this.username = user.username;
         this.message = message;
         this.imageUrl = imageUrl;
         this.imageThumbUrl = imageThumbUrl;
@@ -57,6 +59,7 @@ public class JsonMessage {
     public JsonMessage(String uuid, JsonUser user, JsonChatRoom room, String message) {
         this.uuid = uuid;
         this.user = user;
+        this.username = user.username;
         this.room = room;
         this.message = message;
         this.createDate = new Date();
