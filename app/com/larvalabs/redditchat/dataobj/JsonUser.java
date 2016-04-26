@@ -7,11 +7,12 @@ import models.ChatRoom;
 import models.ChatUser;
 
 import javax.validation.constraints.Null;
+import java.io.Serializable;
 import java.util.*;
 import java.util.Date;
 import java.util.List;
 
-public class JsonUser {
+public class JsonUser implements Serializable {
 
     public long id;
     public String username;

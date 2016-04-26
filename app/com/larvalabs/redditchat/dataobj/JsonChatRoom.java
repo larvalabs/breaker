@@ -4,6 +4,7 @@ import models.ChatRoom;
 import models.ChatUser;
 import models.ChatUserRoomJoin;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -16,7 +17,7 @@ import java.util.List;
  * Time: 11:59 AM
  * To change this template use File | Settings | File Templates.
  */
-public class JsonChatRoom {
+public class JsonChatRoom implements Serializable {
 
     public long id;
     public String name;

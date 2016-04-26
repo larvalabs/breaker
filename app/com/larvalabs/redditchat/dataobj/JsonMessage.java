@@ -3,12 +3,13 @@ package com.larvalabs.redditchat.dataobj;
 import models.*;
 import org.nibor.autolink.*;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
 
-public class JsonMessage {
+public class JsonMessage implements Serializable {
 
     public long id;
     public String uuid;

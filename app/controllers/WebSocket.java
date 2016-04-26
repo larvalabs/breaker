@@ -5,10 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.larvalabs.redditchat.ChatCommands;
 import com.larvalabs.redditchat.Constants;
-import com.larvalabs.redditchat.dataobj.JsonChatRoom;
-import com.larvalabs.redditchat.dataobj.JsonMessage;
-import com.larvalabs.redditchat.dataobj.JsonRoomMembers;
-import com.larvalabs.redditchat.dataobj.JsonUser;
+import com.larvalabs.redditchat.dataobj.*;
 import com.larvalabs.redditchat.realtime.ChatRoomStream;
 import com.larvalabs.redditchat.util.Stats;
 import com.larvalabs.redditchat.util.Util;
@@ -119,12 +116,7 @@ public class WebSocket extends PreloadUserController {
             }
             members.put(thisRoom.getName(), roomMembers);
 
-            ArrayList<JsonMessage> roomMessages = new ArrayList<JsonMessage>();
-            List<Message> messageList = thisRoom.getMessages(Constants.DEFAULT_MESSAGE_LIMIT);
-            for (Message message : messageList) {
-                roomMessages.add(JsonMessage.from(message));
-            }
-            Collections.reverse(roomMessages);
+            ArrayList<JsonMessage> roomMessages = BreakerCache.getLastMessages(thisRoom);
             messages.put(thisRoom.getName(), roomMessages);
         }
         Logger.info("Websocket join time checkpoint 1 for " + user.getUsername() + ": " + (System.currentTimeMillis() - startTime));
@@ -376,6 +368,7 @@ public class WebSocket extends PreloadUserController {
                                     JsonMessage jsonMessage = JsonMessage.makePresavedMessage(uuid, user, roomConnection.room, message);
                                     new SaveNewMessageJob(uuid, user, roomName, message).now();
                                     roomConnection.chatRoomMessageStream.say(jsonMessage);
+                                    BreakerCache.clearMessagesCache(roomConnection.room.getName());
                                     Stats.count(Stats.StatKey.MESSAGE, 1);
                                 } else {
                                     Logger.info("User " + user.getUsername() + " cannot post to " + roomName);

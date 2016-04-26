@@ -23,22 +23,6 @@ import java.util.List;
 
 public class ChatRoomStream {
 
-    public static class NoHistoryArchivedEventStream extends ArchivedEventStream<ChatRoomStream.Event> {
-
-        public NoHistoryArchivedEventStream(int archiveSize) {
-            super(archiveSize);
-        }
-
-        @Override
-        public synchronized EventStream<Event> eventStream() {
-            EventStream<Event> archivedEventStream = super.eventStream();
-            while (archivedEventStream.nextEvent().getOrNull() != null) {
-//                Logger.info("Clearing stream history...");
-            }
-            return archivedEventStream;
-        }
-    }
-
     public static final int STREAM_SIZE = 0;
     public static final int PRELOAD_NUM_MSGS_ON_STARTUP = STREAM_SIZE;
 
