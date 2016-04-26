@@ -96,15 +96,11 @@ public class WebSocket extends PreloadUserController {
             rooms.put(thisRoom.getName(), JsonChatRoom.from(thisRoom));
 
             TreeSet<String> usernamesPresent = room.getUsernamesPresent();
-            List<ChatUser> roomUsers = room.getUsers();
+            ArrayList<JsonUser> usersForRoom = BreakerCache.getUsersForRoom(thisRoom);
             JsonRoomMembers roomMembers = new JsonRoomMembers();
-            for (ChatUser roomUser : roomUsers) {
-                JsonUser jsonUser = allUsers.get(roomUser.getUsername());
-                if (jsonUser == null) {
-                    jsonUser = JsonUser.fromUser(roomUser);
-                    jsonUser.online = usernamesPresent.contains(jsonUser.username);
-                    allUsers.put(roomUser.getUsername(), jsonUser);
-                }
+            for (JsonUser jsonUser : usersForRoom) {
+                jsonUser.online = usernamesPresent.contains(jsonUser.username);
+                allUsers.put(jsonUser.username, jsonUser);
                 if (jsonUser.modForRoom) {
                     roomMembers.mods.add(jsonUser.username);
                 } else if (jsonUser.online) {
@@ -112,7 +108,6 @@ public class WebSocket extends PreloadUserController {
                 } else {
                     roomMembers.offline.add(jsonUser.username);
                 }
-
             }
             members.put(thisRoom.getName(), roomMembers);
 
@@ -153,72 +148,6 @@ public class WebSocket extends PreloadUserController {
         Logger.info("Websocket join time for " + user.getUsername() + ": " + (System.currentTimeMillis() - startTime));
 
         render("index.html", user, userString, roomName, environment, roomsString, usersString, membersString, messagesString);
-    }
-
-    public static void roomOld(String roomName) {
-        ChatUser user = connected();
-        ChatRoom room = null;
-        if (roomName != null) {
-            room = ChatRoom.findOrCreateForName(roomName);
-            if (!room.isOpen()) {
-                Logger.info("Room "+roomName+" not open, directing to room wait page.");
-                Application.roomWait(roomName, null);
-                return;
-            }
-        }
-
-        if (user == null) {
-            user = ChatUser.findOrCreate(Constants.USERNAME_GUEST);
-            try {
-                user.joinChatRoom(room);
-            } catch (ChatUser.UserBannedException e) {
-                Logger.error("Preview user banned.");
-            }
-            setUserInSession(user);
-        }
-
-        List<ChatUserRoomJoin> chatRoomJoins = user.getChatRoomJoins();
-        if (roomName == null || room == null) {
-            if (chatRoomJoins.size() == 0) {
-                room = ChatRoom.findOrCreateForName(Constants.CHATROOM_DEFAULT);
-                try {
-                    user.joinChatRoom(room);
-                } catch (ChatUser.UserBannedException e) {
-                    // todo show message that they're banned
-                    Application.index();
-                }
-            }
-        } else {
-            try {
-                user.joinChatRoom(room);
-            } catch (ChatUser.UserBannedException e) {
-                // todo show message that they're banned
-                Application.index();
-            }
-        }
-
-        // Links to other suggested rooms
-        List<ChatRoom> activeRooms = new ArrayList<ChatRoom>();
-        {
-            ChatRoom breakerapp = ChatRoom.findOrCreateForName("breakerapp");
-            if (!existsInJoins(chatRoomJoins, breakerapp)) {
-                activeRooms.add(breakerapp);
-            }
-        }
-        {
-            ChatRoom breakerapp = ChatRoom.findOrCreateForName("SideProject");
-            if (!existsInJoins(chatRoomJoins, breakerapp)) {
-                activeRooms.add(breakerapp);
-            }
-        }
-        {
-            ChatRoom breakerapp = ChatRoom.findOrCreateForName("webdev");
-            if (!existsInJoins(chatRoomJoins, breakerapp)) {
-                activeRooms.add(breakerapp);
-            }
-        }
-
-        render("WebSocket/room3.html", user, roomName, activeRooms);
     }
 
     private static boolean existsInJoins(List<ChatUserRoomJoin> joins, ChatRoom room) {

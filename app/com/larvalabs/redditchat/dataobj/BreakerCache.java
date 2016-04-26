@@ -3,6 +3,7 @@ package com.larvalabs.redditchat.dataobj;
 import com.larvalabs.redditchat.Constants;
 import com.larvalabs.redditchat.realtime.ChatRoomStream;
 import models.ChatRoom;
+import models.ChatUser;
 import models.Message;
 import play.Logger;
 import play.cache.Cache;
@@ -18,8 +19,10 @@ import java.util.List;
 public class BreakerCache {
 
     private static HashMap<String, ArrayList<JsonMessage>> messageCache = new HashMap<String, ArrayList<JsonMessage>>();
+    private static HashMap<String, ArrayList<JsonUser>> userCache = new HashMap<String, ArrayList<JsonUser>>();
 
     private static final String KEY_MESSAGES = "messages-";
+    private static final String KEY_USER = "user-";
 
     private static String getMessagesKey(String roomName) {
         return KEY_MESSAGES + roomName;
@@ -47,10 +50,48 @@ public class BreakerCache {
         return roomMessages;
     }
 
+    public static void clearUsersCache(String roomName) {
+        userCache.remove(roomName);
+    }
+
+    public static ArrayList<JsonUser> getUsersForRoom(ChatRoom room) {
+        ArrayList<JsonUser> usersForRoom = userCache.get(room.getName());
+        if (usersForRoom == null) {
+            Logger.info("Cache miss userlist for " + room.getName());
+            List<ChatUser> roomUsers = room.getUsers();
+            usersForRoom = new ArrayList<JsonUser>();
+            for (ChatUser roomUser : roomUsers) {
+                JsonUser jsonUser = JsonUser.fromUser(roomUser);
+                usersForRoom.add(jsonUser);
+            }
+            userCache.put(room.getName(), usersForRoom);
+        } else {
+            Logger.info("Cache hit userlist for " + room.getName());
+        }
+        return usersForRoom;
+    }
+
     public static void handleEvent(ChatRoomStream.Event event) {
         if (event instanceof ChatRoomStream.Message) {
             ChatRoomStream.Message messageEvent = (ChatRoomStream.Message) event;
             clearMessagesCache(messageEvent.room.name);
+        } else if (event instanceof ChatRoomStream.Join) {
+            ChatRoomStream.Join joinEvent = (ChatRoomStream.Join) event;
+            if (userCache.containsKey(joinEvent.room.name)) {
+                ArrayList<JsonUser> jsonUsers = userCache.get(joinEvent.room.name);
+                boolean found = false;
+                for (JsonUser jsonUser : jsonUsers) {
+                    if (jsonUser.username.equals(joinEvent.user.username)) {
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    Logger.info("Clearing room member cache because new user joined: " + joinEvent.user.username);
+                    clearUsersCache(joinEvent.room.name);
+                }
+            }
         }
     }
 }
