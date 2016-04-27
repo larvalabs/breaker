@@ -26,23 +26,27 @@ export default class ChatMessage extends Component {
     if(props.user.get('username') == 'mathent') {
       return Immutable.fromJS({
         nba: {
-          flair_text: "[CLE] LeBron James",
-          flair_css_class: "Cavaliers1"
+          flairText: "[CLE] LeBron James",
+          flairCss: "Cavaliers1",
+          flairPosition: "left"
         },
         breakerapp: {
-          flair_text: "Dev",
-          flair_css_class: ""
+          flairText: "Dev",
+          flairCss: "",
+          flairPosition: "left"
         }
       })
     } else if (props.user.get('username') == 'rickiibeta') {
       return Immutable.fromJS({
         nba: {
-          flair_text: "[LAL] Nick Van Exel",
-          flair_css_class: "Lakers2"
+          flairText: "[LAL] Nick Van Exel",
+          flairCss: "Lakers2",
+          flairPosition: "right"
         },
         breakerapp: {
-          flair_text: "Some user flair",
-          flair_css_class: ""
+          flairText: "Some user flair",
+          flairCss: "",
+          flairPosition: "right"
         }
       })
     }
@@ -56,7 +60,8 @@ export default class ChatMessage extends Component {
       return null;
     }
 
-    return <span className={`user-flair flair flair-${flairSettings.get('flair_css_class')}`} title={flairSettings.get('flair_text')}>{flairSettings.get('flair_text')}</span>
+    let classes = `user-flair-${flairSettings.get('flairPosition', 'right')} flair flair-${flairSettings.get('flairCss')}`;
+    return <span className={classes} title={flairSettings.get('flairText')}>{flairSettings.get('flairText')}</span>
   }
   renderUsername() {
     let modClass = this.props.user.get('modForRoom') ? 'text-md text-primary-dker' : 'text-md text-dark-dker';

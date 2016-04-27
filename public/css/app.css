@@ -5221,8 +5221,13 @@ li.chat-message-root .message-body, li.chat-message-short .message-body, li.chat
   margin-top: 0px;
 }
 
-.user-flair {
+.user-flair-right {
   margin-left: 1em;
+}
+
+.user-flair-left {
+  float: left;
+  margin-right: 1em;
 }
 /* Autocomplete styles */
 
