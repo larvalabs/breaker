@@ -38,18 +38,21 @@ class ChatBox extends Component {
   renderThreadMessage(props, message, previous){
     if(message.get('type') === "servermessage"){
       return <ChatServerMessage key={message.get('uuid')}
-                                message={message} />
+                                message={message}
+                                roomName={props.roomName}/>
     }
     
     if(previous && previous.get('username') === message.get('username')){
       return <ChatShortMessage key={message.get('uuid')}
                                message={message}
-                               user={props.users.get(message.get('username'))}/>
+                               user={props.users.get(message.get('username'))}
+                               roomName={props.roomName}/>
     }
 
     return <ChatMessage key={message.get('uuid')}
                         message={message}
-                        user={props.users.get(message.get('username'))}/>
+                        user={props.users.get(message.get('username'))}
+                        roomName={props.roomName}/>
   }
 
   renderThread(props) {

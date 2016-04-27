@@ -26,6 +26,10 @@ public class ChatUserRoomJoin extends Model {
     public long lastSeenMessageId;
     public long lastSeenMessageTime;
 
+    public String flairText;
+    public String flairCss;
+    public String flairPosition;
+
     public ChatUserRoomJoin(ChatUser user, ChatRoom room) {
         this.user = user;
         this.room = room;
@@ -62,6 +66,30 @@ public class ChatUserRoomJoin extends Model {
 
     public void setLastSeenMessageTime(long lastSeenMessageTime) {
         this.lastSeenMessageTime = lastSeenMessageTime;
+    }
+
+    public String getFlairText() {
+        return flairText;
+    }
+
+    public void setFlairText(String flairText) {
+        this.flairText = flairText;
+    }
+
+    public String getFlairCss() {
+        return flairCss;
+    }
+
+    public void setFlairCss(String flairCss) {
+        this.flairCss = flairCss;
+    }
+
+    public String getFlairPosition() {
+        return flairPosition;
+    }
+
+    public void setFlairPosition(String flairPosition) {
+        this.flairPosition = flairPosition;
     }
 
     ///

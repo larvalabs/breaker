@@ -12,7 +12,10 @@ body {
   -webkit-font-smoothing: antialiased;
   line-height: 1.42857143;
   color: #58666e;
-  background-color: transparent;
+  margin: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  background-color: transparent !important;
 }
 
 *:focus {
@@ -5218,6 +5221,14 @@ li.chat-message-root .message-body, li.chat-message-short .message-body, li.chat
   margin-top: 0px;
 }
 
+.user-flair-right {
+  margin-left: 1em;
+}
+
+.user-flair-left {
+  float: left;
+  margin-right: 1em;
+}
 /* Autocomplete styles */
 
 .suggestionsContainer {

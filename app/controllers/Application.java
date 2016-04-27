@@ -4,6 +4,8 @@ import com.google.gson.JsonObject;
 import com.larvalabs.redditchat.dataobj.JsonUserSearch;
 import com.larvalabs.redditchat.util.RedditUtil;
 import com.larvalabs.redditchat.util.Util;
+import jobs.UpdateAllUsersFromRedditRecurringJob;
+import jobs.UpdateUserFromRedditJob;
 import models.ChatRoom;
 import models.ChatUser;
 import models.ChatUserRoomJoin;
@@ -31,7 +33,7 @@ public class Application extends PreloadUserController {
     public static final String REDDIT_CLIENTID = Play.configuration.getProperty("oauth.reddit.clientid");
     public static final String REDDIT_SECRET = Play.configuration.getProperty("oauth.reddit.secret");
     public static final String REDDIT_CALLBACK = Play.configuration.getProperty("oauth.reddit.callbackurl");
-    public static final String REDDIT_SCOPE = WS.encode("identity,mysubreddits");
+    public static final String REDDIT_SCOPE = WS.encode("identity,mysubreddits,flair");
     // https://ssl.reddit.com/api/v1/authorize.compact
     public static final String REDDIT_AUTHORIZATION_URL = "https://www.reddit.com/api/v1/authorize?client_id=" + REDDIT_CLIENTID + "&response_type=code" +
             "&state=iuknjvdihu&redirect_uri=" + REDDIT_CALLBACK + "&duration=permanent&scope=" + REDDIT_SCOPE;
@@ -253,6 +255,8 @@ public class Application extends PreloadUserController {
                 user.username = username;
                 user.accessToken = tokens.access;
                 user.refreshToken = tokens.refresh;
+                Logger.info("Access token: "+tokens.access);
+                Logger.info("Refresh token: "+tokens.refresh);
 
                 user.linkKarma = me.get("link_karma").getAsLong();
                 user.commentKarma = me.get("comment_karma").getAsLong();
@@ -298,7 +302,7 @@ public class Application extends PreloadUserController {
         params.put("code", accessCode);
         HashMap<String, String> headers = getOauthHeaders(accessCode);
         String authStr = REDDIT_CLIENTID + ":" + REDDIT_SECRET;
-        headers.put("Authorization", "Basic " + Base64.encodeBase64String(authStr.getBytes()));
+        headers.put("Authorization", "Basic " + Base64.encodeBase64String((REDDIT_CLIENTID + ":" + REDDIT_SECRET).getBytes()));
 
         WS.HttpResponse response = WS.url(REDDIT_TOKEN_URL).headers(headers).params(params).post();
         JsonObject jsonObject = response.getJson().getAsJsonObject();
@@ -420,5 +424,10 @@ public class Application extends PreloadUserController {
     public static void testPM() throws ApiException {
         RedditUtil.sendPrivateMessageFromBot("megamatt2000", "Server test PM", "Testing as of time " + System.currentTimeMillis());
         renderText("ok");
+    }
+
+    public static void testRedditUpdate() {
+        new UpdateAllUsersFromRedditRecurringJob().now();
+        renderText("OK");
     }
 }

@@ -1,6 +1,7 @@
 package models;
 
 import com.larvalabs.redditchat.Constants;
+import com.larvalabs.redditchat.dataobj.JsonFlair;
 import com.larvalabs.redditchat.util.Util;
 import org.apache.commons.lang.StringUtils;
 import play.Logger;
@@ -541,6 +542,15 @@ public class ChatUser extends Model {
             message.setDeleted(true);
             message.save();
         }
+    }
+
+    public HashMap<String, JsonFlair> getFlairAsJson() {
+        HashMap<String, JsonFlair> map = new HashMap<>();
+        List<ChatUserRoomJoin> joins = ChatUserRoomJoin.findByUser(this);
+        for (ChatUserRoomJoin join : joins) {
+            map.put(join.getRoom().getName(), new JsonFlair(join.flairText, join.flairCss, join.flairPosition));
+        }
+        return map;
     }
 
     public class UserBannedException extends Exception {

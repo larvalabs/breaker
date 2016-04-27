@@ -18,16 +18,25 @@ export default class ChatMessage extends Component {
     </a>
   }
   renderTime() {
-    // TODO: Timeago
     return <div className="pull-right text-sm text-muted">
       <TimeAgo date={new Date(this.props.message.get('createDateLongUTC')).toISOString()} />
     </div>
+  }
+  renderFlair() {
+    let flairSettings = this.props.user.getIn(['flair', this.props.roomName]);
+    if(!flairSettings || !flairSettings.get('flairText')){
+      return null;
+    }
+
+    let classes = `user-flair-${flairSettings.get('flairPosition', 'right')} flair flair-${flairSettings.get('flairCss')}`;
+    return <span className={classes} title={flairSettings.get('flairText')}>{flairSettings.get('flairText')}</span>
   }
   renderUsername() {
     let modClass = this.props.user.get('modForRoom') ? 'text-md text-primary-dker' : 'text-md text-dark-dker';
     return <div>
         <a className={modClass} href={`https://reddit.com/u/${this.props.user.get('username')}`} target="_blank">
           {this.props.user.get('username')}</a>
+      {this.renderFlair()}
       </div>
 
   }
