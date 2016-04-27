@@ -27,19 +27,19 @@ public class BreakerRedditClient{
     public BreakerRedditClient(){
     }
 
-    public JSONObject getRedditUserFlairForSubreddit(ChatUser chatUser, String subreddit) throws Exception{
+    public JSONObject getRedditUserFlairForSubreddit(ChatUser chatUser, String subreddit) throws RedditRequestError{
         return postJsonForUser(chatUser, MessageFormat.format(USER_FLAIR_URL, subreddit));
     }
 
-    private JSONObject getJsonForUser(ChatUser chatUser, String endpoint) throws Exception{
+    private JSONObject getJsonForUser(ChatUser chatUser, String endpoint) throws RedditRequestError{
         return fetchJsonForUser(chatUser, endpoint, "GET", true);
     }
 
-    private JSONObject postJsonForUser(ChatUser chatUser, String endpoint) throws Exception{
+    private JSONObject postJsonForUser(ChatUser chatUser, String endpoint) throws RedditRequestError{
         return fetchJsonForUser(chatUser, endpoint, "POST", true);
     }
 
-    private JSONObject fetchJsonForUser(ChatUser chatUser, String endpoint, String method, boolean refreshToken) throws Exception{
+    private JSONObject fetchJsonForUser(ChatUser chatUser, String endpoint, String method, boolean refreshToken) throws RedditRequestError{
        try{
            return fetchJson(endpoint, method, chatUser.accessToken);
        } catch (TokenRefreshNeeded t){
@@ -48,24 +48,24 @@ public class BreakerRedditClient{
                chatUser.save();
                return fetchJsonForUser(chatUser, endpoint, method, false);
            } else {
-               throw new Exception("Not able to auth");
+               throw new RedditRequestError();
            }
        }
     }
 
-    private JSONObject fetchJson(String endpoint, String method, String bearer) throws TokenRefreshNeeded{
+    private JSONObject fetchJson(String endpoint, String method, String bearer) throws RedditRequestError{
         return fetchJson(endpoint, method, bearer, null);
     }
 
-    private JSONObject getJson(String endpoint, String method, String bearer, HashMap<String, String> params) throws TokenRefreshNeeded{
+    private JSONObject getJson(String endpoint, String method, String bearer, HashMap<String, String> params) throws RedditRequestError{
         return fetchJson(endpoint, "GET", bearer, params);
     }
 
-    private JSONObject postJson(String endpoint, String bearer, HashMap<String, String> params) throws TokenRefreshNeeded{
+    private JSONObject postJson(String endpoint, String bearer, HashMap<String, String> params) throws RedditRequestError{
         return fetchJson(endpoint, "POST", bearer, params);
     }
 
-    private JSONObject fetchJson(String endpoint, String method, String bearer, HashMap<String, String> params) throws TokenRefreshNeeded{
+    private JSONObject fetchJson(String endpoint, String method, String bearer, HashMap<String, String> params) throws RedditRequestError{
         try{
             final HttpURLConnection conn = (HttpURLConnection) new URL(endpoint).openConnection();
 
@@ -96,7 +96,9 @@ public class BreakerRedditClient{
 
             if(code == 401){
                 throw new TokenRefreshNeeded();
-            } else if(code != 200){
+            } if (code == 403) {
+                throw new InvalidAuthScope();
+            } if(code != 200){
                 throw new Exception("Not 200");
             }
 
@@ -113,7 +115,7 @@ public class BreakerRedditClient{
         return null;
     }
 
-    public String refreshToken(String refreshToken) throws Exception{
+    public String refreshToken(String refreshToken){
         final HashMap<String, String> params = new HashMap<String, String>();
         params.put("grant_type", "refresh_token");
         params.put("refresh_token", refreshToken);
