@@ -263,6 +263,8 @@ public class Application extends PreloadUserController {
                 user.lastResponseApiMe = me.toString();
                 user.save();
 
+                new UpdateUserFromRedditJob(user.getId()).now();
+
                 setUserInSession(user);
             }
 

@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Created by matt on 4/27/16.
  */
-//@Every("10s")
+@Every("1h")
 public class UpdateAllUsersFromRedditRecurringJob extends Job {
 
     @Override
