@@ -5,7 +5,14 @@
         <title></title>
         <meta http-equiv="Content-Type" content="text/html; charset=${_response_encoding}">
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-        <link id="subreddit-style" rel="stylesheet" href="" type="text/css"/>
+        %{
+            for(room in rooms) {
+        }%
+            <link rel="alternate stylesheet" href="https://reddit.com/r/${room.getValue().getName()}/stylesheet.css" type="text/css" disabled="${room.getValue().getName() == roomName}" title="${room.getValue().getName()}"/>
+        %{
+            }
+        }%
+
 
         <link rel="stylesheet" href="@{'/public/libs/assets/animate.css/animate.css'}" type="text/css"/>
         <link rel="stylesheet" href="@{'/public/libs/assets/font-awesome/css/font-awesome.min.css'}" type="text/css"/>
