@@ -2,6 +2,7 @@ package jobs;
 
 import com.amazonaws.util.json.JSONException;
 import com.amazonaws.util.json.JSONObject;
+import com.larvalabs.redditchat.dataobj.BreakerCache;
 import models.ChatUser;
 import models.ChatUserRoomJoin;
 import play.Logger;
@@ -20,9 +21,15 @@ import java.util.List;
 public class UpdateUserFromRedditJob extends Job {
 
     private long userId;
+    private boolean clearCacheWhenDone = false;
 
     public UpdateUserFromRedditJob(long userId) {
         this.userId = userId;
+    }
+
+    public UpdateUserFromRedditJob(long userId, boolean clearCacheWhenDone) {
+        this.userId = userId;
+        this.clearCacheWhenDone = clearCacheWhenDone;
     }
 
     @Override
@@ -55,5 +62,8 @@ public class UpdateUserFromRedditJob extends Job {
             }
         }
 
+        if (clearCacheWhenDone) {
+            BreakerCache.clearUsersCacheAll();
+        }
     }
 }

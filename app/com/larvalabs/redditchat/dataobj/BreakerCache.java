@@ -50,6 +50,11 @@ public class BreakerCache {
         return roomMessages;
     }
 
+    public static void clearUsersCacheAll() {
+        Logger.info("Clearing all user cache values.");
+        userCache.clear();
+    }
+
     public static void clearUsersCache(String roomName) {
         userCache.remove(roomName);
     }
@@ -94,4 +99,5 @@ public class BreakerCache {
             }
         }
     }
+
 }

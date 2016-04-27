@@ -18,11 +18,15 @@ public class UpdateAllUsersFromRedditRecurringJob extends Job {
         Logger.info("Queueing user update jobs...");
         List<ChatUser> allUsers = ChatUser.findAll();
         int count = 0;
-        for (ChatUser user : allUsers) {
-            if (user.isNotBanned()) {
-                new UpdateUserFromRedditJob(user.getId()).now();
-                count++;
+        for (int i = 0; i < allUsers.size(); i++) {
+            ChatUser user = allUsers.get(i);
+            boolean clearCache = false;
+            if (i == allUsers.size() - 1) {
+                // todo this isn't ideal because the jobs get run out of order, will think about something better
+                clearCache = true;
             }
+            new UpdateUserFromRedditJob(user.getId(), clearCache).now();
+            count++;
         }
         Logger.info("Queued " + count + " jobs.");
     }
