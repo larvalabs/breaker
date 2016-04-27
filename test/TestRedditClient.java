@@ -1,3 +1,4 @@
+import com.amazonaws.util.json.JSONObject;
 import models.ChatUser;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,6 +33,22 @@ public class TestRedditClient extends UnitTest {
 
         Logger.info("Received new token: " + newToken);
         assertNotNull(newToken);
+
+    }
+
+    @Test
+    public void testGetFlair() throws Exception {
+        ChatUser chatUser = new ChatUser("1");
+        chatUser.username = "megamatt2000";
+        chatUser.accessToken = "38478176-8ryTZfcMXEw5zYx0qkRwY7duRYk";
+        chatUser.refreshToken = "38478176-tzgBE8fUaa5Rth7_cYkmbPKhLDk";
+
+        // Refresh access token for user
+        BreakerRedditClient breakerRedditClient = new BreakerRedditClient();
+        JSONObject hockeyFlair = breakerRedditClient.getRedditUserFlairForSubreddit(chatUser, "hockey");
+
+        Logger.info("Received flair: " + hockeyFlair.toString());
+
 
     }
 }

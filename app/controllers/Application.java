@@ -4,6 +4,8 @@ import com.google.gson.JsonObject;
 import com.larvalabs.redditchat.dataobj.JsonUserSearch;
 import com.larvalabs.redditchat.util.RedditUtil;
 import com.larvalabs.redditchat.util.Util;
+import jobs.UpdateAllUsersFromRedditRecurringJob;
+import jobs.UpdateUserFromRedditJob;
 import models.ChatRoom;
 import models.ChatUser;
 import models.ChatUserRoomJoin;
@@ -422,5 +424,10 @@ public class Application extends PreloadUserController {
     public static void testPM() throws ApiException {
         RedditUtil.sendPrivateMessageFromBot("megamatt2000", "Server test PM", "Testing as of time " + System.currentTimeMillis());
         renderText("ok");
+    }
+
+    public static void testRedditUpdate() {
+        new UpdateAllUsersFromRedditRecurringJob().now();
+        renderText("OK");
     }
 }

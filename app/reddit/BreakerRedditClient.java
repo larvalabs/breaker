@@ -99,7 +99,7 @@ public class BreakerRedditClient{
             } if (code == 403) {
                 throw new InvalidAuthScope();
             } if(code != 200){
-                throw new Exception("Not 200");
+                throw new RedditRequestError("Not 200");
             }
 
             String jsonStr = IOUtils.toString(conn.getInputStream());
@@ -108,8 +108,6 @@ public class BreakerRedditClient{
             e.printStackTrace();
         } catch (TokenRefreshNeeded t){
             throw t;
-        } catch (Exception e){
-            e.printStackTrace();
         }
 
         return null;
