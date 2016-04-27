@@ -51,6 +51,9 @@ public class WebSocket extends PreloadUserController {
                 Application.roomWait(roomName, null);
                 return;
             }
+        } else {
+            redirect("/c/" + Constants.CHATROOM_DEFAULT);
+            return;
         }
 
         if (user == null) {
