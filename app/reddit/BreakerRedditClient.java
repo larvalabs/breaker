@@ -5,14 +5,11 @@ import com.amazonaws.util.json.JSONObject;
 import com.google.gson.JsonElement;
 import com.larvalabs.redditchat.Constants;
 import models.ChatUser;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
-import org.w3c.dom.Document;
 import play.Logger;
 import play.libs.WS;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -47,8 +44,8 @@ public class BreakerRedditClient{
            return fetchJson(endpoint, method, chatUser.accessToken);
        } catch (TokenRefreshNeeded t){
            if (refreshToken){
-               String newToken = refreshToken(chatUser.refreshToken);
-               // TODO: Save new token
+               chatUser.accessToken = refreshToken(chatUser.refreshToken);
+               chatUser.save();
                return fetchJsonForUser(chatUser, endpoint, method, false);
            } else {
                throw new Exception("Not able to auth");
@@ -116,59 +113,10 @@ public class BreakerRedditClient{
         return null;
     }
 
-    private JSONObject postRefreshToken(String endpoint, HashMap<String, String> params) throws Exception {
-        try{
-            String query = getQuery(params);
-            final HttpURLConnection conn = (HttpURLConnection) new URL(endpoint + "?" + query).openConnection();
-
-            String userCredentials = "***REMOVED***:***REMOVED***";
-//            new String(Base64.encodeBase64("".getBytes())));
-            conn.setRequestProperty("Authorization", "Basic " + new String(new Base64().encode(userCredentials.getBytes())));
-
-            // set user agent to avoid throttling
-            conn.setRequestProperty("User-Agent", this.BREAKER_USER_AGENT);
-            conn.setRequestMethod("POST");
-            conn.setRequestProperty("Content-Length", "0");
-
-            conn.connect();
-
-            int code = conn.getResponseCode();
-
-            if(code == 401){
-                throw new TokenRefreshNeeded();
-            } else if(code != 200){
-                throw new Exception("Not 200");
-            }
-
-            String jsonStr = IOUtils.toString(conn.getInputStream());
-            return new JSONObject(jsonStr);
-        } catch (IOException | JSONException e){
-            e.printStackTrace();
-        } catch (TokenRefreshNeeded t){
-            throw t;
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
     public String refreshToken(String refreshToken) throws Exception{
         final HashMap<String, String> params = new HashMap<String, String>();
         params.put("grant_type", "refresh_token");
         params.put("refresh_token", refreshToken);
-        try{
-            final JSONObject response = postRefreshToken(this.REFRESH_TOKEN_URL, params);
-            return (String) response.get("access_token");
-        } catch (TokenRefreshNeeded t){
-            throw new Exception("I don't know man");
-        }
-    }
-
-    public String refreshTokenWS(String refreshToken) throws Exception{
-        final HashMap<String, String> params = new HashMap<String, String>();
-        params.put("grant_type", "refresh_token");
-        params.put("refresh_token", "9567379-7ARi2_GnU49mCpJUIzbGBmrCKpk");
 
         WS.HttpResponse res = WS.url("https://www.reddit.com/api/v1/access_token")
                 .setHeader("Content-Type", "application/x-www-form-urlencoded")

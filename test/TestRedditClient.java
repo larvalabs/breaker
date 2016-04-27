@@ -28,7 +28,7 @@ public class TestRedditClient extends UnitTest {
 
         // Refresh access token for user
         BreakerRedditClient breakerRedditClient = new BreakerRedditClient();
-        String newToken = breakerRedditClient.refreshTokenWS(chatUser.refreshToken);
+        String newToken = breakerRedditClient.refreshToken(chatUser.refreshToken);
 
         Logger.info("Received new token: " + newToken);
         assertNotNull(newToken);
