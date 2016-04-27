@@ -17,8 +17,12 @@ class ChatDocumentTitle extends Component {
     this.changeSubredditStylesheet(nextProps.roomName)
   }
   changeSubredditStylesheet(roomName){
-    document.getElementById("subreddit-style")
-            .setAttribute("href", `https://www.reddit.com/r/${roomName}/stylesheet.css`);
+    var i, link_tag ;
+    for (i = 0, link_tag = document.getElementsByTagName("link"); i < link_tag.length ; i++ ) {
+      if ((link_tag[i].rel.indexOf("alternate") != -1) && link_tag[i].title) {
+        link_tag[i].disabled = link_tag[i].title != roomName;
+      }
+    }
   }
   render() {
     return <DocumentTitle title={this.getTitle(this.props)}>

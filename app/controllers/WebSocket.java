@@ -13,7 +13,6 @@ import jobs.SaveNewMessageJob;
 import models.ChatRoom;
 import models.ChatUser;
 import models.ChatUserRoomJoin;
-import models.Message;
 import play.Logger;
 import play.Play;
 import play.libs.F.EventStream;
@@ -152,7 +151,7 @@ public class WebSocket extends PreloadUserController {
 
         Logger.info("Websocket join time for " + user.getUsername() + ": " + (System.currentTimeMillis() - startTime));
 
-        render("index.html", user, userString, roomName, environment, roomsString, usersString, membersString, messagesString);
+        render("index.html", user, rooms, userString, roomName, environment, roomsString, usersString, membersString, messagesString);
     }
 
     public static void roomOld(String roomName) {
