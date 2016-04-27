@@ -7,7 +7,7 @@ function users(state=Immutable.Map(), action) {
   switch (action.type) {
     case (socketTypes.SOCK_LEAVE):
     case (socketTypes.SOCK_JOIN): {
-      return state.set(action.message.user.username, Immutable.Map(action.message.user))
+      return state.set(action.message.user.username, Immutable.fromJS(action.message.user))
     }
     case (socketTypes.SOCK_MESSAGE): {
       return state.set(action.message.user.username, Immutable.fromJS(action.message.user));

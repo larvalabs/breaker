@@ -22,40 +22,8 @@ export default class ChatMessage extends Component {
       <TimeAgo date={new Date(this.props.message.get('createDateLongUTC')).toISOString()} />
     </div>
   }
-  getMockFlairForUser(props) {
-    if(props.user.get('username') == 'mathent') {
-      return Immutable.fromJS({
-        nba: {
-          flairText: "[CLE] LeBron James",
-          flairCss: "Cavaliers1",
-          flairPosition: "left"
-        },
-        breakerapp: {
-          flairText: "Dev",
-          flairCss: "",
-          flairPosition: "left"
-        }
-      })
-    } else if (props.user.get('username') == 'rickiibeta') {
-      return Immutable.fromJS({
-        nba: {
-          flairText: "[LAL] Nick Van Exel",
-          flairCss: "Lakers2",
-          flairPosition: "right"
-        },
-        breakerapp: {
-          flairText: "Some user flair",
-          flairCss: "",
-          flairPosition: "right"
-        }
-      })
-    }
-
-    return this.props.user.get('flair', Immutable.Map());
-  }
   renderFlair() {
-    let flairDoc = this.getMockFlairForUser(this.props);
-    let flairSettings = flairDoc.get(this.props.roomName);
+    let flairSettings = this.props.user.getIn(['flair', this.props.roomName]);
     if(!flairSettings){
       return null;
     }
