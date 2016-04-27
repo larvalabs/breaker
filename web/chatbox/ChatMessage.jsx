@@ -18,16 +18,52 @@ export default class ChatMessage extends Component {
     </a>
   }
   renderTime() {
-    // TODO: Timeago
     return <div className="pull-right text-sm text-muted">
       <TimeAgo date={new Date(this.props.message.get('createDateLongUTC')).toISOString()} />
     </div>
+  }
+  getMockFlairForUser(props) {
+    if(props.user.get('username') == 'mathent') {
+      return Immutable.fromJS({
+        nba: {
+          flair_text: "[CLE] LeBron James",
+          flair_css_class: "Cavaliers1"
+        },
+        breakerapp: {
+          flair_text: "Dev",
+          flair_css_class: ""
+        }
+      })
+    } else if (props.user.get('username') == 'rickiibeta') {
+      return Immutable.fromJS({
+        nba: {
+          flair_text: "[LAL] Nick Van Exel",
+          flair_css_class: "Lakers2"
+        },
+        breakerapp: {
+          flair_text: "Some user flair",
+          flair_css_class: ""
+        }
+      })
+    }
+
+    return this.props.user.get('flair', Immutable.Map());
+  }
+  renderFlair() {
+    let flairDoc = this.getMockFlairForUser(this.props);
+    let flairSettings = flairDoc.get(this.props.roomName);
+    if(!flairSettings){
+      return null;
+    }
+
+    return <span className={`user-flair flair flair-${flairSettings.get('flair_css_class')}`} title={flairSettings.get('flair_text')}>{flairSettings.get('flair_text')}</span>
   }
   renderUsername() {
     let modClass = this.props.user.get('modForRoom') ? 'text-md text-primary-dker' : 'text-md text-dark-dker';
     return <div>
         <a className={modClass} href={`https://reddit.com/u/${this.props.user.get('username')}`} target="_blank">
           {this.props.user.get('username')}</a>
+      {this.renderFlair()}
       </div>
 
   }

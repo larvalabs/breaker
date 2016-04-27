@@ -10,6 +10,16 @@ class ChatDocumentTitle extends Component {
 
     return `breaker`
   }
+  componentDidMount() {
+    this.changeSubredditStylesheet(this.props.roomName)
+  }
+  componentWillReceiveProps(nextProps) {
+    this.changeSubredditStylesheet(nextProps.roomName)
+  }
+  changeSubredditStylesheet(roomName){
+    document.getElementById("subreddit-style")
+            .setAttribute("href", `https://www.reddit.com/r/${roomName}/stylesheet.css`);
+  }
   render() {
     return <DocumentTitle title={this.getTitle(this.props)}>
       {this.props.children}
@@ -19,7 +29,8 @@ class ChatDocumentTitle extends Component {
 
 function mapStateToProps(state) {
   return {
-    unreadCount: state.getIn(['unreadCounts', state.getIn(['initial', 'roomName'])])
+    unreadCount: state.getIn(['unreadCounts', state.getIn(['initial', 'roomName'])]),
+    roomName: state.getIn(['initial', 'roomName'])
   }
 }
 

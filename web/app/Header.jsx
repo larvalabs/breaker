@@ -97,7 +97,7 @@ export default React.createClass({
     }
   },
   render: function () {
-    return <header id="header" className="app-header navbar" role="menu">
+    return <header className="app-header navbar" role="menu">
 
       {this.renderBreakerLogoBox()}
 
