@@ -8,7 +8,7 @@ import reddit.BreakerRedditClient;
 /**
  * Created by matt on 1/5/16.
  */
-@OnApplicationStart
+//@OnApplicationStart
 public class UpdateUserJob extends Job {
 
     @Override

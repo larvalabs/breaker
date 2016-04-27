@@ -1,5 +1,8 @@
 package com.larvalabs.redditchat;
 
+import controllers.Application;
+import org.apache.commons.codec.binary.Base64;
+
 public class Constants {
 
     public static final String REDDIT_BASE_URL = "https://www.reddit.com";
@@ -60,4 +63,6 @@ public class Constants {
     public static final int USER_FLAG_THRESHOLD = 15;
 
     public static final int DEFAULT_MESSAGE_LIMIT = 20;
+
+    public static final String REDDIT_AUTH_STR = Base64.encodeBase64String((Application.REDDIT_CLIENTID + ":" + Application.REDDIT_SECRET).getBytes());
 }

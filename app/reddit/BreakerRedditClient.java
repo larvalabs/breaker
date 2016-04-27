@@ -3,10 +3,12 @@ package reddit;
 import com.amazonaws.util.json.JSONException;
 import com.amazonaws.util.json.JSONObject;
 import com.google.gson.JsonElement;
+import com.larvalabs.redditchat.Constants;
 import models.ChatUser;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.w3c.dom.Document;
+import play.Logger;
 import play.libs.WS;
 
 import java.io.IOException;
@@ -168,21 +170,23 @@ public class BreakerRedditClient{
         params.put("grant_type", "refresh_token");
         params.put("refresh_token", "9567379-7ARi2_GnU49mCpJUIzbGBmrCKpk");
 
-        WS.HttpResponse res = WS.url("https://oauth.reddit.com/api/v1/access_token?grant_type=refresh_token&refresh_token=9567379-7ARi2_GnU49mCpJUIzbGBmrCKpk")
-                                .setHeader("Content-Type", "application/x-www-form-urlencoded")
-                                .setHeader("User-Agent", this.BREAKER_USER_AGENT)
-                                .setHeader("Authorization", "Basic cEFQTk9xUjVkbUhNR3c6VjlUMU8ybUowNzVqT2FJZTFzZll6VVE5MzZN")
-                                .post();
+        WS.HttpResponse res = WS.url("https://www.reddit.com/api/v1/access_token")
+                .setHeader("Content-Type", "application/x-www-form-urlencoded")
+                .setHeader("User-Agent", this.BREAKER_USER_AGENT)
+                .setHeader("Authorization", "Basic " + Constants.REDDIT_AUTH_STR)
+                .setParameters(params)
+                .post();
 
         int status = res.getStatus();
-        String type = res.getContentType();
-
-        String content = res.getString();
-        Document xml = res.getXml();
-        JsonElement json = res.getJson();
-        InputStream is = res.getStream();
-
-        return "";
+        if (status == 200) {
+            String type = res.getContentType();
+//            String content = res.getString();
+            JsonElement json = res.getJson();
+            Logger.info("Received: " + json.toString());
+            return json.getAsJsonObject().get("access_token").getAsString();
+        } else {
+            return null;
+        }
     }
 
     private String getQuery(HashMap<String, String> params) throws UnsupportedEncodingException
