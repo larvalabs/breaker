@@ -2,11 +2,15 @@ package reddit;
 
 import com.amazonaws.util.json.JSONException;
 import com.amazonaws.util.json.JSONObject;
+import com.google.gson.JsonElement;
 import models.ChatUser;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
+import org.w3c.dom.Document;
+import play.libs.WS;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -81,7 +85,6 @@ public class BreakerRedditClient{
                 conn.setConnectTimeout(15000);
                 conn.setDoInput(true);
                 conn.setDoOutput(true);
-                conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
                 String query = getQuery(params);
                 conn.setRequestProperty("Content-Length", "" + Integer.toString(query.getBytes("UTF-8").length));
@@ -113,7 +116,8 @@ public class BreakerRedditClient{
 
     private JSONObject postRefreshToken(String endpoint, HashMap<String, String> params) throws Exception {
         try{
-            final HttpURLConnection conn = (HttpURLConnection) new URL(endpoint).openConnection();
+            String query = getQuery(params);
+            final HttpURLConnection conn = (HttpURLConnection) new URL(endpoint + "?" + query).openConnection();
 
             String userCredentials = "***REMOVED***:***REMOVED***";
 //            new String(Base64.encodeBase64("".getBytes())));
@@ -121,18 +125,8 @@ public class BreakerRedditClient{
 
             // set user agent to avoid throttling
             conn.setRequestProperty("User-Agent", this.BREAKER_USER_AGENT);
-
             conn.setRequestMethod("POST");
-
-            conn.setReadTimeout(10000);
-            conn.setConnectTimeout(15000);
-            conn.setDoInput(true);
-            conn.setDoOutput(true);
-            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-
-            String query = getQuery(params);
-            conn.setRequestProperty("Content-Length", "" + Integer.toString(query.getBytes("UTF-8").length));
-            conn.getOutputStream().write(query.getBytes());
+            conn.setRequestProperty("Content-Length", "0");
 
             conn.connect();
 
@@ -157,7 +151,7 @@ public class BreakerRedditClient{
         return null;
     }
 
-    private String refreshToken(String refreshToken) throws Exception{
+    public String refreshToken(String refreshToken) throws Exception{
         final HashMap<String, String> params = new HashMap<String, String>();
         params.put("grant_type", "refresh_token");
         params.put("refresh_token", refreshToken);
@@ -167,6 +161,28 @@ public class BreakerRedditClient{
         } catch (TokenRefreshNeeded t){
             throw new Exception("I don't know man");
         }
+    }
+
+    public String refreshTokenWS(String refreshToken) throws Exception{
+        final HashMap<String, String> params = new HashMap<String, String>();
+        params.put("grant_type", "refresh_token");
+        params.put("refresh_token", "9567379-7ARi2_GnU49mCpJUIzbGBmrCKpk");
+
+        WS.HttpResponse res = WS.url("https://oauth.reddit.com/api/v1/access_token?grant_type=refresh_token&refresh_token=9567379-7ARi2_GnU49mCpJUIzbGBmrCKpk")
+                                .setHeader("Content-Type", "application/x-www-form-urlencoded")
+                                .setHeader("User-Agent", this.BREAKER_USER_AGENT)
+                                .setHeader("Authorization", "Basic cEFQTk9xUjVkbUhNR3c6VjlUMU8ybUowNzVqT2FJZTFzZll6VVE5MzZN")
+                                .post();
+
+        int status = res.getStatus();
+        String type = res.getContentType();
+
+        String content = res.getString();
+        Document xml = res.getXml();
+        JsonElement json = res.getJson();
+        InputStream is = res.getStream();
+
+        return "";
     }
 
     private String getQuery(HashMap<String, String> params) throws UnsupportedEncodingException
@@ -191,19 +207,5 @@ public class BreakerRedditClient{
         }
 
         return result.toString();
-    }
-
-    public static void main(String[] args) throws Exception{
-        // Mock user
-        ChatUser chatUser = new ChatUser("1");
-        chatUser.username = "mathent";
-        chatUser.accessToken = "9567379-IQp3H3AeY0XM2ci-E5NzotmGMHU";
-        chatUser.refreshToken = "9567379-7ARi2_GnU49mCpJUIzbGBmrCKpk";
-
-        // Refresh access token for user
-        BreakerRedditClient breakerRedditClient = new BreakerRedditClient();
-        String newToken = breakerRedditClient.refreshToken(chatUser.refreshToken);
-
-        System.out.print(newToken);
     }
 }
