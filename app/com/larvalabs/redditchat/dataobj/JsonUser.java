@@ -24,6 +24,8 @@ public class JsonUser implements Serializable {
     public String statusMessage;
     public boolean bot;
 
+    public HashMap<String, JsonFlair> flair = new HashMap<>();
+
     // Optionally filled
     public String accessToken;
     public boolean online;
@@ -44,7 +46,8 @@ public class JsonUser implements Serializable {
     public JsonChatRoom[] developerForRooms;
 
     public JsonUser(long id, String username, String notificationPreference, Date lastSeen,
-                    long lastSeenLongUTC, long totalLikes, String profileImageUrl, String statusMessage, boolean bot) {
+                    long lastSeenLongUTC, long totalLikes, String profileImageUrl, String statusMessage, boolean bot,
+                    HashMap<String, JsonFlair> flair) {
         this.id = id;
         this.username = username;
         this.notificationPreference = notificationPreference;
@@ -54,12 +57,14 @@ public class JsonUser implements Serializable {
         this.profileImageUrl = profileImageUrl;
         this.statusMessage = statusMessage;
         this.bot = bot;
+        this.flair = flair;
     }
 
     public static JsonUser fromUser(ChatUser user) {
         return new JsonUser(user.getId(), user.username, user.notificationPreference,
                 user.getLastSeenDate(), user.getLastSeenDate().getTime(),
-                user.getLikeCount(), user.getProfileImageUrl(), user.getStatusMessage(), user.isBot());
+                user.getLikeCount(), user.getProfileImageUrl(), user.getStatusMessage(), user.isBot(),
+                user.getFlairAsJson());
     }
 
     public static JsonUser fromUserForRoom(ChatUser user, ChatRoom room) {
