@@ -24,7 +24,7 @@ export default class ChatMessage extends Component {
   }
   renderFlair() {
     let flairSettings = this.props.user.getIn(['flair', this.props.roomName]);
-    if(!flairSettings){
+    if(!flairSettings || !flairSettings.get('flairText')){
       return null;
     }
 
