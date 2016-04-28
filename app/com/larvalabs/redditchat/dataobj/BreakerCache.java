@@ -61,7 +61,7 @@ public class BreakerCache {
 
     public static ArrayList<JsonUser> getUsersForRoom(ChatRoom room) {
         ArrayList<JsonUser> usersForRoom = userCache.get(room.getName());
-        if (usersForRoom == null) {
+        if (usersForRoom == null || true) {
             Logger.info("Cache miss userlist for " + room.getName());
             List<ChatUser> roomUsers = room.getUsers();
             usersForRoom = new ArrayList<JsonUser>();

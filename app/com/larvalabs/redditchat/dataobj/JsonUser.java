@@ -67,6 +67,13 @@ public class JsonUser implements Serializable {
                 user.getFlairAsJson());
     }
 
+    public static JsonUser fromUserNoFlairLoad(ChatUser user) {
+        return new JsonUser(user.getId(), user.username, user.notificationPreference,
+                user.getLastSeenDate(), user.getLastSeenDate().getTime(),
+                user.getLikeCount(), user.getProfileImageUrl(), user.getStatusMessage(), user.isBot(),
+                new HashMap<String, JsonFlair>());
+    }
+
     public static JsonUser fromUserForRoom(ChatUser user, ChatRoom room) {
         return fromUserForRoom(user, room, null);
     }
@@ -93,6 +100,10 @@ public class JsonUser implements Serializable {
             jsonUser.mentions = JsonMessage.convert(user.getMentioned(20), user, JsonMessage.ListType.MENTIONS);
         }
         return jsonUser;
+    }
+
+    public void addFlair(String roomName, JsonFlair flairObj) {
+        flair.put(roomName, flairObj);
     }
 
     // todo Convert this role stuff over to visitor, user, moderator

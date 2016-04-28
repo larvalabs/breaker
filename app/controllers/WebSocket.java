@@ -15,6 +15,7 @@ import models.ChatUser;
 import models.ChatUserRoomJoin;
 import play.Logger;
 import play.Play;
+import play.db.jpa.JPA;
 import play.libs.F.EventStream;
 import play.libs.F.Promise;
 import play.mvc.Http.WebSocketClose;
@@ -22,6 +23,7 @@ import play.mvc.Http.WebSocketFrame;
 import play.mvc.WebSocketController;
 import play.mvc.With;
 
+import javax.persistence.Query;
 import java.util.*;
 
 @With(ForceSSL.class)
@@ -66,8 +68,8 @@ public class WebSocket extends PreloadUserController {
             setUserInSession(user);
         }
 
-        List<ChatUserRoomJoin> chatRoomJoins = user.getChatRoomJoins();
         if (roomName == null || room == null) {
+            List<ChatUserRoomJoin> chatRoomJoins = user.getChatRoomJoins();
             if (chatRoomJoins.size() == 0) {
                 room = ChatRoom.findByName(Constants.CHATROOM_DEFAULT);
                 try {
@@ -89,11 +91,53 @@ public class WebSocket extends PreloadUserController {
         Gson gson = new Gson();
 
         // Get initial state
+//        List<ChatUserRoomJoin> chatRoomJoins = user.getChatRoomJoins();
+        Query getAllStuffQuery = JPA.em().createQuery("select ur from ChatUserRoomJoin ur join fetch ur.room urr join fetch ur.user u where ur.room in (select room from ChatUserRoomJoin ur2 where ur2.user = ?)")
+                .setParameter(1, user);
+        List<ChatUserRoomJoin> resultList = getAllStuffQuery.getResultList();
+
         HashMap<String, JsonChatRoom> rooms = new HashMap<String, JsonChatRoom>();
         HashMap<String, JsonUser> allUsers = new HashMap<String, JsonUser>();
         HashMap<String, JsonRoomMembers> members = new HashMap<String, JsonRoomMembers>();
         HashMap<String, ArrayList<JsonMessage>> messages = new HashMap<String, ArrayList<JsonMessage>>();
-        for (ChatUserRoomJoin chatRoomJoin : chatRoomJoins) {
+
+        Logger.info("Starting preload...");
+        TreeSet<String> usernamesPresent = ChatRoom.getAllOnlineUsersForAllRooms();
+        for (ChatUserRoomJoin chatRoomJoin : resultList) {
+            ChatRoom thisRoom = chatRoomJoin.getRoom();
+            ChatUser thisUser = chatRoomJoin.getUser();
+            Logger.info("Preload " + thisRoom.getName() + " for " + thisUser.getUsername());
+            rooms.put(thisRoom.getName(), JsonChatRoom.from(thisRoom));
+
+            JsonRoomMembers roomMembers = members.get(thisRoom.getName());
+            if (roomMembers == null) {
+                roomMembers = new JsonRoomMembers();
+                members.put(thisRoom.getName(), roomMembers);
+            }
+            JsonUser jsonUser = allUsers.get(thisUser.getUsername());
+            if (jsonUser == null) {
+                jsonUser = JsonUser.fromUserNoFlairLoad(thisUser);
+                jsonUser.online = usernamesPresent.contains(jsonUser.username);
+                allUsers.put(jsonUser.username, jsonUser);
+            }
+            jsonUser.addFlair(thisRoom.getName(), new JsonFlair(chatRoomJoin.getFlairText(), chatRoomJoin.getFlairCss(), chatRoomJoin.getFlairPosition()));
+            if (jsonUser.modForRoom) {
+                roomMembers.mods.add(jsonUser.username);
+            } else if (jsonUser.online) {
+                roomMembers.online.add(jsonUser.username);
+            } else {
+                roomMembers.offline.add(jsonUser.username);
+            }
+            members.put(thisRoom.getName(), roomMembers);
+
+            if (!messages.containsKey(thisRoom.getName())) {
+                ArrayList<JsonMessage> roomMessages = BreakerCache.getLastMessages(thisRoom);
+                messages.put(thisRoom.getName(), roomMessages);
+            }
+        }
+        Logger.info("Done preload.");
+
+/*        for (ChatUserRoomJoin chatRoomJoin : chatRoomJoins) {
             ChatRoom thisRoom = chatRoomJoin.getRoom();
             rooms.put(thisRoom.getName(), JsonChatRoom.from(thisRoom));
 
@@ -116,6 +160,7 @@ public class WebSocket extends PreloadUserController {
             ArrayList<JsonMessage> roomMessages = BreakerCache.getLastMessages(thisRoom);
             messages.put(thisRoom.getName(), roomMessages);
         }
+  */
         Logger.info("Websocket join time checkpoint 1 for " + user.getUsername() + ": " + (System.currentTimeMillis() - startTime));
         String roomsString = gson.toJson(rooms);
         String usersString = gson.toJson(allUsers);
@@ -125,6 +170,7 @@ public class WebSocket extends PreloadUserController {
 
         // Links to other suggested rooms
         List<ChatRoom> activeRooms = new ArrayList<ChatRoom>();
+/*
         {
             ChatRoom breakerapp = ChatRoom.findByName("breakerapp");
             if (!existsInJoins(chatRoomJoins, breakerapp)) {
@@ -143,6 +189,7 @@ public class WebSocket extends PreloadUserController {
                 activeRooms.add(breakerapp);
             }
         }
+*/
 
         String userString = gson.toJson(JsonUser.fromUser(user));
         String environment = Play.mode.isProd() ? "production" : "dev";
