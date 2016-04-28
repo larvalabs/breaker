@@ -18,7 +18,7 @@ export default class ChatMessage extends Component {
     </a>
   }
   renderTime() {
-    return <div className="pull-right text-sm text-muted">
+    return <div className="pull-right text-sm hidden-xs text-muted">
       <TimeAgo date={new Date(this.props.message.get('createDateLongUTC')).toISOString()} />
     </div>
   }
