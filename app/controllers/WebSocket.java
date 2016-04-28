@@ -106,7 +106,7 @@ public class WebSocket extends PreloadUserController {
         for (ChatUserRoomJoin chatRoomJoin : resultList) {
             ChatRoom thisRoom = chatRoomJoin.getRoom();
             ChatUser thisUser = chatRoomJoin.getUser();
-            Logger.info("Preload " + thisRoom.getName() + " for " + thisUser.getUsername());
+//            Logger.info("Preload " + thisRoom.getName() + " for " + thisUser.getUsername());
             rooms.put(thisRoom.getName(), JsonChatRoom.from(thisRoom));
 
             JsonRoomMembers roomMembers = members.get(thisRoom.getName());
