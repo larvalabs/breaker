@@ -18,6 +18,8 @@ import java.util.List;
  */
 public class BreakerCache {
 
+    public static final boolean CACHE_ENABLED = false;
+
     private static HashMap<String, ArrayList<JsonMessage>> messageCache = new HashMap<String, ArrayList<JsonMessage>>();
     private static HashMap<String, ArrayList<JsonUser>> userCache = new HashMap<String, ArrayList<JsonUser>>();
 
@@ -35,7 +37,7 @@ public class BreakerCache {
 
     public static ArrayList<JsonMessage> getLastMessages(ChatRoom room) {
         ArrayList<JsonMessage> roomMessages = messageCache.get(getMessagesKey(room.getName()));
-        if (roomMessages == null) {
+        if (roomMessages == null || !CACHE_ENABLED) {
             Logger.info("Cache miss room messages for " + room.getName());
             roomMessages = new ArrayList<JsonMessage>();
             List<Message> messageList = room.getMessages(Constants.DEFAULT_MESSAGE_LIMIT);
@@ -61,7 +63,7 @@ public class BreakerCache {
 
     public static ArrayList<JsonUser> getUsersForRoom(ChatRoom room) {
         ArrayList<JsonUser> usersForRoom = userCache.get(room.getName());
-        if (usersForRoom == null || true) {
+        if (usersForRoom == null || !CACHE_ENABLED) {
             Logger.info("Cache miss userlist for " + room.getName());
             List<ChatUser> roomUsers = room.getUsers();
             usersForRoom = new ArrayList<JsonUser>();

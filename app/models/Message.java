@@ -57,6 +57,7 @@ public class Message extends Model {
     @JoinTable(name = "message_mention")
     public Set<ChatUser> mentioned = new HashSet<ChatUser>();
 
+    @Index(name = "deleted")
     public boolean deleted;
 
     // Scoring related for top message list
