@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class BreakerCache {
 
-    public static final boolean CACHE_ENABLED = false;
+    public static final boolean CACHE_ENABLED = true;
 
     private static HashMap<String, ArrayList<JsonMessage>> messageCache = new HashMap<String, ArrayList<JsonMessage>>();
     private static HashMap<String, ArrayList<JsonUser>> userCache = new HashMap<String, ArrayList<JsonUser>>();

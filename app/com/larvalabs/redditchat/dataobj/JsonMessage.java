@@ -38,11 +38,12 @@ public class JsonMessage implements Serializable {
 //    public String translatedMessage;
 //    public String translatedLanguage;
 
-    public JsonMessage(long id, String uuid, String username, String message, String imageUrl, String imageThumbUrl, int likeCount, boolean userDidLike,
+    public JsonMessage(long id, String uuid, String username, String roomName, String message, String imageUrl, String imageThumbUrl, int likeCount, boolean userDidLike,
                        Date createDate, long createDateLongUTC, boolean newSinceLastSession, String detectedLanguage) {
         this.id = id;
         this.uuid = uuid;
         this.username = username;
+        this.roomName = roomName;
         this.message = message;
         this.imageUrl = imageUrl;
         this.imageThumbUrl = imageThumbUrl;
@@ -66,7 +67,10 @@ public class JsonMessage implements Serializable {
     }
 
     public static JsonMessage from(Message message, String username, String roomName) {
-        return new JsonMessage(message.getUuid(), username, roomName, message.getMessageText());
+        return new JsonMessage(message.getId(), message.getUuid(), username, roomName,
+                message.messageText, message.getImageUrl(), message.getImageThumbUrl(),
+                message.getLikeCount(), false, message.createDate, message.createDate.getTime(),
+                false, message.getLanguageDetected());
     }
 
     public static JsonMessage from(Message message, ChatUser loggedInUser, boolean isNewSinceLastSession) {
@@ -80,7 +84,7 @@ public class JsonMessage implements Serializable {
         } else {
             didLikeMessage = message.didUserLike(loggedInUser);
         }
-        return new JsonMessage(message.getId(), message.getUuid(), message.getUser().getUsername(),
+        return new JsonMessage(message.getId(), message.getUuid(), message.getUser().getUsername(), message.getRoom().getName(),
                 message.messageText, message.getImageUrl(), message.getImageThumbUrl(),
                 message.getLikeCount(), didLikeMessage, message.createDate, message.createDate.getTime(),
                 isNewSinceLastSession, message.getLanguageDetected());
