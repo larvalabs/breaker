@@ -42,7 +42,7 @@ export default class ChatMessage extends Component {
   }
   renderUsername() {
     let modClass = this.props.user.get('modForRoom') ? 'text-md text-primary-dker' : 'text-md text-dark-dker';
-    return <div>
+    return <div className="message-container">
         <a className={modClass} href={`https://reddit.com/u/${this.props.user.get('username')}`} target="_blank">
           {this.props.user.get('username')}</a>
       {this.renderFlair()}
