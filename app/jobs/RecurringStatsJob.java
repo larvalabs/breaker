@@ -4,6 +4,7 @@ import com.larvalabs.redditchat.util.Stats;
 import models.ChatRoom;
 import play.Invoker;
 import play.Logger;
+import play.Play;
 import play.jobs.Every;
 import play.jobs.Job;
 import play.jobs.JobsPlugin;
@@ -19,6 +20,9 @@ public class RecurringStatsJob extends Job {
 
     @Override
     public void doJob() throws Exception {
+        if (Play.mode.isDev()) {
+            return;
+        }
         long start = System.currentTimeMillis();
         Stats.sample(Stats.StatKey.JOB_ACTIVE, JobsPlugin.executor.getActiveCount() - 1); // -1 so we don't count this job
         Stats.sample(Stats.StatKey.JOB_QUEUED, JobsPlugin.executor.getQueue().size());

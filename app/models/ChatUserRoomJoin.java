@@ -18,7 +18,7 @@ public class ChatUserRoomJoin extends Model {
     @Index(name="userindex")
     public ChatUser user;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @Fetch(FetchMode.JOIN)
     @Index(name="roomindex")
     public ChatRoom room;
