@@ -50,12 +50,7 @@ function messages(state=Immutable.Map(), action) {
       return state.set(action.message.room.name, state.get(action.message.room.name, Immutable.List()).push(message));
     }
     case (socketTypes.SOCK_MESSAGE): {
-      let message = Immutable.fromJS(action.message.message)
-          .set('username', action.message.user.username)
-          .set('room', action.message.room.name)
-          .set('type', "message")
-          .delete('user')
-          .delete('room');
+      let message = Immutable.fromJS(action.message.message);
       
       return state.set(action.message.room.name, state.get(action.message.room.name, Immutable.List()).push(message));
     }
