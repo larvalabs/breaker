@@ -6,7 +6,7 @@ export default class ChatMessage extends Component {
   renderUserImage() {
     let userLink = `https://reddit.com/u/${this.props.user.get('username')}`;
 
-    return <a className="avatar thumb-sm pull-left m-r" href={userLink} target="_blank">
+    return <a className="avatar thumb-sm pull-left m-r hidden-xs" href={userLink} target="_blank">
       &nbsp;
     </a>
   }

@@ -13,7 +13,7 @@ export default class ChatMessage extends Component {
       profileImage = '/public/img/user-anon.png';
     }
 
-    return <a className="avatar thumb-sm pull-left m-r" href={userLink} target="_blank">
+    return <a className="avatar thumb-sm pull-left m-r hidden-xs" href={userLink} target="_blank">
       <img src={profileImage} />
     </a>
   }
