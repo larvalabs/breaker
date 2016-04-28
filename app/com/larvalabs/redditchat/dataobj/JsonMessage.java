@@ -34,6 +34,7 @@ public class JsonMessage implements Serializable {
 
     // Optionally filled when showing list of messages loaded from various rooms
     public JsonChatRoom room;
+    public String roomName;
 
     // Optionally filled if translation exists
 //    public String translatedMessage;
@@ -62,6 +63,7 @@ public class JsonMessage implements Serializable {
         this.user = user;
         this.username = user.username;
         this.room = room;
+        this.roomName = room.name;
         this.message = message;
         this.createDate = new Date();
         this.createDateLongUTC = createDate.getTime();
