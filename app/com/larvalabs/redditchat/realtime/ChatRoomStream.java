@@ -41,7 +41,7 @@ public class ChatRoomStream {
         // We're pushing onto a queue here so go in sqeuential order
         Collections.reverse(messages);
         for (models.Message message : messages) {
-            chatEvents.publish(new Message(JsonMessage.from(message)));
+            chatEvents.publish(new Message(JsonMessage.from(message, message.getUser().getUsername(), name), JsonChatRoom.from(room), JsonUser.fromUser(message.getUser())));
         }
         Logger.debug("Old messages sent to room: " + name);
     }
@@ -81,12 +81,12 @@ public class ChatRoomStream {
     /**
      * A user say something on the room
      */
-    public void say(JsonMessage message) {
+    public void say(JsonMessage message, JsonChatRoom room, JsonUser user) {
         // todo maybe move this empty check elsewhere?
         if(message.message == null || message.message.trim().equals("")) {
             return;
         }
-        publishEvent(new Message(message), true);
+        publishEvent(new Message(message, room, user), true);
     }
 
     public void publishEvent(Event event, boolean alsoPublishToRedis) {
@@ -232,10 +232,10 @@ public class ChatRoomStream {
         public Message() {
         }
 
-        public Message(JsonMessage message) {
-            super(TYPE_MESSAGE, message.room);
+        public Message(JsonMessage message, JsonChatRoom room, JsonUser user) {
+            super(TYPE_MESSAGE, room);
             this.message = message;
-            this.user = this.message.user;
+            this.user = user;
         }
         
     }

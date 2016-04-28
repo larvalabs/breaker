@@ -347,7 +347,7 @@ public class WebSocket extends PreloadUserController {
                                     String uuid = Util.getUUID();
                                     JsonMessage jsonMessage = JsonMessage.makePresavedMessage(uuid, user, roomConnection.room, message);
                                     new SaveNewMessageJob(uuid, user, roomName, message).now();
-                                    roomConnection.chatRoomMessageStream.say(jsonMessage);
+                                    roomConnection.chatRoomMessageStream.say(jsonMessage, JsonChatRoom.from(roomConnection.room), JsonUser.fromUser(user));
                                     Stats.count(Stats.StatKey.MESSAGE, 1);
                                 } else {
                                     Logger.info("User " + user.getUsername() + " cannot post to " + roomName);

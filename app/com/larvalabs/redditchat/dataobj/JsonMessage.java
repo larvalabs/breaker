@@ -13,7 +13,6 @@ public class JsonMessage implements Serializable {
 
     public long id;
     public String uuid;
-    @Deprecated public JsonUser user;   // todo remove this once the front end officially doesn't need it
     public String username;
     public String message;
     public String imageUrl;
@@ -33,19 +32,17 @@ public class JsonMessage implements Serializable {
     public boolean partial = false;
 
     // Optionally filled when showing list of messages loaded from various rooms
-    public JsonChatRoom room;
     public String roomName;
 
     // Optionally filled if translation exists
 //    public String translatedMessage;
 //    public String translatedLanguage;
 
-    public JsonMessage(long id, String uuid, JsonUser user, String message, String imageUrl, String imageThumbUrl, int likeCount, boolean userDidLike,
+    public JsonMessage(long id, String uuid, String username, String message, String imageUrl, String imageThumbUrl, int likeCount, boolean userDidLike,
                        Date createDate, long createDateLongUTC, boolean newSinceLastSession, String detectedLanguage) {
         this.id = id;
         this.uuid = uuid;
-        this.user = user;
-        this.username = user.username;
+        this.username = username;
         this.message = message;
         this.imageUrl = imageUrl;
         this.imageThumbUrl = imageThumbUrl;
@@ -58,20 +55,18 @@ public class JsonMessage implements Serializable {
         processMessage();
     }
 
-    public JsonMessage(String uuid, JsonUser user, JsonChatRoom room, String message) {
+    public JsonMessage(String uuid, String username, String roomName, String message) {
         this.uuid = uuid;
-        this.user = user;
-        this.username = user.username;
-        this.room = room;
-        this.roomName = room.name;
+        this.username = username;
+        this.roomName = roomName;
         this.message = message;
         this.createDate = new Date();
         this.createDateLongUTC = createDate.getTime();
         processMessage();
     }
 
-    public static JsonMessage from(Message message) {
-        return new JsonMessage(message.getUuid(), JsonUser.fromUserForRoom(message.getUser(), message.getRoom()), JsonChatRoom.from(message.getRoom()), message.getMessageText());
+    public static JsonMessage from(Message message, String username, String roomName) {
+        return new JsonMessage(message.getUuid(), username, roomName, message.getMessageText());
     }
 
     public static JsonMessage from(Message message, ChatUser loggedInUser, boolean isNewSinceLastSession) {
@@ -85,14 +80,14 @@ public class JsonMessage implements Serializable {
         } else {
             didLikeMessage = message.didUserLike(loggedInUser);
         }
-        return new JsonMessage(message.getId(), message.getUuid(), JsonUser.fromUser(message.user),
+        return new JsonMessage(message.getId(), message.getUuid(), message.getUser().getUsername(),
                 message.messageText, message.getImageUrl(), message.getImageThumbUrl(),
                 message.getLikeCount(), didLikeMessage, message.createDate, message.createDate.getTime(),
                 isNewSinceLastSession, message.getLanguageDetected());
     }
 
     public static JsonMessage makePresavedMessage(String uuid, ChatUser user, ChatRoom room, String message) {
-        return new JsonMessage(uuid, JsonUser.fromUser(user), JsonChatRoom.from(room, user, null, false), message);
+        return new JsonMessage(uuid, user.getUsername(), room.getName(), message);
     }
 
     public enum ListType {
@@ -116,7 +111,7 @@ public class JsonMessage implements Serializable {
             }
             JsonMessage jsonMessage = JsonMessage.from(message, loggedInUser, isNew);
             if (type == ListType.RECENT_MESSAGES || type == ListType.MENTIONS) {
-                jsonMessage.room = JsonChatRoom.from(message.getRoom(), loggedInUser, null, false);
+                jsonMessage.roomName = message.getRoom().getName();
             }
             jsonMessages.add(jsonMessage);
         }
