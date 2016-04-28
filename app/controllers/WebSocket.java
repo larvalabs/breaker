@@ -101,13 +101,15 @@ public class WebSocket extends PreloadUserController {
         HashMap<String, JsonRoomMembers> members = new HashMap<String, JsonRoomMembers>();
         HashMap<String, ArrayList<JsonMessage>> messages = new HashMap<String, ArrayList<JsonMessage>>();
 
-        Logger.info("Starting preload...");
+        Logger.info("Websocket join time checkpoint post preload query for " + user.getUsername() + ": " + (System.currentTimeMillis() - startTime));
         TreeSet<String> usernamesPresent = ChatRoom.getAllOnlineUsersForAllRooms();
         for (ChatUserRoomJoin chatRoomJoin : resultList) {
             ChatRoom thisRoom = chatRoomJoin.getRoom();
             ChatUser thisUser = chatRoomJoin.getUser();
 //            Logger.info("Preload " + thisRoom.getName() + " for " + thisUser.getUsername());
-            rooms.put(thisRoom.getName(), JsonChatRoom.from(thisRoom));
+            if (!rooms.containsKey(thisRoom.getName())) {
+                rooms.put(thisRoom.getName(), JsonChatRoom.from(thisRoom));
+            }
 
             JsonRoomMembers roomMembers = members.get(thisRoom.getName());
             if (roomMembers == null) {
@@ -131,8 +133,10 @@ public class WebSocket extends PreloadUserController {
             members.put(thisRoom.getName(), roomMembers);
 
             if (!messages.containsKey(thisRoom.getName())) {
+                long messagesStart = System.currentTimeMillis();
                 ArrayList<JsonMessage> roomMessages = BreakerCache.getLastMessages(thisRoom);
                 messages.put(thisRoom.getName(), roomMessages);
+                Logger.info("Messages load time: " + (System.currentTimeMillis() - messagesStart));
             }
         }
         Logger.info("Done preload.");
