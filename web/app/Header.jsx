@@ -1,8 +1,10 @@
 import React from "react";
+import { connect } from 'react-redux'
 import Immutable from 'immutable'
 import Config from '../config'
+import {toggleSidebar, toggleSettings} from '../redux/actions/menu-actions'
 
-export default React.createClass({
+var Header = React.createClass({
   getDefaultProps: function() {
     return {
       user: Immutable.Map(),
@@ -10,6 +12,12 @@ export default React.createClass({
       roomName: null,
       userIsMod: false
     }
+  },
+  onSidebarButtonClick: function(){
+    this.props.dispatch(toggleSidebar());
+  },
+  onSettingsButtonClick: function(){
+    this.props.dispatch(toggleSettings());
   },
   renderLogin: function(){
     return <ul className="nav navbar-nav navbar-right">
@@ -43,14 +51,30 @@ export default React.createClass({
       </li>
     </ul>
   },
+  renderSettingsCog: function(){
+    let classes = "pull-right visible-xs dk";
+    if(this.props.settings_open){
+      classes += " active";
+    }
+    return  <button className={classes}
+                    ui-toggle-className="show"
+                    target=".navbar-collapse"
+                    onClick={this.onSettingsButtonClick}>
+      
+      <i className="glyphicon glyphicon-cog" />
+    </button>
+  },
+  renderSidebarHamburger: function(){
+    let classes = "pull-right visible-xs";
+    let active = this.props.sidebar_open ? " active" : null;
+    return <button className={classes + active} ui-toggle-className="off-screen" target=".app-aside" ui-scroll="app" onClick={this.onSidebarButtonClick}>
+      <i className="glyphicon glyphicon-align-justify"/>
+    </button>
+  },
   renderBreakerLogoBox: function() {
     return <div className="navbar-header bg-dark">
-      <button className="pull-right visible-xs dk" ui-toggle-className="show" target=".navbar-collapse">
-        <i className="glyphicon glyphicon-cog" />
-      </button>
-      <button className="pull-right visible-xs" ui-toggle-className="off-screen" target=".app-aside" ui-scroll="app">
-        <i className="glyphicon glyphicon-align-justify"/>
-      </button>
+      {this.renderSettingsCog()}
+      {this.renderSidebarHamburger()}
       <a href="#" className="navbar-brand text-lt">
         <i className="fa fa-terminal"/>
         <span className="hidden-folded m-l-xs" style={{marginLeft: "10px"}}>breaker</span>
@@ -97,15 +121,26 @@ export default React.createClass({
     }
   },
   render: function () {
+    let classes = "collapse pos-rlt navbar-collapse box-shadow bg-white-only";
+    if(this.props.settings_open){
+      classes += " show";
+    }
     return <header className="app-header navbar" role="menu">
-
       {this.renderBreakerLogoBox()}
-
-      <div className="collapse pos-rlt navbar-collapse box-shadow bg-white-only">
+      <div className={classes}>
         {this.renderRoomIcon()}
         {this.renderRoomTitle()}
         {Config.guest ? this.renderLogin() : this.renderProfileMenu()}
       </div>
     </header>
   }
-})
+});
+
+function mapStateToProps(state) {
+  return {
+    sidebar_open: state.getIn(['ui', 'sidebar_open'], false),
+    settings_open: state.getIn(['ui', 'settings_open'], false)
+  }
+}
+
+export default connect(mapStateToProps)(Header)

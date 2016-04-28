@@ -4,7 +4,7 @@ import Immutable from 'immutable'
 
 export default class ChatMessage extends Component {
   renderUserImage() {
-    return <a className="avatar thumb-sm pull-left m-r" target="_blank">&nbsp;</a>
+    return <a className="avatar thumb-sm pull-left m-r hidden-xs" target="_blank">&nbsp;</a>
   }
   renderMessage() {
     return <div className="message-body m-t-midxs">

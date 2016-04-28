@@ -13,12 +13,12 @@ export default class ChatMessage extends Component {
       profileImage = '/public/img/user-anon.png';
     }
 
-    return <a className="avatar thumb-sm pull-left m-r" href={userLink} target="_blank">
+    return <a className="avatar thumb-sm pull-left m-r hidden-xs" href={userLink} target="_blank">
       <img src={profileImage} />
     </a>
   }
   renderTime() {
-    return <div className="pull-right text-sm text-muted">
+    return <div className="pull-right text-sm hidden-xs text-muted">
       <TimeAgo date={new Date(this.props.message.get('createDateLongUTC')).toISOString()} />
     </div>
   }

@@ -50,8 +50,12 @@ export default React.createClass({
     </div>
   },
   render: function () {
+    let classes = "app-aside hidden-xs bg-dark";
+    if(this.props.open){
+      classes += " off-screen";
+    }
     return (
-      <aside id="aside" className="app-aside hidden-xs bg-dark">
+      <aside id="aside" className={classes}>
         <div className="aside-wrap">
           <div className="navi-wrap">
             <nav ui-nav className="navi clearfix">
