@@ -166,7 +166,9 @@ public class WebSocket extends PreloadUserController {
         String usersString = gson.toJson(allUsers);
         String membersString = gson.toJson(members);
         String messagesString = gson.toJson(messages);
-        Logger.info("Websocket join time checkpoint 2 (post gson) for " + user.getUsername() + ": " + (System.currentTimeMillis() - startTime));
+        long loadTime = System.currentTimeMillis() - startTime;
+        Logger.info("Websocket join time checkpoint 2 (post gson) for " + user.getUsername() + ": " + loadTime);
+        Stats.measure(Stats.StatKey.INITIALPAGE_TIME, loadTime);
 
         // Links to other suggested rooms
         List<ChatRoom> activeRooms = new ArrayList<ChatRoom>();
