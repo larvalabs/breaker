@@ -2,7 +2,11 @@ let Config = {
   guest: window.__USER_GUEST__ === "true",
   admin: window.__USER_ADMIN__ === "true",
   features: {
-    suggestedRooms: false
+    suggestedRooms: false,
+    noMessageAvatar: ['nba', 'clevelandcavs'],
+    noUserListAvatar: ['nba', 'clevelandcavs'],
+    flairTextDescription: ['nba', 'clevelandcavs'],
+    headerFlairUsername: ['nba', 'clevelandcavs']
   },
   environment: {
     prod: window.__ENVIRONMENT__ == "production"

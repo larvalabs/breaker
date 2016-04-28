@@ -1,9 +1,14 @@
 import React, {Component} from 'react'
 import Immutable from 'immutable'
+import Config from '../config'
 
 
 export default class ChatMessage extends Component {
   renderUserImage() {
+    if(Config.features.noMessageAvatar.indexOf(this.props.roomName) > -1){
+      return null;
+    }
+
     return <a className="avatar thumb-sm pull-left m-r hidden-xs" target="_blank">&nbsp;</a>
   }
   renderMessage() {
