@@ -5221,19 +5221,8 @@ li.chat-message-root .message-body, li.chat-message-short .message-body, li.chat
   margin-top: 0px;
 }
 
-.flair-message-hack {
-  margin-left: 3em;
-}
-
 .message-container {
   line-height: 18px;
-}
-
-.flair-container {
-  display: inline-block;
-  float: left;
-  min-width: 3em;
-  height: 100%;
 }
 
 .user-flair-right {

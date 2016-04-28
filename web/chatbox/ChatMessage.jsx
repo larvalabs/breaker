@@ -1,15 +1,10 @@
 import React, {Component} from 'react'
 import Immutable from 'immutable'
 import TimeAgo from 'react-timeago'
-import Config from '../config'
-import Username from '../userlist/Username.jsx'
+
 
 export default class ChatMessage extends Component {
   renderUserImage() {
-    if(Config.features.noMessageAvatar.indexOf(this.props.roomName) > -1){
-      return null;
-    }
-    
     let userLink = `https://reddit.com/u/${this.props.user.get('username')}`;
     let profileImage = this.props.user.get('profileImageUrl');
 
@@ -27,12 +22,35 @@ export default class ChatMessage extends Component {
       <TimeAgo date={new Date(this.props.message.get('createDateLongUTC')).toISOString()} />
     </div>
   }
-  renderMessage() {
-    let classes = "message-body m-t-midxs";
-    if (Config.features.noMessageAvatar.indexOf(this.props.roomName) > -1) {
-      classes += " flair-message-hack"
+  renderFlair() {
+    let flairSettings = this.props.user.getIn(['flair', this.props.roomName]);
+    if(!flairSettings){
+      return null;
     }
-    return <div className={classes} dangerouslySetInnerHTML={{__html: this.props.message.get('messageHtml')}}>
+
+    if(!flairSettings.get('flairCss') && !flairSettings.get('flairText')){
+      return null;
+    }
+
+    let classes = `user-flair-${flairSettings.get('flairPosition', 'right')} flair flair-${flairSettings.get('flairCss')}`;
+
+    if(!flairSettings.get('flairText')){
+      return <span className={classes} title={flairSettings.get('flairText')}></span>
+    }
+
+    return <span className={classes} title={flairSettings.get('flairText')}>{flairSettings.get('flairText')}</span>
+  }
+  renderUsername() {
+    let modClass = this.props.user.get('modForRoom') ? 'text-md text-primary-dker' : 'text-md text-dark-dker';
+    return <div className="message-container">
+        <a className={modClass} href={`https://reddit.com/u/${this.props.user.get('username')}`} target="_blank">
+          {this.props.user.get('username')}</a>
+      {this.renderFlair()}
+      </div>
+
+  }
+  renderMessage() {
+    return <div className="message-body m-t-midxs" dangerouslySetInnerHTML={{__html: this.props.message.get('messageHtml')}}>
     </div>
   }
   renderLinks(){
@@ -54,7 +72,7 @@ export default class ChatMessage extends Component {
         {this.renderUserImage()}
         {this.renderTime()}
         <div className="clear">
-          <Username user={this.props.user} roomName={this.props.roomName} />
+          {this.renderUsername()}
           {this.renderMessage()}
           {this.renderLinks()}
         </div>
