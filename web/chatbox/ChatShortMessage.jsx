@@ -1,14 +1,9 @@
 import React, {Component} from 'react'
 import Immutable from 'immutable'
-import Config from '../config'
 
 
 export default class ChatMessage extends Component {
   renderUserImage() {
-    if(Config.features.noMessageAvatar.indexOf(this.props.roomName) > -1){
-      return null;
-    }
-    
     let userLink = `https://reddit.com/u/${this.props.user.get('username')}`;
 
     return <a className="avatar thumb-sm pull-left m-r hidden-xs" href={userLink} target="_blank">
@@ -16,11 +11,7 @@ export default class ChatMessage extends Component {
     </a>
   }
   renderMessage() {
-    let classes = "message-body m-t-midxs";
-    if (Config.features.noMessageAvatar.indexOf(this.props.roomName) > -1) {
-      classes += " flair-message-hack"
-    }
-    return <div className={classes} dangerouslySetInnerHTML={{__html: this.props.message.get('messageHtml')}}>
+    return <div className="message-body m-t-midxs" dangerouslySetInnerHTML={{__html: this.props.message.get('messageHtml')}}>
     </div>
   }
   renderLinks(){

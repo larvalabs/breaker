@@ -3,7 +3,6 @@ import { connect } from 'react-redux'
 import Immutable from 'immutable'
 import Config from '../config'
 import {toggleSidebar, toggleSettings} from '../redux/actions/menu-actions'
-import Username from '../userlist/Username'
 
 var Header = React.createClass({
   getDefaultProps: function() {
@@ -29,25 +28,16 @@ var Header = React.createClass({
       </li>
     </ul>
   },
-  renderUsername: function(){
-    if(Config.features.noMessageAvatar.indexOf(this.props.roomName) > -1){
-      return <div>
-        <span className="hidden-sm hidden-md">{this.props.user.get('username')}</span> <b className="caret" />
-      </div>;
-    }
-    return <div><span className="thumb-sm avatar pull-right m-t-n-sm m-b-n-sm m-l-sm">
-            <img src={this.props.user.get('profileImageUrl')} alt="..." />
-              <i className="on md b-white bottom" />
-          </span>
-        <span className="hidden-sm hidden-md">{this.props.user.get('username')}</span> <b className="caret" />
-    </div>
-  },
   renderProfileMenu: function(){
     return <ul className="nav navbar-nav navbar-right">
 
       <li className="dropdown v-middle">
         <a href="#" data-toggle="dropdown" className="dropdown-toggle clear" data-toggle="dropdown">
-          {this.renderUsername()}
+          <span className="thumb-sm avatar pull-right m-t-n-sm m-b-n-sm m-l-sm">
+            <img src={this.props.user.get('profileImageUrl')} alt="..." />
+              <i className="on md b-white bottom" />
+          </span>
+          <span className="hidden-sm hidden-md">{this.props.user.get('username')}</span> <b className="caret" />
         </a>
         <ul className="dropdown-menu w">
 
@@ -149,7 +139,7 @@ var Header = React.createClass({
 function mapStateToProps(state) {
   return {
     sidebar_open: state.getIn(['ui', 'sidebar_open'], false),
-    settings_open: state.getIn(['ui', 'settings_open'], false),
+    settings_open: state.getIn(['ui', 'settings_open'], false)
   }
 }
 
