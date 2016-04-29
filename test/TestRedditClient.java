@@ -1,4 +1,5 @@
 import com.amazonaws.util.json.JSONObject;
+import com.larvalabs.redditchat.Constants;
 import models.ChatUser;
 import org.junit.Before;
 import org.junit.Test;
@@ -7,6 +8,8 @@ import play.libs.Mail;
 import play.test.Fixtures;
 import play.test.UnitTest;
 import reddit.BreakerRedditClient;
+
+import java.util.List;
 
 /**
  * Created by matt on 4/27/16.
@@ -48,7 +51,15 @@ public class TestRedditClient extends UnitTest {
         JSONObject hockeyFlair = breakerRedditClient.getRedditUserFlairForSubreddit(chatUser, "hockey");
 
         Logger.info("Received flair: " + hockeyFlair.toString());
+    }
 
-
+    @Test
+    public void testGetModerators() throws Exception {
+        BreakerRedditClient client = new BreakerRedditClient();
+        List<String> moderatorUsernames = client.getModeratorUsernames(Constants.CHATROOM_DEFAULT);
+        assertEquals(3, moderatorUsernames.size());
+        assertTrue(moderatorUsernames.contains("megamatt2000"));
+        assertTrue(moderatorUsernames.contains("pents900"));
+        assertTrue(moderatorUsernames.contains("rickiibeta"));
     }
 }

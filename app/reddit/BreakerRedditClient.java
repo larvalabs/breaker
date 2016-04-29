@@ -2,6 +2,7 @@ package reddit;
 
 import com.amazonaws.util.json.JSONException;
 import com.amazonaws.util.json.JSONObject;
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.larvalabs.redditchat.Constants;
 import models.ChatUser;
@@ -11,20 +12,52 @@ import play.libs.WS;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
+import java.net.*;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class BreakerRedditClient{
     private final String BREAKER_USER_AGENT = "web:breakerapp:v0.1";
     final private String OAUTH_URL = "https://oauth.reddit.com";
+    final private String BASIC_URL = "https://www.reddit.com";
     final private String USER_PREF_URL = OAUTH_URL + "/api/v1/me/prefs";
     final private String USER_FLAIR_URL = OAUTH_URL + "/r/{0}/api/flairselector";
     final private String REFRESH_TOKEN_URL = OAUTH_URL + "/api/v1/access_token";
+    final private String MODERATORS_URL = BASIC_URL + "/r/{0}/about/moderators.json";
+
+    public static class RedditJsonUserlist {
+        public RedditJsonUserData data;
+    }
+
+    public static class RedditJsonUserData {
+        public RedditJsonUser[] children;
+    }
+
+    public static class RedditJsonUser {
+        public String name;
+        public String id;
+    }
 
     public BreakerRedditClient(){
+    }
+
+    public List<String> getModeratorUsernames(String subreddit) throws IOException {
+        String url = MessageFormat.format(MODERATORS_URL, subreddit);
+//            System.setProperty("http.agent", BREAKER_USER_AGENT);
+//            String response = IOUtils.toString(new URI(url));
+
+        String response = WS.url(url)
+                .setHeader("User-Agent", this.BREAKER_USER_AGENT)
+                .get().getString();
+
+        ArrayList<String> usernames = new ArrayList<>();
+        RedditJsonUserlist redditJsonUserlist = new Gson().fromJson(response, RedditJsonUserlist.class);
+        for (RedditJsonUser child : redditJsonUserlist.data.children) {
+            usernames.add(child.name);
+        }
+        return usernames;
     }
 
     public JSONObject getRedditUserFlairForSubreddit(ChatUser chatUser, String subreddit) throws RedditRequestError{
