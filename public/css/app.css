@@ -5222,11 +5222,12 @@ li.chat-message-root .message-body, li.chat-message-short .message-body, li.chat
 }
 
 .flair-message-hack {
-  margin-left: 3em;
+  margin-left: 1em;
 }
 
 .message-container {
   line-height: 18px;
+  overflow: overlay;
 }
 
 .flair-container {

@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import Immutable from 'immutable'
 import Config from '../config'
 import {toggleSidebar, toggleSettings} from '../redux/actions/menu-actions'
-import Username from '../userlist/Username'
+import UsernameAndFlair from '../userlist/UsernameAndFlair'
 
 var Header = React.createClass({
   getDefaultProps: function() {
@@ -30,7 +30,7 @@ var Header = React.createClass({
     </ul>
   },
   renderUsername: function(){
-    if(Config.features.noMessageAvatar.indexOf(this.props.roomName) > -1){
+    if(Config.features.useFlairStyle(this.props.roomName)){
       return <div>
         <span className="hidden-sm hidden-md">{this.props.user.get('username')}</span> <b className="caret" />
       </div>;

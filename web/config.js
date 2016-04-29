@@ -6,7 +6,8 @@ let Config = {
     noMessageAvatar: ['nba', 'clevelandcavs'],
     noUserListAvatar: ['nba', 'clevelandcavs'],
     flairTextDescription: ['nba', 'clevelandcavs'],
-    headerFlairUsername: ['nba', 'clevelandcavs']
+    headerFlairUsername: ['nba', 'clevelandcavs'],
+    useFlairStyle: (roomName) => true
   },
   environment: {
     prod: window.__ENVIRONMENT__ == "production"

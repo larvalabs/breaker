@@ -3,7 +3,7 @@ import Immutable from 'immutable'
 import Config from '../config'
 
 
-export default class Username extends Component {
+export default class Flair extends Component {
   renderFlair() {
     let flairSettings = this.props.user.getIn(['flair', this.props.roomName]);
     if(!flairSettings){
@@ -25,16 +25,9 @@ export default class Username extends Component {
     return <span className={classes} title={flairSettings.get('flairText')}>{flairSettings.get('flairText')}</span>
   }
   render(){
-    let modClass = this.props.user.get('modForRoom') ? 'text-md text-primary-dker' : 'text-md text-dark-dker';
-    return <div className="message-container">
-      <div className="flair-container">
+      return <div className="flair-container">
         {this.renderFlair()}
       </div>
-      <div className="username-container">
-        <a className={modClass} href={`https://reddit.com/u/${this.props.user.get('username')}`} target="_blank">
-          {this.props.user.get('username')}</a>
-      </div>
-    </div>
   }
 }
 

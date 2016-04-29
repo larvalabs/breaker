@@ -2,26 +2,10 @@ import React, {Component} from 'react'
 import Immutable from 'immutable'
 import TimeAgo from 'react-timeago'
 import Config from '../config'
-import Username from '../userlist/Username.jsx'
+import UsernameAndFlair from '../userlist/UsernameAndFlair.jsx'
+import UserAvatar from '../userlist/UserAvatar'
 
 export default class ChatMessage extends Component {
-  renderUserImage() {
-    if(Config.features.noMessageAvatar.indexOf(this.props.roomName) > -1){
-      return null;
-    }
-    
-    let userLink = `https://reddit.com/u/${this.props.user.get('username')}`;
-    let profileImage = this.props.user.get('profileImageUrl');
-
-    // TODO: seems like a hack here
-    if (profileImage && profileImage.indexOf('user-anon') > -1){
-      profileImage = '/public/img/user-anon.png';
-    }
-
-    return <a className="avatar thumb-sm pull-left m-r hidden-xs" href={userLink} target="_blank">
-      <img src={profileImage} />
-    </a>
-  }
   renderTime() {
     return <div className="pull-right text-sm hidden-xs text-muted">
       <TimeAgo date={new Date(this.props.message.get('createDateLongUTC')).toISOString()} />
@@ -29,7 +13,7 @@ export default class ChatMessage extends Component {
   }
   renderMessage() {
     let classes = "message-body m-t-midxs";
-    if (Config.features.noMessageAvatar.indexOf(this.props.roomName) > -1) {
+    if (Config.features.useFlairStyle(this.props.roomName)) {
       classes += " flair-message-hack"
     }
     return <div className={classes} dangerouslySetInnerHTML={{__html: this.props.message.get('messageHtml')}}>
@@ -51,13 +35,13 @@ export default class ChatMessage extends Component {
 
     return (
       <li className={liClasses}>
-        {this.renderUserImage()}
+        <UserAvatar user={this.props.user} roomName={this.props.roomName}/>
         {this.renderTime()}
         <div className="clear">
-          <Username user={this.props.user} roomName={this.props.roomName} />
-          {this.renderMessage()}
-          {this.renderLinks()}
+          <UsernameAndFlair user={this.props.user} roomName={this.props.roomName} />
+
         </div>
+
       </li>
     )
   }
