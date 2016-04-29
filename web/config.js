@@ -3,11 +3,10 @@ let Config = {
   admin: window.__USER_ADMIN__ === "true",
   features: {
     suggestedRooms: false,
-    noMessageAvatar: ['nba', 'clevelandcavs'],
-    noUserListAvatar: ['nba', 'clevelandcavs'],
-    flairTextDescription: ['nba', 'clevelandcavs'],
-    headerFlairUsername: ['nba', 'clevelandcavs'],
-    useFlairStyle: (roomName) => true
+    useFlairStyle: (roomName) => {
+      // We can switch here based on subreddit
+      return true;
+    }
   },
   environment: {
     prod: window.__ENVIRONMENT__ == "production"
