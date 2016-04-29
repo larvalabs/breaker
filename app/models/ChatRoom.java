@@ -40,7 +40,7 @@ public class ChatRoom extends Model {
 
     public boolean needsScoreRecalc;
 
-    public boolean open = false;
+    public boolean open = true;
     public int numNeededToOpen = Constants.NUM_PEOPLE_TO_OPEN_ROOM;
 
     @ManyToMany(mappedBy = "watchedRooms", fetch = FetchType.LAZY)
