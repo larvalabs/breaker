@@ -2,7 +2,11 @@ let Config = {
   guest: window.__USER_GUEST__ === "true",
   admin: window.__USER_ADMIN__ === "true",
   features: {
-    suggestedRooms: false
+    suggestedRooms: false,
+    useFlairStyle: (roomName) => {
+      // We can switch here based on subreddit
+      return true;
+    }
   },
   environment: {
     prod: window.__ENVIRONMENT__ == "production"
