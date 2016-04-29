@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import Immutable from 'immutable'
 import UsernameAndFlair from '../userlist/UsernameAndFlair.jsx'
 import UserAvatar from '../userlist/UserAvatar'
-import Clear from '../util/clear'
+import Clear from '../util/Clear'
 import ChatMessageTimeago from './ChatMessageTimeago'
 
 export default class ChatMessage extends Component {
