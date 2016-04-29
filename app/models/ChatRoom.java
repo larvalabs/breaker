@@ -197,6 +197,10 @@ public class ChatRoom extends Model {
         this.moderators = moderators;
     }
 
+    public void addModerator(ChatUser chatUser) {
+        chatUser.moderateRoom(this);
+    }
+
     // Do stuff zone
 
     public static ChatRoom findByName(String name) {
