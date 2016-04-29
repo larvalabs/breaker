@@ -3,6 +3,8 @@ package models;
 import com.larvalabs.redditchat.Constants;
 import com.larvalabs.redditchat.util.Util;
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Index;
 import play.Logger;
 import play.db.jpa.JPA;
@@ -23,9 +25,11 @@ public class Message extends Model {
     public static final int IMAGETYPE_WALLPAPER = 2;
 
     @ManyToOne
+    @Fetch(FetchMode.JOIN)
     public ChatUser user;
 
     @ManyToOne
+    @Fetch(FetchMode.JOIN)
     public ChatRoom room;
 
     @Column(length=1000)
@@ -53,6 +57,7 @@ public class Message extends Model {
     @JoinTable(name = "message_mention")
     public Set<ChatUser> mentioned = new HashSet<ChatUser>();
 
+    @Index(name = "deleted")
     public boolean deleted;
 
     // Scoring related for top message list

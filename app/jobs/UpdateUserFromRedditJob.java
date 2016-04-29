@@ -3,6 +3,7 @@ package jobs;
 import com.amazonaws.util.json.JSONException;
 import com.amazonaws.util.json.JSONObject;
 import com.larvalabs.redditchat.dataobj.BreakerCache;
+import models.ChatRoom;
 import models.ChatUser;
 import models.ChatUserRoomJoin;
 import play.Logger;
@@ -12,6 +13,7 @@ import play.jobs.OnApplicationStart;
 import reddit.BreakerRedditClient;
 import reddit.RedditRequestError;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -59,7 +61,19 @@ public class UpdateUserFromRedditJob extends Job {
                 Logger.warn("Reddit request error for user " + chatUser.getUsername() + " for room " + chatUserRoomJoin.room.getName());
             } catch (JSONException e) {
                 Logger.error(e, "Error parsing json result from reddit request.");
+            } catch (Exception e) {
+                Logger.error(e, "Problem getting flair for room: " + chatUserRoomJoin.getRoom().getName());
             }
+        }
+
+        // Make user a moderator of subs
+        ArrayList<String> subNamesModerated = breakerRedditClient.getSubNamesModerated(chatUser);
+        Logger.info("User " + chatUser.getUsername() + " is a moderator of " + subNamesModerated.size() + " subs.");
+        for (String subName : subNamesModerated) {
+            ChatRoom chatRoom = ChatRoom.findOrCreateForName(subName);
+            chatUser.moderateRoom(chatRoom);
+            chatUser.joinChatRoom(chatRoom);
+            Logger.info("User made moderator of room " + chatRoom.getName());
         }
 
         if (clearCacheWhenDone) {

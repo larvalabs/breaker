@@ -1,0 +1,31 @@
+{
+  "kind": "UserList",
+  "data": {
+    "children": [
+      {
+        "date": 1451704365.0,
+        "mod_permissions": [
+          "all"
+        ],
+        "name": "megamatt2000",
+        "id": "t2_mwpy8"
+      },
+      {
+        "date": 1453228733.0,
+        "mod_permissions": [
+          "all"
+        ],
+        "name": "pents900",
+        "id": "t2_n8l2s"
+      },
+      {
+        "date": 1460567980.0,
+        "mod_permissions": [
+          "all"
+        ],
+        "name": "rickiibeta",
+        "id": "t2_3mfcm"
+      }
+    ]
+  }
+}

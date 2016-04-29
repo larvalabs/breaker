@@ -14,11 +14,13 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import play.Logger;
 import play.Play;
+import play.db.jpa.JPA;
 import play.libs.OAuth2;
 import play.libs.WS;
 import play.mvc.Scope;
 
 import javax.imageio.ImageIO;
+import javax.persistence.Query;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -431,5 +433,17 @@ public class Application extends PreloadUserController {
     public static void testRedditUpdate() {
         new UpdateAllUsersFromRedditRecurringJob().now();
         renderText("OK");
+    }
+
+    public static void testQuery() {
+        Logger.info("Starting query...");
+        Query getAllStuffQuery = JPA.em().createQuery("select ur from ChatUserRoomJoin ur join fetch ur.room urr join fetch ur.user u where ur.room in (select room from ChatUserRoomJoin ur2 where ur2.user = ?)")
+                .setParameter(1, ChatUser.findByUsername("megamatt2000"));
+        List<ChatUserRoomJoin> resultList = getAllStuffQuery.getResultList();
+        Logger.info("Iterating results...");
+        for (ChatUserRoomJoin roomJoin : resultList) {
+            Logger.info("Result: " + roomJoin.getRoom().getName() + " : " + roomJoin.getUser().getUsername());
+        }
+        Logger.info("Done.");
     }
 }

@@ -14,7 +14,8 @@ public class Stats {
         USERS_CONNECTED("users.connected"),
         REQUESTS_ACTIVE("requests.active"),
         REQUESTS_QUEUED("requests.queued"),
-        WEBSOCKET_CONNECT("websocket.connect"); // Using this until I can find a place to get all connected sockets
+        WEBSOCKET_CONNECT("websocket.connect"), // Using this until I can find a place to get all connected sockets
+        INITIALPAGE_TIME("initialpage");
 
         private String key;
 
@@ -42,5 +43,9 @@ public class Stats {
 
     public static void sample(StatKey key, long value) {
         Logger.info("sample#" + key.getKey() + "=" + value);
+    }
+
+    public static void measure(StatKey key, long timeMs) {
+        Logger.info("measure#" + key.getKey() + "=" + timeMs + "ms");
     }
 }

@@ -40,7 +40,7 @@ public class ChatRoom extends Model {
 
     public boolean needsScoreRecalc;
 
-    public boolean open = false;
+    public boolean open = true;
     public int numNeededToOpen = Constants.NUM_PEOPLE_TO_OPEN_ROOM;
 
     @ManyToMany(mappedBy = "watchedRooms", fetch = FetchType.LAZY)
@@ -195,6 +195,10 @@ public class ChatRoom extends Model {
 
     public void setModerators(Set<ChatUser> moderators) {
         this.moderators = moderators;
+    }
+
+    public void addModerator(ChatUser chatUser) {
+        chatUser.moderateRoom(this);
     }
 
     // Do stuff zone

@@ -12,6 +12,7 @@ import play.mvc.Router;
 
 import java.util.HashMap;
 import java.util.Set;
+import java.util.TreeSet;
 
 public class NotifyMentionedUsersJob extends Job {
 
@@ -35,11 +36,13 @@ public class NotifyMentionedUsersJob extends Job {
         String baseUrl = Play.configuration.getProperty("application.baseUrl");
         String url = baseUrl + "/c/" + chatRoom.getName();
 
+        TreeSet<String> allOnlineUsersForAllRooms = ChatRoom.getAllOnlineUsersForAllRooms();
+
         Set<ChatUser> mentionedUsers = message.updateMentionedUsers();
         if (mentionedUsers != null && mentionedUsers.size() > 0) {
             for (ChatUser mentionedUser : mentionedUsers) {
                 Logger.info("User mentioned: " + mentionedUser.getUsername() + " in message id " + message.getId());
-                if (mentionedUser.isNotificationEnabledForMention()) {
+                if (mentionedUser.isNotificationEnabledForMention() && !allOnlineUsersForAllRooms.contains(mentionedUser.getUsername())) {
 
                     String subject = "You were mentioned in "+chatRoom.getName() + " chat";
                     String content = message.getUser().getUsername() + " mentioned you in " + chatRoom.getName() + " chat:\n\n "
@@ -48,6 +51,8 @@ public class NotifyMentionedUsersJob extends Job {
                             + "\n"
                             + "Notification preferences at https://www.breakerapp.com/usermanage/prefs";
                     RedditUtil.sendPrivateMessageFromBot(mentionedUser.getUsername(), subject, content);
+                } else {
+                    Logger.info("Not notifying mentioned user "+mentionedUser.getUsername()+" because of notification preference or because they are online.");
                 }
             }
         }

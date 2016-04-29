@@ -4,6 +4,7 @@ import com.larvalabs.redditchat.Constants;
 import com.larvalabs.redditchat.dataobj.JsonFlair;
 import com.larvalabs.redditchat.util.Util;
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.annotations.Index;
 import play.Logger;
 import play.Play;
 import play.db.DB;
@@ -37,6 +38,8 @@ public class ChatUser extends Model {
     public String accessToken;
     public String refreshToken;
 
+    @Column(unique = true)
+    @Index(name = "username")
     public String username;
     public String email;
     public long linkKarma;
