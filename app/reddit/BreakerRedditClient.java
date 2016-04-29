@@ -24,6 +24,7 @@ public class BreakerRedditClient{
     final private String BASIC_URL = "https://www.reddit.com";
     final private String USER_PREF_URL = OAUTH_URL + "/api/v1/me/prefs";
     final private String USER_FLAIR_URL = OAUTH_URL + "/r/{0}/api/flairselector";
+    final private String USER_SUBS_MODERATED_URL = OAUTH_URL + "/subreddits/mine/moderator/.json";
     final private String REFRESH_TOKEN_URL = OAUTH_URL + "/api/v1/access_token";
     final private String MODERATORS_URL = BASIC_URL + "/r/{0}/about/moderators.json";
 
@@ -38,6 +39,23 @@ public class BreakerRedditClient{
     public static class RedditJsonUser {
         public String name;
         public String id;
+    }
+
+    public static class RedditJsonSubRedditList {
+        public RedditJsonSubredditData data;
+    }
+
+    public static class RedditJsonSubredditData {
+        public RedditJsonSubredditChild[] children;
+    }
+
+    public static class RedditJsonSubredditChild {
+        public RedditJsonSubreddit data;
+    }
+
+    public static class RedditJsonSubreddit {
+        public String name; // actually ID
+        public String display_name;
     }
 
     public BreakerRedditClient(){
@@ -62,6 +80,21 @@ public class BreakerRedditClient{
 
     public JSONObject getRedditUserFlairForSubreddit(ChatUser chatUser, String subreddit) throws RedditRequestError{
         return postJsonForUser(chatUser, MessageFormat.format(USER_FLAIR_URL, subreddit));
+    }
+
+    public JSONObject getSubsModerated(ChatUser chatUser) throws RedditRequestError {
+        return getJsonForUser(chatUser, USER_SUBS_MODERATED_URL);
+    }
+
+    public ArrayList<String> getSubNamesModerated(ChatUser chatUser) throws RedditRequestError {
+        JSONObject subsModerated = getSubsModerated(chatUser);
+        // todo This is dumb to conver to json then back to string, fix
+        RedditJsonSubRedditList redditJsonSubRedditList = new Gson().fromJson(subsModerated.toString(), RedditJsonSubRedditList.class);
+        ArrayList<String> subnames = new ArrayList<>();
+        for (RedditJsonSubredditChild child : redditJsonSubRedditList.data.children) {
+            subnames.add(child.data.display_name);
+        }
+        return subnames;
     }
 
     private JSONObject getJsonForUser(ChatUser chatUser, String endpoint) throws RedditRequestError{
@@ -124,6 +157,7 @@ public class BreakerRedditClient{
             }
 
             conn.connect();
+            String jsonStr = IOUtils.toString(conn.getInputStream());
 
             int code = conn.getResponseCode();
 
@@ -132,10 +166,9 @@ public class BreakerRedditClient{
             } if (code == 403) {
                 throw new InvalidAuthScope();
             } if(code != 200){
-                throw new RedditRequestError("Not 200");
+                throw new RedditRequestError("Received error code: " + code + ", response: " + jsonStr);
             }
 
-            String jsonStr = IOUtils.toString(conn.getInputStream());
             return new JSONObject(jsonStr);
         } catch (IOException | JSONException e){
             e.printStackTrace();

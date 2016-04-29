@@ -9,6 +9,7 @@ import play.test.Fixtures;
 import play.test.UnitTest;
 import reddit.BreakerRedditClient;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,12 +24,18 @@ public class TestRedditClient extends UnitTest {
         Mail.Mock.reset();
     }
 
-    @Test
-    public void testRefreshToken() throws Exception {
+    private ChatUser getUser() {
         ChatUser chatUser = new ChatUser("1");
         chatUser.username = "megamatt2000";
-        chatUser.accessToken = "38478176-8ryTZfcMXEw5zYx0qkRwY7duRYk";
-        chatUser.refreshToken = "38478176-tzgBE8fUaa5Rth7_cYkmbPKhLDk";
+        // NOTE: These access tokens change every time to relogin into the site, need a better way to test
+        chatUser.accessToken = "***REMOVED***";
+        chatUser.refreshToken = "***REMOVED***";
+        return chatUser;
+    }
+
+    @Test
+    public void testRefreshToken() throws Exception {
+        ChatUser chatUser = getUser();
 
         // Refresh access token for user
         BreakerRedditClient breakerRedditClient = new BreakerRedditClient();
@@ -41,16 +48,25 @@ public class TestRedditClient extends UnitTest {
 
     @Test
     public void testGetFlair() throws Exception {
-        ChatUser chatUser = new ChatUser("1");
-        chatUser.username = "megamatt2000";
-        chatUser.accessToken = "38478176-8ryTZfcMXEw5zYx0qkRwY7duRYk";
-        chatUser.refreshToken = "38478176-tzgBE8fUaa5Rth7_cYkmbPKhLDk";
+        ChatUser chatUser = getUser();
 
         // Refresh access token for user
         BreakerRedditClient breakerRedditClient = new BreakerRedditClient();
         JSONObject hockeyFlair = breakerRedditClient.getRedditUserFlairForSubreddit(chatUser, "hockey");
 
         Logger.info("Received flair: " + hockeyFlair.toString());
+    }
+
+    @Test
+    public void testGetSubsModerated() throws Exception {
+        ChatUser chatUser = getUser();
+
+        // Refresh access token for user
+        BreakerRedditClient breakerRedditClient = new BreakerRedditClient();
+        ArrayList<String> subNamesModerated = breakerRedditClient.getSubNamesModerated(chatUser);
+        assertEquals(3, subNamesModerated.size());
+        assertTrue(subNamesModerated.contains("appchat"));
+        assertTrue(subNamesModerated.contains("breakerapp"));
     }
 
     @Test
