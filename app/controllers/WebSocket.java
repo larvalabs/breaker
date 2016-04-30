@@ -16,6 +16,7 @@ import models.ChatUserRoomJoin;
 import play.Logger;
 import play.Play;
 import play.db.jpa.JPA;
+import play.libs.F;
 import play.libs.F.EventStream;
 import play.libs.F.Promise;
 import play.mvc.Http.WebSocketClose;
@@ -25,6 +26,7 @@ import play.mvc.With;
 
 import javax.persistence.Query;
 import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 @With(ForceSSL.class)
 public class WebSocket extends PreloadUserController {
@@ -377,7 +379,7 @@ public class WebSocket extends PreloadUserController {
                     // If this was the last connection that user had to the room then broadcast they've left
                     if (!roomConnection.room.isUserPresent(user)) {
                         Logger.debug("Last connection for " + user.username + " on channel " + roomConnection.room.getName() + " disconnected, broadcasting leave.");
-                        roomConnection.chatRoomEventStream.leave(roomConnection.room, user);
+                        roomConnection.chatRoomEventStream.leave(roomConnection.room, user, connectionId);
                     }
                 }
                 disconnect();
@@ -425,8 +427,8 @@ public class WebSocket extends PreloadUserController {
             }
             room.userPresent(user, connectionId);
             boolean isModerator = room.isModerator(user);
-            EventStream<ChatRoomStream.Event> roomEventsStream = eventStream.join(room, user, broadcastJoin);
-            EventStream<ChatRoomStream.Event> roomMessagesStream = messageStream.join(room, user, broadcastJoin);
+            EventStream<ChatRoomStream.Event> roomEventsStream = eventStream.join(room, user, connectionId, broadcastJoin);
+            EventStream<ChatRoomStream.Event> roomMessagesStream = messageStream.join(room, user, connectionId, broadcastJoin);
 
             roomConnections.put(room.name, new RoomConnection(user, room, eventStream, messageStream, roomMessagesStream, roomEventsStream, isModerator));
         }

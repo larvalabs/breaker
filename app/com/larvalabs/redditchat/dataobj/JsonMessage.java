@@ -2,6 +2,7 @@ package com.larvalabs.redditchat.dataobj;
 
 import models.*;
 import org.nibor.autolink.*;
+import play.Logger;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -53,7 +54,11 @@ public class JsonMessage implements Serializable {
         this.createDateLongUTC = createDateLongUTC;
         isNewSinceLastSession = newSinceLastSession;
         this.detectedLanguage = detectedLanguage;
-        processMessage();
+        try {
+            processMessage();
+        } catch (Exception e) {
+            Logger.error(e, "Error extracting links from message text.");
+        }
     }
 
     public JsonMessage(String uuid, String username, String roomName, String message) {
@@ -63,7 +68,12 @@ public class JsonMessage implements Serializable {
         this.message = message;
         this.createDate = new Date();
         this.createDateLongUTC = createDate.getTime();
-        processMessage();
+        try {
+            processMessage();
+        } catch (Exception e) {
+            Logger.error(e, "Error extracting links from message text.");
+        }
+
     }
 
     public static JsonMessage from(Message message, String username, String roomName) {
@@ -122,7 +132,7 @@ public class JsonMessage implements Serializable {
         return jsonMessages.toArray(new JsonMessage[]{});
     }
 
-    public void processMessage() {
+    public void processMessage() throws Exception {
         LinkExtractor linkExtractor = LinkExtractor.builder()
                 .linkTypes(EnumSet.of(LinkType.URL)) // limit to URLs
                 .build();

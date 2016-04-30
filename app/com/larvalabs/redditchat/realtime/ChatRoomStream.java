@@ -26,7 +26,7 @@ public class ChatRoomStream {
     public static final int STREAM_SIZE = 0;
     public static final int PRELOAD_NUM_MSGS_ON_STARTUP = STREAM_SIZE;
 
-    private EventStream<ChatRoomStream.Event> chatEvents = new EventStream<Event>();
+    private HashMap<String, EventStream<ChatRoomStream.Event>> userStreams = new HashMap<>();
 
     private String name;
 
@@ -34,6 +34,7 @@ public class ChatRoomStream {
         this.name = name;
     }
 
+/*
     private void loadOldMessages() {
         Logger.debug("Loading old messages for room: " + name);
         ChatRoom room = ChatRoom.findByName(name);
@@ -45,6 +46,7 @@ public class ChatRoomStream {
         }
         Logger.debug("Old messages sent to room: " + name);
     }
+*/
 
     public String getName() {
         return name;
@@ -52,16 +54,26 @@ public class ChatRoomStream {
 
     // ~~~~~~~~~ Let's chat!
 
+    private String getStreamKey(String roomName, String username, String connectionId) {
+        return roomName + "-" + username + "-" + connectionId;
+    }
+
     /**
      * For WebSocket, when a user join the room we return a continuous event stream
      * of ChatEvent
      */
-    public EventStream<ChatRoomStream.Event> join(ChatRoom room, ChatUser user, boolean broadcastJoin) {
+    public EventStream<ChatRoomStream.Event> join(ChatRoom room, ChatUser user, String connectionId, boolean broadcastJoin) {
         if (broadcastJoin) {
             JsonUser jsonUser = JsonUser.fromUserForRoom(user, room);
             publishEvent(new Join(JsonChatRoom.from(room), jsonUser), true);
         }
-        return chatEvents;
+        String streamKey = getStreamKey(room.getName(), user.getUsername(), connectionId);
+        EventStream<Event> userEventStream = userStreams.get(streamKey);
+        if (userEventStream == null) {
+            userEventStream = new EventStream<Event>();
+            userStreams.put(streamKey, userEventStream);
+        }
+        return userEventStream;
     }
 
     public void sendMemberList(ChatRoom room) {
@@ -74,7 +86,10 @@ public class ChatRoomStream {
     /**
      * A user leave the room
      */
-    public void leave(ChatRoom room, ChatUser user) {
+    public void leave(ChatRoom room, ChatUser user, String connectionId) {
+        // todo Review whether this can leak, i.e. if we don't always get proper disconnect events from the socket
+        // todo Could do a periodic cleanup where we remove streams that haven't been accessed in a while
+        userStreams.remove(getStreamKey(room.getName(), user.getUsername(), connectionId));
         publishEvent(new Leave(JsonChatRoom.from(room), JsonUser.fromUser(user)), true);
     }
     
@@ -94,7 +109,9 @@ public class ChatRoomStream {
     }
 
     public void publishEventInternal(Event event) {
-        chatEvents.publish(event);
+        for (EventStream<Event> userEventStream : userStreams.values()) {
+            userEventStream.publish(event);
+        }
     }
 
     /**
