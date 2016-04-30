@@ -625,4 +625,8 @@ public class ChatRoom extends Model {
     public String toString() {
         return "Room: " + getId() + ":" + getName();
     }
+
+    public boolean isDefaultRoom() {
+        return getName().equals(Constants.CHATROOM_DEFAULT);
+    }
 }

@@ -4,9 +4,11 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.larvalabs.redditchat.ChatCommands;
+import com.larvalabs.redditchat.Constants;
 import com.larvalabs.redditchat.dataobj.JsonChatRoom;
 import com.larvalabs.redditchat.dataobj.JsonMessage;
 import com.larvalabs.redditchat.dataobj.JsonUser;
+import com.larvalabs.redditchat.util.Stats;
 import jobs.RedisQueueJob;
 import models.ChatRoom;
 import models.ChatUser;
@@ -73,6 +75,9 @@ public class ChatRoomStream {
             userEventStream = new EventStream<Event>();
             userStreams.put(streamKey, userEventStream);
         }
+        if (room.isDefaultRoom()) {
+            Stats.sample(Stats.StatKey.USER_STREAMS_OPEN, userStreams.size());
+        }
         return userEventStream;
     }
 
@@ -90,6 +95,9 @@ public class ChatRoomStream {
         // todo Review whether this can leak, i.e. if we don't always get proper disconnect events from the socket
         // todo Could do a periodic cleanup where we remove streams that haven't been accessed in a while
         userStreams.remove(getStreamKey(room.getName(), user.getUsername(), connectionId));
+        if (room.isDefaultRoom()) {
+            Stats.sample(Stats.StatKey.USER_STREAMS_OPEN, userStreams.size());
+        }
         publishEvent(new Leave(JsonChatRoom.from(room), JsonUser.fromUser(user)), true);
     }
     
@@ -288,7 +296,7 @@ public class ChatRoomStream {
         }
         return chatRoomStream;
     }
-    
+
     public static ChatRoomStream getMessageStream(String name) {
         ChatRoomStream chatRoomStream = messageStreams.get(name);
         if (chatRoomStream == null) {
