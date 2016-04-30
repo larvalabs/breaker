@@ -5230,6 +5230,10 @@ li.chat-message-root .message-body, li.chat-message-short .message-body, li.chat
   overflow: overlay;
 }
 
+.username-container {
+  display: inline-block;
+}
+
 .flair-container {
   display: inline-block;
   float: left;
