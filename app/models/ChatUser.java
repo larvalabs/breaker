@@ -3,6 +3,7 @@ package models;
 import com.larvalabs.redditchat.Constants;
 import com.larvalabs.redditchat.dataobj.JsonFlair;
 import com.larvalabs.redditchat.util.Util;
+import jobs.UpdateUserFromRedditJob;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Index;
 import play.Logger;
@@ -358,6 +359,8 @@ public class ChatUser extends Model {
         chatRoom.numberOfUsers++;
         chatRoom.save();
         Logger.info("User " + username + ": " + chatRoom.name + " : " + chatRoom.numberOfUsers);
+
+        new UpdateUserFromRedditJob(getId()).now();
     }
 
     public void leaveChatRoom(ChatRoom chatRoom) {

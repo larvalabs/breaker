@@ -430,8 +430,12 @@ public class Application extends PreloadUserController {
         renderText("ok");
     }
 
-    public static void testRedditUpdate() {
-        new UpdateAllUsersFromRedditRecurringJob().now();
+    public static void runRedditUpdate(Long userId) {
+        if (userId != null) {
+            new UpdateUserFromRedditJob(userId).now();
+        } else {
+            new UpdateAllUsersFromRedditRecurringJob().now();
+        }
         renderText("OK");
     }
 
