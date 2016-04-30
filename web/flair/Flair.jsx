@@ -14,7 +14,7 @@ export default class Flair extends Component {
       return null;
     }
 
-    let classes = `user-flair-${flairSettings.get('flairPosition', 'right')} flair flair-${flairSettings.get('flairCss')}`;
+    let classes = `flair flair-${flairSettings.get('flairCss')}`;
 
     if(!flairSettings.get('flairText') || this.props.classOnly){
       return <span className={classes} title={flairSettings.get('flairText')}></span>
@@ -25,7 +25,7 @@ export default class Flair extends Component {
     return <span className={classes} title={flairSettings.get('flairText')}>{flairSettings.get('flairText')}</span>
   }
   render(){
-      return <div className="flair-container">
+      return <div className={`flair-container user-flair-${flairSettings.get('flairPosition', 'right')}`}>
         {this.renderFlair()}
       </div>
   }
