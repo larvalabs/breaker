@@ -19,7 +19,7 @@ class UserListBox extends Component {
                     {
                       this.props.members.get('mods', Immutable.List()).map((member) => {
                         let user = this.props.users.get(member);
-                        return <UserListItem key={user.get('username')} user={user}/>
+                        return <UserListItem key={user.get('username')} user={user} roomName={this.props.roomName}/>
                       })
                     }
                   </ul>
@@ -30,7 +30,7 @@ class UserListBox extends Component {
                     {
                       this.props.members.get('online', Immutable.List()).map((member) => {
                         let user = this.props.users.get(member);
-                        return <UserListItem key={user.get('username')} user={user}/>
+                        return <UserListItem key={user.get('username')} user={user} roomName={this.props.roomName} />
                       })
                     }
                   </ul>
@@ -41,7 +41,7 @@ class UserListBox extends Component {
                     {
                       this.props.members.get('offline', Immutable.List()).map((member) => {
                         let user = this.props.users.get(member);
-                        return <UserListItem key={user.get('username')} user={user}/>
+                        return <UserListItem key={user.get('username')} user={user} roomName={this.props.roomName} />
                       })
                     }
                   </ul>
@@ -64,7 +64,8 @@ function mapStateToProps(state) {
 
   return {
     members: state.getIn(['members', roomName], Immutable.Map()),
-    users: state.get('users')
+    users: state.get('users'),
+    roomName
   }
 }
 

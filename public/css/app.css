@@ -5245,6 +5245,11 @@ li.chat-message-root .message-body, li.chat-message-short .message-body, li.chat
   float: left;
   margin-right: 0.5em;
 }
+
+.nba .user-list-item .flair:hover {
+  width: 33px !important;
+  padding-right: 0px !important;
+}
 /* Autocomplete styles */
 
 .suggestionsContainer {

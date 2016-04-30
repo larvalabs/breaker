@@ -11,10 +11,10 @@ export default class UserListItem extends Component {
       return null;
     }
     
-    return <li key={this.props.user.get('id')} className="list-group-item">
+    return <li key={this.props.user.get('id')} className="list-group-item user-list-item">
       <UserAvatar user={this.props.user} roomName={this.props.roomName}/>
       <Clear>
-        <UsernameAndFlair user={this.props.user} roomName={this.props.roomName} />
+        <UsernameAndFlair user={this.props.user} roomName={this.props.roomName} classOnly={this.props.roomName === "nba"}/>
         <UserStatusMessage user={this.props.user} roomName={this.props.roomName} />
       </Clear>
     </li>
