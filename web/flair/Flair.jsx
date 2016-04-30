@@ -26,8 +26,9 @@ export default class Flair extends Component {
   }
   render(){
       let flairSettings = this.props.user.getIn(['flair', this.props.roomName]);
+      let flairSide = flairSettings ? flairSettings.get('flairPosition', 'right') : 'right'
 
-      return <div className={`flair-container user-flair-${flairSettings.get('flairPosition', 'right')}`}>
+      return <div className={`flair-container user-flair-${flairSide}`}>
         {this.renderFlair()}
       </div>
   }
