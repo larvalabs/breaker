@@ -83,7 +83,7 @@ public class RedditLinkBotJob extends Job {
                             title + " - " + Constants.REDDIT_BASE_URL + "/" + id + " - score: " + score + " - comments: " + comments);
                     message.save();
 
-                    ChatRoomStream.getMessageStream(subredditToProcess).say(JsonMessage.from(message, botUser.getUsername(), room.getName()), JsonChatRoom.from(room), JsonUser.fromUser(message.getUser()));
+                    ChatRoomStream.getEventStream(subredditToProcess).say(JsonMessage.from(message, botUser.getUsername(), room.getName()), JsonChatRoom.from(room), JsonUser.fromUser(message.getUser()));
 
                     numPosted++;
                     if (numPosted >= MAX_NUM_TO_POST_PER_RUN) {

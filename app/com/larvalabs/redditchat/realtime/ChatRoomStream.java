@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.larvalabs.redditchat.ChatCommands;
-import com.larvalabs.redditchat.Constants;
 import com.larvalabs.redditchat.dataobj.JsonChatRoom;
 import com.larvalabs.redditchat.dataobj.JsonMessage;
 import com.larvalabs.redditchat.dataobj.JsonUser;
@@ -13,15 +12,9 @@ import jobs.RedisQueueJob;
 import models.ChatRoom;
 import models.ChatUser;
 import play.Logger;
-import play.libs.F;
-import play.libs.F.ArchivedEventStream;
 import play.libs.F.EventStream;
-import play.libs.F.IndexedEvent;
-import play.libs.F.Promise;
 
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 
 public class ChatRoomStream {
 
@@ -285,26 +278,15 @@ public class ChatRoomStream {
 
     // ~~~~~~~~~ Chat room factory
 
-    private static HashMap<String, ChatRoomStream> eventStreams = new HashMap<String, ChatRoomStream>();
-    private static HashMap<String, ChatRoomStream> messageStreams = new HashMap<String, ChatRoomStream>();
+    private static HashMap<String, ChatRoomStream> chatRoomStreamsForRoom = new HashMap<String, ChatRoomStream>();
 
     public static ChatRoomStream getEventStream(String name) {
-        ChatRoomStream chatRoomStream = eventStreams.get(name);
+        ChatRoomStream chatRoomStream = chatRoomStreamsForRoom.get(name);
         if (chatRoomStream == null) {
             chatRoomStream = new ChatRoomStream(name, false);
-            eventStreams.put(name, chatRoomStream);
+            chatRoomStreamsForRoom.put(name, chatRoomStream);
         }
         return chatRoomStream;
     }
-
-    public static ChatRoomStream getMessageStream(String name) {
-        ChatRoomStream chatRoomStream = messageStreams.get(name);
-        if (chatRoomStream == null) {
-            chatRoomStream = new ChatRoomStream(name, true);
-            messageStreams.put(name, chatRoomStream);
-        }
-        return chatRoomStream;
-    }
-
 }
 

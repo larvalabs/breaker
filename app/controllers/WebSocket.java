@@ -227,18 +227,14 @@ public class WebSocket extends PreloadUserController {
     private static class RoomConnection {
         public ChatRoom room;
         public ChatRoomStream chatRoomEventStream;
-        public ChatRoomStream chatRoomMessageStream;
         public EventStream<ChatRoomStream.Event> eventStream;
-        public EventStream<ChatRoomStream.Event> messageStream;
         public boolean isModerator;
         public boolean canPost;
 
-        public RoomConnection(ChatUser user, ChatRoom room, ChatRoomStream chatRoomEventStream, ChatRoomStream chatRoomMessageStream, EventStream<ChatRoomStream.Event> eventStream, EventStream<ChatRoomStream.Event> messageStream, boolean isModerator) {
+        public RoomConnection(ChatUser user, ChatRoom room, ChatRoomStream chatRoomEventStream, EventStream<ChatRoomStream.Event> eventStream, boolean isModerator) {
             this.room = room;
             this.chatRoomEventStream = chatRoomEventStream;
-            this.chatRoomMessageStream = chatRoomMessageStream;
             this.eventStream = eventStream;
-            this.messageStream = messageStream;
             this.isModerator = isModerator;
             this.canPost = room.userCanPost(user);
         }
@@ -298,13 +294,11 @@ public class WebSocket extends PreloadUserController {
         }
 
         private static void awaitAndProcessInput(ChatUser user, String connectionId, HashMap<String, RoomConnection> roomConnections) {
-            Promise[] roomEventPromises = new Promise[(roomConnections.size() * 2) + 1];
+            Promise[] roomEventPromises = new Promise[roomConnections.size() + 1];
             roomEventPromises[0] = inbound.nextEvent();
             int i = 1;
             for (RoomConnection roomConnection : roomConnections.values()) {
                 roomEventPromises[i] = roomConnection.eventStream.nextEvent();
-                i++;
-                roomEventPromises[i] = roomConnection.messageStream.nextEvent();
                 i++;
             }
 
@@ -355,7 +349,7 @@ public class WebSocket extends PreloadUserController {
                                     String uuid = Util.getUUID();
                                     JsonMessage jsonMessage = JsonMessage.makePresavedMessage(uuid, user, roomConnection.room, message);
                                     new SaveNewMessageJob(uuid, user, roomName, message).now();
-                                    roomConnection.chatRoomMessageStream.say(jsonMessage, JsonChatRoom.from(roomConnection.room), JsonUser.fromUser(user));
+                                    roomConnection.chatRoomEventStream.say(jsonMessage, JsonChatRoom.from(roomConnection.room), JsonUser.fromUser(user));
                                     Stats.count(Stats.StatKey.MESSAGE, 1);
                                 } else {
                                     Logger.info("User " + user.getUsername() + " cannot post to " + roomName);
@@ -416,8 +410,7 @@ public class WebSocket extends PreloadUserController {
         }
 
         private static void addConnection(ChatUser user, String connectionId, HashMap<String, RoomConnection> roomConnections, ChatRoom room) {
-            ChatRoomStream eventStream = ChatRoomStream.getEventStream(room.name);
-            ChatRoomStream messageStream = ChatRoomStream.getMessageStream(room.name);
+            ChatRoomStream chatRoomStreamForRoom = ChatRoomStream.getEventStream(room.name);
 
             // Socket connected, join the chat room
             // If this is the first connection this user has to the room then broadcast
@@ -427,10 +420,9 @@ public class WebSocket extends PreloadUserController {
             }
             room.userPresent(user, connectionId);
             boolean isModerator = room.isModerator(user);
-            EventStream<ChatRoomStream.Event> roomEventsStream = eventStream.join(room, user, connectionId, broadcastJoin);
-            EventStream<ChatRoomStream.Event> roomMessagesStream = messageStream.join(room, user, connectionId, broadcastJoin);
+            EventStream<ChatRoomStream.Event> eventStreamForThisUser = chatRoomStreamForRoom.join(room, user, connectionId, broadcastJoin);
 
-            roomConnections.put(room.name, new RoomConnection(user, room, eventStream, messageStream, roomMessagesStream, roomEventsStream, isModerator));
+            roomConnections.put(room.name, new RoomConnection(user, room, chatRoomStreamForRoom, eventStreamForThisUser, isModerator));
         }
 
     }
