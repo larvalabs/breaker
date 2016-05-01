@@ -5231,7 +5231,7 @@ li.chat-message-root .message-body, li.chat-message-short .message-body, li.chat
 
 .message-container {
   line-height: 18px;
-  overflow: overlay;
+  overflow: visible;
 }
 
 .username-container {
