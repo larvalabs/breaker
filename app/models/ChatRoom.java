@@ -56,7 +56,7 @@ public class ChatRoom extends Model {
 
     public String iconUrl;
     public String banner;
-
+    public String flairScale;
 
     public int karmaThreshold = Constants.DEFAULT_MIN_KARMA_REQUIRED_TO_POST;
     public int sidebarColor;
@@ -64,6 +64,14 @@ public class ChatRoom extends Model {
     public ChatRoom(String name) {
         this.name = name;
         this.numberOfUsers = 0;
+    }
+
+    public String getFlairScale(){
+        return flairScale;
+    }
+
+    public void setFlairScale(String flairScale){
+        this.flairScale = flairScale;
     }
 
     public String getName() {
