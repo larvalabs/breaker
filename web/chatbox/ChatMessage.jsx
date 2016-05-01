@@ -31,7 +31,7 @@ export default class ChatMessage extends Component {
     return null;
   }
   render(){
-    let liClasses = "chat-message-root list-group-item no-border p-t-s p-b-xs clearfix b-l-3x b-l-white";
+    let liClasses = "chat-message-root-old list-group-item no-border p-t-s p-b-xs clearfix b-l-3x b-l-white";
 
     return (
       <li className={liClasses}>
