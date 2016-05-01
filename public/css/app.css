@@ -5240,17 +5240,9 @@ li.chat-message-root .message-body, li.chat-message-short .message-body, li.chat
 
 .flair-container {
   display: inline-block;
-  float: left;
   min-width: 3em;
   height: 100%;
-}
-
-.user-flair-right {
   margin-left: 0.5em;
-}
-
-.user-flair-left {
-  float: left;
 }
 
 .nba .user-list-item .flair:hover {
