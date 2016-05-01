@@ -25,7 +25,8 @@ export default class Flair extends Component {
     return <span className={classes} title={flairSettings.get('flairText')}>{flairSettings.get('flairText')}</span>
   }
   render(){
-      return <div className={`flair-container`}>
+      let flairScaleClass = Config.settings.flairScaleForRoom(this.props.roomName);
+      return <div className={`flair-container ${flairScaleClass}`}>
         {this.renderFlair()}
       </div>
   }

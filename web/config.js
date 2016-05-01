@@ -14,7 +14,14 @@ let Config = {
   settings: {
     ping_timeout: 20000,
     default_banner: "Message from the moderators to you, the user.",
-    dev_tools: window.__USER_ADMIN__ || window.__ENVIRONMENT__ !== "production"
+    dev_tools: window.__USER_ADMIN__ || window.__ENVIRONMENT__ !== "production",
+    flairScaleForRoom: (roomName) => {
+      if(["newyorkislanders"].includes(roomName)){
+        return "flair-scale-half"
+      }
+      
+      return null
+    }
   },
   websocket_url: window.__WEBSOCKET_URL__,
   room_name: window.__ROOM_NAME__
