@@ -20,7 +20,7 @@ let Config = {
         return "flair-scale-half"
       }
       
-      return null
+      return ""
     }
   },
   websocket_url: window.__WEBSOCKET_URL__,

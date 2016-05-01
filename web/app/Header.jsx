@@ -76,7 +76,7 @@ var Header = React.createClass({
   },
   renderSidebarHamburger: function(){
     let classes = "pull-right visible-xs";
-    let active = this.props.sidebar_open ? " active" : null;
+    let active = this.props.sidebar_open ? " active" : "";
     return <button className={classes + active} ui-toggle-className="off-screen" target=".app-aside" ui-scroll="app" onClick={this.onSidebarButtonClick}>
       <i className="glyphicon glyphicon-align-justify"/>
     </button>
