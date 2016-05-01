@@ -1,9 +1,10 @@
 import React, {Component} from 'react'
 import Immutable from 'immutable'
 import Config from '../config'
+import { connect } from 'react-redux';
 
 
-export default class Flair extends Component {
+class Flair extends Component {
   renderFlair() {
     let flairSettings = this.props.user.getIn(['flair', this.props.roomName]);
     if(!flairSettings){
@@ -25,10 +26,20 @@ export default class Flair extends Component {
     return <span className={classes} title={flairSettings.get('flairText')}>{flairSettings.get('flairText')}</span>
   }
   render(){
-      let flairScaleClass = Config.settings.flairScaleForRoom(this.props.roomName);
+      let flairScaleClass = Config.settings.flairScaleForRoom(this.props.room);
       return <div className={`flair-container ${flairScaleClass}`}>
         {this.renderFlair()}
       </div>
   }
 }
 
+
+function mapStateToProps(state) {
+  let roomName = state.getIn(['initial', 'roomName']);
+
+  return {
+    room: state.getIn(['rooms', roomName])
+  }
+}
+
+export default connect(mapStateToProps)(Flair)
