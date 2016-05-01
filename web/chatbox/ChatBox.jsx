@@ -44,7 +44,7 @@ class ChatBox extends Component {
   }
   renderMessageInput(){
     if(Config.guest){
-      return <ChatLoginInput roomName={this.props.roomName} />
+      return <ChatLoginInput roomName={this.props.roomName} room={this.props.room}/>
     } else {
       return <ChatMessageInput roomName={this.props.roomName} onMessageInput={this.onMessageInput}/>
     }
@@ -74,7 +74,8 @@ function mapStateToProps(state) {
     messages: state.getIn(['messages', roomName], Immutable.List()),
     users: state.get('users'),
     roomName: roomName,
-    message: state.get('message', Immutable.Map())
+    message: state.get('message', Immutable.Map()),
+    room: state.getIn(['rooms', roomName])
   }
 }
 

@@ -13,8 +13,12 @@ class SidebarRoomListElm extends Component {
     this.props.dispatch(chatActions.handleChangeRoom(this.props.room.get('name')));
   }
   renderUnreadCount(props){
+    let backgroundColor = this.props.currentRoom.getIn(['styles', 'sidebarUnreadColor']);
+    let textColor = this.props.currentRoom.getIn(['styles', 'sidebarUnreadTextColor']);
+
     if(props.unreadCount > 0) {
-      return <b className="unreadcount label bg-info pull-right">{this.props.unreadCount}</b>
+      return <b className="unreadcount label bg-info pull-right"
+                style={{backgroundColor: backgroundColor, color: textColor}}>{this.props.unreadCount}</b>
     }
     return null;
   }
