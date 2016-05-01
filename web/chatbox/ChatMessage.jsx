@@ -39,7 +39,8 @@ export default class ChatMessage extends Component {
         {this.renderTime()}
         <div className="clear">
           <UsernameAndFlair user={this.props.user} roomName={this.props.roomName} />
-
+          {this.renderMessage()}
+          {this.renderLinks()}
         </div>
 
       </li>

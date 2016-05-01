@@ -5,7 +5,7 @@ let Config = {
     suggestedRooms: false,
     useFlairStyle: (roomName) => {
       // We can switch here based on subreddit
-      return true;
+      return false;
     }
   },
   environment: {

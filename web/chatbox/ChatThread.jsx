@@ -1,10 +1,11 @@
 import React, {Component} from 'react'
 import ChatMessageHeader from './ChatMessageHeader'
 import ChatShortMessage from './ChatShortMessage'
+import ChatMessage from './ChatMessage'
+import Config from '../config'
 
 export default class ChatThread extends Component {
-  renderThreadMessage(props, message, previous){
-
+  renderThreadMessageNewWay(props, message, previous){
     return <div key={message.get('uuid')}>
       <ChatMessageHeader message={message}
                          previous={previous}
@@ -15,6 +16,29 @@ export default class ChatThread extends Component {
                         user={props.users.get(message.get('username'))}
                         roomName={props.roomName}/>
     </div>
+  }
+  renderThreadMessageOldWay(props, message, previous){
+
+    if(previous && previous.get('username') === message.get('username')){
+      return <ChatShortMessage key={message.get('uuid')}
+                               message={message}
+                               user={props.users.get(message.get('username'))}
+                               roomName={props.roomName}/>
+    }
+
+    return <ChatMessage key={message.get('uuid')}
+                        message={message}
+                        user={props.users.get(message.get('username'))}
+                        roomName={props.roomName}/>
+  }
+
+  renderThreadMessage(props, message, previous){
+
+    if(Config.features.useFlairStyle(this.props.roomName)){
+      return this.renderThreadMessageNewWay(props, message, previous)
+    }
+
+    return this.renderThreadMessageOldWay(props, message, previous)
 
   }
 
