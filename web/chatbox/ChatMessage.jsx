@@ -35,10 +35,11 @@ export default class ChatMessage extends Component {
 
     return (
       <li className={liClasses}>
-        <UserAvatar user={this.props.user} roomName={this.props.roomName}/>
+        <UserAvatar user={this.props.user} roomName={this.props.roomName} />
         {this.renderTime()}
         <div className="clear">
-          <UsernameAndFlair user={this.props.user} roomName={this.props.roomName} />
+          <UsernameAndFlair user={this.props.user} roomName={this.props.roomName}
+                            messageUsername={this.props.message.get('username')}/>
           {this.renderMessage()}
           {this.renderLinks()}
         </div>

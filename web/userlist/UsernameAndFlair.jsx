@@ -11,11 +11,15 @@ export default class UsernameAndFlair extends Component {
   }
   render(){
     let modClass = this.props.user.get('modForRoom') ? 'text-md text-primary-dker' : 'text-md text-dark-dker';
+    let username = this.props.user.get('username');
+    if(!username){
+      username = this.props.messageUsername;
+    }
     return <div className="message-container">
       
       <div className="username-container">
         <a className={modClass} href={`https://reddit.com/u/${this.props.user.get('username')}`} target="_blank">
-          {this.props.user.get('username')}</a>
+          {username}</a>
       </div>
       {this.renderFlairIfNecessary()}
     </div>
