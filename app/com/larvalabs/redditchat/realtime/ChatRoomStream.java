@@ -15,13 +15,14 @@ import play.Logger;
 import play.libs.F.EventStream;
 
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ChatRoomStream {
 
     public static final int STREAM_SIZE = 0;
     public static final int PRELOAD_NUM_MSGS_ON_STARTUP = STREAM_SIZE;
 
-    private HashMap<String, EventStream<ChatRoomStream.Event>> userStreams = new HashMap<>();
+    private ConcurrentHashMap<String, EventStream<Event>> userStreams = new ConcurrentHashMap<>();
 
     private String name;
 
@@ -80,7 +81,7 @@ public class ChatRoomStream {
 //        Logger.info("Sending member list of length " + users.size());
         publishEvent(new MemberList(JsonChatRoom.from(room), room.getAllUsersWithOnlineStatus()), true);
     }
-    
+
     /**
      * A user leave the room
      */
@@ -93,13 +94,13 @@ public class ChatRoomStream {
         }
         publishEvent(new Leave(JsonChatRoom.from(room), JsonUser.fromUser(user)), true);
     }
-    
+
     /**
      * A user say something on the room
      */
     public void say(JsonMessage message, JsonChatRoom room, JsonUser user) {
         // todo maybe move this empty check elsewhere?
-        if(message.message == null || message.message.trim().equals("")) {
+        if (message.message == null || message.message.trim().equals("")) {
             return;
         }
         publishEvent(new Message(message, room, user), true);
@@ -138,7 +139,7 @@ public class ChatRoomStream {
     // ~~~~~~~~~ Chat room events
 
     public static abstract class Event {
-        
+
         public String type;
         public Long timestamp;
         public JsonChatRoom room;
@@ -215,7 +216,7 @@ public class ChatRoomStream {
     }
 
     public static class Join extends Event {
-        
+
         public JsonUser user;
 
         public Join() {
@@ -225,9 +226,9 @@ public class ChatRoomStream {
             super(TYPE_JOIN, room);
             this.user = user;
         }
-        
+
     }
-    
+
     public static class Leave extends Event {
 
         public JsonUser user;
@@ -239,9 +240,9 @@ public class ChatRoomStream {
             super(TYPE_LEAVE, room);
             this.user = user;
         }
-        
+
     }
-    
+
     public static class Message extends Event {
 
         public JsonUser user;         // Just for convenience on the front end
@@ -255,7 +256,7 @@ public class ChatRoomStream {
             this.message = message;
             this.user = user;
         }
-        
+
     }
 
     public static class ServerMessage extends Event {
@@ -281,12 +282,14 @@ public class ChatRoomStream {
     private static HashMap<String, ChatRoomStream> chatRoomStreamsForRoom = new HashMap<String, ChatRoomStream>();
 
     public static ChatRoomStream getEventStream(String name) {
-        ChatRoomStream chatRoomStream = chatRoomStreamsForRoom.get(name);
-        if (chatRoomStream == null) {
-            chatRoomStream = new ChatRoomStream(name, false);
-            chatRoomStreamsForRoom.put(name, chatRoomStream);
+        synchronized (chatRoomStreamsForRoom) {
+            ChatRoomStream chatRoomStream = chatRoomStreamsForRoom.get(name);
+            if (chatRoomStream == null) {
+                chatRoomStream = new ChatRoomStream(name, false);
+                chatRoomStreamsForRoom.put(name, chatRoomStream);
+            }
+            return chatRoomStream;
         }
-        return chatRoomStream;
     }
 }
 
