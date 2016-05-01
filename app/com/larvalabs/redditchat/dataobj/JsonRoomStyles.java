@@ -6,6 +6,7 @@ package com.larvalabs.redditchat.dataobj;
 public class JsonRoomStyles{
 
     public String sidebarBackgroundColor;
+    public String sidebarTextColor;
     public String sidebarRoomSelectedColor;
     public String sidebarRoomHoverColor;
     public String sidebarRoomTextColor;
@@ -14,10 +15,12 @@ public class JsonRoomStyles{
     public String signinButtonColor;
     public String signinButtonTextColor;
 
-    public JsonRoomStyles(String sidebarBackgroundColor, String sidebarRoomSelectedColor, String sidebarRoomHoverColor,
-                          String sidebarRoomTextColor, String sidebarUnreadColor, String sidebarUnreadTextColor,
-                          String signinButtonColor, String signinButtonTextColor) {
+    public JsonRoomStyles(String sidebarBackgroundColor, String sidebarTextColor, String sidebarRoomSelectedColor,
+                          String sidebarRoomHoverColor, String sidebarRoomTextColor, String sidebarUnreadColor,
+                          String sidebarUnreadTextColor, String signinButtonColor, String signinButtonTextColor) {
+
         this.sidebarBackgroundColor = sidebarBackgroundColor;
+        this.sidebarTextColor = sidebarTextColor;
         this.sidebarRoomSelectedColor = sidebarRoomSelectedColor;
         this.sidebarRoomHoverColor = sidebarRoomHoverColor;
         this.sidebarRoomTextColor = sidebarRoomTextColor;

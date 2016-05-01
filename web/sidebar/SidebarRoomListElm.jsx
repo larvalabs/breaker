@@ -24,13 +24,16 @@ class SidebarRoomListElm extends Component {
       roomIcon = '/public/images/blank.png';
     }
 
+    let roomNameColor = this.props.currentRoom.getIn(['styles', 'sidebarTextColor']);
+
     let key = this.props.room.get('name');
     let active = this.props.active ? " active" : "";
     return <li key={key} className={`roomlistentry ${active}`} onClick={this.onElementClicked}>
       <a className="roomselect" data-roomname={this.props.room.get('name')}>
         {this.renderUnreadCount(this.props)}
         <img className="roomIconSmall" src={roomIcon}/>
-        <span className={`roomname ${active}`} style={{marginLeft: "2px"}}>#{this.props.room.get('name')}</span>
+        <span className={`roomname ${active}`}
+              style={{marginLeft: "2px", color: roomNameColor}}>#{this.props.room.get('name')}</span>
       </a>
     </li>
   }
@@ -45,6 +48,7 @@ SidebarRoomListElm.defaultProps = {
 
 function mapStateToProps(state) {
   return {
+    currentRoom: state.getIn(['rooms', state.getIn(['initial', 'roomName'])])
   }
 }
 

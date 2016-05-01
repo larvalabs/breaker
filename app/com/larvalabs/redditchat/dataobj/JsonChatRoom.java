@@ -65,8 +65,9 @@ public class JsonChatRoom implements Serializable {
      * @return
      */
     public static JsonChatRoom from(ChatRoom room) {
-        JsonRoomStyles jsonRoomStyles = new JsonRoomStyles(room.sidebarBackgroundColor, room.sidebarRoomSelectedColor, room.sidebarRoomHoverColor,
-                room.sidebarRoomTextColor, room.sidebarUnreadColor, room.sidebarUnreadTextColor, room.signinButtonColor,
+        JsonRoomStyles jsonRoomStyles = new JsonRoomStyles(room.sidebarBackgroundColor, room.sidebarTextColor,
+                room.sidebarRoomSelectedColor, room.sidebarRoomHoverColor, room.sidebarRoomTextColor,
+                room.sidebarUnreadColor, room.sidebarUnreadTextColor, room.signinButtonColor,
                 room.signinButtonTextColor);
 
         JsonChatRoom jsonChatRoom = new JsonChatRoom(room.getId(), room.name,
@@ -88,8 +89,9 @@ public class JsonChatRoom implements Serializable {
         }
         ChatUserRoomJoin join = ChatUserRoomJoin.findByUserAndRoom(loggedInUser, room);
 
-        JsonRoomStyles jsonRoomStyles = new JsonRoomStyles(room.sidebarBackgroundColor, room.sidebarRoomSelectedColor, room.sidebarRoomHoverColor,
-                room.sidebarRoomTextColor, room.sidebarUnreadColor, room.sidebarUnreadTextColor, room.signinButtonColor,
+        JsonRoomStyles jsonRoomStyles = new JsonRoomStyles(room.sidebarBackgroundColor, room.sidebarTextColor,
+                room.sidebarRoomSelectedColor, room.sidebarRoomHoverColor, room.sidebarRoomTextColor,
+                room.sidebarUnreadColor, room.sidebarUnreadTextColor, room.signinButtonColor,
                 room.signinButtonTextColor);
 
         JsonChatRoom jsonChatRoom = new JsonChatRoom(room.getId(), room.name,

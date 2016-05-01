@@ -20,7 +20,8 @@ class AsyncApp extends Component {
                    roomList={rooms}
                    roomName={roomName}
                    unreadCounts={unreadCounts}
-                   open={sidebarOpen}/>
+                   open={sidebarOpen}
+                   room={room} />
           <Main />
         </div>
       </ChatDocumentTitle>

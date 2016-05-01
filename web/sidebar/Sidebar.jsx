@@ -14,9 +14,12 @@ export default React.createClass({
     }
   },
   renderYourRooms: function(){
+
+    let sidebarColor = this.props.room.getIn(['styles', 'sidebarTextColor']);
+
     return <ul id="roomlist" className="nav">
       <li key="your-rooms" className="hidden-folded padder m-t m-b-sm text-muted text-xs">
-        <span>Your Rooms</span>
+        <span style={{color: sidebarColor}}>Your Rooms</span>
       </li>
       {
         this.props.roomList.toArray().map((room) => {
@@ -51,11 +54,12 @@ export default React.createClass({
   },
   render: function () {
     let classes = "app-aside hidden-xs bg-dark";
+    let styles = Config.styles.getSidebarColorForRoom(this.props.room);
     if(this.props.open){
       classes += " off-screen";
     }
     return (
-      <aside id="aside" className={classes}>
+      <aside id="aside" className={classes} style={styles}>
         <div className="aside-wrap">
           <div className="navi-wrap">
             <nav ui-nav className="navi clearfix">

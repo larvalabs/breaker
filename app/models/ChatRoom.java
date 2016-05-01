@@ -62,6 +62,7 @@ public class ChatRoom extends Model {
     public int sidebarColor;
 
     public String sidebarBackgroundColor;
+    public String sidebarTextColor;
     public String sidebarRoomSelectedColor;
     public String sidebarRoomHoverColor;
     public String sidebarRoomTextColor;
@@ -93,6 +94,14 @@ public class ChatRoom extends Model {
 
     public void setSidebarBackgroundColor(String sidebarBackgroundColor){
         this.sidebarBackgroundColor = sidebarBackgroundColor;
+    }
+
+    public String getSidebarTextColor(){
+        return sidebarTextColor;
+    }
+
+    public void setSidebarTextColor(String sidebarTextColor){
+        this.sidebarTextColor = sidebarTextColor;
     }
 
     public String getSigninButtonTextColor(){

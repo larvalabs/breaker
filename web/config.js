@@ -23,6 +23,18 @@ let Config = {
       return ""
     }
   },
+  styles: {
+    getSidebarColorForRoom(room){
+      if(room.getIn(['styles', 'sidebarBackgroundColor'])){
+        return {
+          backgroundColor: room.getIn(['styles', 'sidebarBackgroundColor']),
+          color: room.getIn(['styles', 'sidebarTextColor'])
+        }
+      }
+
+      return {}
+    }
+  },
   websocket_url: window.__WEBSOCKET_URL__,
   room_name: window.__ROOM_NAME__
 };
