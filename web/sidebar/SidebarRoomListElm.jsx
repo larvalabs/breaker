@@ -32,7 +32,12 @@ class SidebarRoomListElm extends Component {
 
     let key = this.props.room.get('name');
     let active = this.props.active ? " active" : "";
-    return <li key={key} className={`roomlistentry ${active}`} onClick={this.onElementClicked}>
+    let activeBackground = null;
+    if(active){
+      activeBackground = this.props.currentRoom.getIn(['styles', 'sidebarRoomSelectedColor']);
+    }
+    return <li key={key} className={`roomlistentry ${active}`} onClick={this.onElementClicked}
+               style={{backgroundColor: activeBackground}}>
       <a className="roomselect" data-roomname={this.props.room.get('name')}>
         {this.renderUnreadCount(this.props)}
         <img className="roomIconSmall" src={roomIcon}/>

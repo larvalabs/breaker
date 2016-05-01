@@ -5310,11 +5310,11 @@ li.chat-message-root .message-body, li.chat-message-short .message-body, li.chat
   /*background-color: #2E7DBD;*/
 /*}*/
 
-.sandersforpresident .bg-dark .nav > li:hover > a,
-.sandersforpresident .bg-dark .nav > li:focus > a,
-.sandersforpresident .bg-dark .nav > li.active > a {
-  background-color: #0063A2;
-}
+/*.sandersforpresident .bg-dark .nav > li:hover > a,*/
+/*.sandersforpresident .bg-dark .nav > li:focus > a,*/
+/*.sandersforpresident .bg-dark .nav > li.active > a {*/
+  /*background-color: #0063A2;*/
+/*}*/
 
 /*.sandersforpresident .bg-dark .nav > li > a {*/
   /*color: #fff;*/
