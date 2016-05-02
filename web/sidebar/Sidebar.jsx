@@ -19,11 +19,13 @@ export default React.createClass({
         <span>Your Rooms</span>
       </li>
       {
-        this.props.roomList.toArray().map((room) => {
-          return <SidebarRoomListElm key={room.get('name')}
-                                     room={room}
-                                     active={room.get('name') == this.props.roomName}
-                                     unreadCount={this.props.unreadCounts.get(room.get('name'))}/>
+        this.props.roomList.toArray()
+            .sort((a, b) => b.get('name').toLowerCase() - a.get('name').toLowerCase())
+            .map((room) => {
+              return <SidebarRoomListElm key={room.get('name')}
+                                         room={room}
+                                         active={room.get('name') == this.props.roomName}
+                                         unreadCount={this.props.unreadCounts.get(room.get('name'))}/>;
         })
       }
     </ul>
