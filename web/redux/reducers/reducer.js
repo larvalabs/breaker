@@ -158,7 +158,11 @@ function unreadCounts(state=Immutable.Map(), action) {
     }
     case(chatTypes.CHAT_FOCUSED): {
       return state.set(action.roomName, 0).set('__HAS_FOCUS__', true);
-    }default: {
+    }
+    case(chatTypes.CHAT_ROOM_CHANGED): {
+      return state.set('__HAS_FOCUS__', true).set(action.roomName, 0);
+    }
+    default: {
       return state
     }
   }
