@@ -29,25 +29,10 @@ public class JsonUser implements Serializable {
     // Optionally filled
     public String accessToken;
     public boolean online;
-    // Filled in when part of a user list for a room
-    public boolean modForRoom;
-
-    // Filled in when requesting full user profile
-    public JsonMessage[] recentMessages;
-    public JsonChatRoom[] topChatRooms;
-    public JsonMessage[] mentions;  // Filled in if user requesting = user requested
-
-    // Additional role information for rendering badges
-    public static final int ROLE_NONE = 0;
-    public static final int ROLE_DEVELOPER_THIS = 1;
-    public static final int ROLE_DEVELOPER_OTHER = 2;
-    public int roleForRoom = ROLE_NONE;
-    public String flairForRoom = "";
-    public JsonChatRoom[] developerForRooms;
 
     public JsonUser(long id, String username, String notificationPreference, Date lastSeen,
                     long lastSeenLongUTC, long totalLikes, String profileImageUrl, String statusMessage, boolean bot,
-                    HashMap<String, JsonFlair> flair) {
+                    boolean online, HashMap<String, JsonFlair> flair) {
         this.id = id;
         this.username = username;
         this.notificationPreference = notificationPreference;
@@ -57,92 +42,38 @@ public class JsonUser implements Serializable {
         this.profileImageUrl = profileImageUrl;
         this.statusMessage = statusMessage;
         this.bot = bot;
+        this.online = online;
         this.flair = flair;
     }
 
-    public static JsonUser fromUser(ChatUser user) {
+    /**
+     * Load a user and set online status. Note: this loads user flair which can be expensive.
+     * @param user
+     * @param isOnline
+     * @return
+     */
+    public static JsonUser fromUser(ChatUser user, boolean isOnline) {
         return new JsonUser(user.getId(), user.username, user.notificationPreference,
                 user.getLastSeenDate(), user.getLastSeenDate().getTime(),
                 user.getLikeCount(), user.getProfileImageUrl(), user.getStatusMessage(), user.isBot(),
-                user.getFlairAsJson());
-    }
-
-    public static JsonUser fromUserNoFlairLoad(ChatUser user) {
-        return new JsonUser(user.getId(), user.username, user.notificationPreference,
-                user.getLastSeenDate(), user.getLastSeenDate().getTime(),
-                user.getLikeCount(), user.getProfileImageUrl(), user.getStatusMessage(), user.isBot(),
-                new HashMap<String, JsonFlair>());
-    }
-
-    public static JsonUser fromUserForRoom(ChatUser user, ChatRoom room) {
-        return fromUserForRoom(user, room, null);
+                isOnline, user.getFlairAsJson());
     }
 
     /**
-     * Adds information to user specific to a chat room, mainly online status and moderator flag.
+     *
      * @param user
-     * @param room
+     * @param isOnline
      * @return
      */
-    public static JsonUser fromUserForRoom(ChatUser user, ChatRoom room, @Nullable Set<String> usernamesPresent) {
-        JsonUser jsonUser = fromUser(user);
-        jsonUser.online = room.isUserPresent(user, usernamesPresent);
-        jsonUser.modForRoom = room.isRedditModerator(user);
-        return jsonUser;
-    }
-
-    public static JsonUser fromUserWithFullDetails(ChatUser user, ChatUser loggedInUser) {
-        JsonUser jsonUser = fromUser(user);
-        List<ChatRoom> topChatRoomsList = user.getTopChatRooms(10);
-        jsonUser.topChatRooms = JsonChatRoom.convert(loggedInUser, topChatRoomsList, null, false);
-        jsonUser.recentMessages = JsonMessage.convert(user.getLatestMessages(Constants.DEFAULT_MESSAGE_LIMIT), loggedInUser, JsonMessage.ListType.RECENT_MESSAGES);
-        if (user.equals(loggedInUser)) {
-            jsonUser.mentions = JsonMessage.convert(user.getMentioned(20), user, JsonMessage.ListType.MENTIONS);
-        }
-        return jsonUser;
+    public static JsonUser fromUserNoFlairLoad(ChatUser user, boolean isOnline) {
+        return new JsonUser(user.getId(), user.username, user.notificationPreference,
+                user.getLastSeenDate(), user.getLastSeenDate().getTime(),
+                user.getLikeCount(), user.getProfileImageUrl(), user.getStatusMessage(), user.isBot(),
+                isOnline, new HashMap<String, JsonFlair>());
     }
 
     public void addFlair(String roomName, JsonFlair flairObj) {
         flair.put(roomName, flairObj);
     }
 
-    // todo Convert this role stuff over to visitor, user, moderator
-/*
-    public void fillRoleInfo(ChatUser messagePostingUser, ChatRoom room) {
-        fillRoleInfo(messagePostingUser, room, null);
-    }
-
-    public void fillRoleInfo(ChatUser messagePostingUser, ChatRoom room, HashMap<ChatUser, Set<ChatRoom>> userDeveloperMap) {
-//        LogUtil.info("fillRoleInfo for " + messagePostingUser.username + " in " + (room != null ? room.appPackage : "(no room)"));
-        Set<ChatRoom> developerOfRooms;
-        if (userDeveloperMap != null) {
-            developerOfRooms = userDeveloperMap.get(messagePostingUser);
-        } else {
-            developerOfRooms = messagePostingUser.getDeveloperOfRooms();
-        }
-        if (developerOfRooms != null && developerOfRooms.size() > 0) {
-            if (room == null) {
-                roleForRoom = JsonUser.ROLE_NONE;
-            } else if (room != null && developerOfRooms.size() > 0 && !developerOfRooms.contains(room)) {
-                roleForRoom = JsonUser.ROLE_DEVELOPER_OTHER;
-            } else {
-                flairForRoom += Constants.Flair.DEV_SAME_ROOM.getAsString();
-                roleForRoom = JsonUser.ROLE_DEVELOPER_THIS;
-            }
-            // todo Add this back in if we need it, but make it a bit faster
-//            developerForRooms = JsonChatRoom.convert(messagePostingUser,
-//                    new ArrayList<ChatRoom>(messagePostingUser.getDeveloperOfRooms()), null, false);
-        }
-
-        if (Stats.isTopGlobalStarredUser(messagePostingUser)) {
-            flairForRoom += Constants.Flair.TOP_STARS_GLOBAL.getAsString();
-        }
-        if (room != null) {
-            if (Stats.isTopStarredUserForRoom(messagePostingUser, room)) {
-                flairForRoom += Constants.Flair.TOP_STARS_ROOM.getAsString();
-            }
-        }
-//        LogUtil.info("DONE fillRoleInfo for " + messagePostingUser.username + " in " + (room != null ? room.appPackage : "(no room)"));
-    }
-*/
 }

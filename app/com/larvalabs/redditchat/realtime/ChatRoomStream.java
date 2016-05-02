@@ -60,7 +60,7 @@ public class ChatRoomStream {
      */
     public EventStream<ChatRoomStream.Event> join(ChatRoom room, ChatUser user, String connectionId, boolean broadcastJoin) {
         if (broadcastJoin) {
-            JsonUser jsonUser = JsonUser.fromUserForRoom(user, room);
+            JsonUser jsonUser = JsonUser.fromUser(user, true);
             publishEvent(new Join(JsonChatRoom.from(room), jsonUser), true);
         }
         String streamKey = getStreamKey(room.getName(), user.getUsername(), connectionId);
@@ -92,7 +92,7 @@ public class ChatRoomStream {
         if (room.isDefaultRoom()) {
             Stats.sample(Stats.StatKey.USER_STREAMS_OPEN, userStreams.size());
         }
-        publishEvent(new Leave(JsonChatRoom.from(room), JsonUser.fromUser(user)), true);
+        publishEvent(new Leave(JsonChatRoom.from(room), JsonUser.fromUser(user, false)), true);
     }
 
     /**

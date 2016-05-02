@@ -99,8 +99,8 @@ public class ChatUserRoomJoin extends Model {
     }
 
     public static List<ChatUserRoomJoin> findByUser(ChatUser chatUser) {
-        Query query = JPA.em().createQuery("select userroom from ChatUserRoomJoin userroom join fetch userroom.room where userroom.user = :user");
-        query.setParameter("user", chatUser);
+        Query query = JPA.em().createQuery("select userroom from ChatUserRoomJoin userroom join fetch userroom.room where userroom.user = :userparam");
+        query.setParameter("userparam", chatUser);
         return query.getResultList();
 //        return find("user = ? join chatroom", chatUser).fetch();
     }

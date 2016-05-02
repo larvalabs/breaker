@@ -92,82 +92,16 @@ public class WebSocket extends PreloadUserController {
 
         Gson gson = new Gson();
 
-        // Get initial state
-//        List<ChatUserRoomJoin> chatRoomJoins = user.getChatRoomJoins();
-        Query getAllStuffQuery = JPA.em().createQuery("select ur from ChatUserRoomJoin ur join fetch ur.room urr join fetch ur.user u where ur.room in (select room from ChatUserRoomJoin ur2 where ur2.user = ?)")
-                .setParameter(1, user);
-        List<ChatUserRoomJoin> resultList = getAllStuffQuery.getResultList();
+        JsonUtil.FullState fullState = JsonUtil.loadFullStateForUser(user);
 
-        HashMap<String, JsonChatRoom> rooms = new HashMap<String, JsonChatRoom>();
-        HashMap<String, JsonUser> allUsers = new HashMap<String, JsonUser>();
-        HashMap<String, JsonRoomMembers> members = new HashMap<String, JsonRoomMembers>();
-        HashMap<String, ArrayList<JsonMessage>> messages = new HashMap<String, ArrayList<JsonMessage>>();
+        TreeMap<String, JsonChatRoom> rooms = fullState.rooms;
+        TreeMap<String, JsonUser> allUsers = fullState.allUsers;
+        TreeMap<String, JsonRoomMembers> members = fullState.members;
+        TreeMap<String, ArrayList<JsonMessage>> messages = fullState.messages;
 
-        Logger.info("Websocket join time checkpoint post preload query for " + user.getUsername() + ": " + (System.currentTimeMillis() - startTime));
-        TreeSet<String> usernamesPresent = ChatRoom.getAllOnlineUsersForAllRooms();
-        for (ChatUserRoomJoin chatRoomJoin : resultList) {
-            ChatRoom thisRoom = chatRoomJoin.getRoom();
-            ChatUser thisUser = chatRoomJoin.getUser();
-//            Logger.info("Preload " + thisRoom.getName() + " for " + thisUser.getUsername());
-            if (!rooms.containsKey(thisRoom.getName())) {
-                rooms.put(thisRoom.getName(), JsonChatRoom.from(thisRoom));
-            }
+        Logger.info("Websocket join time checkpoint post preload all state " + user.getUsername() + ": " + (System.currentTimeMillis() - startTime));
 
-            JsonRoomMembers roomMembers = members.get(thisRoom.getName());
-            if (roomMembers == null) {
-                roomMembers = new JsonRoomMembers();
-                members.put(thisRoom.getName(), roomMembers);
-            }
-            JsonUser jsonUser = allUsers.get(thisUser.getUsername());
-            if (jsonUser == null) {
-                jsonUser = JsonUser.fromUserNoFlairLoad(thisUser);
-                jsonUser.online = usernamesPresent.contains(jsonUser.username);
-                allUsers.put(jsonUser.username, jsonUser);
-            }
-            jsonUser.addFlair(thisRoom.getName(), new JsonFlair(chatRoomJoin.getFlairText(), chatRoomJoin.getFlairCss(), chatRoomJoin.getFlairPosition()));
-            if (jsonUser.modForRoom) {
-                roomMembers.mods.add(jsonUser.username);
-            } else if (jsonUser.online) {
-                roomMembers.online.add(jsonUser.username);
-            } else {
-                roomMembers.offline.add(jsonUser.username);
-            }
-            members.put(thisRoom.getName(), roomMembers);
-
-            if (!messages.containsKey(thisRoom.getName())) {
-                long messagesStart = System.currentTimeMillis();
-                ArrayList<JsonMessage> roomMessages = BreakerCache.getLastMessages(thisRoom);
-                messages.put(thisRoom.getName(), roomMessages);
-                Logger.info("Messages load time: " + (System.currentTimeMillis() - messagesStart));
-            }
-        }
-        Logger.info("Done preload.");
-
-/*        for (ChatUserRoomJoin chatRoomJoin : chatRoomJoins) {
-            ChatRoom thisRoom = chatRoomJoin.getRoom();
-            rooms.put(thisRoom.getName(), JsonChatRoom.from(thisRoom));
-
-            TreeSet<String> usernamesPresent = room.getUsernamesPresent();
-            ArrayList<JsonUser> usersForRoom = BreakerCache.getUsersForRoom(thisRoom);
-            JsonRoomMembers roomMembers = new JsonRoomMembers();
-            for (JsonUser jsonUser : usersForRoom) {
-                jsonUser.online = usernamesPresent.contains(jsonUser.username);
-                allUsers.put(jsonUser.username, jsonUser);
-                if (jsonUser.modForRoom) {
-                    roomMembers.mods.add(jsonUser.username);
-                } else if (jsonUser.online) {
-                    roomMembers.online.add(jsonUser.username);
-                } else {
-                    roomMembers.offline.add(jsonUser.username);
-                }
-            }
-            members.put(thisRoom.getName(), roomMembers);
-
-            ArrayList<JsonMessage> roomMessages = BreakerCache.getLastMessages(thisRoom);
-            messages.put(thisRoom.getName(), roomMessages);
-        }
-  */
-        Logger.info("Websocket join time checkpoint 1 for " + user.getUsername() + ": " + (System.currentTimeMillis() - startTime));
+//        Logger.info("Websocket join time checkpoint 1 for " + user.getUsername() + ": " + (System.currentTimeMillis() - startTime));
         String roomsString = gson.toJson(rooms);
         String usersString = gson.toJson(allUsers);
         String membersString = gson.toJson(members);
@@ -199,7 +133,7 @@ public class WebSocket extends PreloadUserController {
         }
 */
 
-        String userString = gson.toJson(JsonUser.fromUser(user));
+        String userString = gson.toJson(JsonUser.fromUser(user, true));
         String environment = Play.mode.isProd() ? "production" : "dev";
 
         Logger.info("Websocket join time for " + user.getUsername() + ": " + (System.currentTimeMillis() - startTime));
@@ -349,7 +283,7 @@ public class WebSocket extends PreloadUserController {
                                     String uuid = Util.getUUID();
                                     JsonMessage jsonMessage = JsonMessage.makePresavedMessage(uuid, user, roomConnection.room, message);
                                     new SaveNewMessageJob(uuid, user, roomName, message).now();
-                                    roomConnection.chatRoomEventStream.say(jsonMessage, JsonChatRoom.from(roomConnection.room), JsonUser.fromUser(user));
+                                    roomConnection.chatRoomEventStream.say(jsonMessage, JsonChatRoom.from(roomConnection.room), JsonUser.fromUser(user, true));
                                     Stats.count(Stats.StatKey.MESSAGE, 1);
                                 } else {
                                     Logger.info("User " + user.getUsername() + " cannot post to " + roomName);

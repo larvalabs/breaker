@@ -29,7 +29,7 @@ public class JsonUserSearch {
         ArrayList<JsonUser> offline = new ArrayList<JsonUser>();
         for (ChatUser user : usersToProcess) {
             if (user.username.toLowerCase().startsWith(query.toLowerCase())) {
-                JsonUser jsonUser = JsonUser.fromUser(user);
+                JsonUser jsonUser = JsonUser.fromUser(user, usernamesPresent.contains(user.getUsername()));
                 // Note: No longer separating into online/offline
                 if (usernamesPresent.contains(user.getUsername()) && false) {
                     online.add(jsonUser);
