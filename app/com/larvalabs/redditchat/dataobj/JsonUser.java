@@ -69,10 +69,13 @@ public class JsonUser implements Serializable {
         return new JsonUser(user.getId(), user.username, user.notificationPreference,
                 user.getLastSeenDate(), user.getLastSeenDate().getTime(),
                 user.getLikeCount(), user.getProfileImageUrl(), user.getStatusMessage(), user.isBot(),
-                isOnline, new HashMap<String, JsonFlair>());
+                isOnline, null);
     }
 
     public void addFlair(String roomName, JsonFlair flairObj) {
+        if (flair == null) {
+            flair = new HashMap<>();
+        }
         flair.put(roomName, flairObj);
     }
 
