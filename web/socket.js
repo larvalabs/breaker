@@ -7,7 +7,7 @@ var socket = null;
 function init() {
   let websocketUrl = Config.websocket_url.replace('ws:', 'wss:');
   socket = new ReconnectingWebSocket(websocketUrl);
-  let pingTimeouts = [];
+  let pingTimeout = null;
 
   socket.onopen = function (event) {
     store.dispatch(socketActions.handleSocketOpen(store, socket))
@@ -23,7 +23,11 @@ function init() {
   };
   
   socket.startRoomPing = function (room) {
-    pingTimeouts[room] = window.setInterval(function () {
+    if(pingTimeout){
+      window.clearInterval(pingTimeout);
+    }
+    
+    pingTimeout = window.setInterval(function () {
       if (socket.readyState !== 1) {
         console.log("Can't ping, connection not open.");
         return;
@@ -34,9 +38,9 @@ function init() {
     }, Config.settings.ping_timeout);
   };
   
-  socket.stopRoomPing = function (room) {
-    if(pingTimeouts[room]){
-      window.clearInterval(pingTimeouts[room]);
+  socket.stopRoomPing = function () {
+    if(pingTimeout){
+      window.clearInterval(pingTimeout);
     }
   };
   

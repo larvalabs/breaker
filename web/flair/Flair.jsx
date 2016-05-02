@@ -12,7 +12,6 @@ export default class Flair extends Component {
     }
 
     if(!flairSettings.get('flairCss') && !flairSettings.get('flairText')){
-      console.log("flair empty", flairSettings);
       return null;
     }
 
