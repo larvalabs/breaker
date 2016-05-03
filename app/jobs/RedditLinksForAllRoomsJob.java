@@ -10,8 +10,8 @@ import java.util.List;
 
 /**
  * Created by matt on 1/5/16.
- * @Every("5min")
  */
+@Every("5min")
 public class RedditLinksForAllRoomsJob extends Job {
 
     @Override

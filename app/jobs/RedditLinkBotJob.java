@@ -19,6 +19,7 @@ import play.jobs.Job;
 
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.List;
 
 /**
  * Created by matt on 1/5/16.
@@ -51,6 +52,15 @@ public class RedditLinkBotJob extends Job {
         if (room == null || botUser == null) {
             Logger.error("Bot user or chat room was null, can't run bot.");
             return;
+        }
+
+        List<Message> messages = room.getMessages(1);
+        if (messages != null && messages.size() > 0) {
+            Message message = messages.get(0);
+            if (message.getUser().equals(botUser)) {
+                Logger.info("Linkbot not running for room " + subredditToProcess + " because last message is from link bot.");
+                return;
+            }
         }
 
         int numPosted = 0;
