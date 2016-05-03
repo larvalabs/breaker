@@ -15,22 +15,29 @@ class ChatBox extends Component {
     this.onMessageInput = this.onMessageInput.bind(this);
     this.renderMessageInput = this.renderMessageInput.bind(this);
   }
-
   componentDidMount() {
-    var staydown = new StayDown({
+    let staydown = new StayDown({
       target: $('#thread_scrollparent')[0],
       interval: 500
     });
 
-    this.setState({
-      staydown: staydown
-    });
+    var checkdown = function () {
+      staydown.checkdown();
+      window.setTimeout(checkdown, staydown.interval);
+    };
+    checkdown();
 
-    staydown.checkdown();
+    this.staydown = staydown
+  }
+
+  componentWillReceiveProps(nextProps){
+    if(this.props.roomName != nextProps.roomName){
+      this.staydown.intend_down = true;
+    }
   }
 
   onMessageInput() {
-    this.state.staydown.intend_down = true;
+    this.staydown.intend_down = true;
   }
   
   renderMessage(props){
