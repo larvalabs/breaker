@@ -61,16 +61,6 @@ function messages(state=Immutable.Map(), action) {
   }
 }
 
-
-function ensureTypeIsSet(state, roomName, status){
-  if(!Immutable.OrderedSet.isOrderedSet(state.getIn([roomName, status]))){
-    return state.setIn([roomName, status], Immutable.OrderedSet(
-        state.getIn([roomName, status]))
-    );
-  }
-  return state;
-}
-
 function moveMemberOfflineState(state, action){
   return moveMemberStates(state, action, 'online', 'offline');
 }
@@ -93,7 +83,6 @@ function moveMemberStates(state, action, remove, add){
     if(!o){
       return Immutable.OrderedSet([action.message.user.username]);
     }
-    debugger;
     return o.add(action.message.user.username).sort((a,b) => b.toLowerCase() - a.toLowerCase());
   });
 }
@@ -104,26 +93,19 @@ function members(state=Immutable.Map(), action) {
       return state
     }
     case (socketTypes.SOCK_JOIN): {
-      let newState = ensureTypeIsSet(state, action.message.room.name, "mods");
-      newState = ensureTypeIsSet(newState, action.message.room.name, "online");
-      newState = ensureTypeIsSet(newState, action.message.room.name, "offline");
-
-      if(newState.getIn([action.message.room.name, 'mods'], Immutable.OrderedSet()).has(action.message.user.username)){
-        return newState
+      if(state.getIn([action.message.room.name, 'mods'], Immutable.OrderedSet()).has(action.message.user.username)){
+        return state
       }
 
-      return moveMemberOnlineState(newState, action);
+      return moveMemberOnlineState(state, action);
     }
     case (socketTypes.SOCK_LEAVE): {
-      let newState = ensureTypeIsSet(state, action.message.room.name, "mods");
-      newState = ensureTypeIsSet(newState, action.message.room.name, "offline");
-      newState = ensureTypeIsSet(newState, action.message.room.name, "online");
 
-      if(newState.getIn([action.message.room.name, 'mods'], Immutable.OrderedSet()).has(action.message.user.username)){
-        return newState
+      if(state.getIn([action.message.room.name, 'mods'], Immutable.OrderedSet()).has(action.message.user.username)){
+        return state
       }
 
-      return moveMemberOfflineState(newState, action);
+      return moveMemberOfflineState(state, action);
     }
     default:
       return state;
