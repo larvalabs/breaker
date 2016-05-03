@@ -38,15 +38,6 @@ public class RedditLinkBotJob extends Job {
     public void doJob() throws Exception {
         Logger.debug("Starting link bot job for " + subredditToProcess);
 
-        String subredditJsonUrl = "https://www.reddit.com/r/" + subredditToProcess + "/hot.json?sort=hot";
-        URLConnection urlConnection = new URL(subredditJsonUrl).openConnection();
-        // set user agent to avoid throttling
-        urlConnection.setRequestProperty("User-Agent", "web:breakerapp:v0.1");
-        String jsonStr = IOUtils.toString(urlConnection.getInputStream());
-
-        JSONObject overallJsonObj = new JSONObject(jsonStr);
-        JSONArray jsonArray = overallJsonObj.getJSONObject("data").getJSONArray("children");
-
         ChatUser botUser = ChatUser.getBreakerBot();
         ChatRoom room = ChatRoom.findByName(subredditToProcess);
         if (room == null || botUser == null) {
@@ -62,6 +53,15 @@ public class RedditLinkBotJob extends Job {
                 return;
             }
         }
+
+        String subredditJsonUrl = "https://www.reddit.com/r/" + subredditToProcess + "/hot.json?sort=hot";
+        URLConnection urlConnection = new URL(subredditJsonUrl).openConnection();
+        // set user agent to avoid throttling
+        urlConnection.setRequestProperty("User-Agent", "web:breakerapp:v0.1");
+        String jsonStr = IOUtils.toString(urlConnection.getInputStream());
+
+        JSONObject overallJsonObj = new JSONObject(jsonStr);
+        JSONArray jsonArray = overallJsonObj.getJSONObject("data").getJSONArray("children");
 
         int numPosted = 0;
 
