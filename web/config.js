@@ -14,7 +14,7 @@ let Config = {
   settings: {
     ping_timeout: 20000,
     default_banner: "Message from the moderators to you, the user.",
-    dev_tools: window.__USER_ADMIN__ || window.__ENVIRONMENT__ !== "production",
+    dev_tools: window.__USER_ADMIN__ === "true" || window.__ENVIRONMENT__ !== "production",
     flairScaleForRoom: (room) => {
       if(room.get('flairScale') === "0.5"){
         return "flair-scale-half"
