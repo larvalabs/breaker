@@ -37,7 +37,7 @@ public class RoomManage extends PreloadUserController {
         }
     }
 
-    public static void saveStylePrefs(Long roomId, String sidebarBackgroundColor, String sidebarTextColor, String sidebarRoomSelectedColor,
+    public static void saveStylePrefs(Long roomId, String flairScale, String sidebarBackgroundColor, String sidebarTextColor, String sidebarRoomSelectedColor,
                                       String sidebarRoomHoverColor, String sidebarRoomTextColor, String sidebarUnreadColor,
                                       String sidebarUnreadTextColor, String signinButtonColor, String signinButtonTextColor) {
         ChatUser user = connected();
@@ -45,6 +45,7 @@ public class RoomManage extends PreloadUserController {
         if (!user.isAdmin()) {
             error("Not an admin.");
         } else {
+            chatRoom.setFlairScale(flairScale);
             chatRoom.setSidebarBackgroundColor(sidebarBackgroundColor);
             chatRoom.setSidebarTextColor(sidebarTextColor);
             chatRoom.setSidebarRoomSelectedColor(sidebarRoomSelectedColor);

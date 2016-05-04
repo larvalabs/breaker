@@ -242,7 +242,12 @@
                                 <form class="form-horizontal" method="post" enctype="multipart/form-data" action="@{RoomManage.saveStylePrefs()}">
 
                                     <input type="hidden" name="roomId" value="${chatRoom.id}"/>
-
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label">Flair scale</label>
+                                        <div class="col-sm-9">
+                                            <input name="flairScale" type="text" class="form-control" value="${chatRoom.flairScale}" placeholder="Flair scale">
+                                        </div>
+                                    </div>
                                     <div class="form-group">
                                         <label class="col-sm-3 control-label">Sidebar Text Color</label>
                                         <div class="col-sm-9">
