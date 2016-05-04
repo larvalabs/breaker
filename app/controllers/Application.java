@@ -2,6 +2,7 @@ package controllers;
 
 import com.google.gson.JsonObject;
 import com.larvalabs.redditchat.dataobj.JsonUserSearch;
+import com.larvalabs.redditchat.realtime.ChatRoomStream;
 import com.larvalabs.redditchat.util.RedditUtil;
 import com.larvalabs.redditchat.util.Util;
 import jobs.RedditLinkBotJob;
@@ -455,5 +456,19 @@ public class Application extends PreloadUserController {
     public static void testLinkbot(String subname) {
         new RedditLinkBotJob(subname).now();
         renderText("ok");
+    }
+
+    public static void makeMod(String roomname, String username, boolean mod) {
+        ChatRoom room = ChatRoom.findByName(roomname);
+        ChatUser user = ChatUser.findByUsername(username);
+        if (mod) {
+            user.moderateRoom(room);
+        } else {
+            user.getModeratedRooms().remove(room);
+        }
+        user.save();
+        room.refresh();
+        ChatRoomStream.getEventStream(room.getName()).sendUserUpdate(room, user, true);
+        renderText("OK");
     }
 }
