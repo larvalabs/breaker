@@ -61,16 +61,6 @@ function messages(state=Immutable.Map(), action) {
   }
 }
 
-
-function ensureTypeIsSet(state, roomName, status){
-  if(!Immutable.Set.isSet(state.getIn([roomName, status]))){
-    return state.setIn([roomName, status], Immutable.Set(
-        state.getIn([roomName, status]))
-    );
-  }
-  return state;
-}
-
 function moveMemberOfflineState(state, action){
   return moveMemberStates(state, action, 'online', 'offline');
 }
@@ -83,61 +73,39 @@ function moveMemberStates(state, action, remove, add){
   // Remove previous state
   let newState = state.updateIn([action.message.room.name, remove], o => {
     if(!o) {
-      return Immutable.Set([]);
+      return Immutable.OrderedSet([]);
     }
-    return o.remove(action.message.user.username)
+    return o.delete(action.message.user.username)
   });
 
   // Add current state
   return newState.updateIn([action.message.room.name, add], o => {
     if(!o){
-      return Immutable.Set([action.message.user.username]);
+      return Immutable.OrderedSet([action.message.user.username]);
     }
-    return o.add(action.message.user.username);
+    return o.add(action.message.user.username).sort((a,b) => b.toLowerCase() - a.toLowerCase());
   });
 }
 
 function members(state=Immutable.Map(), action) {
   switch(action.type){
     case (socketTypes.SOCK_MEMBERS): {
-      let listOfModMembers = action.message.users.filter(user => user.modForRoom).map(user => user.username);
-      let listOfOnlineMembers = action.message.users.filter(user => !user.modForRoom && user.online).map(user => user.username);
-      let listOfOffline = action.message.users.filter(user => !user.modForRoom && !user.online).map(user => user.username);
-      let newMemberList = Immutable.Map({
-        online: Immutable.OrderedSet(listOfOnlineMembers),
-        offline: Immutable.OrderedSet(listOfOffline),
-        mods: Immutable.OrderedSet(listOfModMembers)
-      });
-
-      return state.set(action.message.room.name, newMemberList);
+      return state
     }
     case (socketTypes.SOCK_JOIN): {
-      let newState = ensureTypeIsSet(state, action.message.room.name, "mods");
-      newState = ensureTypeIsSet(state, action.message.room.name, "online");
-
-      if(newState.getIn([action.message.room.name, 'mods'], Immutable.Set()).has(action.message.user.username)){
-        return newState
+      if(state.getIn([action.message.room.name, 'mods'], Immutable.OrderedSet()).has(action.message.user.username)){
+        return state
       }
 
-      if(state.getIn([action.message.room.name, 'online'], Immutable.Set()).has(action.message.user.username)){
-        return newState
-      }
-
-      return moveMemberOnlineState(newState, action);
+      return moveMemberOnlineState(state, action);
     }
     case (socketTypes.SOCK_LEAVE): {
-      let newState = ensureTypeIsSet(state, action.message.room.name, "mods");
-      newState = ensureTypeIsSet(state, action.message.room.name, "offline");
 
-      if(newState.getIn([action.message.room.name, 'mods'], Immutable.Set()).has(action.message.user.username)){
-        return newState
+      if(state.getIn([action.message.room.name, 'mods'], Immutable.OrderedSet()).has(action.message.user.username)){
+        return state
       }
 
-      if(newState.getIn([action.message.room.name, 'offline'], Immutable.Set()).has(action.message.user.username)){
-        return newState
-      }
-
-      return moveMemberOfflineState(newState, action);
+      return moveMemberOfflineState(state, action);
     }
     default:
       return state;
@@ -158,7 +126,11 @@ function unreadCounts(state=Immutable.Map(), action) {
     }
     case(chatTypes.CHAT_FOCUSED): {
       return state.set(action.roomName, 0).set('__HAS_FOCUS__', true);
-    }default: {
+    }
+    case(chatTypes.CHAT_ROOM_CHANGED): {
+      return state.set('__HAS_FOCUS__', true).set(action.roomName, 0);
+    }
+    default: {
       return state
     }
   }

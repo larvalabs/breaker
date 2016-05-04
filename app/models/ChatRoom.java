@@ -451,7 +451,7 @@ public class ChatRoom extends Model {
         JsonUser[] users = new JsonUser[presentUserObjects.size()];
         int i = 0;
         for (ChatUser presentUserObject : presentUserObjects) {
-            users[i] = JsonUser.fromUser(presentUserObject);
+            users[i] = JsonUser.fromUser(presentUserObject, true);
             i++;
         }
         return users;
@@ -468,9 +468,10 @@ public class ChatRoom extends Model {
         }
 
         JsonUser[] users = new JsonUser[allUsers.size()];
+        TreeSet<String> usernamesPresent = getUsernamesPresent();
         int i = 0;
         for (ChatUser user : allUsers) {
-            users[i] = JsonUser.fromUserForRoom(user, this, getUsernamesPresent());
+            users[i] = JsonUser.fromUser(user, usernamesPresent.contains(user.getUsername()));
             i++;
         }
         return users;

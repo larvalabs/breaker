@@ -8,10 +8,7 @@ import models.Message;
 import play.Logger;
 import play.cache.Cache;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by matt on 4/26/16.
@@ -66,9 +63,10 @@ public class BreakerCache {
         if (usersForRoom == null || !CACHE_ENABLED) {
             Logger.info("Cache miss userlist for " + room.getName());
             List<ChatUser> roomUsers = room.getUsers();
+            TreeSet<String> usernamesPresent = room.getUsernamesPresent();
             usersForRoom = new ArrayList<JsonUser>();
             for (ChatUser roomUser : roomUsers) {
-                JsonUser jsonUser = JsonUser.fromUser(roomUser);
+                JsonUser jsonUser = JsonUser.fromUser(roomUser, usernamesPresent.contains(roomUser.getUsername()));
                 usersForRoom.add(jsonUser);
             }
             userCache.put(room.getName(), usersForRoom);

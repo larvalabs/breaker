@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.larvalabs.redditchat.dataobj.JsonUserSearch;
 import com.larvalabs.redditchat.util.RedditUtil;
 import com.larvalabs.redditchat.util.Util;
+import jobs.RedditLinkBotJob;
 import jobs.UpdateAllUsersFromRedditRecurringJob;
 import jobs.UpdateUserFromRedditJob;
 import models.ChatRoom;
@@ -449,5 +450,10 @@ public class Application extends PreloadUserController {
             Logger.info("Result: " + roomJoin.getRoom().getName() + " : " + roomJoin.getUser().getUsername());
         }
         Logger.info("Done.");
+    }
+
+    public static void testLinkbot(String subname) {
+        new RedditLinkBotJob(subname).now();
+        renderText("ok");
     }
 }

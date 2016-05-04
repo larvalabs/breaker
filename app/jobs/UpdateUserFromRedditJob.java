@@ -70,10 +70,14 @@ public class UpdateUserFromRedditJob extends Job {
         ArrayList<String> subNamesModerated = breakerRedditClient.getSubNamesModerated(chatUser);
         Logger.info("User " + chatUser.getUsername() + " is a moderator of " + subNamesModerated.size() + " subs.");
         for (String subName : subNamesModerated) {
-            ChatRoom chatRoom = ChatRoom.findOrCreateForName(subName);
-            chatUser.moderateRoom(chatRoom);
-            chatUser.joinChatRoom(chatRoom);
-            Logger.info("User made moderator of room " + chatRoom.getName());
+            ChatRoom chatRoom = ChatRoom.findByName(subName);
+            if (chatRoom != null) {
+                chatUser.moderateRoom(chatRoom);
+                chatUser.joinChatRoom(chatRoom);
+                Logger.info("User made moderator of room " + chatRoom.getName());
+            } else {
+                Logger.info("User is moderator of room " + subName + " but it doesn't exist yet, not creating.");
+            }
         }
 
         if (clearCacheWhenDone) {

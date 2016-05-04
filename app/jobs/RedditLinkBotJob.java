@@ -19,6 +19,7 @@ import play.jobs.Job;
 
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.List;
 
 /**
  * Created by matt on 1/5/16.
@@ -37,6 +38,22 @@ public class RedditLinkBotJob extends Job {
     public void doJob() throws Exception {
         Logger.debug("Starting link bot job for " + subredditToProcess);
 
+        ChatUser botUser = ChatUser.getBreakerBot();
+        ChatRoom room = ChatRoom.findByName(subredditToProcess);
+        if (room == null || botUser == null) {
+            Logger.error("Bot user or chat room was null, can't run bot.");
+            return;
+        }
+
+        List<Message> messages = room.getMessages(1);
+        if (messages != null && messages.size() > 0) {
+            Message message = messages.get(0);
+            if (message.getUser().equals(botUser)) {
+                Logger.info("Linkbot not running for room " + subredditToProcess + " because last message is from link bot.");
+                return;
+            }
+        }
+
         String subredditJsonUrl = "https://www.reddit.com/r/" + subredditToProcess + "/hot.json?sort=hot";
         URLConnection urlConnection = new URL(subredditJsonUrl).openConnection();
         // set user agent to avoid throttling
@@ -45,13 +62,6 @@ public class RedditLinkBotJob extends Job {
 
         JSONObject overallJsonObj = new JSONObject(jsonStr);
         JSONArray jsonArray = overallJsonObj.getJSONObject("data").getJSONArray("children");
-
-        ChatUser botUser = ChatUser.getBreakerBot();
-        ChatRoom room = ChatRoom.findByName(subredditToProcess);
-        if (room == null || botUser == null) {
-            Logger.error("Bot user or chat room was null, can't run bot.");
-            return;
-        }
 
         int numPosted = 0;
 
@@ -83,7 +93,7 @@ public class RedditLinkBotJob extends Job {
                             title + " - " + Constants.REDDIT_BASE_URL + "/" + id + " - score: " + score + " - comments: " + comments);
                     message.save();
 
-                    ChatRoomStream.getEventStream(subredditToProcess).say(JsonMessage.from(message, botUser.getUsername(), room.getName()), JsonChatRoom.from(room), JsonUser.fromUser(message.getUser()));
+                    ChatRoomStream.getEventStream(subredditToProcess).say(JsonMessage.from(message, botUser.getUsername(), room.getName()), JsonChatRoom.from(room), JsonUser.fromUser(message.getUser(), true));
 
                     numPosted++;
                     if (numPosted >= MAX_NUM_TO_POST_PER_RUN) {

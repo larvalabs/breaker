@@ -23,10 +23,10 @@ export default React.createClass({
       </li>
       {
         this.props.roomList.toArray().map((room) => {
-          return <SidebarRoomListElm key={room.get('name')}
-                                     room={room}
-                                     active={room.get('name') == this.props.roomName}
-                                     unreadCount={this.props.unreadCounts.get(room.get('name'))}/>
+            return <SidebarRoomListElm key={room.get('name')}
+                                       room={room}
+                                       active={room.get('name') == this.props.roomName}
+                                       unreadCount={this.props.unreadCounts.get(room.get('name'))}/>;
         })
       }
     </ul>
