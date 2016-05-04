@@ -17,7 +17,7 @@ class UserListBox extends Component {
                   <div className="m-b-sm text-md">Mods</div>
                   <ul id='modlist' className="list-group no-bg no-borders pull-in m-b-sm">
                     {
-                      this.props.mods.map((member) => {
+                      this.props.mods.sort(alphabeticalSort).map((member) => {
                         let user = this.props.users.get(member);
                         return <UserListItem key={user.get('username')} user={user} roomName={this.props.roomName}/>
                       })
@@ -28,10 +28,15 @@ class UserListBox extends Component {
                   <div className="m-b-sm text-md">Here Now</div>
                   <ul id='onlinelist' className="list-group no-bg no-borders pull-in m-b-sm">
                     {
-                      this.props.members.get('online', Immutable.List()).subtract(this.props.mods).map((member) => {
-                        let user = this.props.users.get(member);
-                        return <UserListItem key={user.get('username')} user={user} roomName={this.props.roomName} />
-                      })
+
+                      this.props.members.get('online', Immutable.List())
+                          .sort(alphabeticalSort)
+                          .subtract(this.props.mods)
+
+                          .map((member) => {
+                            let user = this.props.users.get(member);
+                            return <UserListItem key={user.get('username')} user={user} roomName={this.props.roomName} />
+                          })
                     }
                   </ul>
                 </div>
@@ -39,10 +44,14 @@ class UserListBox extends Component {
                   <div className="m-b-sm text-md">Offline</div>
                   <ul id='userlist' className="list-group no-bg no-borders pull-in m-b-sm">
                     {
-                      this.props.members.get('offline', Immutable.List()).subtract(this.props.mods).map((member) => {
-                        let user = this.props.users.get(member);
-                        return <UserListItem key={user.get('username')} user={user} roomName={this.props.roomName} />
-                      })
+
+                      this.props.members.get('offline', Immutable.List())
+                          .sort(alphabeticalSort)
+                          .subtract(this.props.mods)
+                          .map((member) => {
+                            let user = this.props.users.get(member);
+                            return <UserListItem key={user.get('username')} user={user} roomName={this.props.roomName} />
+                          })
                     }
                   </ul>
                 </div>
@@ -58,6 +67,17 @@ class UserListBox extends Component {
 UserListBox.defaultProps = {
   members: []
 };
+
+function alphabeticalSort(a, b){
+  if(a.toLowerCase() < b.toLowerCase()){
+    return -1
+  }
+  else if(b.toLowerCase() < a.toLowerCase()){
+    return 1
+  }
+
+  return 0
+}
 
 function mapStateToProps(state) {
   let roomName = state.getIn(['initial', 'roomName']);
