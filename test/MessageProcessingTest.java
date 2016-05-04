@@ -28,7 +28,7 @@ public class MessageProcessingTest extends UnitTest {
         user1.save();
         ChatRoom room1 = new ChatRoom("testroom");
         room1.save();
-        JsonChatRoom jsonChatRoom = JsonChatRoom.from(room1, user1, null, false);
+        JsonChatRoom jsonChatRoom = JsonChatRoom.from(room1, room1.getModeratorUsernames());
         {
             JsonMessage testMsg = new JsonMessage("testuid", user1.getUsername(), jsonChatRoom.name,
                             "It's a test messasge to http://yahoo.com");

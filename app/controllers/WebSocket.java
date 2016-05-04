@@ -194,7 +194,7 @@ public class WebSocket extends PreloadUserController {
                 for (ChatUserRoomJoin chatRoomJoin : chatRoomJoins) {
                     ChatRoom room = chatRoomJoin.getRoom();
                     if (Constants.CHATROOM_DEFAULT.equals(room.name) || room.isOpen()) {
-                        jsonChatRoomsList.add(JsonChatRoom.from(room, user));
+                        jsonChatRoomsList.add(JsonChatRoom.from(room, room.getModeratorUsernames()));
                         addConnection(user, connectionId, roomConnections, room);
                         Logger.debug("Connecting to chat room stream for " + room.getName()+", canpost "+room.userCanPost(user));
                         i++;
@@ -264,7 +264,7 @@ public class WebSocket extends PreloadUserController {
                             } else if (message.toLowerCase().equals("##memberlist##")) {
                                 Logger.debug("User " + user.username + " requested member list.");
 
-                                outbound.send(new ChatRoomStream.MemberList(JsonChatRoom.from(roomConnection.room, user),
+                                outbound.send(new ChatRoomStream.MemberList(JsonChatRoom.from(roomConnection.room, roomConnection.room.getModeratorUsernames()),
                                         roomConnection.room.getAllUsersWithOnlineStatus()).toJson());
                             } else if (message.toLowerCase().equals("##markmessagesread##")) {
                                 Logger.debug("User " + user.username + " marking messages read for " + roomName);
@@ -283,7 +283,7 @@ public class WebSocket extends PreloadUserController {
                                     String uuid = Util.getUUID();
                                     JsonMessage jsonMessage = JsonMessage.makePresavedMessage(uuid, user, roomConnection.room, message);
                                     new SaveNewMessageJob(uuid, user, roomName, message).now();
-                                    roomConnection.chatRoomEventStream.say(jsonMessage, JsonChatRoom.from(roomConnection.room), JsonUser.fromUser(user, true));
+                                    roomConnection.chatRoomEventStream.say(jsonMessage,  JsonChatRoom.from(roomConnection.room, roomConnection.room.getModeratorUsernames()), JsonUser.fromUser(user, true));
                                     Stats.count(Stats.StatKey.MESSAGE, 1);
                                 } else {
                                     Logger.info("User " + user.getUsername() + " cannot post to " + roomName);
@@ -340,7 +340,7 @@ public class WebSocket extends PreloadUserController {
         }
 
         private static void sendLocalServerMessage(RoomConnection roomConnection, String message) {
-            outbound.send(new ChatRoomStream.ServerMessage(JsonChatRoom.from(roomConnection.room), message).toJson());
+            outbound.send(new ChatRoomStream.ServerMessage(JsonChatRoom.from(roomConnection.room, roomConnection.room.getModeratorUsernames()), message).toJson());
         }
 
         private static void addConnection(ChatUser user, String connectionId, HashMap<String, RoomConnection> roomConnections, ChatRoom room) {

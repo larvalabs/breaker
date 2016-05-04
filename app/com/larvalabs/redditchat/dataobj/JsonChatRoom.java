@@ -21,18 +21,13 @@ public class JsonChatRoom implements Serializable {
     public long id;
     public String name;
     public long numberUsers;
-    public long numberNewMessagesForUser;
-    public boolean starred;
     public long liveUserCount;
     public String iconUrl;
     public int iconUrlSource;
     public boolean noIconAvailableFromStore;
     public String banner;
-    public boolean isUserModerator;
+    public List<String> moderators;
 
-    public boolean watching;
-
-    public long lastSeenMessageTime;
     public String flairScale;
     public JsonRoomStyles styles;
 
@@ -41,22 +36,20 @@ public class JsonChatRoom implements Serializable {
     public JsonMessage[] messages;
 
     public JsonChatRoom(long id, String name, long numberUsers,
-                        long numberNewMessagesForUser, boolean starred, long liveUserCount, String iconUrl, int iconUrlSource, boolean noIconAvailableFromStore,
-                        String banner, boolean isUserModerator, long lastSeenMessageTime, String flairScale, JsonRoomStyles jsonRoomStyles) {
+                        long liveUserCount, String iconUrl, int iconUrlSource, boolean noIconAvailableFromStore,
+                        String banner, String flairScale, JsonRoomStyles jsonRoomStyles,
+                        List<String> moderators) {
         this.id = id;
         this.name = name;
         this.numberUsers = numberUsers;
-        this.numberNewMessagesForUser = numberNewMessagesForUser;
-        this.starred = starred;
         this.liveUserCount = liveUserCount;
         this.iconUrl = iconUrl;
         this.iconUrlSource = iconUrlSource;
         this.noIconAvailableFromStore = noIconAvailableFromStore;
         this.banner = banner;
-        this.isUserModerator = isUserModerator;
-        this.lastSeenMessageTime = lastSeenMessageTime;
         this.flairScale = flairScale;
         this.styles = jsonRoomStyles;
+        this.moderators = moderators;
     }
 
     /**
@@ -64,7 +57,7 @@ public class JsonChatRoom implements Serializable {
      * @param room
      * @return
      */
-    public static JsonChatRoom from(ChatRoom room) {
+    public static JsonChatRoom from(ChatRoom room, List<String> moderators) {
         JsonRoomStyles jsonRoomStyles = new JsonRoomStyles(room.sidebarBackgroundColor, room.sidebarTextColor,
                 room.sidebarRoomSelectedColor, room.sidebarRoomHoverColor, room.sidebarRoomTextColor,
                 room.sidebarUnreadColor, room.sidebarUnreadTextColor, room.signinButtonColor,
@@ -72,44 +65,9 @@ public class JsonChatRoom implements Serializable {
 
         JsonChatRoom jsonChatRoom = new JsonChatRoom(room.getId(), room.name,
                 room.numberOfUsers,
-                0, false, room.getCurrentUserCount(), room.getIconUrl(),
-                room.getIconUrlSource(), room.isNoIconAvailableFromStore(), room.getBanner(), false,
-                0, room.flairScale, jsonRoomStyles);
+                room.getCurrentUserCount(), room.getIconUrl(),
+                room.getIconUrlSource(), room.isNoIconAvailableFromStore(), room.getBanner(),
+                room.flairScale, jsonRoomStyles, moderators);
         return jsonChatRoom;
-    }
-
-    public static JsonChatRoom from(ChatRoom room, ChatUser loggedInUser) {
-        return from(room, loggedInUser, null, false);
-    }
-
-    public static JsonChatRoom from(ChatRoom room, ChatUser loggedInUser, HashMap<Long, Long> unreadCountsByRoomId, boolean loadWatcherStatus) {
-        Long unreadCount = 0l;
-        if (unreadCountsByRoomId != null && unreadCountsByRoomId.containsKey(room.id)) {
-            unreadCount = unreadCountsByRoomId.get(room.id);
-        }
-        ChatUserRoomJoin join = ChatUserRoomJoin.findByUserAndRoom(loggedInUser, room);
-
-        JsonRoomStyles jsonRoomStyles = new JsonRoomStyles(room.sidebarBackgroundColor, room.sidebarTextColor,
-                room.sidebarRoomSelectedColor, room.sidebarRoomHoverColor, room.sidebarRoomTextColor,
-                room.sidebarUnreadColor, room.sidebarUnreadTextColor, room.signinButtonColor,
-                room.signinButtonTextColor);
-
-        JsonChatRoom jsonChatRoom = new JsonChatRoom(room.getId(), room.name,
-                room.numberOfUsers,
-                unreadCount, loggedInUser.isRoomStarred(room), room.getCurrentUserCount(), room.getIconUrl(),
-                room.getIconUrlSource(), room.isNoIconAvailableFromStore(), room.getBanner(), room.isModerator(loggedInUser),
-                join.getLastSeenMessageTime(), room.flairScale, jsonRoomStyles);
-        if (loadWatcherStatus) {
-            jsonChatRoom.watching = room.getWatchers().contains(loggedInUser);
-        }
-        return jsonChatRoom;
-    }
-
-    public static JsonChatRoom[] convert(ChatUser loggedInUser, List<ChatRoom> roomList, HashMap<Long, Long> unreadCountsByRoomId, boolean loadWatcherStatus) {
-        ArrayList<JsonChatRoom> jsonList = new ArrayList<JsonChatRoom>();
-        for (ChatRoom chatRoom : roomList) {
-            jsonList.add(JsonChatRoom.from(chatRoom, loggedInUser, unreadCountsByRoomId, loadWatcherStatus));
-        }
-        return jsonList.toArray(new JsonChatRoom[]{});
     }
 }

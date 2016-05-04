@@ -11,10 +11,12 @@ import com.larvalabs.redditchat.util.Stats;
 import jobs.RedisQueueJob;
 import models.ChatRoom;
 import models.ChatUser;
+import models.ChatUserRoomJoin;
 import play.Logger;
 import play.libs.F.EventStream;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ChatRoomStream {
@@ -61,7 +63,7 @@ public class ChatRoomStream {
     public EventStream<ChatRoomStream.Event> join(ChatRoom room, ChatUser user, String connectionId, boolean broadcastJoin) {
         if (broadcastJoin) {
             JsonUser jsonUser = JsonUser.fromUser(user, true);
-            publishEvent(new Join(JsonChatRoom.from(room), jsonUser), true);
+            publishEvent(new Join(JsonChatRoom.from(room, room.getModeratorUsernames()), jsonUser));
         }
         String streamKey = getStreamKey(room.getName(), user.getUsername(), connectionId);
         EventStream<Event> userEventStream = userStreams.get(streamKey);
@@ -79,7 +81,7 @@ public class ChatRoomStream {
 //        String[] usernames = room.getUsernamesPresent().toArray(new String[]{});
 //        TreeSet<ChatUser> users = room.getPresentUserObjects();
 //        Logger.info("Sending member list of length " + users.size());
-        publishEvent(new MemberList(JsonChatRoom.from(room), room.getAllUsersWithOnlineStatus()), true);
+        publishEvent(new MemberList(JsonChatRoom.from(room, room.getModeratorUsernames()), room.getAllUsersWithOnlineStatus()));
     }
 
     /**
@@ -92,7 +94,7 @@ public class ChatRoomStream {
         if (room.isDefaultRoom()) {
             Stats.sample(Stats.StatKey.USER_STREAMS_OPEN, userStreams.size());
         }
-        publishEvent(new Leave(JsonChatRoom.from(room), JsonUser.fromUser(user, false)), true);
+        publishEvent(new Leave(JsonChatRoom.from(room, room.getModeratorUsernames()), JsonUser.fromUser(user, false)));
     }
 
     /**
@@ -103,10 +105,20 @@ public class ChatRoomStream {
         if (message.message == null || message.message.trim().equals("")) {
             return;
         }
-        publishEvent(new Message(message, room, user), true);
+        publishEvent(new Message(message, room, user));
     }
 
-    public void publishEvent(Event event, boolean alsoPublishToRedis) {
+    public void sendUserUpdate(ChatRoom room, ChatUser user, boolean isOnline) {
+        JsonUser jsonUser = JsonUser.fromUser(user, isOnline);
+        JsonChatRoom jsonRoom = JsonChatRoom.from(room, room.getModeratorUsernames());
+        publishEvent(new UpdateUserEvent(jsonRoom, jsonUser));
+    }
+
+    public void sendRoomUpdate(ChatRoom room) {
+        publishEvent(new UpdateRoomEvent(JsonChatRoom.from(room, room.getModeratorUsernames())));
+    }
+
+    public void publishEvent(Event event) {
         RedisQueueJob.publish(event);
     }
 
@@ -151,6 +163,8 @@ public class ChatRoomStream {
         public static final String TYPE_SERVERMESSAGE = "servermessage";
         public static final String TYPE_SERVERCOMMAND = "servercommand";
         public static final String TYPE_LEAVE = "leave";
+        public static final String TYPE_UPDATE_USER = "updateuser";
+        public static final String TYPE_UPDATE_ROOM = "updateroom";
 
         public Event() {
         }
@@ -183,8 +197,12 @@ public class ChatRoomStream {
                 return gson.fromJson(jsonStr, ServerMessage.class);
             } else if (type.equals(TYPE_SERVERCOMMAND)) {
                 return gson.fromJson(jsonStr, ServerCommand.class);
+            } else if (type.equals(TYPE_UPDATE_USER)) {
+                return gson.fromJson(jsonStr, UpdateUserEvent.class);
+            } else if (type.equals(TYPE_UPDATE_ROOM)) {
+                return gson.fromJson(jsonStr, UpdateRoomEvent.class);
             }
-            Logger.error("Even");
+            Logger.error("Event not recognized.");
             return null;
         }
     }
@@ -259,6 +277,27 @@ public class ChatRoomStream {
 
     }
 
+    public static class UpdateUserEvent extends Event {
+        public JsonUser user;
+
+        public UpdateUserEvent() {
+        }
+
+        public UpdateUserEvent(JsonChatRoom room, JsonUser user) {
+            super(TYPE_UPDATE_USER, room);
+            this.user = user;
+        }
+    }
+
+    public static class UpdateRoomEvent extends Event {
+        public UpdateRoomEvent() {
+        }
+
+        public UpdateRoomEvent(JsonChatRoom room) {
+            super(TYPE_UPDATE_ROOM, room);
+        }
+    }
+
     public static class ServerMessage extends Event {
         public String message;
 
@@ -276,6 +315,7 @@ public class ChatRoomStream {
             this.command = command;
         }
     }
+
 
     // ~~~~~~~~~ Chat room factory
 
