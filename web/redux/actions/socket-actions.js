@@ -6,6 +6,7 @@ const MESSAGE_TYPE_SERVER = "servermessage";
 const MESSAGE_TYPE_JOIN = "join";
 const MESSAGE_TYPE_LEAVE = "leave";
 const MESSAGE_TYPE_MEMBERS = "memberlist";
+const MESSAGE_TYPE_UPDATE_USER = "updateuser";
 
 export function onSocketMessage(message) {
   switch(message.type){
@@ -21,6 +22,8 @@ export function onSocketMessage(message) {
       return { type: actions.SOCK_LEAVE, message};
     case MESSAGE_TYPE_MEMBERS:
       return { type: actions.SOCK_MEMBERS, message};
+    case MESSAGE_TYPE_UPDATE_USER:
+      return { type: actions.SOCK_UPDATE_USER, message};
     default:
       return { type: actions.SOCK_UNKNOWN, message };
   }

@@ -21,6 +21,9 @@ function users(state=Immutable.Map(), action) {
       }
       return nextState;
     }
+    case (socketTypes.SOCK_UPDATE_USER): {
+      return state.set(action.message.user.username, Immutable.fromJS(action.message.user));
+    }
     default:
       return state
   }
