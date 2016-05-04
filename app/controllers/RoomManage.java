@@ -37,4 +37,29 @@ public class RoomManage extends PreloadUserController {
         }
     }
 
+    public static void saveStylePrefs(Long roomId, String flairScale, String sidebarBackgroundColor, String sidebarTextColor, String sidebarRoomSelectedColor,
+                                      String sidebarRoomHoverColor, String sidebarRoomTextColor, String sidebarUnreadColor,
+                                      String sidebarUnreadTextColor, String signinButtonColor, String signinButtonTextColor) {
+        ChatUser user = connected();
+        ChatRoom chatRoom = ChatRoom.findById(roomId);
+        if (!user.isAdmin()) {
+            error("Not an admin.");
+        } else {
+            chatRoom.setFlairScale(flairScale);
+            chatRoom.setSidebarBackgroundColor(sidebarBackgroundColor);
+            chatRoom.setSidebarTextColor(sidebarTextColor);
+            chatRoom.setSidebarRoomSelectedColor(sidebarRoomSelectedColor);
+            chatRoom.setSidebarRoomHoverColor(sidebarRoomHoverColor);
+            chatRoom.setSidebarRoomTextColor(sidebarRoomTextColor);
+            chatRoom.setSidebarUnreadColor(sidebarUnreadColor);
+            chatRoom.setSidebarUnreadTextColor(sidebarUnreadTextColor);
+            chatRoom.setSigninButtonColor(signinButtonColor);
+            chatRoom.setSigninButtonTextColor(signinButtonTextColor);
+            chatRoom.save();
+            TopAlert alert = new TopAlert(TopAlert.Type.SUCCESS, "Room updated.", "Room information saved.");
+            alert.toFlash(flash);
+            WebSocket.room(chatRoom.getName());
+        }
+    }
+
 }

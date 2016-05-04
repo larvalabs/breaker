@@ -6,7 +6,6 @@ import models.ChatUserRoomJoin;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -34,6 +33,8 @@ public class JsonChatRoom implements Serializable {
     public boolean watching;
 
     public long lastSeenMessageTime;
+    public String flairScale;
+    public JsonRoomStyles styles;
 
     // Filled when getting messages
     public String[] usernamesPresent;
@@ -41,7 +42,7 @@ public class JsonChatRoom implements Serializable {
 
     public JsonChatRoom(long id, String name, long numberUsers,
                         long numberNewMessagesForUser, boolean starred, long liveUserCount, String iconUrl, int iconUrlSource, boolean noIconAvailableFromStore,
-                        String banner, boolean isUserModerator, long lastSeenMessageTime) {
+                        String banner, boolean isUserModerator, long lastSeenMessageTime, String flairScale, JsonRoomStyles jsonRoomStyles) {
         this.id = id;
         this.name = name;
         this.numberUsers = numberUsers;
@@ -54,6 +55,8 @@ public class JsonChatRoom implements Serializable {
         this.banner = banner;
         this.isUserModerator = isUserModerator;
         this.lastSeenMessageTime = lastSeenMessageTime;
+        this.flairScale = flairScale;
+        this.styles = jsonRoomStyles;
     }
 
     /**
@@ -62,11 +65,16 @@ public class JsonChatRoom implements Serializable {
      * @return
      */
     public static JsonChatRoom from(ChatRoom room) {
+        JsonRoomStyles jsonRoomStyles = new JsonRoomStyles(room.sidebarBackgroundColor, room.sidebarTextColor,
+                room.sidebarRoomSelectedColor, room.sidebarRoomHoverColor, room.sidebarRoomTextColor,
+                room.sidebarUnreadColor, room.sidebarUnreadTextColor, room.signinButtonColor,
+                room.signinButtonTextColor);
+
         JsonChatRoom jsonChatRoom = new JsonChatRoom(room.getId(), room.name,
                 room.numberOfUsers,
                 0, false, room.getCurrentUserCount(), room.getIconUrl(),
                 room.getIconUrlSource(), room.isNoIconAvailableFromStore(), room.getBanner(), false,
-                0);
+                0, room.flairScale, jsonRoomStyles);
         return jsonChatRoom;
     }
 
@@ -80,11 +88,17 @@ public class JsonChatRoom implements Serializable {
             unreadCount = unreadCountsByRoomId.get(room.id);
         }
         ChatUserRoomJoin join = ChatUserRoomJoin.findByUserAndRoom(loggedInUser, room);
+
+        JsonRoomStyles jsonRoomStyles = new JsonRoomStyles(room.sidebarBackgroundColor, room.sidebarTextColor,
+                room.sidebarRoomSelectedColor, room.sidebarRoomHoverColor, room.sidebarRoomTextColor,
+                room.sidebarUnreadColor, room.sidebarUnreadTextColor, room.signinButtonColor,
+                room.signinButtonTextColor);
+
         JsonChatRoom jsonChatRoom = new JsonChatRoom(room.getId(), room.name,
                 room.numberOfUsers,
                 unreadCount, loggedInUser.isRoomStarred(room), room.getCurrentUserCount(), room.getIconUrl(),
                 room.getIconUrlSource(), room.isNoIconAvailableFromStore(), room.getBanner(), room.isModerator(loggedInUser),
-                join.getLastSeenMessageTime());
+                join.getLastSeenMessageTime(), room.flairScale, jsonRoomStyles);
         if (loadWatcherStatus) {
             jsonChatRoom.watching = room.getWatchers().contains(loggedInUser);
         }

@@ -15,12 +15,24 @@ let Config = {
     ping_timeout: 20000,
     default_banner: "Message from the moderators to you, the user.",
     dev_tools: window.__USER_ADMIN__ || window.__ENVIRONMENT__ !== "production",
-    flairScaleForRoom: (roomName) => {
-      if(["newyorkislanders"].includes(roomName)){
+    flairScaleForRoom: (room) => {
+      if(room.get('flairScale') === "0.5"){
         return "flair-scale-half"
       }
       
       return ""
+    }
+  },
+  styles: {
+    getSidebarColorForRoom(room){
+      if(room.getIn(['styles', 'sidebarBackgroundColor'])){
+        return {
+          backgroundColor: room.getIn(['styles', 'sidebarBackgroundColor']),
+          color: room.getIn(['styles', 'sidebarTextColor'])
+        }
+      }
+
+      return {}
     }
   },
   websocket_url: window.__WEBSOCKET_URL__,
