@@ -3,6 +3,7 @@ package jobs;
 import com.amazonaws.util.json.JSONException;
 import com.amazonaws.util.json.JSONObject;
 import com.larvalabs.redditchat.dataobj.BreakerCache;
+import com.larvalabs.redditchat.realtime.ChatRoomStream;
 import models.ChatRoom;
 import models.ChatUser;
 import models.ChatUserRoomJoin;
@@ -78,6 +79,15 @@ public class UpdateUserFromRedditJob extends Job {
             } else {
                 Logger.info("User is moderator of room " + subName + " but it doesn't exist yet, not creating.");
             }
+        }
+
+        // Send user updates to server
+        boolean userOnline = ChatRoom.isUserOnlineInAnyRoom(chatUser.getUsername());
+        for (ChatUserRoomJoin chatUserRoomJoin : chatRoomJoins) {
+            ChatRoom room = chatUserRoomJoin.getRoom();
+            ChatRoomStream eventStream = ChatRoomStream.getEventStream(room.getName());
+            eventStream.sendUserUpdate(room, chatUser, userOnline);
+            eventStream.sendRoomUpdate(room);
         }
 
         if (clearCacheWhenDone) {

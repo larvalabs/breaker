@@ -21,6 +21,9 @@ function users(state=Immutable.Map(), action) {
       }
       return nextState;
     }
+    case (socketTypes.SOCK_UPDATE_USER): {
+      return state.set(action.message.user.username, Immutable.fromJS(action.message.user));
+    }
     default:
       return state
   }
@@ -38,6 +41,9 @@ function rooms(state=Immutable.Map(), action) {
         nextState = nextState.set(room.name, Immutable.fromJS(room));
       }
       return nextState;
+    }
+    case (socketTypes.SOCK_UPDATE_ROOM): {
+      return state.set(action.message.room.name, Immutable.fromJS(action.message.room));
     }
     default:
       return state
@@ -93,18 +99,9 @@ function members(state=Immutable.Map(), action) {
       return state
     }
     case (socketTypes.SOCK_JOIN): {
-      if(state.getIn([action.message.room.name, 'mods'], Immutable.OrderedSet()).has(action.message.user.username)){
-        return state
-      }
-
       return moveMemberOnlineState(state, action);
     }
     case (socketTypes.SOCK_LEAVE): {
-
-      if(state.getIn([action.message.room.name, 'mods'], Immutable.OrderedSet()).has(action.message.user.username)){
-        return state
-      }
-
       return moveMemberOfflineState(state, action);
     }
     default:

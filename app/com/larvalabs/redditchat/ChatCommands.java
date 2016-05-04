@@ -114,9 +114,10 @@ public class ChatCommands {
 
     public static void execCommand(ChatUser executingUser, ChatRoom room, String message,
                                    ChatRoomStream stream, Http.Outbound socket) throws NotEnoughPermissionsException, CommandNotRecognizedException {
+        JsonChatRoom jsonChatRoom = JsonChatRoom.from(room, room.getModeratorUsernames());
         if (!isCommand(message)) {
             Logger.debug("Error processing message, notifying user.");
-            socket.send(new ChatRoomStream.ServerMessage(JsonChatRoom.from(room), "Error processing command.").toJson());
+            socket.send(new ChatRoomStream.ServerMessage(jsonChatRoom, "Error processing command.").toJson());
             return;
         }
 
@@ -162,13 +163,13 @@ public class ChatCommands {
                 }
 
                 if (command.type == CommandType.BAN) {
-                    socket.send(new ChatRoomStream.ServerMessage(JsonChatRoom.from(room), "User " + command.username + " has been banned.").toJson());
+                    socket.send(new ChatRoomStream.ServerMessage(jsonChatRoom, "User " + command.username + " has been banned.").toJson());
                 } else {
-                    socket.send(new ChatRoomStream.ServerMessage(JsonChatRoom.from(room), "User " + command.username + " is now unbanned.").toJson());
+                    socket.send(new ChatRoomStream.ServerMessage(jsonChatRoom, "User " + command.username + " is now unbanned.").toJson());
                 }
-                stream.publishEvent(new ChatRoomStream.ServerCommand(JsonChatRoom.from(room), command), true);
+                stream.publishEvent(new ChatRoomStream.ServerCommand(jsonChatRoom, command));
             } else {
-                socket.send(new ChatRoomStream.ServerMessage(JsonChatRoom.from(room), "User " + command.username + " was not found.").toJson());
+                socket.send(new ChatRoomStream.ServerMessage(jsonChatRoom, "User " + command.username + " was not found.").toJson());
             }
         } else if (command.type == CommandType.SITEBAN) {
             ChatUser user = ChatUser.findByUsername(command.username);
@@ -176,14 +177,14 @@ public class ChatCommands {
                 user.setShadowBan(true);
                 user.save();
                 user.deleteAllMessages();
-                socket.send(new ChatRoomStream.ServerMessage(JsonChatRoom.from(room), "User " + command.username + " has been banned.").toJson());
-                stream.publishEvent(new ChatRoomStream.ServerCommand(JsonChatRoom.from(room), command), true);
+                socket.send(new ChatRoomStream.ServerMessage(jsonChatRoom, "User " + command.username + " has been banned.").toJson());
+                stream.publishEvent(new ChatRoomStream.ServerCommand(jsonChatRoom, command));
             } else {
-                socket.send(new ChatRoomStream.ServerMessage(JsonChatRoom.from(room), "User " + command.username + " was not found.").toJson());
+                socket.send(new ChatRoomStream.ServerMessage(jsonChatRoom, "User " + command.username + " was not found.").toJson());
             }
         } else if (command.type == CommandType.KICK) {
-            socket.send(new ChatRoomStream.ServerMessage(JsonChatRoom.from(room), "User " + command.username + " kicked.").toJson());
-            stream.publishEvent(new ChatRoomStream.ServerCommand(JsonChatRoom.from(room), command), true);
+            socket.send(new ChatRoomStream.ServerMessage(jsonChatRoom, "User " + command.username + " kicked.").toJson());
+            stream.publishEvent(new ChatRoomStream.ServerCommand(jsonChatRoom, command));
         }
     }
 

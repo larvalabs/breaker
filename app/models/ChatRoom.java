@@ -291,6 +291,14 @@ public class ChatRoom extends Model {
         chatUser.moderateRoom(this);
     }
 
+    public List<String> getModeratorUsernames() {
+        List<String> usernames = new ArrayList<>();
+        for (ChatUser moderator : moderators) {
+            usernames.add(moderator.getUsername());
+        }
+        return usernames;
+    }
+
     // Do stuff zone
 
     public static ChatRoom findByName(String name) {
@@ -606,6 +614,10 @@ public class ChatRoom extends Model {
             Logger.error(e, "Error contacting redis.");
             return new TreeSet<String>();
         }
+    }
+
+    public static boolean isUserOnlineInAnyRoom(String username) {
+        return getAllOnlineUsersForAllRooms().contains(username);
     }
 
     /**
