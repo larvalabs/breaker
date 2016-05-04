@@ -17,7 +17,7 @@ class UserListBox extends Component {
                   <div className="m-b-sm text-md">Mods</div>
                   <ul id='modlist' className="list-group no-bg no-borders pull-in m-b-sm">
                     {
-                      this.props.members.get('mods', Immutable.List()).map((member) => {
+                      this.props.mods.map((member) => {
                         let user = this.props.users.get(member);
                         return <UserListItem key={user.get('username')} user={user} roomName={this.props.roomName}/>
                       })
@@ -28,7 +28,7 @@ class UserListBox extends Component {
                   <div className="m-b-sm text-md">Here Now</div>
                   <ul id='onlinelist' className="list-group no-bg no-borders pull-in m-b-sm">
                     {
-                      this.props.members.get('online', Immutable.List()).map((member) => {
+                      this.props.members.get('online', Immutable.List()).subtract(this.props.mods).map((member) => {
                         let user = this.props.users.get(member);
                         return <UserListItem key={user.get('username')} user={user} roomName={this.props.roomName} />
                       })
@@ -39,7 +39,7 @@ class UserListBox extends Component {
                   <div className="m-b-sm text-md">Offline</div>
                   <ul id='userlist' className="list-group no-bg no-borders pull-in m-b-sm">
                     {
-                      this.props.members.get('offline', Immutable.List()).map((member) => {
+                      this.props.members.get('offline', Immutable.List()).subtract(this.props.mods).map((member) => {
                         let user = this.props.users.get(member);
                         return <UserListItem key={user.get('username')} user={user} roomName={this.props.roomName} />
                       })
@@ -65,6 +65,7 @@ function mapStateToProps(state) {
   return {
     members: state.getIn(['members', roomName], Immutable.Map()),
     users: state.get('users'),
+    mods: state.getIn(['rooms', roomName, 'moderators'], Immutable.List()),
     roomName
   }
 }

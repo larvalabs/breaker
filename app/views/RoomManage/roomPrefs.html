@@ -233,7 +233,87 @@
                             </form>
                         </div>
                     </div>
+                    #{if user.isAdmin()}
+                        <div class="panel panel-default">
+                            <div class="panel-heading font-bold m-t-sm">
+                                Room Style Preferences (Admins Only)
+                            </div>
+                            <div class="panel-body">
+                                <form class="form-horizontal" method="post" enctype="multipart/form-data" action="@{RoomManage.saveStylePrefs()}">
 
+                                    <input type="hidden" name="roomId" value="${chatRoom.id}"/>
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label">Flair scale</label>
+                                        <div class="col-sm-9">
+                                            <input name="flairScale" type="text" class="form-control" value="${chatRoom.flairScale}" placeholder="Flair scale">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label">Sidebar Text Color</label>
+                                        <div class="col-sm-9">
+                                            <input name="sidebarTextColor" type="text" class="form-control" value="${chatRoom.sidebarTextColor}" placeholder="Sidebar text color">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label">Sidebar Background</label>
+                                        <div class="col-sm-9">
+                                            <input name="sidebarBackgroundColor" type="text" class="form-control" value="${chatRoom.sidebarBackgroundColor}" placeholder="Sidebar background color">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label">Room Text Color</label>
+                                        <div class="col-sm-9">
+                                            <input name="sidebarRoomTextColor" type="text" class="form-control" value="${chatRoom.sidebarRoomTextColor}" placeholder="Room text color">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label">Selected Room Background</label>
+                                        <div class="col-sm-9">
+                                            <input name="sidebarRoomSelectedColor" type="text" class="form-control" value="${chatRoom.sidebarRoomSelectedColor}" placeholder="Selected room background">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label">Hover Room Background</label>
+                                        <div class="col-sm-9">
+                                            <input name="sidebarRoomHoverColor" type="text" class="form-control" value="${chatRoom.sidebarRoomHoverColor}" placeholder="Hover room background">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label">Unread Icon Text Color</label>
+                                        <div class="col-sm-9">
+                                            <input name="sidebarUnreadTextColor" type="text" class="form-control" value="${chatRoom.sidebarUnreadTextColor}" placeholder="Unread icon text color">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label">Unread Icon Background</label>
+                                        <div class="col-sm-9">
+                                            <input name="sidebarUnreadColor" type="text" class="form-control" value="${chatRoom.sidebarUnreadColor}" placeholder="Unread icon background">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label">Signin Button Text Color</label>
+                                        <div class="col-sm-9">
+                                            <input name="signinButtonTextColor" type="text" class="form-control" value="${chatRoom.signinButtonTextColor}" placeholder="Signin button text color">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label">Signin Button Background</label>
+                                        <div class="col-sm-9">
+                                            <input name="signinButtonColor" type="text" class="form-control" value="${chatRoom.signinButtonColor}" placeholder="Signin button background">
+                                        </div>
+                                    </div>
+                                    <div class="line line-dashed b-b line-lg pull-in"></div>
+                                    <div class="form-group">
+                                        <div class="col-sm-4 col-sm-offset-2">
+                                            <a href="@{WebSocket.room(chatRoom.name)}" class="btn btn-default">Cancel</a>
+                                            <button type="submit" class="btn btn-primary">Save changes</button>
+                                        </div>
+                                    </div>
+
+                                </form>
+                            </div>
+                        </div>
+                    #{/if}
                     <div class="panel panel-default">
                         <div class="panel-heading font-bold m-t-sm">
                             How to add a custom button to your subreddit's sidebar

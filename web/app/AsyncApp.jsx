@@ -6,6 +6,7 @@ import Sidebar from '../sidebar/Sidebar'
 import Main from './Main'
 import Immutable from 'immutable'
 import ChatDocumentTitle from './ChatDocumentTitle'
+import Config from '../config'
 
 class AsyncApp extends Component {
   render(){
@@ -20,7 +21,8 @@ class AsyncApp extends Component {
                    roomList={rooms}
                    roomName={roomName}
                    unreadCounts={unreadCounts}
-                   open={sidebarOpen}/>
+                   open={sidebarOpen}
+                   room={room} />
           <Main />
         </div>
       </ChatDocumentTitle>
@@ -32,17 +34,23 @@ function mapStateToProps(state) {
   let roomName = state.getIn(['initial', 'roomName']);
   let user = state.getIn(['initial', 'user']);
   let members = state.getIn(['members']);
+  let rooms = state.get('rooms');
 
   let userIsMod;
   if (members && members.get('breakerapp')) {
     userIsMod = !!state.getIn(['members', roomName, 'mods', user.get('username')]);
   }
+
+  if(Config.guest){
+    rooms = rooms.filter(room => room.get('name') === roomName);
+  }
+
   return {
     user: user,
     userIsMod: userIsMod,
     activeRooms: state.getIn(['initial', 'activeRooms']),
     roomName: roomName,
-    rooms: state.get('rooms'),
+    rooms: rooms,
     room: state.getIn(['rooms', roomName], Immutable.Map()),
     unreadCounts: state.get('unreadCounts'),
     sidebarOpen: state.getIn(['ui', 'sidebar_open']),

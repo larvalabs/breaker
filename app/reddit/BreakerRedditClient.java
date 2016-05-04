@@ -88,7 +88,7 @@ public class BreakerRedditClient{
 
     public ArrayList<String> getSubNamesModerated(ChatUser chatUser) throws RedditRequestError {
         JSONObject subsModerated = getSubsModerated(chatUser);
-        // todo This is dumb to conver to json then back to string, fix
+        // todo This is dumb to convert to json then back to string, fix
         RedditJsonSubRedditList redditJsonSubRedditList = new Gson().fromJson(subsModerated.toString(), RedditJsonSubRedditList.class);
         ArrayList<String> subnames = new ArrayList<>();
         for (RedditJsonSubredditChild child : redditJsonSubRedditList.data.children) {

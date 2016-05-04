@@ -66,28 +66,36 @@ var Header = React.createClass({
     if(this.props.settings_open){
       classes += " active";
     }
+    let iconColor = this.props.room.getIn(['styles', 'sidebarTextColor']);
+    let iconBGColor = this.props.room.getIn(['styles', 'sidebarBackgroundColor']);
+
     return  <button className={classes}
                     ui-toggle-className="show"
                     target=".navbar-collapse"
-                    onClick={this.onSettingsButtonClick}>
+                    onClick={this.onSettingsButtonClick}
+                    style={{backgroundColor: iconBGColor}}>
       
-      <i className="glyphicon glyphicon-cog" />
+      <i className="glyphicon glyphicon-cog" style={{color: iconColor}}/>
     </button>
   },
   renderSidebarHamburger: function(){
     let classes = "pull-right visible-xs";
     let active = this.props.sidebar_open ? " active" : "";
+    let iconColor = this.props.room.getIn(['styles', 'sidebarTextColor']);
     return <button className={classes + active} ui-toggle-className="off-screen" target=".app-aside" ui-scroll="app" onClick={this.onSidebarButtonClick}>
-      <i className="glyphicon glyphicon-align-justify"/>
+      <i className="glyphicon glyphicon-align-justify" style={{color: iconColor}}/>
     </button>
   },
   renderBreakerLogoBox: function() {
-    return <div className="navbar-header bg-dark">
+    let styles = Config.styles.getSidebarColorForRoom(this.props.room);
+    let sidebarColor = this.props.room.getIn(['styles', 'sidebarTextColor']);
+
+    return <div className="navbar-header bg-dark" style={styles}>
       {this.renderSettingsCog()}
       {this.renderSidebarHamburger()}
-      <a href="#" className="navbar-brand text-lt">
-        <i className="fa fa-terminal"/>
-        <span className="hidden-folded m-l-xs" style={{marginLeft: "10px"}}>breaker</span>
+      <a href="#" className="navbar-brand text-lt" style={styles}>
+        <i className="fa fa-terminal" style={{color: sidebarColor}}/>
+        <span className="hidden-folded m-l-xs" style={{marginLeft: "10px", color: sidebarColor}}>breaker</span>
       </a>
     </div>
   },

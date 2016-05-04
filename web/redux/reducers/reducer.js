@@ -99,18 +99,9 @@ function members(state=Immutable.Map(), action) {
       return state
     }
     case (socketTypes.SOCK_JOIN): {
-      if(state.getIn([action.message.room.name, 'mods'], Immutable.OrderedSet()).has(action.message.user.username)){
-        return state
-      }
-
       return moveMemberOnlineState(state, action);
     }
     case (socketTypes.SOCK_LEAVE): {
-
-      if(state.getIn([action.message.room.name, 'mods'], Immutable.OrderedSet()).has(action.message.user.username)){
-        return state
-      }
-
       return moveMemberOfflineState(state, action);
     }
     default:
