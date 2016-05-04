@@ -42,8 +42,8 @@ public class RoomManage extends PreloadUserController {
                                       String sidebarUnreadTextColor, String signinButtonColor, String signinButtonTextColor) {
         ChatUser user = connected();
         ChatRoom chatRoom = ChatRoom.findById(roomId);
-        if (!chatRoom.isModerator(user)) {
-            error("Not a moderator of '" + chatRoom.getName() + "'.");
+        if (!user.isAdmin()) {
+            error("Not an admin.");
         } else {
             chatRoom.setSidebarBackgroundColor(sidebarBackgroundColor);
             chatRoom.setSidebarTextColor(sidebarTextColor);
