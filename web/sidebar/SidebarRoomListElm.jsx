@@ -8,6 +8,10 @@ class SidebarRoomListElm extends Component {
   constructor(props){
     super(props);
     this.onElementClicked = this.onElementClicked.bind(this);
+    this.getStyles = this.getStyles.bind(this);
+    this.onMouseEnter = this.onMouseEnter.bind(this);
+    this.onMouseLeave = this.onMouseLeave.bind(this);
+    this.state = {}
   }
   onElementClicked(){
     this.props.dispatch(chatActions.handleChangeRoom(this.props.room.get('name')));
@@ -22,6 +26,29 @@ class SidebarRoomListElm extends Component {
     }
     return null;
   }
+  onMouseEnter(){
+    this.setState({
+      hover: true
+    })
+  }
+  onMouseLeave(){
+    this.setState({
+      hover: false
+    })
+  }
+  getStyles(){
+    debugger;
+    let backgroundColor = null;
+    if(this.props.active ){
+      backgroundColor = this.props.currentRoom.getIn(['styles', 'sidebarRoomSelectedColor']);
+    } else if (this.state.hover){
+      backgroundColor = this.props.currentRoom.getIn(['styles', 'sidebarRoomHoverColor']);
+    } else {
+      return {}
+    }
+
+    return { backgroundColor: backgroundColor }
+  }
   render() {
     let roomIcon = this.props.room.get('iconUrl', null);
     if (!roomIcon) {
@@ -32,13 +59,10 @@ class SidebarRoomListElm extends Component {
 
     let key = this.props.room.get('name');
     let active = this.props.active ? " active" : "";
-    let activeBackground = null;
-    if(active){
-      activeBackground = this.props.currentRoom.getIn(['styles', 'sidebarRoomSelectedColor']);
-    }
-    return <li key={key} className={`roomlistentry ${active}`} onClick={this.onElementClicked}
-               style={{backgroundColor: activeBackground}}>
-      <a className="roomselect" data-roomname={this.props.room.get('name')}>
+
+    return <li key={key} className={`roomlistentry ${active}`} onClick={this.onElementClicked}>
+      <a className="roomselect" data-roomname={this.props.room.get('name')} style={this.getStyles()}
+         onMouseLeave={this.onMouseLeave} onMouseEnter={this.onMouseEnter}>
         {this.renderUnreadCount(this.props)}
         <img className="roomIconSmall" src={roomIcon}/>
         <span className={`roomname ${active}`}
