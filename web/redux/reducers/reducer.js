@@ -42,6 +42,9 @@ function rooms(state=Immutable.Map(), action) {
       }
       return nextState;
     }
+    case (socketTypes.SOCK_UPDATE_ROOM): {
+      return state.set(action.message.room.name, Immutable.fromJS(action.message.room));
+    }
     default:
       return state
   }

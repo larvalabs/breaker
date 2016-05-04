@@ -8,3 +8,4 @@ export const SOCK_LEAVE = 'sock-leave';
 export const SOCK_MEMBERS = 'sock-members';
 export const SOCK_UNKNOWN = 'sock-unknown';
 export const SOCK_UPDATE_USER = 'sock-update-user';
+export const SOCK_UPDATE_ROOM = 'sock-update-room';
