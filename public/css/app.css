@@ -5298,21 +5298,3 @@ li.chat-message-root .message-body, li.chat-message-short .message-body, li.chat
   background: #E94F5F;
   color: #fff;
 }
-
-.clevelandcavs .bg-dark,
-.clevelandcavs .bg-dark.dk,
-.clevelandcavs .bg-dark .dk {
-  background-color: #002D62;
-}
-
-.clevelandcavs .bg-dark .nav > li:hover > a,
-.clevelandcavs .bg-dark .nav > li:focus > a,
-.clevelandcavs .bg-dark .nav > li.active > a {
-  background-color: #26437B;
-}
-
-.clevelandcavs .btn-info {
-  color: #ffffff !important;
-  background-color: #860038;
-  border-color: #860038;
-}
