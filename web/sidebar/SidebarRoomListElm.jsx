@@ -37,7 +37,6 @@ class SidebarRoomListElm extends Component {
     })
   }
   getStyles(){
-    debugger;
     let backgroundColor = null;
     if(this.props.active ){
       backgroundColor = this.props.currentRoom.getIn(['styles', 'sidebarRoomSelectedColor']);
