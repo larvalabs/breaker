@@ -85,6 +85,7 @@ public class UpdateUserFromRedditJob extends Job {
         boolean userOnline = ChatRoom.isUserOnlineInAnyRoom(chatUser.getUsername());
         for (ChatUserRoomJoin chatUserRoomJoin : chatRoomJoins) {
             ChatRoom room = chatUserRoomJoin.getRoom();
+            room.refresh(); // Pick up any changes to the other side of this join made above
             ChatRoomStream eventStream = ChatRoomStream.getEventStream(room.getName());
             eventStream.sendUserUpdate(room, chatUser, userOnline);
             eventStream.sendRoomUpdate(room);
