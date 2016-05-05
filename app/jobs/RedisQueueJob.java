@@ -27,7 +27,7 @@ public class RedisQueueJob extends Job {
     private static class RedisListener extends JedisPubSub {
         @Override
         public void onMessage(String channel, String message) {
-            Logger.info("Received message on redis channel " + channel + ": " + message);
+//            Logger.info("Received message on redis channel " + channel + ": " + message);
             ChatRoomStream.Event event = ChatRoomStream.Event.fromJson(message);
             ChatRoomStream.getEventStream(event.room.name).publishEventInternal(event);
             BreakerCache.handleEvent(event);
@@ -60,7 +60,7 @@ public class RedisQueueJob extends Job {
     }
 
     public static void publish(ChatRoomStream.Event event) {
-        Logger.info("Sending event to redis");
+//        Logger.info("Sending event to redis");
         Redis.publish(CHANNEL, event.toJson());
     }
 }
