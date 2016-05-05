@@ -282,17 +282,26 @@ public class Message extends Model {
         if (messageText == null) {
             return mentionList;
         }
-        Matcher matcher = ChatUser.PATTERN_USER_MENTION.matcher(messageText);
-        while (matcher.find()) {
-            String username = matcher.group();
-            Logger.info("Found username: " + username);
-            username = username.replaceAll("@", "").trim().toLowerCase();
-            ChatUser mentionedUser = ChatUser.findByUsername(username);
+        List<String> mentionedUsernames = getMentionedUsernames(messageText);
+        for (String mentionedUsername : mentionedUsernames) {
+            ChatUser mentionedUser = ChatUser.findByUsername(mentionedUsername);
             if (mentionedUser != null) {
                 mentionList.add(mentionedUser);
             }
         }
         return mentionList;
+    }
+
+    public static List<String> getMentionedUsernames(String messageText) {
+        ArrayList<String> usernames = new ArrayList<>();
+        Matcher matcher = ChatUser.PATTERN_USER_MENTION.matcher(messageText);
+        while (matcher.find()) {
+            String username = matcher.group();
+            Logger.info("Found username: " + username);
+            username = username.replaceAll("@", "").trim().toLowerCase();
+            usernames.add(username);
+        }
+        return usernames;
     }
 
     public Set<ChatUser> updateMentionedUsers() {

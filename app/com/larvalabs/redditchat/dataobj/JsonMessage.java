@@ -29,6 +29,8 @@ public class JsonMessage implements Serializable {
     public String[] allLinks;
     public String[] imageLinks;
 
+    public String[] mentionedUsernames;
+
     // If true means it was sent before saving, so doesn't contain all info
     public boolean partial = false;
 
@@ -167,6 +169,8 @@ public class JsonMessage implements Serializable {
         if (localImageLinks.size() > 0) {
             imageLinks = localImageLinks.toArray(new String[]{});
         }
+
+        mentionedUsernames = Message.getMentionedUsernames(message).toArray(new String[]{});
     }
 /*
     public void fillTranslation(Translation translation) {
