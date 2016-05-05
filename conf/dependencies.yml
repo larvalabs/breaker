@@ -8,7 +8,7 @@ require:
     - net.java.dev.jets3t -> jets3t 0.8.1
     - org.jsoup -> jsoup 1.8.3
     - net.dean.jraw -> JRAW 0.8.0
-    - commons-codec -> commons-codec 1.4:
+    - commons-codec -> commons-codec 1.10:
         force: true
 
 repositories:

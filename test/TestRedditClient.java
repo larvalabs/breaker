@@ -33,9 +33,17 @@ public class TestRedditClient extends UnitTest {
         return chatUser;
     }
 
+    private ChatUser getTestUser1() {
+        ChatUser chatUser = new ChatUser("1");
+        chatUser.username = "breakerapptest1";  // pass: redblue12
+        chatUser.accessToken = "56637634-8TyekoUAe_twsfmj_8fVZy8lWVE";
+        chatUser.refreshToken = "56637634-_E9zBoGYmNISf7HmNj8mbf3dQPs";
+        return chatUser;
+    }
+
     @Test
     public void testRefreshToken() throws Exception {
-        ChatUser chatUser = getUser();
+        ChatUser chatUser = getTestUser1();
 
         // Refresh access token for user
         BreakerRedditClient breakerRedditClient = new BreakerRedditClient();
@@ -77,5 +85,17 @@ public class TestRedditClient extends UnitTest {
         assertTrue(moderatorUsernames.contains("megamatt2000"));
         assertTrue(moderatorUsernames.contains("pents900"));
         assertTrue(moderatorUsernames.contains("rickiibeta"));
+    }
+
+    @Test
+    public void testPrivateSubDetection() throws Exception {
+        BreakerRedditClient client = new BreakerRedditClient();
+        String megaprivatetest = "megaprivatetest";
+        assertTrue(client.isSubredditPrivate(megaprivatetest));
+
+        ChatUser user = getTestUser1();
+        JSONObject subsModerated = client.getSubsModerated(user);
+//        Logger.info("Subs: " + subsModerated);
+        assertTrue(client.doesUserHaveAccessToSubreddit(user, megaprivatetest));
     }
 }

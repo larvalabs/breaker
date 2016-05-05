@@ -27,6 +27,8 @@ public class BreakerRedditClient{
     final private String USER_SUBS_MODERATED_URL = OAUTH_URL + "/subreddits/mine/moderator/.json";
     final private String REFRESH_TOKEN_URL = OAUTH_URL + "/api/v1/access_token";
     final private String MODERATORS_URL = BASIC_URL + "/r/{0}/about/moderators.json";
+    final private String ABOUT_URL = BASIC_URL + "/r/{0}/about.json";
+    final private String ABOUT_URL_LOGGED_IN = OAUTH_URL + "/r/{0}/about";
 
     public static class RedditJsonUserlist {
         public RedditJsonUserData data;
@@ -59,6 +61,41 @@ public class BreakerRedditClient{
     }
 
     public BreakerRedditClient(){
+    }
+
+    public boolean isSubredditPrivate(String subreddit) {
+        String url = MessageFormat.format(ABOUT_URL, subreddit);
+        WS.HttpResponse response = WS.url(url)
+                .setHeader("User-Agent", this.BREAKER_USER_AGENT)
+                .get();
+        if (response.success()) {
+            return false;
+        }
+        return true;
+    }
+
+    public boolean doesUserHaveAccessToSubreddit(ChatUser user, String subreddit) {
+        try {
+            JSONObject jsonResponse = getJsonForUser(user, MessageFormat.format(ABOUT_URL_LOGGED_IN, subreddit));
+            if (jsonResponse == null) {
+                return false;
+            }
+            if (jsonResponse.has("error")) {
+                try {
+                    if (jsonResponse.getInt("error") == 403) {
+                        return false;
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    return false;
+                }
+            }
+            return true;
+        } catch (RedditRequestError redditRequestError) {
+            Logger.info("Unable to access subreddit info, user does not have access.");
+            return false;
+        }
+
     }
 
     public List<String> getModeratorUsernames(String subreddit) throws IOException {

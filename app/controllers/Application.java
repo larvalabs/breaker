@@ -259,8 +259,10 @@ public class Application extends PreloadUserController {
                 user.username = username;
                 user.accessToken = tokens.access;
                 user.refreshToken = tokens.refresh;
-                Logger.info("Access token: "+tokens.access);
-                Logger.info("Refresh token: "+tokens.refresh);
+                if (Play.mode.isDev()) {
+                    Logger.info("Access token: " + tokens.access);
+                    Logger.info("Refresh token: " + tokens.refresh);
+                }
 
                 user.linkKarma = me.get("link_karma").getAsLong();
                 user.commentKarma = me.get("comment_karma").getAsLong();
@@ -312,8 +314,10 @@ public class Application extends PreloadUserController {
 
         WS.HttpResponse response = WS.url(REDDIT_TOKEN_URL).headers(headers).params(params).post();
         JsonObject jsonObject = response.getJson().getAsJsonObject();
-        Logger.debug("JSON resp: " + jsonObject.toString());
-        Logger.debug("JSON resp: " + jsonObject.get("access_token").toString());
+        if (Play.mode.isDev()) {
+            Logger.debug("JSON resp: " + jsonObject.toString());
+            Logger.debug("JSON resp: " + jsonObject.get("access_token").toString());
+        }
         return new Tokens(jsonObject.get("access_token").getAsString(), jsonObject.get("refresh_token").getAsString());
 //        return jsonObject.get("accessToken").getAsString();
 //        Logger.debug("Response: " + response);
