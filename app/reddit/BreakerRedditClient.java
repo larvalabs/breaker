@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class BreakerRedditClient{
+public class BreakerRedditClient {
     private final String BREAKER_USER_AGENT = "web:breakerapp:v0.1";
     final private String OAUTH_URL = "https://oauth.reddit.com";
     final private String BASIC_URL = "https://www.reddit.com";
@@ -60,7 +60,7 @@ public class BreakerRedditClient{
         public String display_name;
     }
 
-    public BreakerRedditClient(){
+    public BreakerRedditClient() {
     }
 
     public boolean isSubredditPrivate(String subreddit) {
@@ -74,28 +74,12 @@ public class BreakerRedditClient{
         return true;
     }
 
-    public boolean doesUserHaveAccessToSubreddit(ChatUser user, String subreddit) {
+    public boolean doesUserHaveAccessToSubreddit(ChatUser user, String subreddit) throws RedditRequestError {
         try {
-            JSONObject jsonResponse = getJsonForUser(user, MessageFormat.format(ABOUT_URL_LOGGED_IN, subreddit));
-            if (jsonResponse == null) {
-                return false;
-            }
-            if (jsonResponse.has("error")) {
-                try {
-                    if (jsonResponse.getInt("error") == 403) {
-                        return false;
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    return false;
-                }
-            }
-            return true;
-        } catch (RedditRequestError redditRequestError) {
-            Logger.info("Unable to access subreddit info, user does not have access.");
+            return getRedditUserFlairForSubreddit(user, subreddit) != null;
+        } catch (InvalidAuthScope redditRequestError) {
             return false;
         }
-
     }
 
     public List<String> getModeratorUsernames(String subreddit) throws IOException {
@@ -115,7 +99,7 @@ public class BreakerRedditClient{
         return usernames;
     }
 
-    public JSONObject getRedditUserFlairForSubreddit(ChatUser chatUser, String subreddit) throws RedditRequestError{
+    public JSONObject getRedditUserFlairForSubreddit(ChatUser chatUser, String subreddit) throws RedditRequestError {
         return postJsonForUser(chatUser, MessageFormat.format(USER_FLAIR_URL, subreddit));
     }
 
@@ -134,46 +118,46 @@ public class BreakerRedditClient{
         return subnames;
     }
 
-    private JSONObject getJsonForUser(ChatUser chatUser, String endpoint) throws RedditRequestError{
+    private JSONObject getJsonForUser(ChatUser chatUser, String endpoint) throws RedditRequestError {
         return fetchJsonForUser(chatUser, endpoint, "GET", true);
     }
 
-    private JSONObject postJsonForUser(ChatUser chatUser, String endpoint) throws RedditRequestError{
+    private JSONObject postJsonForUser(ChatUser chatUser, String endpoint) throws RedditRequestError {
         return fetchJsonForUser(chatUser, endpoint, "POST", true);
     }
 
-    private JSONObject fetchJsonForUser(ChatUser chatUser, String endpoint, String method, boolean refreshToken) throws RedditRequestError{
-       try{
-           return fetchJson(endpoint, method, chatUser.accessToken);
-       } catch (TokenRefreshNeeded t){
-           if (refreshToken){
-               chatUser.accessToken = refreshToken(chatUser.refreshToken);
-               chatUser.save();
-               return fetchJsonForUser(chatUser, endpoint, method, false);
-           } else {
-               throw new RedditRequestError();
-           }
-       }
+    private JSONObject fetchJsonForUser(ChatUser chatUser, String endpoint, String method, boolean refreshToken) throws RedditRequestError {
+        try {
+            return fetchJson(endpoint, method, chatUser.accessToken);
+        } catch (TokenRefreshNeeded t) {
+            if (refreshToken) {
+                chatUser.accessToken = refreshToken(chatUser.refreshToken);
+                chatUser.save();
+                return fetchJsonForUser(chatUser, endpoint, method, false);
+            } else {
+                throw new RedditRequestError();
+            }
+        }
     }
 
-    private JSONObject fetchJson(String endpoint, String method, String bearer) throws RedditRequestError{
+    private JSONObject fetchJson(String endpoint, String method, String bearer) throws RedditRequestError {
         return fetchJson(endpoint, method, bearer, null);
     }
 
-    private JSONObject getJson(String endpoint, String method, String bearer, HashMap<String, String> params) throws RedditRequestError{
+    private JSONObject getJson(String endpoint, String method, String bearer, HashMap<String, String> params) throws RedditRequestError {
         return fetchJson(endpoint, "GET", bearer, params);
     }
 
-    private JSONObject postJson(String endpoint, String bearer, HashMap<String, String> params) throws RedditRequestError{
+    private JSONObject postJson(String endpoint, String bearer, HashMap<String, String> params) throws RedditRequestError {
         return fetchJson(endpoint, "POST", bearer, params);
     }
 
-    private JSONObject fetchJson(String endpoint, String method, String bearer, HashMap<String, String> params) throws RedditRequestError{
-        try{
+    private JSONObject fetchJson(String endpoint, String method, String bearer, HashMap<String, String> params) throws RedditRequestError {
+        try {
             final HttpURLConnection conn = (HttpURLConnection) new URL(endpoint).openConnection();
 
             // set headers
-            if(bearer != null){
+            if (bearer != null) {
                 conn.setRequestProperty("Authorization", "Bearer " + bearer);
             }
 
@@ -182,7 +166,7 @@ public class BreakerRedditClient{
 
             conn.setRequestMethod(method);
 
-            if(method.equals("POST")){
+            if (method.equals("POST")) {
                 conn.setReadTimeout(10000);
                 conn.setConnectTimeout(15000);
                 conn.setDoInput(true);
@@ -198,25 +182,26 @@ public class BreakerRedditClient{
 
             int code = conn.getResponseCode();
 
-            if(code == 401){
+            // todo These aren't generally reachable, the getInputStream() throws an IOException
+            if (code == 401) {
                 throw new TokenRefreshNeeded();
-            } if (code == 403) {
+            } else if (code == 403) {
                 throw new InvalidAuthScope();
-            } if(code != 200){
+            } else if (code != 200) {
                 throw new RedditRequestError("Received error code: " + code + ", response: " + jsonStr);
             }
 
             return new JSONObject(jsonStr);
-        } catch (IOException | JSONException e){
+        } catch (IOException | JSONException e) {
             e.printStackTrace();
-        } catch (TokenRefreshNeeded t){
+        } catch (TokenRefreshNeeded t) {
             throw t;
         }
 
         return null;
     }
 
-    public String refreshToken(String refreshToken){
+    public String refreshToken(String refreshToken) {
         final HashMap<String, String> params = new HashMap<String, String>();
         params.put("grant_type", "refresh_token");
         params.put("refresh_token", refreshToken);
@@ -240,18 +225,16 @@ public class BreakerRedditClient{
         }
     }
 
-    private String getQuery(HashMap<String, String> params) throws UnsupportedEncodingException
-    {
-        if(params == null){
+    private String getQuery(HashMap<String, String> params) throws UnsupportedEncodingException {
+        if (params == null) {
             return "";
         }
 
         StringBuilder result = new StringBuilder();
         boolean first = true;
 
-        for (String key : params.keySet())
-        {
-            if(!first){
+        for (String key : params.keySet()) {
+            if (!first) {
                 result.append("&");
             }
             first = false;

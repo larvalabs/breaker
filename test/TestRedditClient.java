@@ -36,8 +36,16 @@ public class TestRedditClient extends UnitTest {
     private ChatUser getTestUser1() {
         ChatUser chatUser = new ChatUser("1");
         chatUser.username = "breakerapptest1";  // pass: redblue12
-        chatUser.accessToken = "56637634-8TyekoUAe_twsfmj_8fVZy8lWVE";
-        chatUser.refreshToken = "56637634-_E9zBoGYmNISf7HmNj8mbf3dQPs";
+        chatUser.accessToken = "***REMOVED***";
+        chatUser.refreshToken = "***REMOVED***";
+        return chatUser;
+    }
+
+    private ChatUser getTestUser2() {
+        ChatUser chatUser = new ChatUser("2");
+        chatUser.username = "breakerapptest2";  // pass: redblue12
+        chatUser.accessToken = "***REMOVED***";
+        chatUser.refreshToken = "***REMOVED***";
         return chatUser;
     }
 
@@ -96,6 +104,9 @@ public class TestRedditClient extends UnitTest {
         ChatUser user = getTestUser1();
         JSONObject subsModerated = client.getSubsModerated(user);
 //        Logger.info("Subs: " + subsModerated);
+//        JSONObject android = client.getRedditUserFlairForSubreddit(user, "android");
+//        Logger.info(android.toString());
         assertTrue(client.doesUserHaveAccessToSubreddit(user, megaprivatetest));
+        assertFalse(client.doesUserHaveAccessToSubreddit(getTestUser2(), megaprivatetest));
     }
 }
