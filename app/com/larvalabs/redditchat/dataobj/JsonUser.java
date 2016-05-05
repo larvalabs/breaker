@@ -79,4 +79,7 @@ public class JsonUser implements Serializable {
         flair.put(roomName, flairObj);
     }
 
+    public ChatUser loadModelFromDatabase() {
+        return ChatUser.findById(id);
+    }
 }

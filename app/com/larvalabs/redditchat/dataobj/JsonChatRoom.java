@@ -1,5 +1,6 @@
 package com.larvalabs.redditchat.dataobj;
 
+import com.larvalabs.redditchat.Constants;
 import models.ChatRoom;
 import models.ChatUser;
 import models.ChatUserRoomJoin;
@@ -69,5 +70,13 @@ public class JsonChatRoom implements Serializable {
                 room.getIconUrlSource(), room.isNoIconAvailableFromStore(), room.getBanner(),
                 room.flairScale, jsonRoomStyles, moderators);
         return jsonChatRoom;
+    }
+
+    public ChatRoom loadModelFromDatabase() {
+        return ChatRoom.findById(id);
+    }
+
+    public boolean isDefaultRoom() {
+        return name.equals(Constants.CHATROOM_DEFAULT);
     }
 }

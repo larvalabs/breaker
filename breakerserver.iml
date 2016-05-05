@@ -23,27 +23,6 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library">
-      <library name="PlayFramework Dependencies">
-        <CLASSES>
-          <root url="file:///usr/local/Cellar/play13/1.3.1/libexec/framework/lib" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-        <jarDirectory url="file:///usr/local/Cellar/play13/1.3.1/libexec/framework/lib" recursive="false" />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar:///usr/local/Cellar/play13/1.3.1/libexec/framework/play-1.3.1.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="file:///usr/local/Cellar/play13/1.3.1/libexec/framework/src" />
-        </SOURCES>
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
       <library name="Redis module">
         <CLASSES>
           <root url="file://$MODULE_DIR$/modules/redis-0.3/lib" />
@@ -63,6 +42,25 @@
         <JAVADOC />
         <SOURCES />
         <jarDirectory url="file://$MODULE_DIR$/lib" recursive="false" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../play-1.4.2/framework/play-1.4.2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/../play-1.4.2/framework/lib" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+        <jarDirectory url="file://$MODULE_DIR$/../play-1.4.2/framework/lib" recursive="false" />
       </library>
     </orderEntry>
   </component>

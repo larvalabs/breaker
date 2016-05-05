@@ -29,8 +29,8 @@ public class LastMessageReadTest extends UnitTest {
         user1.joinChatRoom(room1);
 
         long startTime = System.currentTimeMillis();
-        assertEquals(0, room1.getLastMessageReadTimeForUser(user1));
-        room1.markMessagesReadForUser(user1);
-        assertTrue(room1.getLastMessageReadTimeForUser(user1) > startTime);
+        assertEquals(0, room1.getLastMessageReadTimeForUser(user1.getUsername()));
+        room1.markMessagesReadForUser(user1.getUsername());
+        assertTrue(room1.getLastMessageReadTimeForUser(user1.getUsername()) > startTime);
     }
 }

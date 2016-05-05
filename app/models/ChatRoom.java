@@ -417,14 +417,18 @@ public class ChatRoom extends Model {
         }
     }
 
-    private String getRedisPresenceKeyForRoom() {
-        return "presence_" + name;
+    private static String getRedisPresenceKeyForRoom(String roomName) {
+        return "presence_" + roomName;
     }
 
     public long getCurrentUserCount() {
+        return getCurrentUserCount(name);
+    }
+
+    public static long getCurrentUserCount(String roomName) {
         try {
             int time = (int) (System.currentTimeMillis() / 1000);
-            Long zcount = Redis.zcount(getRedisPresenceKeyForRoom(), time - Constants.PRESENCE_TIMEOUT_SEC, time);
+            Long zcount = Redis.zcount(getRedisPresenceKeyForRoom(roomName), time - Constants.PRESENCE_TIMEOUT_SEC, time);
 //        Logger.info(appPackage + " live count " + zcount);
             return zcount;
         } catch (Exception e) {
@@ -469,12 +473,6 @@ public class ChatRoom extends Model {
 //        TreeSet<ChatUser> presentUserObjects = getPresentUserObjects();
         HashSet<ChatUser> allUsers = new HashSet<ChatUser>(getUsers());
 
-        // todo: Temporary hack to make rooms look full
-        if (getName() != null && !getName().equals(Constants.CHATROOM_DEFAULT)) {
-            ChatRoom defaultRoom = findByName(Constants.CHATROOM_DEFAULT);
-            allUsers.addAll(defaultRoom.getUsers());
-        }
-
         JsonUser[] users = new JsonUser[allUsers.size()];
         TreeSet<String> usernamesPresent = getUsernamesPresent();
         int i = 0;
@@ -485,11 +483,15 @@ public class ChatRoom extends Model {
         return users;
     }
 
-    // note: could consider doing this as a separate set of just usernames
     public TreeSet<String> getUsernamesPresent() {
+        return getUsernamesPresent(name);
+    }
+
+    // note: could consider doing this as a separate set of just usernames
+    public static TreeSet<String> getUsernamesPresent(String roomName) {
         try {
             int time = (int) (System.currentTimeMillis() / 1000);
-            Set<String> usersPresent = Redis.zrangeByScore(getRedisPresenceKeyForRoom(), time - Constants.PRESENCE_TIMEOUT_SEC, time);
+            Set<String> usersPresent = Redis.zrangeByScore(getRedisPresenceKeyForRoom(roomName), time - Constants.PRESENCE_TIMEOUT_SEC, time);
             TreeSet<String> usernamesPresent = new TreeSet<String>();
             for (String usernameAndConnStr : usersPresent) {
                 usernamesPresent.add(splitUsernameAndConnection(usernameAndConnStr)[0]);
@@ -514,8 +516,8 @@ public class ChatRoom extends Model {
      * @param user
      * @return
      */
-    public boolean isUserPresent(ChatUser user) {
-        return isUserPresent(user, null);
+    public boolean isUserPresent(String username) {
+        return isUserPresent(name, username);
     }
 
     /**
@@ -540,32 +542,40 @@ public class ChatRoom extends Model {
 */
     }
 
-    public void userPresent(ChatUser user, String connectionId) {
+    public static boolean isUserPresent(String roomName, String username) {
+        return getUsernamesPresent(roomName).contains(username);
+    }
+
+    public void userPresent(String username, String connectionId) {
+        userPresent(name, username, connectionId);
+    }
+
+    public static void userPresent(String roomName, String username, String connectionId) {
         try {
             int time = (int) (System.currentTimeMillis() / 1000);
-            Redis.zadd(getRedisPresenceKeyForRoom(), time, getUsernameAndConnectionString(user, connectionId));
+            Redis.zadd(getRedisPresenceKeyForRoom(roomName), time, getUsernameAndConnectionString(username, connectionId));
             if (random.nextFloat() < CHANCE_CLEAN_REDIS_PRESENCE) {
                 // this is just housekeeping to keep the sets from getting too big
-                cleanPresenceSet();
+                cleanPresenceSet(roomName);
             }
-            userPresentGlobal(user);
+            userPresentGlobal(username);
         } catch (Exception e) {
             Logger.error(e, "Error contacting redis.");
         }
     }
 
-    private String getUsernameAndConnectionString(ChatUser user, String connectionId) {
-        return user.username + ":" + connectionId;
+    private static String getUsernameAndConnectionString(String username, String connectionId) {
+        return username + ":" + connectionId;
     }
 
     /**
      * Add to list of all online users across rooms
-     * @param user
+     * @param username
      */
-    private void userPresentGlobal(ChatUser user) {
+    private static void userPresentGlobal(String username) {
         try {
             int time = (int) (System.currentTimeMillis() / 1000);
-            Redis.zadd(REDISKEY_PRESENCE_GLOBAL, time, user.getUsername());
+            Redis.zadd(REDISKEY_PRESENCE_GLOBAL, time, username);
             if (random.nextFloat() < CHANCE_CLEAN_REDIS_PRESENCE) {
                 // this is just housekeeping to keep the sets from getting too big
                 cleanPresenceSetGlobal();
@@ -575,9 +585,9 @@ public class ChatRoom extends Model {
         }
     }
 
-    private void userNotPresentGlobal(ChatUser user) {
+    private static void userNotPresentGlobal(String username) {
         try {
-            Redis.zrem(REDISKEY_PRESENCE_GLOBAL, user.getUsername());
+            Redis.zrem(REDISKEY_PRESENCE_GLOBAL, username);
         } catch (Exception e) {
             Logger.error(e, "Error contacting redis.");
         }
@@ -586,7 +596,7 @@ public class ChatRoom extends Model {
     /**
      * Housekeeping to keep list sizes under control
      */
-    private void cleanPresenceSetGlobal() {
+    private static void cleanPresenceSetGlobal() {
         try {
             int time = (int) (System.currentTimeMillis() / 1000);
             Long removed = Redis.zremrangeByScore(REDISKEY_PRESENCE_GLOBAL, 0, time - Constants.PRESENCE_TIMEOUT_SEC * 2);
@@ -622,48 +632,60 @@ public class ChatRoom extends Model {
 
     /**
      *
-     * @param [0] = username, [1] = connectionId
-     * @return
+     * @param
+     * @return [0] = username, [1] = connectionId
      */
-    private String[] splitUsernameAndConnection(String combined) {
+    private static String[] splitUsernameAndConnection(String combined) {
         return combined.split(":");
     }
 
-    public void userNotPresent(ChatUser user, String connectionId) {
+    public void userNotPresent(String username, String connectionId) {
+        userNotPresent(name, username, connectionId);
+    }
+
+    public static void userNotPresent(String roomName, String username, String connectionId) {
         try {
-            Redis.zrem(getRedisPresenceKeyForRoom(), getUsernameAndConnectionString(user, connectionId));
-            userNotPresentGlobal(user);
+            Redis.zrem(getRedisPresenceKeyForRoom(roomName), getUsernameAndConnectionString(username, connectionId));
+            userNotPresentGlobal(username);
         } catch (Exception e) {
             Logger.error(e, "Error contacting redis.");
         }
     }
 
-    private void cleanPresenceSet() {
+    private static void cleanPresenceSet(String roomName) {
         try {
             int time = (int) (System.currentTimeMillis() / 1000);
-            Long removed = Redis.zremrangeByScore(getRedisPresenceKeyForRoom(), 0, time - Constants.PRESENCE_TIMEOUT_SEC * 2);
+            Long removed = Redis.zremrangeByScore(getRedisPresenceKeyForRoom(roomName), 0, time - Constants.PRESENCE_TIMEOUT_SEC * 2);
 //            Logger.debug("Clean of presence set for " + name + " removed " + removed + " elements.");
         } catch (Exception e) {
             Logger.error(e, "Error contacting redis.");
         }
     }
 
-    private String makeKeyForLastReadTime(ChatUser user) {
-        return "lastread-"+name+"-"+user.getUsername();
+    private static String makeKeyForLastReadTime(String roomName, String username) {
+        return "lastread-" + roomName + "-" + username;
     }
 
-    public void markMessagesReadForUser(ChatUser user) {
+    public void markMessagesReadForUser(String username) {
+        markMessagesReadForUser(name, username);
+    }
+
+    public static void markMessagesReadForUser(String roomName, String username) {
         try {
-            Redis.set(makeKeyForLastReadTime(user), ""+System.currentTimeMillis());
-            SaveLastReadTimeForAllPendingJob.addPendingUsername(user.getUsername(), name);
+            Redis.set(makeKeyForLastReadTime(roomName, username), ""+System.currentTimeMillis());
+            SaveLastReadTimeForAllPendingJob.addPendingUsername(username, roomName);
         } catch (Exception e) {
             Logger.error(e, "Error contacting redis.");
         }
     }
 
-    public long getLastMessageReadTimeForUser(ChatUser user) {
+    public long getLastMessageReadTimeForUser(String username) {
+        return getLastMessageReadTimeForUser(name, username);
+    }
+
+    public static long getLastMessageReadTimeForUser(String roomName, String username) {
         try {
-            String lastTime = Redis.get(makeKeyForLastReadTime(user));
+            String lastTime = Redis.get(makeKeyForLastReadTime(roomName, username));
             if (lastTime != null) {
                 return Long.parseLong(lastTime);
             }

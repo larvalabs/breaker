@@ -87,14 +87,15 @@ public class ChatRoomStream {
     /**
      * A user leave the room
      */
-    public void leave(ChatRoom room, ChatUser user, String connectionId) {
+    public void leave(JsonChatRoom room, JsonUser user, String connectionId) {
         // todo Review whether this can leak, i.e. if we don't always get proper disconnect events from the socket
         // todo Could do a periodic cleanup where we remove streams that haven't been accessed in a while
-        userStreams.remove(getStreamKey(room.getName(), user.getUsername(), connectionId));
+        userStreams.remove(getStreamKey(room.name, user.username, connectionId));
         if (room.isDefaultRoom()) {
             Stats.sample(Stats.StatKey.USER_STREAMS_OPEN, userStreams.size());
         }
-        publishEvent(new Leave(JsonChatRoom.from(room, room.getModeratorUsernames()), JsonUser.fromUser(user, false)));
+        user.online = false;
+        publishEvent(new Leave(room, user));
     }
 
     /**

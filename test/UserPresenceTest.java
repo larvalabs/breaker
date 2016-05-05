@@ -27,13 +27,13 @@ public class UserPresenceTest extends UnitTest {
         room1.save();
         user1.joinChatRoom(room1);
 
-        room1.userPresent(user1, connectionId);
+        room1.userPresent(user1.getUsername(), connectionId);
         assertEquals(1, room1.getUsernamesPresent().size());
         assertEquals(user1.getUsername(), room1.getUsernamesPresent().first());
         assertEquals(1, ChatRoom.getAllOnlineUsersForAllRooms().size());
         assertEquals(user1.getUsername(), ChatRoom.getAllOnlineUsersForAllRooms().first());
 
-        room1.userNotPresent(user1, connectionId);
+        room1.userNotPresent(user1.getUsername(), connectionId);
         assertEquals(0, room1.getUsernamesPresent().size());
         assertEquals(0, ChatRoom.getAllOnlineUsersForAllRooms().size());
     }

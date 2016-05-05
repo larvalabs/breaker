@@ -102,8 +102,8 @@ public class JsonMessage implements Serializable {
                 isNewSinceLastSession, message.getLanguageDetected());
     }
 
-    public static JsonMessage makePresavedMessage(String uuid, ChatUser user, ChatRoom room, String message) {
-        return new JsonMessage(uuid, user.getUsername(), room.getName(), message);
+    public static JsonMessage makePresavedMessage(String uuid, String username, String roomName, String message) {
+        return new JsonMessage(uuid, username, roomName, message);
     }
 
     public enum ListType {

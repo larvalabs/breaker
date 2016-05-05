@@ -24,7 +24,7 @@ public class SaveLastReadForUserJob extends Job {
         ChatUser user = ChatUser.findByUsername(username);
         ChatRoom room = ChatRoom.findByName(roomName);
         ChatUserRoomJoin join = ChatUserRoomJoin.findByUserAndRoom(user, room);
-        long lastMessageReadTimeForUser = room.getLastMessageReadTimeForUser(user);
+        long lastMessageReadTimeForUser = room.getLastMessageReadTimeForUser(user.getUsername());
         Logger.info("Settings last message read for " + user.getUsername() + " in " + room.getName() + " to " + lastMessageReadTimeForUser);
         join.setLastSeenMessageTime(lastMessageReadTimeForUser);
         join.save();

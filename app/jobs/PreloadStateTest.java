@@ -50,20 +50,20 @@ public class PreloadStateTest extends UnitTest {
 
         user1.joinChatRoom(room1);
         user1.joinChatRoom(room2);
-        room1.userPresent(user1, connectionId);
-        room2.userPresent(user1, connectionId);
+        room1.userPresent(user1.getUsername(), connectionId);
+        room2.userPresent(user1.getUsername(), connectionId);
 
         user2.joinChatRoom(room1);
-        room1.userPresent(user2, connectionId);
+        room1.userPresent(user2.getUsername(), connectionId);
 
         user3.joinChatRoom(room2);
-        room2.userPresent(user3, connectionId);
+        room2.userPresent(user3.getUsername(), connectionId);
 
         // User4 is offline in both rooms
         user4.joinChatRoom(room1);
         user4.joinChatRoom(room2);
-        room1.userNotPresent(user4, connectionId);
-        room2.userNotPresent(user4, connectionId);
+        room1.userNotPresent(user4.getUsername(), connectionId);
+        room2.userNotPresent(user4.getUsername(), connectionId);
         room2.addModerator(user4);
         room2.refresh();        // Refresh other side of join on moderators so it's current
 
