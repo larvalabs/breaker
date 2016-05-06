@@ -5314,3 +5314,10 @@ li.chat-message-root .message-body, li.chat-message-short .message-body, li.chat
   border: 1px solid #FFF2BB;
   padding: 0px 5px;
 }
+
+.roomlistentry .roomselect i.private-icon {
+  float: right;
+  line-height: 50px;
+  margin-right: -15px;
+
+}
