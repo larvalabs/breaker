@@ -5298,3 +5298,19 @@ li.chat-message-root .message-body, li.chat-message-short .message-body, li.chat
   background: #E94F5F;
   color: #fff;
 }
+
+.message-body .username {
+  font-weight: 600;
+  color: #23b7e5;
+  background: #EDF1F2;
+  border-radius: 10px;
+  border: 1px solid #EDF1F2;
+  padding: 0px 5px;
+}
+
+.message-body .username.username-me {
+  background: #FFF2BB;
+  border-radius: 10px;
+  border: 1px solid #FFF2BB;
+  padding: 0px 5px;
+}
