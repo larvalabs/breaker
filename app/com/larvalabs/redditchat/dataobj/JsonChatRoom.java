@@ -30,6 +30,7 @@ public class JsonChatRoom implements Serializable {
     public List<String> moderators;
 
     public String flairScale;
+    public boolean isPrivate;
     public JsonRoomStyles styles;
 
     // Filled when getting messages
@@ -38,7 +39,7 @@ public class JsonChatRoom implements Serializable {
 
     public JsonChatRoom(long id, String name, long numberUsers,
                         long liveUserCount, String iconUrl, int iconUrlSource, boolean noIconAvailableFromStore,
-                        String banner, String flairScale, JsonRoomStyles jsonRoomStyles,
+                        String banner, String flairScale, boolean isPrivate, JsonRoomStyles jsonRoomStyles,
                         List<String> moderators) {
         this.id = id;
         this.name = name;
@@ -49,6 +50,7 @@ public class JsonChatRoom implements Serializable {
         this.noIconAvailableFromStore = noIconAvailableFromStore;
         this.banner = banner;
         this.flairScale = flairScale;
+        this.isPrivate = isPrivate;
         this.styles = jsonRoomStyles;
         this.moderators = moderators;
     }
@@ -68,7 +70,7 @@ public class JsonChatRoom implements Serializable {
                 room.numberOfUsers,
                 room.getCurrentUserCount(), room.getIconUrl(),
                 room.getIconUrlSource(), room.isNoIconAvailableFromStore(), room.getBanner(),
-                room.flairScale, jsonRoomStyles, moderators);
+                room.flairScale, room.isPrivateRoom(), jsonRoomStyles, moderators);
         return jsonChatRoom;
     }
 
