@@ -5298,3 +5298,8 @@ li.chat-message-root .message-body, li.chat-message-short .message-body, li.chat
   background: #E94F5F;
   color: #fff;
 }
+
+.message-body .username {
+  font-weight: 600;
+  color: #23b7e5;
+}
