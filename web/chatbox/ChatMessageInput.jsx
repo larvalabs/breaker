@@ -121,7 +121,8 @@ class ChatMessageInput extends Component {
                    renderSuggestion={this.renderSuggestion}
                    inputProps={inputProps}
                    theme={theme}
-                   tabToSelect={true}/>;
+                   tabToSelect={true}
+                   selectFirstSuggestion={true}/>;
   }
 }
 
