@@ -15,19 +15,17 @@ import models.ChatUser;
 import models.ChatUserRoomJoin;
 import play.Logger;
 import play.Play;
-import play.db.jpa.JPA;
-import play.libs.F;
 import play.libs.F.EventStream;
 import play.libs.F.Promise;
-import play.mvc.Http;
 import play.mvc.Http.WebSocketClose;
 import play.mvc.Http.WebSocketFrame;
 import play.mvc.WebSocketController;
 import play.mvc.With;
 
-import javax.persistence.Query;
-import java.util.*;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.TreeMap;
 
 import static controllers.Application.SESSION_JOINROOM;
 
@@ -67,7 +65,7 @@ public class WebSocket extends PreloadUserController {
             if (room.isPrivateRoom()) {
                 Logger.info("Guest user can't see private room, showing login required screen.");
                 session.put(SESSION_JOINROOM, roomName);
-                render("Websocket/privateRoomGuest.html", room);
+                render("WebSocket/privateRoomGuest.html", room);
                 return;
             }
             user = ChatUser.findOrCreate(Constants.USERNAME_GUEST);
@@ -108,11 +106,11 @@ public class WebSocket extends PreloadUserController {
                 Application.index();
             } catch (ChatUser.UnableToCheckAccessToPrivateRoom unableToCheckAccessToPrivateRoom) {
                 String errorMessage = "We are having a temporary problem verifying your access to this room, please try again later. (Usually this is a temporary problem contacting Reddit).";
-                render("Websocket/privateRoomError.html", room, errorMessage);
+                render("WebSocket/privateRoomError.html", room, errorMessage);
                 return;
             } catch (ChatUser.NoAccessToPrivateRoomException e) {
                 String errorMessage = "You do not have permission to access this room.";
-                render("Websocket/privateRoomError.html", room, errorMessage);
+                render("WebSocket/privateRoomError.html", room, errorMessage);
                 return;
             }
         }

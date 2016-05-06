@@ -18,8 +18,9 @@ export default class ChatThread extends Component {
     </div>
   }
   renderThreadMessageOldWay(props, message, previous){
-
-    if(previous && previous.get('username') === message.get('username')){
+    let isServerMessage = message.get('type') === "servermessage";
+    let isNotFirstUserMessage = previous && previous.get('username') === message.get('username');
+    if(isServerMessage || isNotFirstUserMessage){
       return <ChatShortMessage key={message.get('uuid')}
                                message={message}
                                user={props.users.get(message.get('username'))}
