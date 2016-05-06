@@ -29,6 +29,8 @@ import javax.persistence.Query;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import static controllers.Application.SESSION_JOINROOM;
+
 @With(ForceSSL.class)
 public class WebSocket extends PreloadUserController {
 
@@ -62,11 +64,23 @@ public class WebSocket extends PreloadUserController {
         }
 
         if (user == null) {
+            if (room.isPrivateRoom()) {
+                Logger.info("Guest user can't see private room, showing login required screen.");
+                session.put(SESSION_JOINROOM, roomName);
+                render("Websocket/privateRoomGuest.html", room);
+                return;
+            }
             user = ChatUser.findOrCreate(Constants.USERNAME_GUEST);
             try {
                 user.joinChatRoom(room);
             } catch (ChatUser.UserBannedException e) {
                 Logger.error("Preview user banned.");
+            } catch (ChatUser.UnableToCheckAccessToPrivateRoom unableToCheckAccessToPrivateRoom) {
+                // Should never happen because we bail above
+                unableToCheckAccessToPrivateRoom.printStackTrace();
+            } catch (ChatUser.NoAccessToPrivateRoomException e) {
+                // Should never happen because we bail above
+                e.printStackTrace();
             }
             setUserInSession(user);
         }
@@ -80,6 +94,10 @@ public class WebSocket extends PreloadUserController {
                 } catch (ChatUser.UserBannedException e) {
                     // todo show message that they're banned
                     Application.index();
+                } catch (ChatUser.UnableToCheckAccessToPrivateRoom unableToCheckAccessToPrivateRoom) {
+                    // not gonna happen
+                } catch (ChatUser.NoAccessToPrivateRoomException e) {
+                    // not gonna happen
                 }
             }
         } else {
@@ -88,6 +106,14 @@ public class WebSocket extends PreloadUserController {
             } catch (ChatUser.UserBannedException e) {
                 // todo show message that they're banned
                 Application.index();
+            } catch (ChatUser.UnableToCheckAccessToPrivateRoom unableToCheckAccessToPrivateRoom) {
+                String errorMessage = "We are having a temporary problem verifying your access to this room, please try again later. (Usually this is a temporary problem contacting Reddit).";
+                render("Websocket/privateRoomError.html", room, errorMessage);
+                return;
+            } catch (ChatUser.NoAccessToPrivateRoomException e) {
+                String errorMessage = "You do not have permission to access this room.";
+                render("Websocket/privateRoomError.html", room, errorMessage);
+                return;
             }
         }
 

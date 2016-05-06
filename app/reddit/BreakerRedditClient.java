@@ -9,6 +9,7 @@ import models.ChatUser;
 import org.apache.commons.io.IOUtils;
 import play.Logger;
 import play.libs.WS;
+import play.mvc.Http;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -63,15 +64,27 @@ public class BreakerRedditClient {
     public BreakerRedditClient() {
     }
 
-    public boolean isSubredditPrivate(String subreddit) {
+    public boolean isSubredditPrivate(String subreddit) throws ResourceNotFoundException {
         String url = MessageFormat.format(ABOUT_URL, subreddit);
         WS.HttpResponse response = WS.url(url)
                 .setHeader("User-Agent", this.BREAKER_USER_AGENT)
                 .get();
-        if (response.success()) {
+        if (response.getStatus() == Http.StatusCode.NOT_FOUND) {
+            throw new ResourceNotFoundException();
+        } else if (response.success()) {
             return false;
         }
         return true;
+    }
+
+    public boolean doesSubredditExist(String subreddit) {
+        try {
+            // Just try to make a request and look for not found
+            boolean whocares = isSubredditPrivate(subreddit);
+            return true;
+        } catch (ResourceNotFoundException e) {
+            return false;
+        }
     }
 
     public boolean doesUserHaveAccessToSubreddit(ChatUser user, String subreddit) throws RedditRequestError {
@@ -154,48 +167,47 @@ public class BreakerRedditClient {
 
     private JSONObject fetchJson(String endpoint, String method, String bearer, HashMap<String, String> params) throws RedditRequestError {
         try {
-            final HttpURLConnection conn = (HttpURLConnection) new URL(endpoint).openConnection();
-
+            WS.WSRequest request = WS.url(endpoint);
             // set headers
             if (bearer != null) {
-                conn.setRequestProperty("Authorization", "Bearer " + bearer);
+                request.setHeader("Authorization", "Bearer " + bearer);
             }
 
             // set user agent to avoid throttling
-            conn.setRequestProperty("User-Agent", this.BREAKER_USER_AGENT);
+            request.setHeader("User-Agent", this.BREAKER_USER_AGENT);
 
-            conn.setRequestMethod(method);
-
-            if (method.equals("POST")) {
-                conn.setReadTimeout(10000);
-                conn.setConnectTimeout(15000);
-                conn.setDoInput(true);
-                conn.setDoOutput(true);
-
-                String query = getQuery(params);
-                conn.setRequestProperty("Content-Length", "" + Integer.toString(query.getBytes("UTF-8").length));
-                conn.getOutputStream().write(query.getBytes());
+            if (params != null) {
+                request.setParameters(params);
             }
 
-            conn.connect();
-            String jsonStr = IOUtils.toString(conn.getInputStream());
+            WS.HttpResponse response;
+            if (method.toLowerCase().equals("post")) {
+                try {
+                    String query = getQuery(params);
+                    request.setHeader("Content-Length", "" + Integer.toString(query.getBytes("UTF-8").length));
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                response = request.post();
+            } else {
+                response = request.get();
+            }
 
-            int code = conn.getResponseCode();
+            int code = response.getStatus();
 
-            // todo These aren't generally reachable, the getInputStream() throws an IOException
             if (code == 401) {
                 throw new TokenRefreshNeeded();
             } else if (code == 403) {
                 throw new InvalidAuthScope();
+            } else if (code == 404) {
+                throw new ResourceNotFoundException();
             } else if (code != 200) {
-                throw new RedditRequestError("Received error code: " + code + ", response: " + jsonStr);
+                throw new RedditRequestError("Received error code: " + code + ", response: " + response.getString());
             }
 
-            return new JSONObject(jsonStr);
-        } catch (IOException | JSONException e) {
+            return new JSONObject(response.getString());
+        } catch (JSONException e) {
             e.printStackTrace();
-        } catch (TokenRefreshNeeded t) {
-            throw t;
         }
 
         return null;

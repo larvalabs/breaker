@@ -8,6 +8,7 @@ import play.libs.Mail;
 import play.test.Fixtures;
 import play.test.UnitTest;
 import reddit.BreakerRedditClient;
+import reddit.RedditRequestError;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,7 +81,7 @@ public class TestRedditClient extends UnitTest {
         // Refresh access token for user
         BreakerRedditClient breakerRedditClient = new BreakerRedditClient();
         ArrayList<String> subNamesModerated = breakerRedditClient.getSubNamesModerated(chatUser);
-        assertEquals(3, subNamesModerated.size());
+        assertEquals(4, subNamesModerated.size());
         assertTrue(subNamesModerated.contains("appchat"));
         assertTrue(subNamesModerated.contains("breakerapp"));
     }
@@ -89,7 +90,7 @@ public class TestRedditClient extends UnitTest {
     public void testGetModerators() throws Exception {
         BreakerRedditClient client = new BreakerRedditClient();
         List<String> moderatorUsernames = client.getModeratorUsernames(Constants.CHATROOM_DEFAULT);
-        assertEquals(3, moderatorUsernames.size());
+        assertEquals(4, moderatorUsernames.size());
         assertTrue(moderatorUsernames.contains("megamatt2000"));
         assertTrue(moderatorUsernames.contains("pents900"));
         assertTrue(moderatorUsernames.contains("rickiibeta"));
@@ -102,11 +103,24 @@ public class TestRedditClient extends UnitTest {
         assertTrue(client.isSubredditPrivate(megaprivatetest));
 
         ChatUser user = getTestUser1();
-        JSONObject subsModerated = client.getSubsModerated(user);
+//        JSONObject subsModerated = client.getSubsModerated(user);
 //        Logger.info("Subs: " + subsModerated);
 //        JSONObject android = client.getRedditUserFlairForSubreddit(user, "android");
 //        Logger.info(android.toString());
         assertTrue(client.doesUserHaveAccessToSubreddit(user, megaprivatetest));
         assertFalse(client.doesUserHaveAccessToSubreddit(getTestUser2(), megaprivatetest));
+        try {
+            client.doesUserHaveAccessToSubreddit(getTestUser2(), "clearlydoesntexist1234567789");
+            assertFalse("Should not get here, line above should have thrown not found.", true);
+        } catch (RedditRequestError redditRequestError) {
+            //
+        }
+    }
+
+    @Test
+    public void testDoesRedditExist() throws Exception {
+        BreakerRedditClient client = new BreakerRedditClient();
+        assertFalse(client.doesSubredditExist("nowaydoesthisthingexist1298752"));
+        assertTrue(client.doesSubredditExist("android"));
     }
 }

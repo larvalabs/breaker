@@ -11,6 +11,8 @@ import play.Play;
 import play.db.DB;
 import play.db.jpa.JPA;
 import play.db.jpa.Model;
+import reddit.BreakerRedditClient;
+import reddit.RedditRequestError;
 
 import javax.persistence.*;
 import java.sql.ResultSet;
@@ -338,7 +340,7 @@ public class ChatUser extends Model {
         return ChatUser.find("username", username).first();
     }
 
-    public void joinChatRoom(ChatRoom chatRoom) throws UserBannedException {
+    public void joinChatRoom(ChatRoom chatRoom) throws UserBannedException, NoAccessToPrivateRoomException, UnableToCheckAccessToPrivateRoom {
         if (chatRoom == null) {
             Logger.warn("Chat room was null, cannot join.");
             return;
@@ -352,6 +354,20 @@ public class ChatUser extends Model {
         ChatUserRoomJoin join = ChatUserRoomJoin.findByUserAndRoom(this, chatRoom);
         if (join != null) {
             return;
+        }
+
+        if (chatRoom.isPrivateRoom()) {
+            Logger.info("User " + username + " trying to join private room " + chatRoom.getName());
+            BreakerRedditClient client = new BreakerRedditClient();
+            try {
+                boolean doesUserHaveAccessToSubreddit = client.doesUserHaveAccessToSubreddit(this, chatRoom.getName());
+                if (!doesUserHaveAccessToSubreddit) {
+                    Logger.info("User " + username + " does not have access to " + chatRoom.getName());
+                    throw new NoAccessToPrivateRoomException();
+                }
+            } catch (RedditRequestError redditRequestError) {
+                throw new UnableToCheckAccessToPrivateRoom(redditRequestError);
+            }
         }
 
         join = new ChatUserRoomJoin(this, chatRoom);
@@ -560,6 +576,17 @@ public class ChatUser extends Model {
     }
 
     public class UserBannedException extends Exception {
+    }
+
+    public class NoAccessToPrivateRoomException extends Exception {
+    }
+
+    public class UnableToCheckAccessToPrivateRoom extends Exception {
+        public RedditRequestError redditRequestError;
+
+        public UnableToCheckAccessToPrivateRoom(RedditRequestError redditRequestError) {
+            this.redditRequestError = redditRequestError;
+        }
     }
 
     @Override

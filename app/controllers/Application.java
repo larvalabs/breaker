@@ -1,6 +1,7 @@
 package controllers;
 
 import com.google.gson.JsonObject;
+import com.larvalabs.redditchat.Constants;
 import com.larvalabs.redditchat.dataobj.JsonUserSearch;
 import com.larvalabs.redditchat.realtime.ChatRoomStream;
 import com.larvalabs.redditchat.util.RedditUtil;
@@ -61,7 +62,13 @@ public class Application extends PreloadUserController {
         ChatUser user = new ChatUser(Util.getUUID());
         user.setUsername("chattest-" + System.currentTimeMillis());
         user.save();
-        user.joinChatRoom(ChatRoom.findByName("breakerapp"));
+        try {
+            user.joinChatRoom(ChatRoom.findByName(Constants.CHATROOM_DEFAULT));
+        } catch (ChatUser.NoAccessToPrivateRoomException e) {
+            e.printStackTrace();
+        } catch (ChatUser.UnableToCheckAccessToPrivateRoom unableToCheckAccessToPrivateRoom) {
+            unableToCheckAccessToPrivateRoom.printStackTrace();
+        }
         WebSocket.room("breakerapp");
     }
 
@@ -93,7 +100,7 @@ public class Application extends PreloadUserController {
         render();
     }
 
-    public static void create(String roomName) {
+    public static void create(String roomName) throws ChatUser.NoAccessToPrivateRoomException, ChatUser.UnableToCheckAccessToPrivateRoom {
         ChatUser chatUser = connected();
         if (chatUser == null || chatUser.accessToken == null) {
             index();
@@ -176,6 +183,10 @@ public class Application extends PreloadUserController {
                         user.joinChatRoom(room);
                     } catch (ChatUser.UserBannedException e) {
                         Logger.error(e, "User banned, can't wait to open.");
+                    } catch (ChatUser.UnableToCheckAccessToPrivateRoom unableToCheckAccessToPrivateRoom) {
+                        unableToCheckAccessToPrivateRoom.printStackTrace();
+                    } catch (ChatUser.NoAccessToPrivateRoomException e) {
+                        e.printStackTrace();
                     }
                 }
 

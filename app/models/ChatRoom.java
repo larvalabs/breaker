@@ -8,6 +8,8 @@ import play.Logger;
 import play.db.DB;
 import play.db.jpa.Model;
 import play.modules.redis.Redis;
+import reddit.BreakerRedditClient;
+import reddit.ResourceNotFoundException;
 
 import javax.persistence.*;
 import java.sql.ResultSet;
@@ -70,6 +72,8 @@ public class ChatRoom extends Model {
     public String sidebarUnreadTextColor;
     public String signinButtonColor;
     public String signinButtonTextColor;
+
+    public boolean privateRoom;
 
     public ChatRoom(String name) {
         this.name = name;
@@ -299,6 +303,14 @@ public class ChatRoom extends Model {
         return usernames;
     }
 
+    public boolean isPrivateRoom() {
+        return privateRoom;
+    }
+
+    public void setPrivateRoom(boolean privateRoom) {
+        this.privateRoom = privateRoom;
+    }
+
     // Do stuff zone
 
     public static ChatRoom findByName(String name) {
@@ -385,6 +397,15 @@ public class ChatRoom extends Model {
         if (chatRoom == null) {
             Logger.info("Couldn't find chat room " + name + ", creating.");
             chatRoom = new ChatRoom(name);
+            BreakerRedditClient client = new BreakerRedditClient();
+            boolean isPrivate = false;
+            try {
+                isPrivate = client.isSubredditPrivate(name);
+                Logger.info(name + " is a private room.");
+            } catch (ResourceNotFoundException e) {
+                Logger.warn("Subreddit " + name + " not found, maybe block creating this in the future?");
+            }
+            chatRoom.setPrivateRoom(isPrivate);
             chatRoom.save();
         } else {
 //            Logger.info("Found chat room for app " + packageName);
