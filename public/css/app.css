@@ -5303,3 +5303,10 @@ li.chat-message-root .message-body, li.chat-message-short .message-body, li.chat
   font-weight: 600;
   color: #23b7e5;
 }
+
+.message-body .username.username-me {
+  background: #FFF2BB;
+  border-radius: 10px;
+  border: 1px solid #FFF2BB;
+  padding: 0px 5px;
+}

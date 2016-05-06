@@ -1,15 +1,21 @@
 import React, {Component} from 'react'
 import Immutable from 'immutable'
 import Config from '../config'
+import { connect } from 'react-redux'
 
-export default class Message extends Component {
+
+class Message extends Component {
   constructor(props){
     super(props);
     this.renderFormattedMention = this.renderFormattedMention.bind(this);
   }
   renderFormattedMention(match, username){
     if(this.props.message.get('mentionedUsernames', Immutable.List()).contains(username.toLowerCase())){
-      return `<a target="_blank" class="username" href=${"https://reddit.com/u/" + username}>${match}</a>`
+      let classes = "username";
+      if(username.toLowerCase() === this.props.authUser.get('username')){
+        classes += " username-me"
+      }
+      return `<a target="_blank" class="${classes}" href=${"https://reddit.com/u/" + username}>${match}</a>`
     }
 
     return username
@@ -62,3 +68,12 @@ Message.defaultProps = {
   user: Immutable.Map(),
   root: true
 };
+
+function mapStateToProps(state) {
+  return {
+    authUser: state.getIn(['initial', 'user'])
+  }
+}
+
+
+export default connect(mapStateToProps)(Message)
