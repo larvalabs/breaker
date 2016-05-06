@@ -7,6 +7,10 @@ import Message from './Message'
 
 export default class ChatMessage extends Component {
   renderTime() {
+    if(!this.props.message.get('createDateLongUTC')){
+      return null;
+    }
+    
     return <div className="pull-right text-sm hidden-xs text-muted">
       <TimeAgo date={new Date(this.props.message.get('createDateLongUTC')).toISOString()} />
     </div>

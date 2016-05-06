@@ -7,14 +7,6 @@ export default class Message extends Component {
     super(props);
     this.renderFormattedMention = this.renderFormattedMention.bind(this);
   }
-  isServerMessage() {
-    return this.props.message.get('type') === "servermessage"
-  }
-  renderServerMessage() {
-    return <div className="message-body m-t-midxs">
-      <i>{this.props.message.get('message')}</i>
-    </div>
-  }
   renderFormattedMention(match, username){
     if(this.props.message.get('mentionedUsernames', Immutable.List()).contains(username.toLowerCase())){
       return `<a target="_blank" class="username" href=${"https://reddit.com/u/" + username}>${match}</a>`
@@ -22,7 +14,12 @@ export default class Message extends Component {
 
     return username
   }
-  renderUserMessage(){
+  renderRawMessage() {
+    return <div className="message-body m-t-midxs">
+      <i>{this.props.message.get('message')}</i>
+    </div>
+  }
+  renderHTMLMessage(){
     let classes = "message-body m-t-midxs";
     if (Config.features.useFlairStyle(this.props.roomName)) {
       classes += " flair-message-hack"
@@ -33,14 +30,13 @@ export default class Message extends Component {
     </div>
   }
   renderMessageBody(){
-    if(this.isServerMessage()){
-      return this.renderServerMessage()
+    if(this.props.message.get('messageHtml')){
+      return this.renderHTMLMessage()
     }
-
-    return this.renderUserMessage()
+    return this.renderRawMessage()
   }
   renderLinks(){
-    if(this.isServerMessage()){
+    if(!this.props.message.get('imageLinks')){
       return null
     }
 
