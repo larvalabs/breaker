@@ -65,7 +65,7 @@ public class RedditLinkBotJob extends Job {
 
         int numPosted = 0;
 
-        for (int i = jsonArray.length() - 1; i >= 0; i--) {
+        for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject itemObj = jsonArray.getJSONObject(i);
             String kind = itemObj.getString("kind");
             // t3 is link kind: https://www.reddit.com/dev/api
@@ -75,6 +75,7 @@ public class RedditLinkBotJob extends Job {
                 String title = itemData.getString("title");
                 String subreddit = itemData.getString("subreddit");
                 String url = itemData.getString("url");
+                boolean sticky = itemData.getBoolean("stickied");
                 long score = itemData.getLong("score");
                 long comments = itemData.getLong("num_comments");
 //                    String permaLink = SITE_BASE_URL + itemData.getString("permalink");
@@ -83,7 +84,7 @@ public class RedditLinkBotJob extends Job {
                 Logger.debug(id + ": " + title);
 
                 RedditLink existingLink = RedditLink.findByRedditId(id);
-                if (existingLink == null) {
+                if (existingLink == null && !sticky) {
                     Logger.debug("Link hasn't been posted, posting...");
                     // todo maybe store full json in the future, skip for now
                     RedditLink redditLink = new RedditLink(id, subreddit, permaLink, url, title, "");
