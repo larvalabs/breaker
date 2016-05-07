@@ -48,6 +48,13 @@ class SidebarRoomListElm extends Component {
 
     return { backgroundColor: backgroundColor }
   }
+  renderPrivateIconIfNecessary(props){
+    if(!props.room.get('isPrivate')){
+      return null;
+    }
+    let iconColor = props.currentRoom.getIn(['styles', 'sidebarTextColor']);
+    return <i style={{color: iconColor}} className="fa fa-lock private-icon" />
+  }
   render() {
     let roomIcon = this.props.room.get('iconUrl', null);
     if (!roomIcon) {
@@ -63,6 +70,7 @@ class SidebarRoomListElm extends Component {
       <a className="roomselect" data-roomname={this.props.room.get('name')} style={this.getStyles()}
          onMouseLeave={this.onMouseLeave} onMouseEnter={this.onMouseEnter}>
         {this.renderUnreadCount(this.props)}
+        {this.renderPrivateIconIfNecessary(this.props)}
         <img className="roomIconSmall" src={roomIcon}/>
         <span className={`roomname ${active}`}
               style={{marginLeft: "2px", color: roomNameColor}}>#{this.props.room.get('name')}</span>
