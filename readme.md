@@ -1,7 +1,7 @@
 ## Installation instructions
 
-1. Download Play 1.3.1: https://downloads.typesafe.com/play/1.3.1/play-1.3.1.zip
-2. Add play-1.3.1 directory to PATH
+1. Download Play 1.4.2: https://downloads.typesafe.com/play/1.4.2/play-1.4.2.zip
+2. Add play-1.4.2 directory to PATH
 3. Install Postgres
 4. Install Redis
 5. Install npm and webpack
