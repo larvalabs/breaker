@@ -1,7 +1,7 @@
 import * as socketTypes from '../constants/socket-constants'
 import Immutable from 'immutable'
 
-export default function message(state=Immutable.Map(), action) {
+export default function bannerMessage(state=Immutable.Map(), action) {
   switch(action.type){
     case(socketTypes.SOCK_CLOSE): {
       return Immutable.Map({

@@ -85,7 +85,6 @@ function mapStateToProps(state) {
     messages: state.get('messages'),
     users: state.get('users'),
     roomName: roomName,
-    message: state.get('message', Immutable.Map()),
     room: state.getIn(['rooms', roomName])
   }
 }

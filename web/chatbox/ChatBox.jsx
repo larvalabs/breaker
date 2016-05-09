@@ -80,7 +80,7 @@ function mapStateToProps(state) {
   return {
     users: state.get('users'),
     roomName: roomName,
-    message: state.get('message', Immutable.Map()),
+    message: state.get('bannerMessage', Immutable.Map()),
     room: state.getIn(['rooms', roomName])
   }
 }

@@ -1,5 +1,5 @@
 import ui from './ui-reducer';
-import message from './message-reducer';
+import bannerMessage from './banner-message-reducer';
 import currentRoom from './current-room-reducer';
 import unreadCounts from './unread-reducer';
 import members from './members-reducer';
@@ -23,7 +23,7 @@ const App = combineReducers({
   roomMessages,
   messages,
   unreadCounts,
-  message,
+  bannerMessage,
   ui
 });
 
