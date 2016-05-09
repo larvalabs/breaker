@@ -3,8 +3,10 @@ import ChatMessageHeader from './ChatMessageHeader'
 import ChatShortMessage from './ChatShortMessage'
 import ChatMessage from './ChatMessage'
 import Config from '../config'
+import { connect } from 'react-redux';
+import Immutable from 'immutable'
 
-export default class ChatThread extends Component {
+class ChatThread extends Component {
   renderThreadMessageNewWay(props, message, previous){
     return <div key={message.get('uuid')}>
       <ChatMessageHeader message={message}
@@ -17,19 +19,22 @@ export default class ChatThread extends Component {
                         roomName={props.roomName}/>
     </div>
   }
-  renderThreadMessageOldWay(props, message, previous){
-    let isServerMessage = message.get('type') === "servermessage";
-    let isNotFirstUserMessage = previous && previous.get('username') === message.get('username');
-    if(isServerMessage || isNotFirstUserMessage){
-      return <ChatShortMessage key={message.get('uuid')}
-                               message={message}
-                               user={props.users.get(message.get('username'))}
+  renderThreadMessageOldWay(props, currentMessage, previousMessage){
+
+    let currentUser           = props.users.get(currentMessage.get('username'));
+    let isNotFirstUserMessage = previousMessage &&
+                                previousMessage.get('username') === currentMessage.get('username');
+
+    if(isNotFirstUserMessage){
+      return <ChatShortMessage key={currentMessage.get('uuid')}
+                               message={currentMessage}
+                               user={currentUser}
                                roomName={props.roomName}/>
     }
 
-    return <ChatMessage key={message.get('uuid')}
-                        message={message}
-                        user={props.users.get(message.get('username'))}
+    return <ChatMessage key={currentMessage.get('uuid')}
+                        message={currentMessage}
+                        user={currentUser}
                         roomName={props.roomName}/>
   }
 
@@ -72,3 +77,16 @@ export default class ChatThread extends Component {
   }
 }
 
+function mapStateToProps(state) {
+  let roomName = state.get('currentRoom');
+  let messages = state.getIn(['roomMessages', roomName], Immutable.List()).map((uuid) => state.getIn(['messages', uuid]));
+
+  return {
+    messages: messages,
+    users: state.get('users'),
+    roomName: roomName,
+    room: state.getIn(['rooms', roomName])
+  }
+}
+
+export default connect(mapStateToProps)(ChatThread)

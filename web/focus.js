@@ -2,11 +2,11 @@ import store from './redux/store/store'
 import * as chatActions from './redux/actions/chat-actions'
 
 function onFocus(){
-  store.dispatch(chatActions.chatFocused(store.getState().getIn(['initial', 'roomName'])))
+  store.dispatch(chatActions.chatFocused(store.getState().get('currentRoom')))
 }
 
 function onBlur(){
-  store.dispatch(chatActions.chatBlurred(store.getState().getIn(['initial', 'roomName'])))
+  store.dispatch(chatActions.chatBlurred(store.getState().get('currentRoom')))
 }
 
 export default function register(){

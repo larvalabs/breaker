@@ -10,15 +10,14 @@ import Config from '../config'
 
 class AsyncApp extends Component {
   render(){
-    const { user, activeRooms, roomName ,
+    const { user, roomName ,
             rooms, room, userIsMod, unreadCounts,
             sidebarOpen, settingsOpen } = this.props;
     return (
       <ChatDocumentTitle>
         <div className={`app app-header-fixed app-aside-fixed ${this.props.roomName}`}>
           <Header user={user} roomName={roomName} room={room} userIsMod={userIsMod}/>
-          <Sidebar activeRooms={activeRooms}
-                   roomList={rooms}
+          <Sidebar roomList={rooms}
                    roomName={roomName}
                    unreadCounts={unreadCounts}
                    open={sidebarOpen}
@@ -31,8 +30,8 @@ class AsyncApp extends Component {
 }
 
 function mapStateToProps(state) {
-  let roomName = state.getIn(['initial', 'roomName']);
-  let user = state.getIn(['initial', 'user']);
+  let roomName = state.get('currentRoom');
+  let user = state.get('authUser');
   let members = state.getIn(['members']);
   let rooms = state.get('rooms');
 
@@ -48,7 +47,6 @@ function mapStateToProps(state) {
   return {
     user: user,
     userIsMod: userIsMod,
-    activeRooms: state.getIn(['initial', 'activeRooms']),
     roomName: roomName,
     rooms: rooms,
     room: state.getIn(['rooms', roomName], Immutable.Map()),

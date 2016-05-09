@@ -15,6 +15,9 @@ export default class UsernameAndFlair extends Component {
     if(!username){
       username = this.props.messageUsername;
     }
+    if(username === "breakerbotsystem"){
+      return null
+    }
     return <div className="message-container">
       
       <div className="username-container">

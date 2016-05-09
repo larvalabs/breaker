@@ -44,8 +44,8 @@ export function onSocketClose() {
 export function handleSocketOpen(store, socket) {
   return dispatch => {
 
-    let initialRoom = store.getState().getIn(['initial', 'roomName']);
-    socket.startRoomPing(initialRoom);
+    let currentRoom = store.getState().get('currentRoom');
+    socket.startRoomPing(currentRoom);
 
     dispatch(onSocketOpen())
   }
@@ -54,8 +54,8 @@ export function handleSocketOpen(store, socket) {
 export function handleSocketClose(store, socket) {
   return dispatch => {
 
-    let initialRoom = store.getState().getIn(['initial', 'roomName']);
-    socket.stopRoomPing(initialRoom);
+    let currentRoom = store.getState().get('currentRoom');
+    socket.stopRoomPing(currentRoom);
     
     dispatch(onSocketClose())
   }

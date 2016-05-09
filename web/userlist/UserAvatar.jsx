@@ -7,6 +7,9 @@ export default class UserAvatar extends Component {
     if(Config.features.useFlairStyle(this.props.roomName)){
       return null
     }
+    if(this.props.user.get('username') === "breakerbotsystem"){
+      return null
+    }
     let userImage = this.props.user.get('profileImageUrl');
     if(!userImage){
       userImage = "/public/img/user-anon.png";

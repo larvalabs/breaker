@@ -4,19 +4,19 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.larvalabs.redditchat.ChatCommands;
+import com.larvalabs.redditchat.Constants;
 import com.larvalabs.redditchat.dataobj.JsonChatRoom;
 import com.larvalabs.redditchat.dataobj.JsonMessage;
 import com.larvalabs.redditchat.dataobj.JsonUser;
 import com.larvalabs.redditchat.util.Stats;
+import com.larvalabs.redditchat.util.Util;
 import jobs.RedisQueueJob;
 import models.ChatRoom;
 import models.ChatUser;
-import models.ChatUserRoomJoin;
 import play.Logger;
 import play.libs.F.EventStream;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ChatRoomStream {
@@ -299,12 +299,9 @@ public class ChatRoomStream {
         }
     }
 
-    public static class ServerMessage extends Event {
-        public String message;
-
-        public ServerMessage(JsonChatRoom room, String message) {
-            super(TYPE_SERVERMESSAGE, room);
-            this.message = message;
+    public static class ServerMessage extends Message {
+        public ServerMessage(JsonChatRoom room, JsonUser serverBotUser, String message) {
+            super(JsonMessage.makePresavedMessage(Util.getUUID(), Constants.SYSTEM_USERNAME, room.name, "<i>" + message + "</i>"), room, serverBotUser);
         }
     }
 

@@ -7,7 +7,6 @@ import SidebarRoomListElm from './SidebarRoomListElm'
 export default React.createClass({
   getDefaultProps: function(){
     return {
-      activeRooms: Immutable.Map(),
       roomList: Immutable.Map(),
       roomName: null,
       unreadCounts: Immutable.Map()
@@ -31,27 +30,6 @@ export default React.createClass({
       }
     </ul>
   },
-  renderSuggestedRooms: function(){
-    if(!Config.features.suggestedRooms){
-      return null;
-    }
-
-    if (this.props.activeRooms.size === 0 ) {
-      return null
-    }
-  
-    return <div>
-      <li className="line dk"></li>
-      <ul id="toproomlist" className="nav">
-          <li className="hidden-folded padder m-t m-b-sm text-muted text-xs">
-            <span>Suggested Active Rooms</span>
-          </li>
-          {this.props.activeRooms.map((room) => {
-            return <SidebarRoomListElm key={room.get('name')} room={room} active={false}/>
-          })}
-      </ul>
-    </div>
-  },
   render: function () {
     let classes = "app-aside hidden-xs bg-dark";
     let styles = Config.styles.getSidebarColorForRoom(this.props.room);
@@ -64,7 +42,6 @@ export default React.createClass({
           <div className="navi-wrap">
             <nav ui-nav className="navi clearfix">
               {this.renderYourRooms()}
-              {this.renderSuggestedRooms()}
             </nav>
           </div>
         </div>

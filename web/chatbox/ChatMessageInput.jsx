@@ -131,7 +131,7 @@ ChatMessageInput.defaultProps = {
 };
 
 function mapStateToProps(state) {
-  let roomName = state.getIn(['initial', 'roomName']);
+  let roomName = state.get('currentRoom');
   let membersMap = state.getIn(['members', roomName], Immutable.Map());
   let members = membersMap.reduce((a, b) => a.union(b), Immutable.OrderedSet()).toList();
   let connected = state.getIn(['ui', 'connected']);

@@ -60,7 +60,7 @@ class ChatBox extends Component {
     return <div id="centercol" className="col">
       <div id="threadparent" className="vbox">
         {this.renderMessage(this.props)}
-        <ChatThread messages={this.props.messages} users={this.props.users} roomName={this.props.roomName}/>
+        <ChatThread users={this.props.users} roomName={this.props.roomName}/>
         <div className="padder padder-v b-t b-light text-center">
           {this.renderMessageInput()}
         </div>
@@ -75,13 +75,12 @@ ChatBox.defaultProps = {
 };
 
 function mapStateToProps(state) {
-  let roomName = state.getIn(['initial', 'roomName']);
+  let roomName = state.get('currentRoom');
 
   return {
-    messages: state.getIn(['messages', roomName], Immutable.List()),
     users: state.get('users'),
     roomName: roomName,
-    message: state.get('message', Immutable.Map()),
+    message: state.get('bannerMessage', Immutable.Map()),
     room: state.getIn(['rooms', roomName])
   }
 }

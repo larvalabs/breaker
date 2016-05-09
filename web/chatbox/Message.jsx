@@ -71,7 +71,7 @@ Message.defaultProps = {
 
 function mapStateToProps(state) {
   return {
-    authUser: state.getIn(['initial', 'user'])
+    authUser: state.get('authUser')
   }
 }
 

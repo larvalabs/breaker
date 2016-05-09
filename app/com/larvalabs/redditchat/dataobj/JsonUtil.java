@@ -31,10 +31,20 @@ public class JsonUtil {
             }
         };
 
+        Comparator<JsonMessage> messageTimeComparator = new Comparator<JsonMessage>() {
+            @Override
+            public int compare(JsonMessage o1, JsonMessage o2) {
+                return new Long(o1.createDateLongUTC).compareTo(o2.createDateLongUTC);
+            }
+        };
+
+
+
         public TreeMap<String, JsonChatRoom> rooms = new TreeMap<>(lowerStringComparator);
         public TreeMap<String, JsonUser> allUsers = new TreeMap<>(lowerStringComparator);
         public TreeMap<String, JsonRoomMembers> members = new TreeMap<>(lowerStringComparator);
-        public TreeMap<String, ArrayList<JsonMessage>> messages = new TreeMap<>(lowerStringComparator);
+        public TreeMap<String, ArrayList<String>> roomMessages = new TreeMap<>(lowerStringComparator);
+        public HashMap<String, JsonMessage> messages = new HashMap<String, JsonMessage>();
     }
 
     public static FullState loadFullStateForUser(ChatUser user) {
@@ -74,10 +84,15 @@ public class JsonUtil {
             }
             state.members.put(thisRoom.getName(), roomMembers);
 
-            if (!state.messages.containsKey(thisRoom.getName())) {
+            if (!state.roomMessages.containsKey(thisRoom.getName())) {
                 long messagesStart = System.currentTimeMillis();
                 ArrayList<JsonMessage> roomMessages = BreakerCache.getLastMessages(thisRoom);
-                state.messages.put(thisRoom.getName(), roomMessages);
+                ArrayList<String> messageIds = new ArrayList<>();
+                for (JsonMessage roomMessage : roomMessages) {
+                    state.messages.put(roomMessage.uuid, roomMessage);
+                    messageIds.add(roomMessage.uuid);
+                }
+                state.roomMessages.put(thisRoom.getName(), messageIds);
                 Logger.info("Messages load time: " + (System.currentTimeMillis() - messagesStart));
             }
         }
