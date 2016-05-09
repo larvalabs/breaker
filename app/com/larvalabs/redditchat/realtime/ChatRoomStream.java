@@ -301,7 +301,7 @@ public class ChatRoomStream {
 
     public static class ServerMessage extends Message {
         public ServerMessage(JsonChatRoom room, JsonUser serverBotUser, String message) {
-            super(JsonMessage.makePresavedMessage(Util.getUUID(), Constants.SYSTEM_USERNAME, room.name, message), room, serverBotUser);
+            super(JsonMessage.makePresavedMessage(Util.getUUID(), Constants.SYSTEM_USERNAME, room.name, "<i>" + message + "</i>"), room, serverBotUser);
         }
     }
 
