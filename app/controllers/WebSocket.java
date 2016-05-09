@@ -311,9 +311,9 @@ public class WebSocket extends PreloadUserController {
             for (RoomConnection roomConnection : roomConnections.values()) {
                 ChatRoom.userNotPresent(roomConnection.room.name, user.username, connectionId);
                 // If this was the last connection that user had to the room then broadcast they've left
+                roomConnection.chatRoomEventStream.leave(roomConnection.room, user, connectionId);
                 if (!ChatRoom.isUserPresent(roomConnection.room.name, user.username)) {
                     Logger.debug("Last connection for " + user.username + " on channel " + roomConnection.room.name + " disconnected, broadcasting leave.");
-                    roomConnection.chatRoomEventStream.leave(roomConnection.room, user, connectionId);
                 }
             }
             disconnect();
