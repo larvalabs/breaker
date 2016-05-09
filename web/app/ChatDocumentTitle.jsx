@@ -33,8 +33,8 @@ class ChatDocumentTitle extends Component {
 
 function mapStateToProps(state) {
   return {
-    unreadCount: state.getIn(['unreadCounts', state.getIn(['initial', 'roomName'])]),
-    roomName: state.getIn(['initial', 'roomName'])
+    unreadCount: state.getIn(['unreadCounts', state.get('currentRoom')]),
+    roomName: state.get('currentRoom')
   }
 }
 

@@ -88,7 +88,7 @@ SidebarRoomListElm.defaultProps = {
 
 function mapStateToProps(state) {
   return {
-    currentRoom: state.getIn(['rooms', state.getIn(['initial', 'roomName'])])
+    currentRoom: state.getIn(['rooms', state.get('currentRoom')])
   }
 }
 

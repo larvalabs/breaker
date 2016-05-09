@@ -47,17 +47,14 @@
             window.__USER_GUEST__ = "${user.isGuest()}";
 
             window.__INITIAL_STATE__ = {
-                message: {
-                },
-                initial: {
-                    user: ${userString.raw()},
-                    roomName: "${roomName}",
-                },
+                authUser: ${userString.raw()},
+                currentRoom: "${roomName}",
                 members: ${membersString.raw()},
                 rooms: ${roomsString.raw()},
                 users: ${usersString.raw()},
                 roomMessages: {},
                 messages: {},
+                message: {},
                 unreadCounts: {
                     __HAS_FOCUS__: document.hasFocus(),
                 }

@@ -75,7 +75,7 @@ ChatBox.defaultProps = {
 };
 
 function mapStateToProps(state) {
-  let roomName = state.getIn(['initial', 'roomName']);
+  let roomName = state.get('currentRoom');
 
   return {
     users: state.get('users'),

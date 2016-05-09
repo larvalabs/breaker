@@ -1,6 +1,6 @@
 import ui from './ui-reducer';
 import message from './message-reducer';
-import initial from './initial-reducer';
+import currentRoom from './current-room-reducer';
 import unreadCounts from './unread-reducer';
 import members from './members-reducer';
 import roomMessages from './room-messages-reducer';
@@ -10,8 +10,13 @@ import users from './users-reducer';
 
 import { combineReducers } from 'redux-immutable';
 
+function authUser(state=Immutable.Map(), action) {
+  return state
+}
+
 const App = combineReducers({
-  initial,
+  currentRoom,
+  authUser,
   members,
   users,
   rooms,

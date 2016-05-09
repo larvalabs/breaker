@@ -33,7 +33,7 @@ class Flair extends Component {
 
 
 function mapStateToProps(state) {
-  let roomName = state.getIn(['initial', 'roomName']);
+  let roomName = state.get('currentRoom');
 
   return {
     room: state.getIn(['rooms', roomName])
