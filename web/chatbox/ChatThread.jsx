@@ -21,20 +21,20 @@ class ChatThread extends Component {
   }
   renderThreadMessageOldWay(props, currentMessage, previousMessage){
 
-    let isServerMessage       = currentMessage.get('type') === "servermessage";
+    let currentUser           = props.users.get(currentMessage.get('username'));
     let isNotFirstUserMessage = previousMessage &&
                                 previousMessage.get('username') === currentMessage.get('username');
 
-    if(isServerMessage || isNotFirstUserMessage){
+    if(isNotFirstUserMessage){
       return <ChatShortMessage key={currentMessage.get('uuid')}
                                message={currentMessage}
-                               user={props.users.get(currentMessage.get('username'))}
+                               user={currentUser}
                                roomName={props.roomName}/>
     }
 
     return <ChatMessage key={currentMessage.get('uuid')}
                         message={currentMessage}
-                        user={props.users.get(currentMessage.get('username'))}
+                        user={currentUser}
                         roomName={props.roomName}/>
   }
 

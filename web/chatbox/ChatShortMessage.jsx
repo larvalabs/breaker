@@ -11,12 +11,8 @@ export default class ChatMessage extends Component {
       return null;
     }
 
-    let userLink = null;
-    if(this.props.message.get('type') !== "servermessage"){
-      userLink = `https://reddit.com/u/${this.props.user.get('username')}`;
-    }
-
-    return <a className="avatar thumb-sm pull-left m-r hidden-xs" href={userLink} target="_blank">
+    return <a className="avatar thumb-sm pull-left m-r hidden-xs"
+              href={`https://reddit.com/u/${this.props.user.get('username')}`} target="_blank">
       &nbsp;
     </a>
   }
