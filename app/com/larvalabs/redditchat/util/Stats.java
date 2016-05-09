@@ -16,7 +16,8 @@ public class Stats {
         REQUESTS_QUEUED("requests.queued"),
         WEBSOCKET_CONNECT("websocket.connect"), // Using this until I can find a place to get all connected sockets
         INITIALPAGE_TIME("initialpage"),
-        USER_STREAMS_OPEN("userstreams");
+        USER_STREAMS_OPEN("userstreams"),
+        REDIS_MESSAGES("redismessage");
 
         private String key;
 

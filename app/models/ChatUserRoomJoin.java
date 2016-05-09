@@ -1,5 +1,6 @@
 package models;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Index;
@@ -111,5 +112,22 @@ public class ChatUserRoomJoin extends Model {
 
     public long getNumNewMessages() {
         return Message.count("room = ? and id > ?", room, lastSeenMessageId);
+    }
+
+    public boolean updateFlairIfDifferent(String flairText, String flairCss, String flairPosition) {
+        boolean changed = false;
+        if (!StringUtils.equals(this.flairText, flairText)) {
+            this.flairText = flairText;
+            changed = true;
+        }
+        if (!StringUtils.equals(this.flairCss, flairCss)) {
+            this.flairCss = flairCss;
+            changed = true;
+        }
+        if (!StringUtils.equals(this.flairPosition, flairPosition)) {
+            this.flairPosition = flairPosition;
+            changed = true;
+        }
+        return changed;
     }
 }

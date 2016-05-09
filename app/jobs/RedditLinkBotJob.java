@@ -84,23 +84,27 @@ public class RedditLinkBotJob extends Job {
                 Logger.debug(id + ": " + title);
 
                 RedditLink existingLink = RedditLink.findByRedditId(id);
-                if (existingLink == null && !sticky) {
-                    Logger.debug("Link hasn't been posted, posting...");
-                    // todo maybe store full json in the future, skip for now
-                    RedditLink redditLink = new RedditLink(id, subreddit, permaLink, url, title, "");
-                    redditLink.save();
+                if (!sticky) {
+                    if (existingLink == null) {
+                        Logger.debug("Link hasn't been posted, posting...");
+                        // todo maybe store full json in the future, skip for now
+                        RedditLink redditLink = new RedditLink(id, subreddit, permaLink, url, title, "");
+                        redditLink.save();
 
-                    Message message = new Message(botUser, room,
-                            title + " - " + Constants.REDDIT_BASE_URL + "/" + id + " - score: " + score + " - comments: " + comments);
-                    message.save();
+                        Message message = new Message(botUser, room,
+                                "New top post in /r/" + subredditToProcess + ": " + title + " - " + Constants.REDDIT_BASE_URL + "/" + id + " - score: " + score + " - comments: " + comments);
+                        message.save();
 
-                    ChatRoomStream.getEventStream(subredditToProcess).say(JsonMessage.from(message, botUser.getUsername(), room.getName()), JsonChatRoom.from(room, room.getModeratorUsernames()), JsonUser.fromUser(message.getUser(), true));
+                        ChatRoomStream.getEventStream(subredditToProcess).say(JsonMessage.from(message, botUser.getUsername(), room.getName()), JsonChatRoom.from(room, room.getModeratorUsernames()), JsonUser.fromUser(message.getUser(), true));
 
-                    numPosted++;
-                    if (numPosted >= MAX_NUM_TO_POST_PER_RUN) {
-                        Logger.debug("Hit max bot posts per run for " + subredditToProcess);
-                        break;
+                        numPosted++;
+                        if (numPosted >= MAX_NUM_TO_POST_PER_RUN) {
+                            Logger.debug("Hit max bot posts per run for " + subredditToProcess);
+                            break;
+                        }
                     }
+                    // We're only interested in the top post now, so as soon as we've seen a non-sticky post bailout
+                    break;
                 }
             }
         }

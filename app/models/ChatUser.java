@@ -604,4 +604,8 @@ public class ChatUser extends Model {
         return "User: " + getId() + ":" + getUsername();
     }
 
+    public boolean isUserOnlineInAnyRoom() {
+        return ChatRoom.isUserOnlineInAnyRoom(username);
+    }
+
 }
