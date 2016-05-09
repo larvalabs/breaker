@@ -1,0 +1,19 @@
+import * as socketTypes from '../constants/socket-constants'
+import Immutable from 'immutable'
+
+export default function message(state=Immutable.Map(), action) {
+  switch(action.type){
+    case(socketTypes.SOCK_CLOSE): {
+      return Immutable.Map({
+        type: "error",
+        body: "Disconnected from server, will retry..."
+      })
+    }
+    case(socketTypes.SOCK_OPEN): {
+      return Immutable.Map()
+    }
+    default: {
+      return state
+    }
+  }
+}
