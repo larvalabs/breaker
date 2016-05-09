@@ -22,10 +22,7 @@ import play.mvc.Http.WebSocketFrame;
 import play.mvc.WebSocketController;
 import play.mvc.With;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.TreeMap;
+import java.util.*;
 
 import static controllers.Application.SESSION_JOINROOM;
 
@@ -122,7 +119,8 @@ public class WebSocket extends PreloadUserController {
         TreeMap<String, JsonChatRoom> rooms = fullState.rooms;
         TreeMap<String, JsonUser> allUsers = fullState.allUsers;
         TreeMap<String, JsonRoomMembers> members = fullState.members;
-        TreeMap<String, ArrayList<JsonMessage>> messages = fullState.messages;
+        TreeMap<String, ArrayList<String>> roomMessages = fullState.roomMessages;
+        Map<String, JsonMessage> messages = fullState.messages;
 
         Logger.info("Websocket join time checkpoint post preload all state " + user.getUsername() + ": " + (System.currentTimeMillis() - startTime));
 
@@ -130,6 +128,7 @@ public class WebSocket extends PreloadUserController {
         String roomsString = gson.toJson(rooms);
         String usersString = gson.toJson(allUsers);
         String membersString = gson.toJson(members);
+        String roomMessagesString = gson.toJson(roomMessages);
         String messagesString = gson.toJson(messages);
         long loadTime = System.currentTimeMillis() - startTime;
         Logger.info("Websocket join time checkpoint 2 (post gson) for " + user.getUsername() + ": " + loadTime);
@@ -163,7 +162,7 @@ public class WebSocket extends PreloadUserController {
 
         Logger.info("Websocket join time for " + user.getUsername() + ": " + (System.currentTimeMillis() - startTime));
 
-        render("index.html", user, rooms, userString, roomName, environment, roomsString, usersString, membersString, messagesString);
+        render("index.html", user, rooms, userString, roomName, environment, roomsString, usersString, membersString, roomMessagesString, messagesString);
     }
 
     private static boolean existsInJoins(List<ChatUserRoomJoin> joins, ChatRoom room) {
