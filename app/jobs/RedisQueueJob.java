@@ -2,7 +2,9 @@ package jobs;
 
 import com.larvalabs.redditchat.dataobj.BreakerCache;
 import com.larvalabs.redditchat.realtime.ChatRoomStream;
+import com.larvalabs.redditchat.util.Stats;
 import play.Logger;
+import play.Play;
 import play.jobs.Job;
 import play.jobs.OnApplicationStart;
 import play.modules.redis.Redis;
@@ -61,6 +63,9 @@ public class RedisQueueJob extends Job {
 
     public static void publish(ChatRoomStream.Event event) {
 //        Logger.info("Sending event to redis");
+        if (Play.mode.isProd()) {
+            Stats.count(Stats.StatKey.REDIS_MESSAGES, 1);
+        }
         Redis.publish(CHANNEL, event.toJson());
     }
 }
