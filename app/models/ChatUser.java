@@ -553,6 +553,16 @@ public class ChatUser extends Model {
         return user;
     }
 
+    public static ChatUser getSystemUser() {
+        ChatUser user = findByUsername(Constants.SYSTEM_USERNAME);
+        if (user == null) {
+            user = new ChatUser(Util.getUUID());
+            user.setUsername(Constants.SYSTEM_USERNAME);
+            user.save();
+        }
+        return user;
+    }
+
     public boolean isGuest() {
         return Constants.USERNAME_GUEST.equals(username);
     }

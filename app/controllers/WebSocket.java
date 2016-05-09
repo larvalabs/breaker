@@ -354,8 +354,8 @@ public class WebSocket extends PreloadUserController {
                             try {
                                 ChatRoom room = roomConnection.room.loadModelFromDatabase();
                                 ChatUser execUser = user.loadModelFromDatabase();
-                                ChatUser botUser = ChatUser.getBreakerBot();
-                                ChatCommands.execCommand(execUser, room, message, roomConnection.chatRoomEventStream, outbound, botUser);
+                                ChatUser systemUser = ChatUser.getSystemUser();
+                                ChatCommands.execCommand(execUser, room, message, roomConnection.chatRoomEventStream, outbound, systemUser);
                             } catch (ChatCommands.NotEnoughPermissionsException e) {
                                 sendLocalServerMessage(roomConnection, "You don't have permission to execute this command.");
                             } catch (ChatCommands.CommandNotRecognizedException e) {
@@ -384,7 +384,7 @@ public class WebSocket extends PreloadUserController {
         }
 
         private static void sendLocalServerMessage(RoomConnection roomConnection, String message) {
-            outbound.send(new ChatRoomStream.ServerMessage(roomConnection.room, JsonUser.fromUser(ChatUser.getBreakerBot(), true), message).toJson());
+            outbound.send(new ChatRoomStream.ServerMessage(roomConnection.room, JsonUser.fromUser(ChatUser.getSystemUser(), true), message).toJson());
         }
 
         private static void addConnection(ChatUser userModel, JsonUser user, String connectionId, HashMap<String, RoomConnection> roomConnections, ChatRoom room) {

@@ -13,12 +13,10 @@ import com.larvalabs.redditchat.util.Util;
 import jobs.RedisQueueJob;
 import models.ChatRoom;
 import models.ChatUser;
-import models.ChatUserRoomJoin;
 import play.Logger;
 import play.libs.F.EventStream;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ChatRoomStream {
@@ -303,7 +301,7 @@ public class ChatRoomStream {
 
     public static class ServerMessage extends Message {
         public ServerMessage(JsonChatRoom room, JsonUser serverBotUser, String message) {
-            super(JsonMessage.makePresavedMessage(Util.getUUID(), Constants.BREAKER_BOT_USERNAME, room.name, message), room, serverBotUser);
+            super(JsonMessage.makePresavedMessage(Util.getUUID(), Constants.SYSTEM_USERNAME, room.name, message), room, serverBotUser);
         }
     }
 
