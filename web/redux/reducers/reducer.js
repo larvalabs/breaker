@@ -3,8 +3,8 @@ import message from './message-reducer';
 import initial from './initial-reducer';
 import unreadCounts from './unread-reducer';
 import members from './members-reducer';
-import messages from './messages-reducer';
-import messageEntities from './message-entites-reducer';
+import roomMessages from './room-messages-reducer';
+import messages from './message-entites-reducer';
 import rooms from './rooms-reducer';
 import users from './users-reducer';
 
@@ -15,8 +15,8 @@ const App = combineReducers({
   members,
   users,
   rooms,
+  roomMessages,
   messages,
-  messageEntities,
   unreadCounts,
   message,
   ui

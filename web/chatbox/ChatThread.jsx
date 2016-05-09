@@ -19,22 +19,20 @@ class ChatThread extends Component {
                         roomName={props.roomName}/>
     </div>
   }
-  renderThreadMessageOldWay(props, messageUUID, previousUUID){
-    let currentMessage  = props.messageEntities.get(messageUUID);
-    let previousMessage = props.messageEntities.get(previousUUID);
+  renderThreadMessageOldWay(props, currentMessage, previousMessage){
 
     let isServerMessage       = currentMessage.get('type') === "servermessage";
     let isNotFirstUserMessage = previousMessage &&
                                 previousMessage.get('username') === currentMessage.get('username');
 
     if(isServerMessage || isNotFirstUserMessage){
-      return <ChatShortMessage key={messageUUID}
+      return <ChatShortMessage key={currentMessage.get('uuid')}
                                message={currentMessage}
                                user={props.users.get(currentMessage.get('username'))}
                                roomName={props.roomName}/>
     }
 
-    return <ChatMessage key={messageUUID}
+    return <ChatMessage key={currentMessage.get('uuid')}
                         message={currentMessage}
                         user={props.users.get(currentMessage.get('username'))}
                         roomName={props.roomName}/>
@@ -81,10 +79,10 @@ class ChatThread extends Component {
 
 function mapStateToProps(state) {
   let roomName = state.getIn(['initial', 'roomName']);
+  let messages = state.getIn(['roomMessages', roomName], Immutable.List()).map((uuid) => state.getIn('messages', uuid));
 
   return {
-    messages: state.getIn(['messages', roomName], Immutable.List()),
-    messageEntities: state.get('messageEntities'),
+    messages: state.get('messages'),
     users: state.get('users'),
     roomName: roomName,
     message: state.get('message', Immutable.Map()),

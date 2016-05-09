@@ -2,7 +2,7 @@ import * as socketTypes from '../constants/socket-constants'
 import Immutable from 'immutable'
 
 
-export default function messages(state=Immutable.Map(), action) {
+export default function roomMessages(state=Immutable.Map(), action) {
   switch (action.type) {
     case (socketTypes.SOCK_SERVER): {
       // TODO: there's no UUID for these
