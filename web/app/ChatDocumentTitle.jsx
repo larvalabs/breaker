@@ -32,8 +32,12 @@ class ChatDocumentTitle extends Component {
 }
 
 function mapStateToProps(state) {
+  let unreadCount = state.get('unreadCounts').reduce((total, nextValue, nextKey) => {
+    return nextKey == '__HAS_FOCUS__' ? total : total + nextValue
+  }, 0);
+
   return {
-    unreadCount: state.getIn(['unreadCounts', state.get('currentRoom')]),
+    unreadCount: unreadCount,
     roomName: state.get('currentRoom')
   }
 }
