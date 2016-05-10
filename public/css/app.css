@@ -5225,6 +5225,19 @@ li.chat-message-root .message-body, li.chat-message-short .message-body, li.chat
   margin-top: 0px;
 }
 
+.unread-count-total{
+  display: block;
+  padding: 14px;
+}
+
+.unread-count-total b{
+  font-size: 14px;
+}
+.unread-count-room{
+  display: block;
+  padding-top: 7px;
+}
+
 .flair-message-hack {
   margin-left: 1em;
 }
