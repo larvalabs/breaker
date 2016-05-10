@@ -21,8 +21,8 @@ class SidebarRoomListElm extends Component {
     let textColor = this.props.currentRoom.getIn(['styles', 'sidebarUnreadTextColor']);
 
     if(props.unreadCount > 0) {
-      return <b className="unreadcount label bg-info pull-right"
-                style={{backgroundColor: backgroundColor, color: textColor}}>{this.props.unreadCount}</b>
+      return <div className="unread-count-room pull-right"><b className="unreadcount label bg-info pull-right"
+                style={{backgroundColor: backgroundColor, color: textColor}}>{this.props.unreadCount}</b></div>
     }
     return null;
   }

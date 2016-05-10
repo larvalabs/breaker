@@ -92,7 +92,7 @@ var Header = React.createClass({
         return nextKey == '__HAS_FOCUS__' ? total : total + nextValue
       }, 0);
       if(unreadCount > 0) {
-        return <div className="unread-count-total"><b className="unreadcount label bg-info pull-right"
+        return <div className="unread-count-total pull-right"><b className="unreadcount label bg-info pull-right"
                   style={{backgroundColor: backgroundColor, color: textColor}}>{unreadCount}</b></div>
       }
       return null;
