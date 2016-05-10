@@ -12,11 +12,11 @@ class AsyncApp extends Component {
   render(){
     const { user, roomName ,
             rooms, room, userIsMod, unreadCounts,
-            sidebarOpen, settingsOpen } = this.props;
+            sidebarOpen } = this.props;
     return (
       <ChatDocumentTitle>
         <div className={`app app-header-fixed app-aside-fixed ${this.props.roomName}`}>
-          <Header user={user} roomName={roomName} room={room} userIsMod={userIsMod}/>
+          <Header user={user} roomName={roomName} room={room} userIsMod={userIsMod} unreadCounts={unreadCounts}/>
           <Sidebar roomList={rooms}
                    roomName={roomName}
                    unreadCounts={unreadCounts}
