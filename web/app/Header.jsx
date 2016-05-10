@@ -3,7 +3,6 @@ import { connect } from 'react-redux'
 import Immutable from 'immutable'
 import Config from '../config'
 import {toggleSidebar, toggleSettings} from '../redux/actions/menu-actions'
-import UsernameAndFlair from '../userlist/UsernameAndFlair'
 
 var Header = React.createClass({
   getDefaultProps: function() {
@@ -86,11 +85,24 @@ var Header = React.createClass({
       <i className="glyphicon glyphicon-align-justify" style={{color: iconColor}}/>
     </button>
   },
+  renderUnreadCount(props){
+      let backgroundColor = props.room.getIn(['styles', 'sidebarUnreadColor']);
+      let textColor = props.room.getIn(['styles', 'sidebarUnreadTextColor']);
+      let unreadCount = props.unreadCounts.reduce((total, nextValue, nextKey) => {
+        return nextKey == '__HAS_FOCUS__' ? total : total + nextValue
+      }, 0);
+      if(unreadCount > 0) {
+        return <div className="unread-count-total"><b className="unreadcount label bg-info pull-right"
+                  style={{backgroundColor: backgroundColor, color: textColor}}>{unreadCount}</b></div>
+      }
+      return null;
+  },
   renderBreakerLogoBox: function() {
     let styles = Config.styles.getSidebarColorForRoom(this.props.room);
     let sidebarColor = this.props.room.getIn(['styles', 'sidebarTextColor']);
 
     return <div className="navbar-header bg-dark" style={styles}>
+      {this.renderUnreadCount(this.props)}
       {this.renderSettingsCog()}
       {this.renderSidebarHamburger()}
       <a href="#" className="navbar-brand text-lt" style={styles}>

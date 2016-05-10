@@ -82,7 +82,7 @@ class SidebarRoomListElm extends Component {
 SidebarRoomListElm.defaultProps = {
   room: Immutable.Map(),
   active: false,
-  unreadCount: 0
+  unreadCounts: 0
 };
 
 
