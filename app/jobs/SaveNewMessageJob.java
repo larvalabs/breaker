@@ -1,10 +1,17 @@
 package jobs;
 
+import com.larvalabs.linkunfurl.LinkInfo;
+import com.larvalabs.linkunfurl.LinkUnfurl;
+import com.larvalabs.redditchat.util.Util;
 import models.ChatRoom;
 import models.ChatUser;
 import models.Message;
+import models.WebLink;
 import play.Logger;
 import play.jobs.Job;
+
+import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by matt on 12/23/15.
@@ -30,6 +37,7 @@ public class SaveNewMessageJob extends Job<Message> {
         ChatRoom chatRoom = ChatRoom.findByName(roomName);
         ChatUser chatUser = ChatUser.findByUsername(username);
         savedMessage = new Message(uuid, chatUser, chatRoom, messageText);
+        savedMessage.unfurlLinks();
         savedMessage.save();
 
         return savedMessage;

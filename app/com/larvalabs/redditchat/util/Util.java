@@ -1,11 +1,10 @@
 package com.larvalabs.redditchat.util;
 
-import com.larvalabs.redditchat.Constants;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
+import org.nibor.autolink.*;
 
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created by matt on 12/22/15.
@@ -37,4 +36,29 @@ public class Util {
         return userMessageJson;
     }
 
+    public static Iterable<LinkSpan> getLinkSpans(String message) {
+        LinkExtractor linkExtractor = LinkExtractor.builder()
+                .linkTypes(EnumSet.of(LinkType.URL)) // limit to URLs
+                .build();
+
+        final ArrayList<String> localLinks = new ArrayList<String>();
+        final ArrayList<String> localImageLinks = new ArrayList<String>();
+
+        Iterable<LinkSpan> links = linkExtractor.extractLinks(message);
+        return links;
+    }
+
+    public static List<String> getLinks(String message) {
+        Iterable<LinkSpan> linkSpans = getLinkSpans(message);
+        final ArrayList<String> links = new ArrayList<>();
+        Autolink.renderLinks(message, linkSpans,
+                new LinkRenderer() {
+                    @Override
+                    public void render(LinkSpan link, CharSequence text, StringBuilder sb) {
+                        String linkStr = text.toString().substring(link.getBeginIndex(), link.getEndIndex());
+                        links.add(linkStr);
+                    }
+                });
+        return links;
+    }
 }

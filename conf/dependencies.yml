@@ -6,8 +6,9 @@ require:
     - org.nibor.autolink -> autolink 0.2.0
     - com.amazonaws -> aws-java-sdk 1.1.9
     - net.java.dev.jets3t -> jets3t 0.8.1
-    - org.jsoup -> jsoup 1.8.3
+    - org.jsoup -> jsoup 1.9.1
     - net.dean.jraw -> JRAW 0.8.0
+    - provided -> link-unfurl 0.1
     - commons-codec -> commons-codec 1.10:
         force: true
 
@@ -17,3 +18,9 @@ repositories:
         root: "http://jcenter.bintray.com"
         contains:
             - net.dean.jraw -> *
+
+    - provided:
+        type:       local
+        artifact:   "${application.path}/jar/[module]-[revision].jar"
+        contains:
+        - provided -> *

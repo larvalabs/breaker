@@ -1,5 +1,7 @@
 package models;
 
+import com.larvalabs.linkunfurl.LinkInfo;
+import com.larvalabs.linkunfurl.LinkUnfurl;
 import com.larvalabs.redditchat.Constants;
 import com.larvalabs.redditchat.util.Util;
 import org.apache.commons.lang.StringUtils;
@@ -11,6 +13,7 @@ import play.db.jpa.JPA;
 import play.db.jpa.Model;
 
 import javax.persistence.*;
+import java.io.IOException;
 import java.util.*;
 import java.util.regex.Matcher;
 
@@ -59,6 +62,13 @@ public class Message extends Model {
 
     @Index(name = "deleted")
     public boolean deleted;
+
+    public boolean hasLinks = false;
+    public boolean linksUnfurled = false;
+
+    @ManyToMany(cascade = CascadeType.PERSIST)
+    @JoinTable(name = "message_weblink")
+    public Set<WebLink> links = new HashSet<>();
 
     // Scoring related for top message list
     public float score = 0;
@@ -203,6 +213,34 @@ public class Message extends Model {
 
     public void setMentioned(Set<ChatUser> mentioned) {
         this.mentioned = mentioned;
+    }
+
+    public boolean isHasLinks() {
+        return hasLinks;
+    }
+
+    public void setHasLinks(boolean hasLinks) {
+        this.hasLinks = hasLinks;
+    }
+
+    public boolean isLinksUnfurled() {
+        return linksUnfurled;
+    }
+
+    public void setLinksUnfurled(boolean linksUnfurled) {
+        this.linksUnfurled = linksUnfurled;
+    }
+
+    public Set<WebLink> getLinks() {
+        return links;
+    }
+
+    public void setLinks(Set<WebLink> links) {
+        this.links = links;
+    }
+
+    public void addLink(WebLink link) {
+        links.add(link);
     }
 
     /// Custom stuff
@@ -385,4 +423,23 @@ public class Message extends Model {
         }
         return msgResultList;
     }
+
+    public void unfurlLinks() {
+        List<String> links = Util.getLinks(messageText);
+        if (links.size() > 0) {
+            setHasLinks(true);
+            for (String link : links) {
+                try {
+                    LinkInfo linkInfo = LinkUnfurl.unfurl(link, 10000);
+                    WebLink weblink = new WebLink(link, linkInfo);
+                    weblink.save();
+                    addLink(weblink);
+                } catch (IOException e) {
+                    Logger.error("Error unfurling link: " + link);
+                }
+            }
+        }
+        setLinksUnfurled(true);
+    }
+
 }

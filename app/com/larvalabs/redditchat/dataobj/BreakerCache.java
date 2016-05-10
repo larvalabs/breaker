@@ -39,7 +39,11 @@ public class BreakerCache {
             roomMessages = new ArrayList<JsonMessage>();
             List<Message> messageList = room.getMessages(Constants.DEFAULT_MESSAGE_LIMIT);
             for (Message message : messageList) {
-                roomMessages.add(JsonMessage.from(message, message.getUser().getUsername(), room.getName()));
+                JsonMessage jsonMessage = JsonMessage.from(message, message.getUser().getUsername(), room.getName());
+                if (message.isHasLinks()) {
+                    jsonMessage.setLinkInfo(message.getLinks());
+                }
+                roomMessages.add(jsonMessage);
             }
             Collections.reverse(roomMessages);
             messageCache.put(getMessagesKey(room.getName()), roomMessages);

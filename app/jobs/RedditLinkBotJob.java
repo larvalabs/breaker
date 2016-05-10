@@ -93,9 +93,12 @@ public class RedditLinkBotJob extends Job {
 
                         Message message = new Message(botUser, room,
                                 "New top post in /r/" + subredditToProcess + ": " + title + " - " + Constants.REDDIT_BASE_URL + "/" + id + " - score: " + score + " - comments: " + comments);
+                        message.unfurlLinks();
                         message.save();
 
-                        ChatRoomStream.getEventStream(subredditToProcess).say(JsonMessage.from(message, botUser.getUsername(), room.getName()), JsonChatRoom.from(room, room.getModeratorUsernames()), JsonUser.fromUser(message.getUser(), true));
+                        JsonMessage jsonMessage = JsonMessage.from(message, botUser.getUsername(), room.getName());
+                        jsonMessage.setLinkInfo(message.getLinks());
+                        ChatRoomStream.getEventStream(subredditToProcess).say(jsonMessage, JsonChatRoom.from(room, room.getModeratorUsernames()), JsonUser.fromUser(message.getUser(), true));
 
                         numPosted++;
                         if (numPosted >= MAX_NUM_TO_POST_PER_RUN) {

@@ -1,14 +1,12 @@
 package com.larvalabs.redditchat.dataobj;
 
+import com.larvalabs.linkunfurl.LinkInfo;
 import models.*;
 import org.nibor.autolink.*;
 import play.Logger;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.EnumSet;
-import java.util.List;
+import java.util.*;
 
 public class JsonMessage implements Serializable {
 
@@ -30,6 +28,8 @@ public class JsonMessage implements Serializable {
     public String[] imageLinks;
 
     public String[] mentionedUsernames;
+
+    public LinkInfo[] linkInfo;
 
     // If true means it was sent before saving, so doesn't contain all info
     public boolean partial = false;
@@ -172,6 +172,15 @@ public class JsonMessage implements Serializable {
 
         mentionedUsernames = Message.getMentionedUsernames(message).toArray(new String[]{});
     }
+
+    public void setLinkInfo(Set<WebLink> webLinks) {
+        ArrayList<LinkInfo> linkInfos = new ArrayList<>();
+        for (WebLink webLink : webLinks) {
+            linkInfos.add(webLink.getLinkInfo());
+        }
+        linkInfo = linkInfos.toArray(new LinkInfo[]{});
+    }
+
 /*
     public void fillTranslation(Translation translation) {
         translatedMessage = translation.getTranslatedMessageText();
