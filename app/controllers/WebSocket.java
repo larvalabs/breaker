@@ -288,8 +288,8 @@ public class WebSocket extends PreloadUserController {
                     userArray[0] = updateEvent.user;
                 }
                 outbound.send(updateEvent.toJson());
-            } else if (awaitResult instanceof ChatRoomStream.UpdateRoomEvent) {
-                ChatRoomStream.UpdateRoomEvent updateEvent = (ChatRoomStream.UpdateRoomEvent) awaitResult;
+            } else if (awaitResult instanceof ChatRoomStream.UpdateMessageEvent) {
+                ChatRoomStream.UpdateMessageEvent updateEvent = (ChatRoomStream.UpdateMessageEvent) awaitResult;
                 if (roomConnections.containsKey(updateEvent.room.name)) {
                     Logger.info("Updated local room object from event: " + updateEvent.room.name);
                     roomConnections.get(updateEvent.room.name).room = updateEvent.room;
