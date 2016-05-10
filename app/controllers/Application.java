@@ -42,6 +42,8 @@ public class Application extends PreloadUserController {
     // https://ssl.reddit.com/api/v1/authorize.compact
     public static final String REDDIT_AUTHORIZATION_URL = "https://www.reddit.com/api/v1/authorize?client_id=" + REDDIT_CLIENTID + "&response_type=code" +
             "&state=iuknjvdihu&redirect_uri=" + REDDIT_CALLBACK + "&duration=permanent&scope=" + REDDIT_SCOPE;
+    public static final String REDDIT_AUTHORIZATION_URL_COMPACT = "https://www.reddit.com/api/v1/authorize.compact?client_id=" + REDDIT_CLIENTID + "&response_type=code" +
+            "&state=iuknjvdihu&redirect_uri=" + REDDIT_CALLBACK + "&duration=permanent&scope=" + REDDIT_SCOPE;
     public static final String REDDIT_TOKEN_URL = "https://www.reddit.com/api/v1/access_token";
 
     public static final String OAUTH_API_DOMAIN = "https://oauth.reddit.com";
@@ -145,7 +147,7 @@ public class Application extends PreloadUserController {
             render(chatUser, roomName, usernamesPresentStr, userCount);
         } else {
             // This is probably a generic signup request from the homepage
-            auth();
+            auth(null);
         }
     }
 
@@ -168,7 +170,7 @@ public class Application extends PreloadUserController {
                 // this is a logged out user trying to wait for this room, go to auth
                 Logger.debug("User not logged in, redirecting to auth.");
                 session.put(SESSION_WAITROOM, roomName);
-                auth();
+                auth(null);
                 return;
             } else {
                 // this is a logged in user trying to wait for this room, wait it up
@@ -246,10 +248,10 @@ public class Application extends PreloadUserController {
 
     public static void startAuthForGuest(String roomName) {
         session.put(SESSION_JOINROOM, roomName);
-        auth();
+        auth(null);
     }
 
-    public static void auth() {
+    public static void auth(Boolean compact) {
         Logger.debug("Received auth response.");
         if (OAuth2.isCodeResponse()) {
 //            ChatUser user = connected();
@@ -297,8 +299,11 @@ public class Application extends PreloadUserController {
                 WebSocket.room(null);
             }
         }
-        redirect(REDDIT_AUTHORIZATION_URL);
-//        REDDIT.retrieveVerificationCode(authURL());
+        if (compact != null) {
+            redirect(REDDIT_AUTHORIZATION_URL_COMPACT);
+        } else {
+            redirect(REDDIT_AUTHORIZATION_URL);
+        }
     }
 
     private static class Tokens {
