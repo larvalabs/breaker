@@ -5331,8 +5331,12 @@ li.chat-message-root .message-body, li.chat-message-short .message-body, li.chat
   font-weight: 600;
 }
 
-.link-info .title a {
+.link-info a {
   color: #23b7e5;
+}
+
+.link-too-big{
+  color: #98A6AD;
 }
 
 .image-preview {
