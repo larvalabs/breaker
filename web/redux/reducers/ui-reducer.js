@@ -22,10 +22,10 @@ export default function ui(state=Immutable.Map({connected: false, sidebar_open: 
       return state.set('settings_open', true)
     }
     case(chatTypes.CHAT_LINK_COLLAPSED): {
-      return state.set('collapsedLinks', state.get('collapsedLinks', Immutable.Set()).add(action.message.messageId));
+      return state.set('collapsedLinks', state.get('collapsedLinks', Immutable.Set()).add(action.messageId));
     }
     case(chatTypes.CHAT_LINK_EXPANDED): {
-      return state.set('collapsedLinks', state.get('collapsedLinks', Immutable.Set()).delete(action.message.messageId));
+      return state.set('collapsedLinks', state.get('collapsedLinks', Immutable.Set()).delete(action.messageId));
     }
     default: {
       return state

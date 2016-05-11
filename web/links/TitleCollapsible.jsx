@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 
 
-export default class Image extends Component {
+export default class TitleCollapsible extends Component {
   constructor(props){
     super(props);
     this.handleClick = this.handleClick.bind(this);
@@ -30,7 +30,7 @@ export default class Image extends Component {
   }
 }
 
-Image.defaultProps = {
+TitleCollapsible.defaultProps = {
   title: null,
   url: null,
   collapsed: false,

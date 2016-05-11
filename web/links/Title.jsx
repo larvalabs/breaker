@@ -8,7 +8,7 @@ export default class Image extends Component {
   }
   render(){
     return <h5 className="title">
-        <a href={this.props.url} target="_blank">{title}</a>
+        <a href={this.props.url} target="_blank">{this.props.title}</a>
       </h5>
   }
 }

@@ -10,11 +10,12 @@ function expandLink(messageId){
 }
 
 export function toggleCollapseLink(uuid) {
-  return dispatch, getState => {
-    if(getState().getIn(['ui', 'collapsedLinks', uuid])){
-      return dispatch(collapseLink(uuid))
-    } else {
+  return (dispatch, getState) => {
+    let isItemCollapsed = !!getState().getIn(['ui', 'collapsedLinks', uuid]);
+    if(isItemCollapsed){
       return dispatch(expandLink(uuid))
+    } else {
+      return dispatch(collapseLink(uuid))
     }
 
   }

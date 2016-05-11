@@ -8,6 +8,7 @@ class Image extends Component {
   constructor(props){
     super(props);
     this.renderImage = this.renderImage.bind(this);
+    this.handleToggleCollapse = this.handleToggleCollapse.bind(this)
   }
   handleToggleCollapse(){
     this.props.dispatch(toggleCollapseLink(this.props.linkInfo.get('uuid')));
