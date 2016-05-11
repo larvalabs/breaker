@@ -29,7 +29,7 @@ public class JsonMessage implements Serializable {
 
     public String[] mentionedUsernames;
 
-    public LinkInfo[] linkInfo;
+    public JsonLinkInfo[] linkInfo;
 
     // If true means it was sent before saving, so doesn't contain all info
     public boolean partial = false;
@@ -174,11 +174,11 @@ public class JsonMessage implements Serializable {
     }
 
     public void setLinkInfo(Set<WebLink> webLinks) {
-        ArrayList<LinkInfo> linkInfos = new ArrayList<>();
+        ArrayList<JsonLinkInfo> linkInfos = new ArrayList<>();
         for (WebLink webLink : webLinks) {
-            linkInfos.add(webLink.getLinkInfo());
+            linkInfos.add(JsonLinkInfo.from(webLink));
         }
-        linkInfo = linkInfos.toArray(new LinkInfo[]{});
+        linkInfo = linkInfos.toArray(new JsonLinkInfo[]{});
     }
 
 /*

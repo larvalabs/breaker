@@ -1,6 +1,8 @@
 package models;
 
 import com.larvalabs.linkunfurl.LinkInfo;
+import com.larvalabs.redditchat.dataobj.JsonLinkInfo;
+import com.larvalabs.redditchat.util.Util;
 import play.data.validation.Unique;
 import play.db.jpa.Model;
 
@@ -14,6 +16,7 @@ import javax.persistence.Table;
 @Table(name = "weblink")
 public class WebLink extends Model {
 
+    private String uuid;
     @Unique
     private String url;
     private String type;
@@ -30,6 +33,7 @@ public class WebLink extends Model {
     private int videoHeight = -1;
 
     public WebLink(String url, LinkInfo linkInfo) {
+        this.uuid = Util.getUUID();
         this.url = url;
         this.type = linkInfo.getType();
         this.site = linkInfo.getSite();
@@ -57,6 +61,7 @@ public class WebLink extends Model {
     public WebLink(String url, String type, String site, String title, String description,
                    String imageUrl, int imageWidth, int imageHeight, long imageSize,
                    String videoUrl, String videoType, int videoWidth, int videoHeight) {
+        this.uuid = Util.getUUID();
         this.url = url;
         this.type = type;
         this.site = site;
@@ -70,6 +75,14 @@ public class WebLink extends Model {
         this.videoType = videoType;
         this.videoWidth = videoWidth;
         this.videoHeight = videoHeight;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     public String getUrl() {
@@ -176,30 +189,4 @@ public class WebLink extends Model {
         this.imageSize = imageSize;
     }
 
-    public LinkInfo getLinkInfo() {
-        LinkInfo info = new LinkInfo();
-        info.setUrl(url);
-        info.setType(type);
-        info.setSite(site);
-        info.setTitle(title);
-        info.setDescription(description);
-        info.setImageUrl(imageUrl);
-        if (imageWidth > 0) {
-            info.setImageWidth(imageWidth);
-        }
-        if (imageHeight > 0) {
-            info.setImageHeight(imageHeight);
-        }
-        if (imageSize > 0) {
-            info.setImageSize(imageSize);
-        }
-        info.setVideoUrl(videoUrl);
-        if (videoWidth > 0) {
-            info.setVideoWidth(videoWidth);
-        }
-        if (videoHeight > 0) {
-            info.setVideoHeight(videoHeight);
-        }
-        return info;
-    }
 }
