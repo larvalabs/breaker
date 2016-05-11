@@ -25,7 +25,8 @@ class Image extends Component {
     
     return <div className="link-info">
       <TitleCollapsible title={this.props.linkInfo.get('title')} url={this.props.linkInfo.get('url')}
-                        collapsed={collapsed} onToggleCollapse={this.handleToggleCollapse} />
+                        collapsed={collapsed} onToggleCollapse={this.handleToggleCollapse}
+                        size={this.props.linkInfo.get('imageSize')}/>
       {this.renderImage(collapsed)}
     </div>;
   }

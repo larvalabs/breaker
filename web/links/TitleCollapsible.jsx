@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-
+import formatBytes from '../util/formatters'
 
 export default class TitleCollapsible extends Component {
   constructor(props){
@@ -13,6 +13,13 @@ export default class TitleCollapsible extends Component {
     let classes = this.props.collapsed ? "fa-caret-right" : "fa-caret-down";
     return <i className={`fa ${classes} link-collapse`} onClick={this.handleClick}></i>
   }
+  renderSize(){
+    if(!this.props.size){
+      return null;
+    }
+
+    return <span> ({formatBytes(this.props.size, 0)})</span>
+  }
   render(){
     let title = this.props.title;
     if(!title){
@@ -24,7 +31,7 @@ export default class TitleCollapsible extends Component {
     }
 
     return <h5 className="title">
-        <a href={this.props.url} target="_blank">{title}</a>
+        <a href={this.props.url} target="_blank">{title}</a>{this.renderSize()}
         {this.renderCollapse()}
       </h5>
   }
