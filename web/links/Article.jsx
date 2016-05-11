@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import Immutable from 'immutable'
-
+import Title from './Title'
 
 export default class Article extends Component {
   constructor(props){
@@ -17,9 +17,7 @@ export default class Article extends Component {
     return <div className="link-info">
       {this.renderImage(this.props.linkInfo)}
       <div>
-        <h5 className="title">
-          <a href={this.props.linkInfo.get('url')} target="_blank">{this.props.linkInfo.get('title')}</a>
-        </h5>
+        <Title title={this.props.linkInfo.get('title')} url={this.props.linkInfo.get('url')} />
         <p className="description">{this.props.linkInfo.get('description')}</p>
       </div>
 

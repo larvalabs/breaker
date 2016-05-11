@@ -1,33 +1,31 @@
 import React, {Component} from 'react'
 import Immutable from 'immutable'
-import Title from './Title'
+import TitleCollapsible from './TitleCollapsible'
+import { connect } from 'react-redux'
+import {toggleCollapseLink} from '../redux/actions/chat-actions'
 
-export default class Image extends Component {
+class Image extends Component {
   constructor(props){
     super(props);
-    this.onCollapse = this.onCollapse.bind(this);
     this.renderImage = this.renderImage.bind(this);
-    this.state = {
-      atom: Immutable.Map({collapse: false})
-    }
   }
-  onCollapse(value){
-    this.setState({
-      atom: this.state.atom.set('collapse', value)
-    });
+  handleToggleCollapse(){
+    this.props.dispatch(toggleCollapseLink(this.props.linkInfo.get('uuid')));
   }
-  renderImage(){
-    if(this.state.atom.get('collapse')){
+  renderImage(collapsed){
+    if(collapsed){
       return null;
     }
 
     return <img src={this.props.linkInfo.get('imageUrl')} className="image-preview"/>
   }
   render(){
+    let collapsed = this.props.collapsedLinks.contains(this.props.linkInfo.get('uuid'));
+    
     return <div className="link-info">
-      <Title title={this.props.linkInfo.get('title')}
-             url={this.props.linkInfo.get('url')} onCollapse={this.onCollapse}/>
-      {this.renderImage()}
+      <TitleCollapsible title={this.props.linkInfo.get('title')} url={this.props.linkInfo.get('url')}
+                        collapsed={collapsed} onToggleCollapse={this.handleToggleCollapse} />
+      {this.renderImage(collapsed)}
     </div>;
   }
 }
@@ -35,3 +33,12 @@ export default class Image extends Component {
 Image.defaultProps = {
   linkInfo: Immutable.Map()
 };
+
+function mapStateToProps(state) {
+  return {
+    collapsedLinks: state.getIn(['ui', 'collapsedLinks'], Immutable.Set())
+  }
+}
+
+
+export default connect(mapStateToProps)(Image)

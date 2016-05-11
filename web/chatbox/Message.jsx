@@ -45,7 +45,7 @@ class Message extends Component {
   render(){
     return <div>
       {this.renderMessageBody()}
-      <LinkInfo linkInfo={this.props.message.getIn(['linkInfo', 0])} />
+      <LinkInfo linkInfo={this.props.message.getIn(['linkInfo', 0])} uuid={this.props.message.get('uuid')} />
     </div>
   }
 }
@@ -58,7 +58,7 @@ Message.defaultProps = {
 
 function mapStateToProps(state) {
   return {
-    authUser: state.get('authUser')
+    authUser: state.get('authUser'),
   }
 }
 

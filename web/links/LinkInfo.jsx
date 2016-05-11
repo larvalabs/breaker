@@ -15,9 +15,9 @@ export default class LinkInfo extends Component {
 
     let type = this.props.linkInfo.get('type');
     if(type === 'link'){
-      return <Article linkInfo={this.props.linkInfo} />
+      return <Article linkInfo={this.props.linkInfo} uuid={this.props.uuid} />
     } else if (type === 'image'){
-      return <Image linkInfo={this.props.linkInfo} />
+      return <Image linkInfo={this.props.linkInfo} uuid={this.props.uuid} />
     } else {
       return null;
     }
@@ -25,5 +25,6 @@ export default class LinkInfo extends Component {
 }
 
 LinkInfo.defaultProps = {
-  linkInfo: Immutable.Map()
+  linkInfo: Immutable.Map(),
+  uuid: null
 };

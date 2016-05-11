@@ -1,6 +1,25 @@
 import * as actions from '../constants/chat-constants';
 import socket from '../../socket';
 
+function collapseLink(messageId){
+  return { type: actions.CHAT_LINK_COLLAPSED, messageId };
+}
+
+function expandLink(messageId){
+  return { type: actions.CHAT_LINK_EXPANDED, messageId };
+}
+
+export function toggleCollapseLink(uuid) {
+  return dispatch, getState => {
+    if(getState().getIn(['ui', 'collapsedLinks', uuid])){
+      return dispatch(collapseLink(uuid))
+    } else {
+      return dispatch(expandLink(uuid))
+    }
+
+  }
+}
+
 export function chatMessageSent(messageObj) {
   return { type: actions.CHAT_MESSAGE_SENT, messageObj };
 }
