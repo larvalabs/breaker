@@ -18,7 +18,7 @@ export default class LinkInfo extends Component {
       return <LinkTooBig size={this.props.linkInfo.get('imageSize')} url={this.props.linkInfo.get('url')} />
     }
 
-    let type = this.props.linkInfo.get('type');
+    let type = this.props.linkInfo.get('breakerType');
     if(type === 'link'){
       return <Article linkInfo={this.props.linkInfo}/>
     } else if (type === 'image'){
