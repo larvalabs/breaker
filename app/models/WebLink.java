@@ -4,7 +4,6 @@ import com.larvalabs.linkunfurl.LinkInfo;
 import play.data.validation.Unique;
 import play.db.jpa.Model;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
@@ -19,7 +18,9 @@ public class WebLink extends Model {
     private String url;
     private String title;
     private String description;
-    private String heroImageUrl;
+    private String imageUrl;
+    private int imageWidth;
+    private int imageHeight;
     private String videoUrl;
     private String videoType;
     private int videoWidth = -1;
@@ -29,17 +30,21 @@ public class WebLink extends Model {
         this.url = url;
         this.title = linkInfo.getTitle();
         this.description = linkInfo.getDescription();
-        this.heroImageUrl = linkInfo.getHeroImageUrl();
+        this.imageUrl = linkInfo.getImageUrl();
+        this.imageWidth = linkInfo.getImageWidth();
+        this.imageHeight = linkInfo.getImageHeight();
         this.videoUrl = linkInfo.getVideoUrl();
         this.videoWidth = linkInfo.getVideoWidth();
         this.videoHeight = linkInfo.getVideoHeight();
     }
 
-    public WebLink(String url, String title, String description, String heroImageUrl, String videoUrl, String videoType, int videoWidth, int videoHeight) {
+    public WebLink(String url, String title, String description, String imageUrl, int imageWidth, int imageHeight, String videoUrl, String videoType, int videoWidth, int videoHeight) {
         this.url = url;
         this.title = title;
         this.description = description;
-        this.heroImageUrl = heroImageUrl;
+        this.imageUrl = imageUrl;
+        this.imageWidth = imageWidth;
+        this.imageHeight = imageHeight;
         this.videoUrl = videoUrl;
         this.videoType = videoType;
         this.videoWidth = videoWidth;
@@ -70,12 +75,28 @@ public class WebLink extends Model {
         this.description = description;
     }
 
-    public String getHeroImageUrl() {
-        return heroImageUrl;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
-    public void setHeroImageUrl(String heroImageUrl) {
-        this.heroImageUrl = heroImageUrl;
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public int getImageWidth() {
+        return imageWidth;
+    }
+
+    public void setImageWidth(int imageWidth) {
+        this.imageWidth = imageWidth;
+    }
+
+    public int getImageHeight() {
+        return imageHeight;
+    }
+
+    public void setImageHeight(int imageHeight) {
+        this.imageHeight = imageHeight;
     }
 
     public String getVideoUrl() {
@@ -112,9 +133,12 @@ public class WebLink extends Model {
 
     public LinkInfo getLinkInfo() {
         LinkInfo info = new LinkInfo();
+        info.setUrl(url);
         info.setTitle(title);
         info.setDescription(description);
-        info.setHeroImageUrl(heroImageUrl);
+        info.setImageUrl(imageUrl);
+        info.setImageWidth(imageWidth);
+        info.setImageHeight(imageHeight);
         info.setVideoUrl(videoUrl);
         info.setVideoWidth(videoWidth);
         info.setVideoHeight(videoHeight);
