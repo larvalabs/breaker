@@ -9,9 +9,14 @@ export default class LinkInfo extends Component {
     super(props);
   }
   render(){
-    if(this.props.linkInfo && this.props.linkInfo.get('description')){
+    if(!this.props.linkInfo){
+      return null
+    }
+
+    let type = this.props.linkInfo.get('type');
+    if(type === 'link'){
       return <Article linkInfo={this.props.linkInfo} />
-    } else if (this.props.linkInfo.get('imageUrl')){
+    } else if (type === 'image'){
       return <Image linkInfo={this.props.linkInfo} />
     } else {
       return null;
