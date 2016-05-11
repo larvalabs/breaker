@@ -5321,3 +5321,29 @@ li.chat-message-root .message-body, li.chat-message-short .message-body, li.chat
   margin-right: -15px;
 
 }
+
+.link-info {
+  border-left: 5px solid #CFDADD;
+  padding-left: 10px;
+}
+
+.link-info h5.title {
+  font-weight: 600;
+}
+
+.link-info .title a {
+  color: #23b7e5;
+}
+
+.image-preview {
+  max-width: 100%;
+  border: 1px solid #E6E6E6;
+  border-radius: 3px 3px;
+}
+
+
+#thread .username-container a {
+  font-weight: 600;
+  color: #2C2D30;
+  font-size: 15px
+}

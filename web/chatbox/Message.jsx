@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import Immutable from 'immutable'
 import Config from '../config'
 import { connect } from 'react-redux'
+import LinkInfo from '../links/LinkInfo'
 
 
 class Message extends Component {
@@ -26,7 +27,7 @@ class Message extends Component {
     </div>
   }
   renderHTMLMessage(){
-    let classes = "message-body m-t-midxs";
+    let classes = "message-body";
     if (Config.features.useFlairStyle(this.props.roomName)) {
       classes += " flair-message-hack"
     }
@@ -41,24 +42,10 @@ class Message extends Component {
     }
     return this.renderRawMessage()
   }
-  renderLinks(){
-    if(!this.props.message.get('imageLinks')){
-      return null
-    }
-
-    if(this.props.message.get('imageLinks', Immutable.List()).size > 0) {
-      return <div className="m-t-sm">
-        <a href={this.props.message.getIn(['imageLinks', 0])} target="_blank">
-          <img src={this.props.message.getIn(['imageLinks', 0])} className="image-preview"/>
-        </a>
-      </div>;
-    }
-    return null;
-  }
   render(){
     return <div>
       {this.renderMessageBody()}
-      {this.renderLinks()}
+      <LinkInfo linkInfo={this.props.message.getIn(['linkInfo', 0])} />
     </div>
   }
 }
