@@ -15,7 +15,7 @@ export default class UserAvatar extends Component {
       userImage = "/public/img/user-anon.png";
     }
     let userLink = `https://reddit.com/u/${this.props.user.get('username')}`;
-    return <a href={userLink} className="pull-left thumb-sm avatar m-r" target="_blank">
+    return <a href={userLink} className="pull-left thumb-sm avatar m-r hidden-xs" target="_blank">
       <img src={userImage} alt="..." className="img-circle"/>
       <i className={ (this.props.user.get('online') ? 'on' : 'off' ) + " b-white bottom"} />
     </a>

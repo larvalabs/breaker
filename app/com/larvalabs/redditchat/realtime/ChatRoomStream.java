@@ -109,6 +109,13 @@ public class ChatRoomStream {
         publishEvent(new Message(message, room, user));
     }
 
+    public void sendMessageUpdate(ChatRoom room, models.Message message) {
+        JsonMessage jsonMessage = JsonMessage.from(message, message.getUser().getUsername(), room.getName());
+        jsonMessage.setLinkInfo(message.getLinks());
+        JsonChatRoom jsonRoom = JsonChatRoom.from(room, room.getModeratorUsernames());
+        publishEvent(new UpdateMessageEvent(jsonRoom, jsonMessage));
+    }
+
     public void sendUserUpdate(ChatRoom room, ChatUser user, boolean isOnline) {
         JsonUser jsonUser = JsonUser.fromUser(user, isOnline);
         JsonChatRoom jsonRoom = JsonChatRoom.from(room, room.getModeratorUsernames());
@@ -166,6 +173,7 @@ public class ChatRoomStream {
         public static final String TYPE_LEAVE = "leave";
         public static final String TYPE_UPDATE_USER = "updateuser";
         public static final String TYPE_UPDATE_ROOM = "updateroom";
+        public static final String TYPE_UPDATE_MESSAGE = "updatemessage";
 
         public Event() {
         }
@@ -202,6 +210,8 @@ public class ChatRoomStream {
                 return gson.fromJson(jsonStr, UpdateUserEvent.class);
             } else if (type.equals(TYPE_UPDATE_ROOM)) {
                 return gson.fromJson(jsonStr, UpdateRoomEvent.class);
+            } else if (type.equals(TYPE_UPDATE_MESSAGE)) {
+                return gson.fromJson(jsonStr, UpdateMessageEvent.class);
             }
             Logger.error("Event not recognized.");
             return null;
@@ -296,6 +306,18 @@ public class ChatRoomStream {
 
         public UpdateRoomEvent(JsonChatRoom room) {
             super(TYPE_UPDATE_ROOM, room);
+        }
+    }
+
+    public static class UpdateMessageEvent extends Event {
+        public JsonMessage message;
+
+        public UpdateMessageEvent() {
+        }
+
+        public UpdateMessageEvent(JsonChatRoom room, JsonMessage message) {
+            super(TYPE_UPDATE_MESSAGE, room);
+            this.message = message;
         }
     }
 
