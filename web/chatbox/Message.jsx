@@ -27,7 +27,7 @@ class Message extends Component {
     </div>
   }
   renderHTMLMessage(){
-    let classes = "message-body";
+    let classes = "message-body m-t-midxs";
     if (Config.features.useFlairStyle(this.props.roomName)) {
       classes += " flair-message-hack"
     }
