@@ -5347,3 +5347,9 @@ li.chat-message-root .message-body, li.chat-message-short .message-body, li.chat
   color: #2C2D30;
   font-size: 15px
 }
+
+.link-collapse {
+  color: #23b7e5;
+  margin-left: 5px;
+  cursor: pointer;
+}
