@@ -45,6 +45,7 @@ public class JsonUtil {
         public TreeMap<String, JsonRoomMembers> members = new TreeMap<>(lowerStringComparator);
         public TreeMap<String, ArrayList<String>> roomMessages = new TreeMap<>(lowerStringComparator);
         public HashMap<String, JsonMessage> messages = new HashMap<String, JsonMessage>();
+        public HashMap<String, Long> lastSeenTimes = new HashMap<>();
     }
 
     public static FullState loadFullStateForUser(ChatUser user) {
@@ -95,6 +96,8 @@ public class JsonUtil {
                 state.roomMessages.put(thisRoom.getName(), messageIds);
                 Logger.info("Messages load time: " + (System.currentTimeMillis() - messagesStart));
             }
+
+            state.lastSeenTimes.put(thisRoom.getName(), chatRoomJoin.getLastSeenMessageTime());
         }
 
         return state;

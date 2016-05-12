@@ -130,6 +130,7 @@ public class WebSocket extends PreloadUserController {
         String membersString = gson.toJson(members);
         String roomMessagesString = gson.toJson(roomMessages);
         String messagesString = gson.toJson(messages);
+        String lastSeenTimesString = gson.toJson(fullState.lastSeenTimes);
         long loadTime = System.currentTimeMillis() - startTime;
         Logger.info("Websocket join time checkpoint 2 (post gson) for " + user.getUsername() + ": " + loadTime);
         Stats.measure(Stats.StatKey.INITIALPAGE_TIME, loadTime);
@@ -162,7 +163,8 @@ public class WebSocket extends PreloadUserController {
 
         Logger.info("Websocket join time for " + user.getUsername() + ": " + (System.currentTimeMillis() - startTime));
 
-        render("index.html", user, rooms, userString, roomName, environment, roomsString, usersString, membersString, roomMessagesString, messagesString);
+        render("index.html", user, rooms, userString, roomName, environment, roomsString, usersString, membersString,
+                roomMessagesString, messagesString, lastSeenTimesString);
     }
 
     private static boolean existsInJoins(List<ChatUserRoomJoin> joins, ChatRoom room) {
