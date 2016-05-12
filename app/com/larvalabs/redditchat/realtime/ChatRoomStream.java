@@ -166,6 +166,7 @@ public class ChatRoomStream {
 
         public static final String TYPE_ROOMLIST = "roomlist";
         public static final String TYPE_MEMBERLIST = "memberlist";
+        public static final String TYPE_MARKEDREAD = "markedread";
         public static final String TYPE_JOIN = "join";
         public static final String TYPE_MESSAGE = "message";
         public static final String TYPE_SERVERMESSAGE = "servermessage";
@@ -195,6 +196,8 @@ public class ChatRoomStream {
             Gson gson = new Gson();
             if (type.equals(TYPE_MEMBERLIST)) {
                 return gson.fromJson(jsonStr, MemberList.class);
+            } else if (type.equals(TYPE_MARKEDREAD)) {
+                return gson.fromJson(jsonStr, MarkedRead.class);
             } else if (type.equals(TYPE_JOIN)) {
                 return gson.fromJson(jsonStr, Join.class);
             } else if (type.equals(TYPE_MESSAGE)) {
@@ -241,6 +244,19 @@ public class ChatRoomStream {
         public MemberList(JsonChatRoom room, JsonUser[] users) {
             super(TYPE_MEMBERLIST, room);
             this.users = users;
+        }
+    }
+
+    public static class MarkedRead extends Event {
+
+        public long lastReadTime;
+
+        public MarkedRead() {
+        }
+
+        public MarkedRead(JsonChatRoom room, long lastReadTime) {
+            super(TYPE_MARKEDREAD, room);
+            this.lastReadTime = lastReadTime;
         }
     }
 

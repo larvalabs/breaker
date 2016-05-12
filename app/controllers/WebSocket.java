@@ -351,7 +351,8 @@ public class WebSocket extends PreloadUserController {
                         } else if (message.toLowerCase().equals("##markmessagesread##")) {
                             Logger.debug("User " + user.username + " marking messages read for " + roomName);
 
-                            ChatRoom.markMessagesReadForUser(roomConnection.room.name, user.username);
+                            long newLastReadTime = ChatRoom.markMessagesReadForUser(roomConnection.room.name, user.username);
+                            outbound.send(new ChatRoomStream.MarkedRead(roomConnection.room, newLastReadTime).toJson());
                         } else if (ChatCommands.isCommand(message)) {
                             try {
                                 ChatRoom room = roomConnection.room.loadModelFromDatabase();

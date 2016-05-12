@@ -691,13 +691,15 @@ public class ChatRoom extends Model {
         markMessagesReadForUser(name, username);
     }
 
-    public static void markMessagesReadForUser(String roomName, String username) {
+    public static long markMessagesReadForUser(String roomName, String username) {
+        long newLastReadTime = System.currentTimeMillis();
         try {
-            Redis.set(makeKeyForLastReadTime(roomName, username), ""+System.currentTimeMillis());
+            Redis.set(makeKeyForLastReadTime(roomName, username), ""+ newLastReadTime);
             SaveLastReadTimeForAllPendingJob.addPendingUsername(username, roomName);
         } catch (Exception e) {
             Logger.error(e, "Error contacting redis.");
         }
+        return newLastReadTime;
     }
 
     public long getLastMessageReadTimeForUser(String username) {
