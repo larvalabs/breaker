@@ -117,7 +117,7 @@ public class WebSocket extends PreloadUserController {
         JsonUtil.FullState fullState = JsonUtil.loadFullStateForUser(user);
 
         TreeMap<String, JsonChatRoom> rooms = fullState.rooms;
-        TreeMap<String, JsonUser> allUsers = fullState.allUsers;
+        TreeMap<String, JsonUser> allUsers = fullState.users;
         TreeMap<String, JsonRoomMembers> members = fullState.members;
         TreeMap<String, ArrayList<String>> roomMessages = fullState.roomMessages;
         Map<String, JsonMessage> messages = fullState.messages;

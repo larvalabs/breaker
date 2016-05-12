@@ -71,10 +71,10 @@ public class PreloadStateTest extends UnitTest {
             JsonUtil.FullState fullState = JsonUtil.loadFullStateForUser(user1);
 
             // check sorting
-            assertEquals(username1, fullState.allUsers.firstEntry().getValue().username);
+            assertEquals(username1, fullState.users.firstEntry().getValue().username);
             assertEquals(roomName1, fullState.rooms.firstEntry().getValue().name);
 
-            assertEquals(4, fullState.allUsers.size());
+            assertEquals(4, fullState.users.size());
             assertEquals(2, fullState.rooms.size());
 
             assertEquals(2, fullState.members.get(roomName1).online.size());
@@ -88,7 +88,7 @@ public class PreloadStateTest extends UnitTest {
 
         {
             JsonUtil.FullState fullState = JsonUtil.loadFullStateForUser(user2);
-            assertEquals(3, fullState.allUsers.size());
+            assertEquals(3, fullState.users.size());
             assertEquals(1, fullState.rooms.size());
         }
     }

@@ -3,6 +3,7 @@ package controllers;
 import com.google.gson.JsonObject;
 import com.larvalabs.redditchat.Constants;
 import com.larvalabs.redditchat.dataobj.JsonUserSearch;
+import com.larvalabs.redditchat.dataobj.JsonUtil;
 import com.larvalabs.redditchat.realtime.ChatRoomStream;
 import com.larvalabs.redditchat.util.RedditUtil;
 import com.larvalabs.redditchat.util.Util;
@@ -491,5 +492,10 @@ public class Application extends PreloadUserController {
         ChatRoomStream.getEventStream(room.getName()).sendUserUpdate(room, user, true);
         ChatRoomStream.getEventStream(room.getName()).sendRoomUpdate(room);
         renderText("OK");
+    }
+
+    public static void initialState() {
+        JsonUtil.FullState fullState = JsonUtil.loadFullStateForUser(connected());
+        renderJSON(fullState);
     }
 }

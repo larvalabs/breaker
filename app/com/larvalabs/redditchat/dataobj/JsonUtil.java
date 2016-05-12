@@ -41,7 +41,7 @@ public class JsonUtil {
 
 
         public TreeMap<String, JsonChatRoom> rooms = new TreeMap<>(lowerStringComparator);
-        public TreeMap<String, JsonUser> allUsers = new TreeMap<>(lowerStringComparator);
+        public TreeMap<String, JsonUser> users = new TreeMap<>(lowerStringComparator);
         public TreeMap<String, JsonRoomMembers> members = new TreeMap<>(lowerStringComparator);
         public TreeMap<String, ArrayList<String>> roomMessages = new TreeMap<>(lowerStringComparator);
         public HashMap<String, JsonMessage> messages = new HashMap<String, JsonMessage>();
@@ -70,10 +70,10 @@ public class JsonUtil {
                 roomMembers = new JsonRoomMembers();
                 state.members.put(thisRoom.getName(), roomMembers);
             }
-            JsonUser jsonUser = state.allUsers.get(thisUser.getUsername());
+            JsonUser jsonUser = state.users.get(thisUser.getUsername());
             if (jsonUser == null) {
                 jsonUser = JsonUser.fromUserNoFlairLoad(thisUser, usernamesPresent.contains(thisUser.getUsername()));
-                state.allUsers.put(jsonUser.username, jsonUser);
+                state.users.put(jsonUser.username, jsonUser);
             }
             jsonUser.addFlair(thisRoom.getName(), new JsonFlair(chatRoomJoin.getFlairText(), chatRoomJoin.getFlairCss(), chatRoomJoin.getFlairPosition()));
             if (thisRoom.getModerators().contains(thisUser)) {  // check if slow
