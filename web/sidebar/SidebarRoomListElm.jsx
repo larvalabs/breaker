@@ -11,7 +11,7 @@ class SidebarRoomListElm extends Component {
     this.getStyles = this.getStyles.bind(this);
     this.onMouseEnter = this.onMouseEnter.bind(this);
     this.onMouseLeave = this.onMouseLeave.bind(this);
-    this.state = {}
+    this.state = {};
   }
   onElementClicked(){
     this.props.dispatch(chatActions.handleChangeRoom(this.props.room.get('name')));
@@ -82,13 +82,20 @@ class SidebarRoomListElm extends Component {
 SidebarRoomListElm.defaultProps = {
   room: Immutable.Map(),
   active: false,
-  unreadCounts: 0
+  unreadCount: 0
 };
 
 
-function mapStateToProps(state) {
+function mapStateToProps(state, ownProps) {
+  let currentRoom = state.getIn(['rooms', state.get('currentRoom')]);
+  let lastReadTime = state.getIn(['lastSeenTimes', ownProps.room.get('name')]);
+  let unreadCount = state.getIn(['roomMessages', ownProps.room.get('name')]).reduce((total, messageId) => {
+    let messageTime = state.getIn(['messages', messageId, 'createDateLongUTC']);
+    return messageTime && messageTime - lastReadTime > 0 ? total + 1 : total;
+  }, 0);
   return {
-    currentRoom: state.getIn(['rooms', state.get('currentRoom')])
+    currentRoom: state.getIn(['rooms', state.get('currentRoom')]),
+    unreadCount
   }
 }
 

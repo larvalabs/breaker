@@ -88,12 +88,9 @@ var Header = React.createClass({
   renderUnreadCount(props){
       let backgroundColor = props.room.getIn(['styles', 'sidebarUnreadColor']);
       let textColor = props.room.getIn(['styles', 'sidebarUnreadTextColor']);
-      let unreadCount = props.unreadCounts.reduce((total, nextValue, nextKey) => {
-        return nextKey == '__HAS_FOCUS__' ? total : total + nextValue
-      }, 0);
-      if(unreadCount > 0) {
+      if(this.props.unreadCount > 0) {
         return <div className="unread-count-total pull-right"><b className="unreadcount label bg-info pull-right"
-                  style={{backgroundColor: backgroundColor, color: textColor}}>{unreadCount}</b></div>
+                  style={{backgroundColor: backgroundColor, color: textColor}}>{this.props.unreadCount}</b></div>
       }
       return null;
   },

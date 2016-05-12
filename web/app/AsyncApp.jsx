@@ -11,15 +11,14 @@ import Config from '../config'
 class AsyncApp extends Component {
   render(){
     const { user, roomName ,
-            rooms, room, userIsMod, unreadCounts,
+            rooms, room, userIsMod, unreadCount,
             sidebarOpen } = this.props;
     return (
-      <ChatDocumentTitle>
+      <ChatDocumentTitle unreadCount={unreadCount} roomName={roomName}>
         <div className={`app app-header-fixed app-aside-fixed ${this.props.roomName}`}>
-          <Header user={user} roomName={roomName} room={room} userIsMod={userIsMod} unreadCounts={unreadCounts}/>
+          <Header user={user} roomName={roomName} room={room} userIsMod={userIsMod} unreadCount={unreadCount}/>
           <Sidebar roomList={rooms}
                    roomName={roomName}
-                   unreadCounts={unreadCounts}
                    open={sidebarOpen}
                    room={room} />
           <Main />
@@ -44,6 +43,15 @@ function mapStateToProps(state) {
     rooms = rooms.filter(room => room.get('name') === roomName);
   }
 
+  let lastReadTimes = state.get('lastSeenTimes');
+  let unreadCount = lastReadTimes.reduce((total, lastReadTime, roomName) => {
+    debugger;
+    return total + state.getIn(['roomMessages', roomName]).reduce((total, messageId) => {
+          let messageTime = state.getIn(['messages', messageId, 'createDateLongUTC']);
+          return messageTime && messageTime - lastReadTime > 0 ? total + 1 : total;
+        }, 0);
+  }, 0);
+
   return {
     user: user,
     userIsMod: userIsMod,
@@ -52,7 +60,8 @@ function mapStateToProps(state) {
     room: state.getIn(['rooms', roomName], Immutable.Map()),
     unreadCounts: state.get('unreadCounts'),
     sidebarOpen: state.getIn(['ui', 'sidebar_open']),
-    settingsOpen: state.getIn(['ui', 'settings_open'])
+    settingsOpen: state.getIn(['ui', 'settings_open']),
+    unreadCount
   }
 }
 

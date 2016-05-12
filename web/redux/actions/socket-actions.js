@@ -1,4 +1,5 @@
 import * as actions from '../constants/socket-constants';
+import socket from '../../socket';
 
 const MESSAGE_TYPE_ROOM_LIST = "roomlist";
 const MESSAGE_TYPE_MESSAGE = "message";
@@ -9,29 +10,51 @@ const MESSAGE_TYPE_MEMBERS = "memberlist";
 const MESSAGE_TYPE_UPDATE_USER = "updateuser";
 const MESSAGE_TYPE_UPDATE_ROOM = "updateroom";
 const MESSAGE_TYPE_UPDATE_MESSAGE = "updatemessage";
+const MESSAGE_TYPE_UPDATE_LAST_READ = "markedread";
 
 export function onSocketMessage(message) {
-  switch(message.type){
-    case MESSAGE_TYPE_ROOM_LIST:
-      return { type: actions.SOCK_ROOM_LIST, message };
-    case MESSAGE_TYPE_MESSAGE:
-      return { type: actions.SOCK_MESSAGE, message};
-    case MESSAGE_TYPE_SERVER:
-      return { type: actions.SOCK_SERVER, message};
-    case MESSAGE_TYPE_JOIN:
-      return { type: actions.SOCK_JOIN, message};
-    case MESSAGE_TYPE_LEAVE:
-      return { type: actions.SOCK_LEAVE, message};
-    case MESSAGE_TYPE_MEMBERS:
-      return { type: actions.SOCK_MEMBERS, message};
-    case MESSAGE_TYPE_UPDATE_USER:
-      return { type: actions.SOCK_UPDATE_USER, message};
-    case MESSAGE_TYPE_UPDATE_ROOM:
-      return { type: actions.SOCK_UPDATE_ROOM, message};
-    case MESSAGE_TYPE_UPDATE_MESSAGE:
-      return { type: actions.SOCK_UPDATE_MESSAGE, message};
-    default:
-      return { type: actions.SOCK_UNKNOWN, message };
+  return (dispatch, getStore) => {
+    switch (message.type) {
+      case MESSAGE_TYPE_ROOM_LIST: {
+        return dispatch({type: actions.SOCK_ROOM_LIST, message});
+      }
+      case MESSAGE_TYPE_MESSAGE: {
+        let store = getStore();
+        let hasFocus = store.getIn(['ui', '__HAS_FOCUS__'], false);
+        let currentRoom = store.get('currentRoom');
+        if(hasFocus && currentRoom == message.room.name){
+          socket().sendRoomMessagesSeen(currentRoom);
+        }
+        return dispatch({type: actions.SOCK_MESSAGE, message});
+      }
+      case MESSAGE_TYPE_SERVER: {
+        return dispatch({type: actions.SOCK_SERVER, message});
+      }
+      case MESSAGE_TYPE_JOIN: {
+        return dispatch({type: actions.SOCK_JOIN, message});
+      }
+      case MESSAGE_TYPE_LEAVE: {
+        return dispatch({type: actions.SOCK_LEAVE, message});
+      }
+      case MESSAGE_TYPE_MEMBERS: {
+        return dispatch({type: actions.SOCK_MEMBERS, message});
+      }
+      case MESSAGE_TYPE_UPDATE_USER: {
+        return dispatch({type: actions.SOCK_UPDATE_USER, message});
+      }
+      case MESSAGE_TYPE_UPDATE_ROOM: {
+        return dispatch({type: actions.SOCK_UPDATE_ROOM, message});
+      }
+      case MESSAGE_TYPE_UPDATE_MESSAGE: {
+        return dispatch({type: actions.SOCK_UPDATE_MESSAGE, message});
+      }
+      case MESSAGE_TYPE_UPDATE_LAST_READ: {
+        return dispatch({type: actions.SOCK_UPDATE_LAST_READ, message});
+      }
+      default: {
+        return dispatch({type: actions.SOCK_UNKNOWN, message});
+      }
+    }
   }
 }
 

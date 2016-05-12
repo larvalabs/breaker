@@ -27,6 +27,15 @@ export default function ui(state=Immutable.Map({connected: false, sidebar_open: 
     case(chatTypes.CHAT_LINK_EXPANDED): {
       return state.set('collapsedLinks', state.get('collapsedLinks', Immutable.Set()).delete(action.messageId));
     }
+    case(chatTypes.CHAT_BLURRED): {
+      return state.set('__HAS_FOCUS__', false);
+    }
+    case(chatTypes.CHAT_FOCUSED): {
+      return state.set('__HAS_FOCUS__', true);
+    }
+    case(chatTypes.CHAT_ROOM_CHANGED): {
+      return state.set('__HAS_FOCUS__', true);
+    }
     default: {
       return state
     }
