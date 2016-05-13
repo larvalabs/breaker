@@ -18,6 +18,10 @@ body {
   background-color: transparent !important;
 }
 
+body:before {
+  background: none !important;
+}
+
 *:focus {
   outline: 0 !important;
 }

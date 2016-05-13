@@ -25,6 +25,9 @@ export function onSocketMessage(message) {
         let currentRoom = store.get('currentRoom');
         if(hasFocus && currentRoom == message.room.name){
           socket().sendRoomMessagesSeen(currentRoom);
+
+          let shapedMessage = {lastReadTime: message.message.createDateLongUTC, room: message.room};
+          dispatch({type: actions.SOCK_UPDATE_LAST_READ, message: shapedMessage});
         }
         return dispatch({type: actions.SOCK_MESSAGE, message});
       }

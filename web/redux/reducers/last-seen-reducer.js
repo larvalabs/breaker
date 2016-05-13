@@ -8,9 +8,6 @@ export default function lastSeen(state=Immutable.Map(), action) {
     case(socketTypes.SOCK_UPDATE_LAST_READ): {
       return state.set(action.message.room.name, action.message.lastReadTime)
     }
-    case(socketTypes.SOCK_MESSAGE): {
-      return state.set(action.message.room.name, action.message.message.createDateLongUTC)
-    }
     case(chatTypes.CHAT_ROOM_CHANGED): {
       return state.set(action.roomName, action.lastMessageTime)
     }
