@@ -9,7 +9,6 @@ export default React.createClass({
     return {
       roomList: Immutable.Map(),
       roomName: null,
-      unreadCounts: Immutable.Map()
     }
   },
   renderYourRooms: function(){
@@ -24,8 +23,7 @@ export default React.createClass({
         this.props.roomList.toArray().map((room) => {
             return <SidebarRoomListElm key={room.get('name')}
                                        room={room}
-                                       active={room.get('name') == this.props.roomName}
-                                       unreadCount={this.props.unreadCounts.get(room.get('name'))}/>;
+                                       active={room.get('name') == this.props.roomName}/>;
         })
       }
     </ul>

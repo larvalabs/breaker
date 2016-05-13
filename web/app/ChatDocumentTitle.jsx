@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import DocumentTitle from 'react-document-title'
 
-class ChatDocumentTitle extends Component {
+export default class ChatDocumentTitle extends Component {
   getTitle(props){
     if(props.unreadCount && props.unreadCount > 0){
       return `(${props.unreadCount}) breaker`
@@ -30,16 +30,3 @@ class ChatDocumentTitle extends Component {
     </DocumentTitle>
   }
 }
-
-function mapStateToProps(state) {
-  let unreadCount = state.get('unreadCounts').reduce((total, nextValue, nextKey) => {
-    return nextKey == '__HAS_FOCUS__' ? total : total + nextValue
-  }, 0);
-
-  return {
-    unreadCount: unreadCount,
-    roomName: state.get('currentRoom')
-  }
-}
-
-export default connect(mapStateToProps)(ChatDocumentTitle)

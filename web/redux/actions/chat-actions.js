@@ -37,17 +37,23 @@ export function chatBlurred(roomName) {
 }
 
 export function chatFocused(roomName) {
+  socket().sendRoomMessagesSeen(roomName);
   return { type: actions.CHAT_FOCUSED, roomName };
 }
 
-function changeRoom(roomName) {
-  return {type: actions.CHAT_ROOM_CHANGED, roomName}
+function changeRoom(roomName, lastMessageTime) {
+  return {type: actions.CHAT_ROOM_CHANGED, roomName, lastMessageTime}
 }
 
 export function handleChangeRoom(roomName) {
-  return dispatch => {
+  return (dispatch, getState) => {
     socket().sendRoomMessagesSeen(roomName);
+    
     window.history.replaceState({}, 'Breaker: ', '/r/' + roomName);
-    dispatch(changeRoom(roomName))
+    
+    let state = getState();
+    let lastMessageTime = state.getIn(['messages', state.getIn(['roomMessages', roomName]).last(), 'createDateLongUTC']);
+    
+    dispatch(changeRoom(roomName, lastMessageTime))
   }
 }

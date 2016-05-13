@@ -10,3 +10,4 @@ export const SOCK_UNKNOWN = 'sock-unknown';
 export const SOCK_UPDATE_USER = 'sock-update-user';
 export const SOCK_UPDATE_ROOM = 'sock-update-room';
 export const SOCK_UPDATE_MESSAGE = 'sock-update-message';
+export const SOCK_UPDATE_LAST_READ = 'sock-update-last-read';
