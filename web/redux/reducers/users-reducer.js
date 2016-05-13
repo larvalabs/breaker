@@ -1,5 +1,6 @@
 import * as socketTypes from '../constants/socket-constants'
 import Immutable from 'immutable'
+import stateFromJS from '../../util/stateFromJS'
 
 
 export default function users(state=Immutable.Map(), action) {
@@ -20,6 +21,9 @@ export default function users(state=Immutable.Map(), action) {
     }
     case (socketTypes.SOCK_UPDATE_USER): {
       return state.set(action.message.user.username, Immutable.fromJS(action.message.user));
+    }
+    case(socketTypes.SOCK_REFRESH): {
+      return stateFromJS(action.state.users)
     }
     default:
       return state

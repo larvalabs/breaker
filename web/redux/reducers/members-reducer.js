@@ -1,5 +1,6 @@
 import * as socketTypes from '../constants/socket-constants'
 import Immutable from 'immutable'
+import stateFromJS from '../../util/stateFromJS'
 
 
 function moveMemberOfflineState(state, action){
@@ -38,6 +39,9 @@ export default function members(state=Immutable.Map(), action) {
     }
     case (socketTypes.SOCK_LEAVE): {
       return moveMemberOfflineState(state, action);
+    }
+    case(socketTypes.SOCK_REFRESH): {
+      return stateFromJS(action.state.members)
     }
     default:
       return state;

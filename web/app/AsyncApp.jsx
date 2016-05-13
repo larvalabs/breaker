@@ -45,7 +45,6 @@ function mapStateToProps(state) {
 
   let lastReadTimes = state.get('lastSeenTimes');
   let unreadCount = lastReadTimes.reduce((total, lastReadTime, roomName) => {
-    debugger;
     return total + state.getIn(['roomMessages', roomName]).reduce((total, messageId) => {
           let messageTime = state.getIn(['messages', messageId, 'createDateLongUTC']);
           return messageTime && messageTime - lastReadTime > 0 ? total + 1 : total;
