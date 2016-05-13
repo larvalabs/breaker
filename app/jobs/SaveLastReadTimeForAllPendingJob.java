@@ -12,7 +12,7 @@ import java.util.Set;
 /**
  * Created by matt on 1/5/16.
  */
-@Every("1min")
+@Every("5s")
 public class SaveLastReadTimeForAllPendingJob extends Job {
 
     public static final String REDISKEY_PENDINGUSERNAMES = "savelastreadpending";
