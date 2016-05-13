@@ -264,6 +264,12 @@ public class WebSocket extends PreloadUserController {
 
         private static void processEvent(JsonUser[] userArray, HashMap<String, RoomConnection> roomConnections, ChatRoomStream.Event awaitResult) {
             JsonUser user = userArray[0];
+
+            // Bail out if this is directed a specific user, don't process
+            if (awaitResult.toUsername != null && !awaitResult.toUsername.equals(user.username)) {
+                return;
+            }
+
             if (awaitResult instanceof ChatRoomStream.ServerCommand) {
                 // Case: A command affecting users
                 ChatRoomStream.ServerCommand commandEvent = (ChatRoomStream.ServerCommand) awaitResult;
@@ -282,11 +288,6 @@ public class WebSocket extends PreloadUserController {
                         sendLocalServerMessage(roomConnection, user.username, commandEvent.command.username + " was kicked.");
                         disconnect();
                     }
-                }
-            } else if (awaitResult instanceof ChatRoomStream.ServerMessage) {
-                ChatRoomStream.ServerMessage msg = (ChatRoomStream.ServerMessage) awaitResult;
-                if (msg.toUsername.equals(user.username)) {
-                    outbound.send(msg.toJson());
                 }
             } else if (awaitResult instanceof ChatRoomStream.UpdateUserEvent) {
                 ChatRoomStream.UpdateUserEvent updateEvent = (ChatRoomStream.UpdateUserEvent) awaitResult;
@@ -364,7 +365,7 @@ public class WebSocket extends PreloadUserController {
                             Logger.debug("User " + user.username + " marking messages read for " + roomName);
 
                             long newLastReadTime = ChatRoom.markMessagesReadForUser(roomConnection.room.name, user.username);
-                            outbound.send(new ChatRoomStream.MarkedRead(roomConnection.room, newLastReadTime).toJson());
+                            roomConnection.chatRoomEventStream.publishEvent(new ChatRoomStream.MarkedRead(roomConnection.room, user.username, newLastReadTime));
                         } else if (ChatCommands.isCommand(message)) {
                             try {
                                 ChatRoom room = roomConnection.room.loadModelFromDatabase();

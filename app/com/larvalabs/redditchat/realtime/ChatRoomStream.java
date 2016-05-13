@@ -175,6 +175,7 @@ public class ChatRoomStream {
         public String type;
         public Long timestamp;
         public JsonChatRoom room;
+        public String toUsername;
 
         public static final String TYPE_ROOMLIST = "roomlist";
         public static final String TYPE_MEMBERLIST = "memberlist";
@@ -195,6 +196,11 @@ public class ChatRoomStream {
             this.type = type;
             this.room = room;
             this.timestamp = System.currentTimeMillis();
+        }
+
+        public Event(String type, JsonChatRoom room, String toUsername) {
+            this(type, room);
+            this.toUsername = toUsername;
         }
 
         public String toJson() {
@@ -266,8 +272,8 @@ public class ChatRoomStream {
         public MarkedRead() {
         }
 
-        public MarkedRead(JsonChatRoom room, long lastReadTime) {
-            super(TYPE_MARKEDREAD, room);
+        public MarkedRead(JsonChatRoom room, String forUsername, long lastReadTime) {
+            super(TYPE_MARKEDREAD, room, forUsername);
             this.lastReadTime = lastReadTime;
         }
     }
@@ -350,7 +356,6 @@ public class ChatRoomStream {
     }
 
     public static class ServerMessage extends Message {
-        public String toUsername;
         public ServerMessage(JsonChatRoom room, String toUsername, JsonUser serverBotUser, String message) {
             super(JsonMessage.makePresavedMessage(Util.getUUID(), Constants.SYSTEM_USERNAME, room.name, "<i>" + message + "</i>"), room, serverBotUser);
             this.toUsername = toUsername;
