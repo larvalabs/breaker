@@ -1,17 +1,24 @@
 import React, {Component} from 'react'
 import formatBytes from '../util/formatters'
+import {toggleCollapseLink} from '../redux/actions/chat-actions'
+import { connect } from 'react-redux'
+import Immutable from 'immutable'
 
 export default class TitleCollapsible extends Component {
   constructor(props){
     super(props);
     this.handleClick = this.handleClick.bind(this);
+    this.handleToggleCollapse = this.handleToggleCollapse.bind(this);
   }
   handleClick(){
     this.props.onToggleCollapse();
   }
+  handleToggleCollapse(){
+    this.props.dispatch(toggleCollapseLink(this.props.uuid));
+  }
   renderCollapse(){
     let classes = this.props.collapsed ? "fa-caret-right" : "fa-caret-down";
-    return <i className={`fa ${classes} link-collapse`} onClick={this.handleClick}></i>
+    return <i className={`fa ${classes} link-collapse`} onClick={this.handleToggleCollapse}></i>
   }
   renderSize(){
     if(!this.props.size){
@@ -52,3 +59,12 @@ TitleCollapsible.defaultProps = {
   collapsed: false,
   onToggleCollapse: () => {}
 };
+
+function mapStateToProps(state, ownProps) {
+  
+  return {
+    collapsed: state.getIn(['ui', 'collapsedLinks'], Immutable.Map()).contains(ownProps.uuid)
+  }
+}
+
+export default connect(mapStateToProps)(TitleCollapsible)
