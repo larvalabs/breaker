@@ -1,17 +1,24 @@
 import React, {Component} from 'react'
 import formatBytes from '../util/formatters'
+import {toggleCollapseLink} from '../redux/actions/chat-actions'
+import { connect } from 'react-redux'
+import Immutable from 'immutable'
 
 export default class TitleCollapsible extends Component {
   constructor(props){
     super(props);
     this.handleClick = this.handleClick.bind(this);
+    this.handleToggleCollapse = this.handleToggleCollapse.bind(this);
   }
   handleClick(){
     this.props.onToggleCollapse();
   }
+  handleToggleCollapse(){
+    this.props.dispatch(toggleCollapseLink(this.props.uuid));
+  }
   renderCollapse(){
     let classes = this.props.collapsed ? "fa-caret-right" : "fa-caret-down";
-    return <i className={`fa ${classes} link-collapse`} onClick={this.handleClick}></i>
+    return <i className={`fa ${classes} link-collapse`} onClick={this.handleToggleCollapse}></i>
   }
   renderSize(){
     if(!this.props.size){
@@ -19,6 +26,13 @@ export default class TitleCollapsible extends Component {
     }
 
     return <span> ({formatBytes(this.props.size, 0)})</span>
+  }
+  renderBody(){
+    if(this.props.collapsed){
+      return null
+    }
+    
+    return this.props.children
   }
   render(){
     let title = this.props.title;
@@ -30,10 +44,13 @@ export default class TitleCollapsible extends Component {
       return null
     }
 
-    return <h5 className="title">
-        <a href={this.props.url} target="_blank">{title}</a>{this.renderSize()}
+    return <div>
+      <h5 className="title">
+      <a href={this.props.url} target="_blank">{title}</a>{this.renderSize()}
         {this.renderCollapse()}
       </h5>
+      {this.renderBody()}
+    </div>
   }
 }
 
@@ -43,3 +60,12 @@ TitleCollapsible.defaultProps = {
   collapsed: false,
   onToggleCollapse: () => {}
 };
+
+function mapStateToProps(state, ownProps) {
+  
+  return {
+    collapsed: state.getIn(['ui', 'collapsedLinks'], Immutable.Map()).contains(ownProps.uuid)
+  }
+}
+
+export default connect(mapStateToProps)(TitleCollapsible)

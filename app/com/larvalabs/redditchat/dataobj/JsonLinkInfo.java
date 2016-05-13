@@ -35,6 +35,7 @@ public class JsonLinkInfo {
         info.setTitle(webLink.getTitle());
         info.setDescription(webLink.getDescription());
         info.setImageUrl(webLink.getImageUrl());
+        info.setVideoUrl(webLink.getVideoUrl());
         if (webLink.getImageWidth() > 0) {
             info.setImageWidth(webLink.getImageWidth());
         }
