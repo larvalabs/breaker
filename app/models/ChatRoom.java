@@ -314,7 +314,11 @@ public class ChatRoom extends Model {
     // Do stuff zone
 
     public static ChatRoom findByName(String name) {
-        return find("byNameLike", name.toLowerCase()).first();
+        if (name == null) {
+            return null;
+        }
+        name = name.toLowerCase().trim();
+        return find("LOWER(name)", name).first();
     }
 
     private static final String BASE_MSG_QUERY = "room = ? and deleted = false and flagCount < "+ Constants.THRESHOLD_MESSAGE_FLAG

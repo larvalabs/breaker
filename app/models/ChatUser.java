@@ -337,7 +337,11 @@ public class ChatUser extends Model {
     }
 
     public static ChatUser findByUsername(String username) {
-        return ChatUser.find("username", username).first();
+        if (username == null) {
+            return null;
+        }
+        username = username.toLowerCase().trim();
+        return ChatUser.find("LOWER(username) = ?", username).first();
     }
 
     public void joinChatRoom(ChatRoom chatRoom) throws UserBannedException, NoAccessToPrivateRoomException, UnableToCheckAccessToPrivateRoom {
