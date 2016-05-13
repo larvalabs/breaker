@@ -1,5 +1,6 @@
 export const SOCK_OPEN = 'sock-open';
 export const SOCK_CLOSE = 'sock-close';
+export const SOCK_REFRESH = 'sock-refresh';
 export const SOCK_ROOM_LIST = 'sock-room-list';
 export const SOCK_MESSAGE = 'sock-message';
 export const SOCK_SERVER = 'sock-server';

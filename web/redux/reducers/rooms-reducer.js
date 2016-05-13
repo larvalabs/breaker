@@ -1,5 +1,6 @@
 import * as socketTypes from '../constants/socket-constants'
 import Immutable from 'immutable'
+import stateFromJS from '../../util/stateFromJS'
 
 
 export default function rooms(state=Immutable.Map(), action) {
@@ -17,6 +18,9 @@ export default function rooms(state=Immutable.Map(), action) {
     }
     case (socketTypes.SOCK_UPDATE_ROOM): {
       return state.set(action.message.room.name, Immutable.fromJS(action.message.room));
+    }
+    case(socketTypes.SOCK_REFRESH): {
+      return stateFromJS(action.state.rooms)
     }
     default:
       return state

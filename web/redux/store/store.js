@@ -1,15 +1,4 @@
 import configureStore from './configureStore';
-import Immutable from 'immutable'
+import stateFromJS from '../../util/stateFromJS'
 
-
-export default configureStore(Immutable.fromJS(window.__INITIAL_STATE__, (key, value) => {
-  if(key === "rooms"){
-    return value.toOrderedMap();
-  }
-  if(key === "online" || key === "offline" || key === "mods"){
-    return value.toOrderedSet();
-  }
-
-  var isIndexed = Immutable.Iterable.isIndexed(value);
-  return isIndexed ? value.toList() : value.toMap();
-}));
+export default configureStore(stateFromJS(window.__INITIAL_STATE__));
