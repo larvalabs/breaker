@@ -5342,6 +5342,7 @@ li.chat-message-root .message-body, li.chat-message-short .message-body, li.chat
 .link-info {
   border-left: 5px solid #CFDADD;
   padding-left: 10px;
+  margin-bottom: 5px;
 }
 
 .link-info h5.title {
