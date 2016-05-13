@@ -281,6 +281,13 @@ public class Application extends PreloadUserController {
                 user.lastResponseApiMe = me.toString();
                 user.save();
 
+                ChatRoom defaultChat = ChatRoom.findByName(Constants.CHATROOM_DEFAULT);
+                try {
+                    user.joinChatRoom(defaultChat);
+                } catch (ChatUser.UserBannedException | ChatUser.NoAccessToPrivateRoomException | ChatUser.UnableToCheckAccessToPrivateRoom e) {
+                    Logger.error(e, "Unable to join default chat room for user " + username);
+                }
+
                 new UpdateUserFromRedditJob(user.getId()).now();
 
                 setUserInSession(user);
