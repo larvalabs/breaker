@@ -51,7 +51,7 @@ public class JsonUtil {
     public static FullState loadFullStateForUser(ChatUser user) {
         FullState state = new FullState();
 
-        Query getAllStuffQuery = JPA.em().createQuery("select ur from ChatUserRoomJoin ur join fetch ur.room urr join fetch ur.user u where ur.room in (select room from ChatUserRoomJoin ur2 where ur2.user = :user)")
+        Query getAllStuffQuery = JPA.em().createQuery("select ur from ChatUserRoomJoin ur join fetch ur.room urr join fetch ur.user u where ur.user in (select user from ChatUserRoomJoin ur2 where ur2.user = :user)")
                 .setParameter("user", user);
         List<ChatUserRoomJoin> resultList = getAllStuffQuery.getResultList();
 
