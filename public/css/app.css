@@ -5379,6 +5379,7 @@ li.chat-message-root .message-body, li.chat-message-short .message-body, li.chat
   width: 400px;
   height: 300px;
   max-width: 100%;
+  background: #EDF1F2;
 }
 .video-thumbnail {
   position: relative;
