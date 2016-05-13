@@ -5381,11 +5381,11 @@ li.chat-message-root .message-body, li.chat-message-short .message-body, li.chat
   max-width: 100%;
   background: #EDF1F2;
 }
-.video-thumbnail {
+.video .video-thumbnail {
   position: relative;
 }
 
-.video-buttons {
+.video .video-buttons {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -5400,23 +5400,23 @@ li.chat-message-root .message-body, li.chat-message-short .message-body, li.chat
   white-space: nowrap;
 }
 
-.video-button {
+.video .video-button {
   font-size: 45px;
   color: #CCCDCF;
   display: inline-block;
 }
 
-.video-button:hover{
+.video .video-button:hover{
   color: #fff;
   cursor: pointer;
 }
-.button-left {
+.video .button-left {
   width: 30%;
   margin-left: 5%;
   text-align: left;
 }
 
-.button-right {
+.video .button-right {
   width: 50%;
   margin-right: 5%;
   text-align: right;
