@@ -15,7 +15,7 @@ import java.util.*;
 public class JsonUtil {
 
     public static class FullState {
-        Comparator<String> lowerStringComparator = new Comparator<String>() {
+        transient Comparator<String> lowerStringComparator = new Comparator<String>() {
             @Override
             public int compare(String o1, String o2) {
                 if (o1 == o2) {
@@ -31,7 +31,7 @@ public class JsonUtil {
             }
         };
 
-        Comparator<JsonMessage> messageTimeComparator = new Comparator<JsonMessage>() {
+        transient Comparator<JsonMessage> messageTimeComparator = new Comparator<JsonMessage>() {
             @Override
             public int compare(JsonMessage o1, JsonMessage o2) {
                 return new Long(o1.createDateLongUTC).compareTo(o2.createDateLongUTC);
