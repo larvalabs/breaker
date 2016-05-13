@@ -1,5 +1,6 @@
 import * as actions from '../constants/socket-constants';
 import socket from '../../socket';
+import { API } from '../../api'
 
 const MESSAGE_TYPE_ROOM_LIST = "roomlist";
 const MESSAGE_TYPE_MESSAGE = "message";
@@ -84,5 +85,11 @@ export function handleSocketClose(store, socket) {
     socket.stopRoomPing(currentRoom);
     
     dispatch(onSocketClose())
+  }
+}
+
+export function handleStateRefresh() {
+  return dispatch => {
+    API.requestInitialState().then((data) => dispatch({ type: actions.SOCK_REFRESH, state: data.data }))
   }
 }

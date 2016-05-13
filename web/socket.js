@@ -3,7 +3,7 @@ import * as socketActions from './redux/actions/socket-actions'
 import Config from './config'
 
 var socket = null;
-
+var lastPingTime = null;
 function init() {
   let websocketUrl = Config.websocket_url.replace('ws:', 'wss:');
   socket = new ReconnectingWebSocket(websocketUrl);
@@ -26,6 +26,10 @@ function init() {
     if(pingTimeout){
       window.clearInterval(pingTimeout);
     }
+
+    if(!lastPingTime){
+      lastPingTime = Date.now();
+    }
     
     pingTimeout = window.setInterval(function () {
       if (socket.readyState !== 1) {
@@ -33,6 +37,11 @@ function init() {
         return;
       }
       
+      if(Date.now() - lastPingTime > Config.settings.max_stale_state_millis){
+        store.dispatch(socketActions.handleStateRefresh())
+      }
+      lastPingTime = Date.now();
+
       socket.sendPing(room);
         
     }, Config.settings.ping_timeout);

@@ -12,6 +12,7 @@
     "url": ""
   },
   "dependencies": {
+    "axios": "^0.11.0",
     "babel-core": "^6.7.6",
     "babel-loader": "^6.2.4",
     "babel-plugin-react-transform": "^2.0.2",
