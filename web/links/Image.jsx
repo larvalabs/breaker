@@ -13,11 +13,7 @@ class Image extends Component {
   handleToggleCollapse(){
     this.props.dispatch(toggleCollapseLink(this.props.linkInfo.get('uuid')));
   }
-  renderImage(collapsed){
-    if(collapsed){
-      return null;
-    }
-
+  renderImage(){
     return <img src={this.props.linkInfo.get('imageUrl')} className="image-preview"/>
   }
   render(){
@@ -26,8 +22,9 @@ class Image extends Component {
     return <div className="link-info">
       <TitleCollapsible title={this.props.linkInfo.get('title')} url={this.props.linkInfo.get('url')}
                         collapsed={collapsed} onToggleCollapse={this.handleToggleCollapse}
-                        size={this.props.linkInfo.get('imageSize')}/>
-      {this.renderImage(collapsed)}
+                        size={this.props.linkInfo.get('imageSize')}>
+        {this.renderImage(collapsed)}
+      </TitleCollapsible>
     </div>;
   }
 }

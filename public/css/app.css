@@ -5374,3 +5374,49 @@ li.chat-message-root .message-body, li.chat-message-short .message-body, li.chat
   margin-left: 5px;
   cursor: pointer;
 }
+
+.video {
+  width: 400px;
+  height: 300px;
+  max-width: 100%;
+}
+.video-thumbnail {
+  position: relative;
+}
+
+.video-buttons {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 50%;
+  background-color: rgba(0,0,0,.4);
+  min-width: 150px;
+  padding: 5%;
+  border-radius: .7rem;
+  transform: translateX(-50%) translateY(-50%);
+  text-align: center;
+  font-size: 0rem;
+  white-space: nowrap;
+}
+
+.video-button {
+  font-size: 45px;
+  color: #CCCDCF;
+  display: inline-block;
+}
+
+.video-button:hover{
+  color: #fff;
+  cursor: pointer;
+}
+.button-left {
+  width: 30%;
+  margin-left: 5%;
+  text-align: left;
+}
+
+.button-right {
+  width: 50%;
+  margin-right: 5%;
+  text-align: right;
+}
