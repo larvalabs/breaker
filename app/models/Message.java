@@ -349,6 +349,10 @@ public class Message extends Model {
         return mentioned;
     }
 
+    public static Message findByUUID(String uuid) {
+        return Message.find("uuid = ?", uuid).first();
+    }
+
     public static class MentionMessage {
         public String replacedMessage;
         public List<String> usernames;

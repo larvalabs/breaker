@@ -17,7 +17,10 @@ public class Stats {
         WEBSOCKET_CONNECT("websocket.connect"), // Using this until I can find a place to get all connected sockets
         INITIALPAGE_TIME("initialpage"),
         USER_STREAMS_OPEN("userstreams"),
-        REDIS_MESSAGES("redismessage");
+        REDIS_MESSAGES("redismessage"),
+        REDDIT_PM_SUCCESS("redditpm.success"),
+        REDDIT_PM_FAILED("redditpm.failed"),
+        ;
 
         private String key;
 

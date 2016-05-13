@@ -10,6 +10,7 @@ import com.larvalabs.redditchat.dataobj.JsonMessage;
 import com.larvalabs.redditchat.dataobj.JsonUser;
 import com.larvalabs.redditchat.util.Stats;
 import com.larvalabs.redditchat.util.Util;
+import controllers.WebSocket;
 import jobs.RedisQueueJob;
 import models.ChatRoom;
 import models.ChatUser;
@@ -107,6 +108,17 @@ public class ChatRoomStream {
             return;
         }
         publishEvent(new Message(message, room, user));
+    }
+
+    /**
+     * A transient message (doesn't get saved to database or cache) from the server to a specific user
+     * @param room
+     * @param toUsername
+     * @param message
+     */
+    public void sayFromServer(JsonChatRoom room, String toUsername, String message) {
+        ServerMessage serverMessage = new ServerMessage(room, toUsername, JsonUser.fromUser(ChatUser.getSystemUser(), true), message);
+        publishEvent(serverMessage);
     }
 
     public void sendMessageUpdate(ChatRoom room, models.Message message) {
@@ -338,8 +350,10 @@ public class ChatRoomStream {
     }
 
     public static class ServerMessage extends Message {
-        public ServerMessage(JsonChatRoom room, JsonUser serverBotUser, String message) {
+        public String toUsername;
+        public ServerMessage(JsonChatRoom room, String toUsername, JsonUser serverBotUser, String message) {
             super(JsonMessage.makePresavedMessage(Util.getUUID(), Constants.SYSTEM_USERNAME, room.name, "<i>" + message + "</i>"), room, serverBotUser);
+            this.toUsername = toUsername;
         }
     }
 

@@ -10,9 +10,7 @@ import com.larvalabs.redditchat.util.Util;
 import jobs.RedditLinkBotJob;
 import jobs.UpdateAllUsersFromRedditRecurringJob;
 import jobs.UpdateUserFromRedditJob;
-import models.ChatRoom;
-import models.ChatUser;
-import models.ChatUserRoomJoin;
+import models.*;
 import net.dean.jraw.ApiException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
@@ -497,5 +495,27 @@ public class Application extends PreloadUserController {
     public static void initialState() {
         JsonUtil.FullState fullState = JsonUtil.loadFullStateForUser(connected());
         renderJSON(fullState);
+    }
+
+    public static void optOut(String uuid, String username) {
+        if (connected() != null) {
+            Logger.info("User is logged in, redirect to prefs.");
+            UserManage.prefs();
+            return;
+        }
+
+        Message message = Message.findByUUID(uuid);
+        if (message != null) {
+            List<ChatUser> mentionedUsers = message.getMentionedUsers();
+            for (ChatUser mentionedUser : mentionedUsers) {
+                if (mentionedUser.getUsername().equalsIgnoreCase(username)) {
+                    OptOutUser.addOptOut(mentionedUser.getUsername());
+                    break;
+                }
+            }
+            renderText("You are now opted out of all future messages.");
+        } else {
+            renderText("Invalid.");
+        }
     }
 }

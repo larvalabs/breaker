@@ -118,7 +118,7 @@ public class ChatCommands {
         JsonUser systemJsonUser = JsonUser.fromUser(systemUser, true);
         if (!isCommand(message)) {
             Logger.debug("Error processing message, notifying user.");
-            socket.send(new ChatRoomStream.ServerMessage(jsonChatRoom, systemJsonUser, "Error processing command.").toJson());
+            socket.send(new ChatRoomStream.ServerMessage(jsonChatRoom, executingUser.getUsername(), systemJsonUser, "Error processing command.").toJson());
             return;
         }
 
@@ -164,13 +164,13 @@ public class ChatCommands {
                 }
 
                 if (command.type == CommandType.BAN) {
-                    socket.send(new ChatRoomStream.ServerMessage(jsonChatRoom, systemJsonUser, "User " + command.username + " has been banned.").toJson());
+                    socket.send(new ChatRoomStream.ServerMessage(jsonChatRoom, executingUser.getUsername(), systemJsonUser, "User " + command.username + " has been banned.").toJson());
                 } else {
-                    socket.send(new ChatRoomStream.ServerMessage(jsonChatRoom, systemJsonUser, "User " + command.username + " is now unbanned.").toJson());
+                    socket.send(new ChatRoomStream.ServerMessage(jsonChatRoom, executingUser.getUsername(), systemJsonUser, "User " + command.username + " is now unbanned.").toJson());
                 }
                 stream.publishEvent(new ChatRoomStream.ServerCommand(jsonChatRoom, command));
             } else {
-                socket.send(new ChatRoomStream.ServerMessage(jsonChatRoom, systemJsonUser, "User " + command.username + " was not found.").toJson());
+                socket.send(new ChatRoomStream.ServerMessage(jsonChatRoom, executingUser.getUsername(), systemJsonUser, "User " + command.username + " was not found.").toJson());
             }
         } else if (command.type == CommandType.SITEBAN) {
             ChatUser user = ChatUser.findByUsername(command.username);
@@ -178,13 +178,13 @@ public class ChatCommands {
                 user.setShadowBan(true);
                 user.save();
                 user.deleteAllMessages();
-                socket.send(new ChatRoomStream.ServerMessage(jsonChatRoom, systemJsonUser, "User " + command.username + " has been banned.").toJson());
+                socket.send(new ChatRoomStream.ServerMessage(jsonChatRoom, executingUser.getUsername(), systemJsonUser, "User " + command.username + " has been banned.").toJson());
                 stream.publishEvent(new ChatRoomStream.ServerCommand(jsonChatRoom, command));
             } else {
-                socket.send(new ChatRoomStream.ServerMessage(jsonChatRoom, systemJsonUser, "User " + command.username + " was not found.").toJson());
+                socket.send(new ChatRoomStream.ServerMessage(jsonChatRoom, executingUser.getUsername(), systemJsonUser, "User " + command.username + " was not found.").toJson());
             }
         } else if (command.type == CommandType.KICK) {
-            socket.send(new ChatRoomStream.ServerMessage(jsonChatRoom, systemJsonUser, "User " + command.username + " kicked.").toJson());
+            socket.send(new ChatRoomStream.ServerMessage(jsonChatRoom, executingUser.getUsername(), systemJsonUser, "User " + command.username + " kicked.").toJson());
             stream.publishEvent(new ChatRoomStream.ServerCommand(jsonChatRoom, command));
         }
     }

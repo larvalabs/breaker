@@ -279,15 +279,27 @@ public class WebSocket extends PreloadUserController {
                         userModel.leaveChatRoom(roomModel);
                         roomConnections.remove(commandEvent.room.name);
 
-                        sendLocalServerMessage(roomConnection, commandEvent.command.username + " was kicked.");
+                        sendLocalServerMessage(roomConnection, user.username, commandEvent.command.username + " was kicked.");
                         disconnect();
                     }
+                }
+            } else if (awaitResult instanceof ChatRoomStream.ServerMessage) {
+                ChatRoomStream.ServerMessage msg = (ChatRoomStream.ServerMessage) awaitResult;
+                if (msg.toUsername.equals(user.username)) {
+                    outbound.send(msg.toJson());
                 }
             } else if (awaitResult instanceof ChatRoomStream.UpdateUserEvent) {
                 ChatRoomStream.UpdateUserEvent updateEvent = (ChatRoomStream.UpdateUserEvent) awaitResult;
                 if (updateEvent.user.equals(user)) {
                     Logger.info("Updated local user object from event: " + updateEvent.user.username);
                     userArray[0] = updateEvent.user;
+                }
+                outbound.send(updateEvent.toJson());
+            } else if (awaitResult instanceof ChatRoomStream.UpdateRoomEvent) {
+                ChatRoomStream.UpdateRoomEvent updateEvent = (ChatRoomStream.UpdateRoomEvent) awaitResult;
+                if (roomConnections.containsKey(updateEvent.room.name)) {
+                    Logger.info("Updated local room object from event: " + updateEvent.room.name);
+                    roomConnections.get(updateEvent.room.name).room = updateEvent.room;
                 }
                 outbound.send(updateEvent.toJson());
             } else if (awaitResult instanceof ChatRoomStream.UpdateMessageEvent) {
@@ -360,9 +372,9 @@ public class WebSocket extends PreloadUserController {
                                 ChatUser systemUser = ChatUser.getSystemUser();
                                 ChatCommands.execCommand(execUser, room, message, roomConnection.chatRoomEventStream, outbound, systemUser);
                             } catch (ChatCommands.NotEnoughPermissionsException e) {
-                                sendLocalServerMessage(roomConnection, "You don't have permission to execute this command.");
+                                sendLocalServerMessage(roomConnection, user.username, "You don't have permission to execute this command.");
                             } catch (ChatCommands.CommandNotRecognizedException e) {
-                                sendLocalServerMessage(roomConnection, "Command not recognized.");
+                                sendLocalServerMessage(roomConnection, user.username, "Command not recognized.");
                             }
                         } else {
                             if (roomConnection.canPost) {
@@ -374,7 +386,7 @@ public class WebSocket extends PreloadUserController {
                             } else {
                                 Logger.info("User " + user.username + " cannot post to " + roomName);
                                 // Direct message to user who tried to send this
-                                sendLocalServerMessage(roomConnection, "You cannot post to this room.");
+                                sendLocalServerMessage(roomConnection, user.username, "You cannot post to this room.");
                             }
                         }
                     } else {
@@ -386,8 +398,8 @@ public class WebSocket extends PreloadUserController {
             }
         }
 
-        private static void sendLocalServerMessage(RoomConnection roomConnection, String message) {
-            outbound.send(new ChatRoomStream.ServerMessage(roomConnection.room, JsonUser.fromUser(ChatUser.getSystemUser(), true), message).toJson());
+        private static void sendLocalServerMessage(RoomConnection roomConnection, String toUsername, String message) {
+            outbound.send(new ChatRoomStream.ServerMessage(roomConnection.room, toUsername, JsonUser.fromUser(ChatUser.getSystemUser(), true), message).toJson());
         }
 
         private static void addConnection(ChatUser userModel, JsonUser user, String connectionId, HashMap<String, RoomConnection> roomConnections, ChatRoom room) {

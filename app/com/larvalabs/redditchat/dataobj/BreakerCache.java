@@ -81,7 +81,7 @@ public class BreakerCache {
     }
 
     public static void handleEvent(ChatRoomStream.Event event) {
-        if (event instanceof ChatRoomStream.Message) {
+        if (event instanceof ChatRoomStream.Message && !(event instanceof ChatRoomStream.ServerMessage)) {
             ChatRoomStream.Message messageEvent = (ChatRoomStream.Message) event;
             clearMessagesCache(messageEvent.room.name);
         } else if (event instanceof ChatRoomStream.Join) {
