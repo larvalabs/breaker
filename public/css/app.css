@@ -18,6 +18,10 @@ body {
   background-color: transparent !important;
 }
 
+body{
+  background: none !important;
+}
+
 body:before {
   background: none !important;
 }
