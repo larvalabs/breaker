@@ -12,6 +12,7 @@ import play.Logger;
 import play.jobs.Job;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -23,13 +24,15 @@ public class SaveNewMessageJob extends Job<Message> {
     private String username;
     private String roomName;
     private String messageText;
+    private Date createDate;
     private Message savedMessage;
 
-    public SaveNewMessageJob(String uuid, String username, String roomName, String messageText) {
+    public SaveNewMessageJob(String uuid, String username, String roomName, String messageText, Date createDate) {
         this.uuid = uuid;
         this.username = username;
         this.roomName = roomName;
         this.messageText = messageText;
+        this.createDate = createDate;
     }
 
     @Override
@@ -38,6 +41,7 @@ public class SaveNewMessageJob extends Job<Message> {
         ChatRoom chatRoom = ChatRoom.findByName(roomName);
         ChatUser chatUser = ChatUser.findByUsername(username);
         savedMessage = new Message(uuid, chatUser, chatRoom, messageText);
+        savedMessage.setCreateDate(createDate);
         savedMessage.unfurlLinks();
         savedMessage.save();
 

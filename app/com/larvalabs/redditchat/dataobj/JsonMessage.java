@@ -42,7 +42,7 @@ public class JsonMessage implements Serializable {
 //    public String translatedLanguage;
 
     public JsonMessage(long id, String uuid, String username, String roomName, String message, String imageUrl, String imageThumbUrl, int likeCount, boolean userDidLike,
-                       Date createDate, long createDateLongUTC, boolean newSinceLastSession, String detectedLanguage) {
+                       Date createDate, boolean newSinceLastSession, String detectedLanguage) {
         this.id = id;
         this.uuid = uuid;
         this.username = username;
@@ -53,7 +53,7 @@ public class JsonMessage implements Serializable {
         this.likeCount = likeCount;
         this.userDidLike = userDidLike;
         this.createDate = createDate;
-        this.createDateLongUTC = createDateLongUTC;
+        this.createDateLongUTC = createDate.getTime();
         isNewSinceLastSession = newSinceLastSession;
         this.detectedLanguage = detectedLanguage;
         try {
@@ -81,7 +81,7 @@ public class JsonMessage implements Serializable {
     public static JsonMessage from(Message message, String username, String roomName) {
         return new JsonMessage(message.getId(), message.getUuid(), username, roomName,
                 message.messageText, message.getImageUrl(), message.getImageThumbUrl(),
-                message.getLikeCount(), false, message.createDate, message.createDate.getTime(),
+                message.getLikeCount(), false, message.createDate,
                 false, message.getLanguageDetected());
     }
 
@@ -98,7 +98,7 @@ public class JsonMessage implements Serializable {
         }
         return new JsonMessage(message.getId(), message.getUuid(), message.getUser().getUsername(), message.getRoom().getName(),
                 message.messageText, message.getImageUrl(), message.getImageThumbUrl(),
-                message.getLikeCount(), didLikeMessage, message.createDate, message.createDate.getTime(),
+                message.getLikeCount(), didLikeMessage, message.createDate,
                 isNewSinceLastSession, message.getLanguageDetected());
     }
 
