@@ -33,6 +33,7 @@ function mapStateToProps(state) {
   let user = state.get('authUser');
   let members = state.getIn(['members']);
   let rooms = state.get('rooms');
+  let lastReadTimes = state.get('lastSeenTimes');
 
   let userIsMod;
   if (members && members.get('breakerapp')) {
@@ -41,9 +42,10 @@ function mapStateToProps(state) {
 
   if(Config.guest){
     rooms = rooms.filter(room => room.get('name') === roomName);
+    lastReadTimes = lastReadTimes.filter((_, currRoomName) => currRoomName === roomName)
   }
 
-  let lastReadTimes = state.get('lastSeenTimes');
+
   let unreadCount = lastReadTimes.reduce((total, lastReadTime, roomName) => {
     return total + state.getIn(['roomMessages', roomName]).reduce((total, messageId) => {
           let messageTime = state.getIn(['messages', messageId, 'createDateLongUTC']);
