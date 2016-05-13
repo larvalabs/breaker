@@ -6,11 +6,11 @@ import TitleCollapsible from './TitleCollapsible'
 export default class VideoYouTube extends Component {
   constructor(props){
     super(props);
-    this.state = {show: false};
+    this.state = {playVideo: false};
     this.handleClick = this.handleClick.bind(this);
   }
   handleClick(){
-    this.setState({show:true});
+    this.setState({playVideo:true});
   }
   renderVideo(){
     return <div data-url={this.props.linkInfo.get('url')}>
@@ -35,7 +35,7 @@ export default class VideoYouTube extends Component {
     </div>
   }
   renderVideoPlayer(){
-    if(this.state.show){
+    if(this.state.playVideo){
       return this.renderVideo();
     }
 
