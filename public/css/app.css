@@ -5346,6 +5346,7 @@ li.chat-message-root .message-body, li.chat-message-short .message-body, li.chat
 
 .link-info h5.title {
   font-weight: 600;
+  margin: 5px 0;
 }
 
 .link-info a {
@@ -5362,6 +5363,19 @@ li.chat-message-root .message-body, li.chat-message-short .message-body, li.chat
   border-radius: 3px 3px;
 }
 
+.link-info .site {
+  margin-bottom: 0;
+  font-weight: 900;
+  color: #555459;
+}
+
+.link-info .site a{
+  color: #555459;
+}
+
+.link-info .site a:hover{
+  text-decoration: underline;
+}
 
 #thread .username-container a {
   font-weight: 600;
@@ -5373,4 +5387,55 @@ li.chat-message-root .message-body, li.chat-message-short .message-body, li.chat
   color: #23b7e5;
   margin-left: 5px;
   cursor: pointer;
+}
+
+.video {
+  max-width: 100%;
+  background: #EDF1F2;
+}
+
+.video.youtube {
+  width: 400px;
+  height: 300px;
+}
+
+.video .video-thumbnail {
+  position: relative;
+}
+
+.video .video-buttons {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 50%;
+  background-color: rgba(0,0,0,.4);
+  min-width: 150px;
+  padding: 5%;
+  border-radius: .7rem;
+  transform: translateX(-50%) translateY(-50%);
+  text-align: center;
+  font-size: 0rem;
+  white-space: nowrap;
+}
+
+.video .video-button, .video .video-button a {
+  font-size: 45px;
+  color: #CCCDCF;
+  display: inline-block;
+}
+
+.video .video-button:hover, .video .video-button a:hover{
+  color: #fff;
+  cursor: pointer;
+}
+.video .button-left {
+  width: 30%;
+  margin-left: 5%;
+  text-align: left;
+}
+
+.video .button-right {
+  width: 50%;
+  margin-right: 5%;
+  text-align: right;
 }
