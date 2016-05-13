@@ -44,7 +44,8 @@ export default class TitleCollapsible extends Component {
       return null
     }
 
-    return <div><h5 className="title">
+    return <div>
+      <h5 className="title">
       <a href={this.props.url} target="_blank">{title}</a>{this.renderSize()}
         {this.renderCollapse()}
       </h5>
