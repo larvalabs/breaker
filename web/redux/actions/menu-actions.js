@@ -1,4 +1,5 @@
 import * as actions from '../constants/menu-constants';
+import { API } from '../../api'
 
 function sidebarOpen() {
   return { type: actions.UI_SIDEBAR_OPEN };
@@ -14,6 +15,20 @@ function settingsOpen() {
 
 function settingsClose() {
   return { type: actions.UI_SETTINGS_CLOSE };
+}
+
+function leaveRoom(newActiveRoom){
+  return { type: actions.ROOM_LEAVE, newActiveRoom };
+}
+
+export function handleLeaveRoom(roomName) {
+  return (dispatch, getState) => {
+    API.leaveRoom(roomName).then(() => {
+      dispatch(leaveRoom(roomName));
+    }).catch((e) => {
+      console.log("Failed to leave room", e)
+    })
+  }
 }
 
 export function toggleSidebar() {

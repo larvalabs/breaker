@@ -5444,3 +5444,9 @@ li.chat-message-root .message-body, li.chat-message-short .message-body, li.chat
   margin-right: 5%;
   text-align: right;
 }
+
+.close-room {
+  position:absolute;
+  top: 5px;
+  left: 2px;
+}
