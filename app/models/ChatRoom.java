@@ -411,6 +411,17 @@ public class ChatRoom extends Model {
             }
             chatRoom.setPrivateRoom(isPrivate);
             chatRoom.save();
+
+            // Auto join admins
+            List<ChatUser> admins = ChatUser.findAdmins();
+            for (ChatUser admin : admins) {
+                try {
+                    Logger.info("Adding admin user " + admin.getUsername() + " to new room " + name);
+                    admin.joinChatRoom(chatRoom);
+                } catch (ChatUser.UserBannedException | ChatUser.NoAccessToPrivateRoomException | ChatUser.UnableToCheckAccessToPrivateRoom e) {
+                    e.printStackTrace();
+                }
+            }
         } else {
 //            Logger.info("Found chat room for app " + packageName);
         }

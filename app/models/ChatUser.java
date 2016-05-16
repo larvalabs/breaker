@@ -589,6 +589,10 @@ public class ChatUser extends Model {
         return map;
     }
 
+    public static List<ChatUser> findAdmins() {
+        return find("byAdmin", true).fetch();
+    }
+
     public class UserBannedException extends Exception {
     }
 
