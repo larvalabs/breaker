@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import  Autosuggest from 'react-autosuggest';
 import { connect } from 'react-redux';
-import {sendNewMessage} from '../redux/actions/chat-actions'
+import {sendNewMessage, resetChatInputFocus, setChatInputFocus} from '../redux/actions/chat-actions'
 import Immutable from 'immutable'
 
 const theme = {
@@ -22,12 +22,26 @@ class ChatMessageInput extends Component {
     this.onSuggestionSelected = this.onSuggestionSelected.bind(this);
     this.getSuggestionValue = this.getSuggestionValue.bind(this);
     this.getSuggestions = this.getSuggestions.bind(this);
+    this.handleRef = this.handleRef.bind(this)
     this.state = {
       value: '',
       suggestions: this.getSuggestions('')
     };
   }
-  
+  componentDidMount(){
+    this.props.setInputFocus();
+  }
+  componentDidUpdate() {
+    if(!this.props.setInputFocus) {
+      return false;
+    }
+
+    this._input.focus();
+    this.props.inputFocusWasSet();
+  }
+  handleRef(ref){
+    this._input = ref;
+  }
   onChange(event, { newValue, method }) {
     return this.setState({
       value: newValue
@@ -37,10 +51,7 @@ class ChatMessageInput extends Component {
   handleKeyPress(event) {
     if(event.key == 'Enter' && !event.isSuggestionSelected){
       event.preventDefault();
-      this.props.dispatch(sendNewMessage({
-        message: event.target.value,
-        roomName: this.props.roomName
-      }));
+      this.props.sendNewMessage(this.props.roomName, event.target.value);
       this.setState({
         value: ""
       });
@@ -111,7 +122,8 @@ class ChatMessageInput extends Component {
         value,
         onChange: this.onChange,
         onKeyDown: this.handleKeyPress,
-        disabled: !this.props.connected
+        disabled: !this.props.connected,
+        ref: this.handleRef
       };
 
       return <Autosuggest suggestions={suggestions}
@@ -135,12 +147,31 @@ function mapStateToProps(state) {
   let membersMap = state.getIn(['members', roomName], Immutable.Map());
   let members = membersMap.reduce((a, b) => a.union(b), Immutable.OrderedSet()).toList();
   let connected = state.getIn(['ui', 'connected']);
+  let setInputFocus = state.getIn(['ui', 'setInputFocus'], false);
 
   return {
     members,
     roomName,
     connected,
+    setInputFocus
   }
 }
 
-export default connect(mapStateToProps)(ChatMessageInput)
+function mapDispatchToProps(dispatch) {
+  return {
+    inputFocusWasSet() {
+      dispatch(resetChatInputFocus());
+    },
+    setInputFocus() {
+      dispatch(setChatInputFocus());
+    },
+    sendNewMessage(roomName, message){
+      dispatch(sendNewMessage({
+        message: message,
+        roomName: roomName
+      }))
+    }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ChatMessageInput)

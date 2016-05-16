@@ -4,3 +4,6 @@ export const CHAT_FOCUSED = 'chat-focused';
 export const CHAT_ROOM_CHANGED = 'chat-room-changed';
 export const CHAT_LINK_COLLAPSED = 'chat-link-collapsed';
 export const CHAT_LINK_EXPANDED = 'chat-link-expanded';
+
+export const CHAT_SET_INPUT_FOCUS = 'chat-set-input-focus';
+export const CHAT_RESET_INPUT_FOCUS = 'chat-reset-input-focus';
