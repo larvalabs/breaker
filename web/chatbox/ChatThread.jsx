@@ -7,6 +7,17 @@ import { connect } from 'react-redux';
 import Immutable from 'immutable'
 
 class ChatThread extends Component {
+  shouldRenderShortMessage(previousMessage, currentMessage){
+    if(!previousMessage){
+      return false;
+    }
+    let previousTime = previousMessage.get('createDateLongUTC');
+    let currentTime = currentMessage.get('createDateLongUTC');
+
+    let userIsTheSame = previousMessage.get('username') === currentMessage.get('username');
+    let timeUnderAllowedBreak = currentTime - previousTime < Config.settings.message_split_millis;
+    return userIsTheSame && timeUnderAllowedBreak;
+  }
   renderThreadMessageNewWay(props, message, previous){
     return <div key={message.get('uuid')}>
       <ChatMessageHeader message={message}
@@ -20,21 +31,16 @@ class ChatThread extends Component {
     </div>
   }
   renderThreadMessageOldWay(props, currentMessage, previousMessage){
-
-    let currentUser           = props.users.get(currentMessage.get('username'));
-    let isNotFirstUserMessage = previousMessage &&
-                                previousMessage.get('username') === currentMessage.get('username');
-
-    if(isNotFirstUserMessage){
+    if(this.shouldRenderShortMessage(previousMessage, currentMessage)){
       return <ChatShortMessage key={currentMessage.get('uuid')}
                                message={currentMessage}
-                               user={currentUser}
+                               user={props.users.get(currentMessage.get('username'))}
                                roomName={props.roomName}/>
     }
 
     return <ChatMessage key={currentMessage.get('uuid')}
                         message={currentMessage}
-                        user={currentUser}
+                        user={props.users.get(currentMessage.get('username'))}
                         roomName={props.roomName}/>
   }
 

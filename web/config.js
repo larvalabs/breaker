@@ -14,6 +14,7 @@ let Config = {
   settings: {
     ping_timeout: 20000,  // 20 seconds
     max_stale_state_millis: 1000 * 60 * 60, // 1 Hour
+    message_split_millis: 1000 * 60 * 10,  // 10 minutes
     default_banner: "Message from the moderators to you, the user.",
     dev_tools: window.__ENVIRONMENT__ !== "production",
     flairScaleForRoom: (room) => {
