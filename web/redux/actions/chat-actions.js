@@ -32,6 +32,14 @@ export function sendNewMessage(messageObj) {
   }
 }
 
+export function setChatInputFocus() {
+  return { type: actions.CHAT_SET_INPUT_FOCUS};
+}
+
+export function resetChatInputFocus() {
+  return { type: actions.CHAT_RESET_INPUT_FOCUS};
+}
+
 export function chatBlurred(roomName) {
   return { type: actions.CHAT_BLURRED, roomName };
 }
@@ -53,7 +61,7 @@ export function handleChangeRoom(roomName) {
     
     let state = getState();
     let lastMessageTime = state.getIn(['messages', state.getIn(['roomMessages', roomName]).last(), 'createDateLongUTC']);
-    
     dispatch(changeRoom(roomName, lastMessageTime))
+    dispatch(setChatInputFocus())
   }
 }

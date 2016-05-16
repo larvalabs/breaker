@@ -27,6 +27,12 @@ export default function ui(state=Immutable.Map({connected: false, sidebar_open: 
     case(chatTypes.CHAT_LINK_EXPANDED): {
       return state.set('collapsedLinks', state.get('collapsedLinks', Immutable.Set()).delete(action.messageId));
     }
+    case(chatTypes.CHAT_SET_INPUT_FOCUS): {
+      return state.set('setInputFocus', true);
+    }
+    case(chatTypes.CHAT_RESET_INPUT_FOCUS): {
+      return state.set('setInputFocus', false);
+    }
     case(chatTypes.CHAT_BLURRED): {
       return state.set('__HAS_FOCUS__', false);
     }
