@@ -1,11 +1,11 @@
 import * as actions from '../constants/menu-constants';
 import { API } from '../../api'
 
-function sidebarOpen() {
+export function sidebarOpen() {
   return { type: actions.UI_SIDEBAR_OPEN };
 }
 
-function sidebarClose() {
+export function sidebarClose() {
   return { type: actions.UI_SIDEBAR_CLOSE };
 }
 
