@@ -10,6 +10,6 @@ export default function stateFromJS(state) {
     }
 
     var isIndexed = Immutable.Iterable.isIndexed(value);
-    return isIndexed ? value.toList() : value.toMap();
+    return isIndexed ? value.toList() : value.toOrderedMap();
   })
 }

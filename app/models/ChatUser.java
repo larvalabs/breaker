@@ -385,7 +385,7 @@ public class ChatUser extends Model {
 
     public void leaveChatRoom(ChatRoom chatRoom) {
         ChatUserRoomJoin join = ChatUserRoomJoin.findByUserAndRoom(this, chatRoom);
-        if (join != null) {
+        if (join == null) {
             Logger.debug("Not a member of that room.");
             return;
         }

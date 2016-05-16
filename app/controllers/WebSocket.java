@@ -17,6 +17,7 @@ import play.Logger;
 import play.Play;
 import play.libs.F.EventStream;
 import play.libs.F.Promise;
+import play.mvc.Http;
 import play.mvc.Http.WebSocketClose;
 import play.mvc.Http.WebSocketFrame;
 import play.mvc.WebSocketController;
@@ -43,7 +44,6 @@ public class WebSocket extends PreloadUserController {
 
     public static void room(String roomName){
         long startTime = System.currentTimeMillis();
-
         ChatUser user = connected();
         ChatRoom room = null;
         if (roomName != null) {
@@ -159,7 +159,12 @@ public class WebSocket extends PreloadUserController {
 */
 
         String userString = gson.toJson(JsonUser.fromUser(user, true));
+
         String environment = Play.mode.isProd() ? "production" : "dev";
+        Http.Request request = Http.Request.current();
+        if("true".equals(request.params.get("dev"))){
+            environment = "dev";
+        }
 
         Logger.info("Websocket join time for " + user.getUsername() + ": " + (System.currentTimeMillis() - startTime));
 

@@ -91,8 +91,12 @@ export function handleSocketClose(store, socket) {
   }
 }
 
+export function stateRefreshed(newState){
+  return { type: actions.SOCK_REFRESH, state: newState }
+}
+
 export function handleStateRefresh() {
   return dispatch => {
-    API.requestInitialState().then((data) => dispatch({ type: actions.SOCK_REFRESH, state: data.data }))
+    API.requestInitialState().then((data) => dispatch(stateRefreshed(data.data)))
   }
 }
