@@ -453,6 +453,13 @@ public class Application extends PreloadUserController {
         }
     }
 
+    public static void leaveRoom(String roomName) {
+        ChatUser user = connected();
+        ChatRoom chatRoom = ChatRoom.findOrCreateForName(roomName);
+        user.leaveChatRoom(chatRoom);
+        renderText("ok");
+    }
+
     public static void testPM() throws ApiException {
         RedditUtil.sendPrivateMessageFromBot("megamatt2000", "Server test PM", "Testing as of time " + System.currentTimeMillis());
         renderText("ok");
