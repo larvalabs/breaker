@@ -1,4 +1,5 @@
 import * as actions from '../constants/chat-constants';
+import * as menuActions from './menu-actions';
 import socket from '../../socket';
 
 function collapseLink(messageId){
@@ -61,7 +62,8 @@ export function handleChangeRoom(roomName) {
     
     let state = getState();
     let lastMessageTime = state.getIn(['messages', state.getIn(['roomMessages', roomName]).last(), 'createDateLongUTC']);
-    dispatch(changeRoom(roomName, lastMessageTime))
+    dispatch(changeRoom(roomName, lastMessageTime));
+    dispatch(menuActions.sidebarClose());
     dispatch(setChatInputFocus())
   }
 }
