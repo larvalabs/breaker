@@ -5272,6 +5272,18 @@ li.chat-message-root .message-body, li.chat-message-short .message-body, li.chat
   position: absolute;
 }
 
+.flair-container.flair-scale-three-quarter .flair{
+  transform: scale(0.75, 0.75);
+  transform-origin: top left;
+  position: absolute;
+}
+
+.flair-container.flair-scale-one-quarter .flair{
+  transform: scale(0.25, 0.25);
+  transform-origin: top left;
+  position: absolute;
+}
+
 .nba .user-list-item .flair:hover {
   width: 33px !important;
   padding-right: 0px !important;

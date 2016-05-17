@@ -18,8 +18,12 @@ let Config = {
     default_banner: "Message from the moderators to you, the user.",
     dev_tools: window.__ENVIRONMENT__ !== "production",
     flairScaleForRoom: (room) => {
-      if(room.get('flairScale') === "0.5"){
+      if(room.get('flairScale') === "0.25"){
+        return "flair-scale-one-quarter"
+      } else if(room.get('flairScale') === "0.5"){
         return "flair-scale-half"
+      } else if(room.get('flairScale') === "0.75"){
+        return "flair-scale-three-quarter"
       }
       
       return ""
