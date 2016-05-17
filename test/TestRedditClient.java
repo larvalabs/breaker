@@ -31,22 +31,25 @@ public class TestRedditClient extends UnitTest {
         // NOTE: These access tokens change every time to relogin into the site, need a better way to test
         chatUser.accessToken = "***REMOVED***";
         chatUser.refreshToken = "***REMOVED***";
+        chatUser.save();
         return chatUser;
     }
 
-    private ChatUser getTestUser1() {
+    public static ChatUser getTestUser1() {
         ChatUser chatUser = new ChatUser("1");
         chatUser.username = "breakerapptest1";  // pass: redblue12
         chatUser.accessToken = "***REMOVED***";
         chatUser.refreshToken = "***REMOVED***";
+        chatUser.save();
         return chatUser;
     }
 
-    private ChatUser getTestUser2() {
+    public static ChatUser getTestUser2() {
         ChatUser chatUser = new ChatUser("2");
         chatUser.username = "breakerapptest2";  // pass: redblue12
         chatUser.accessToken = "***REMOVED***";
         chatUser.refreshToken = "***REMOVED***";
+        chatUser.save();
         return chatUser;
     }
 

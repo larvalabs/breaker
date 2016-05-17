@@ -2,6 +2,7 @@ package controllers;
 
 import com.google.gson.JsonObject;
 import com.larvalabs.redditchat.Constants;
+import com.larvalabs.redditchat.dataobj.JsonMessage;
 import com.larvalabs.redditchat.dataobj.JsonUserSearch;
 import com.larvalabs.redditchat.dataobj.JsonUtil;
 import com.larvalabs.redditchat.realtime.ChatRoomStream;
@@ -27,10 +28,8 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeSet;
 
 public class Application extends PreloadUserController {
 
@@ -531,5 +530,30 @@ public class Application extends PreloadUserController {
         } else {
             renderText("Invalid.");
         }
+    }
+
+    public static void getMessages(String roomName, Long id, Integer limit, Boolean before) {
+        ChatUser connected = connected();
+        if (connected == null) {
+            error();
+        }
+        ChatRoom room = ChatRoom.findByName(roomName);
+        if (before == null) {
+            before = true;
+        }
+        if (limit == null || limit > 100) {
+            limit = 20;
+        }
+        List<Message> messages;
+        if (before) {
+            messages = room.getMessagesWithoutBannedBefore(connected, id, limit);
+        } else {
+            messages = room.getMessagesWithoutBannedAfter(connected, id, limit);
+        }
+        List<JsonMessage> jsonMessages = new ArrayList<>();
+        for (Message message : messages) {
+            jsonMessages.add(JsonMessage.from(message, message.getUser().getUsername(), room.getName()));
+        }
+        renderJSON(jsonMessages);
     }
 }

@@ -322,7 +322,7 @@ public class ChatRoom extends Model {
     }
 
     private static final String BASE_MSG_QUERY = "room = ? and deleted = false and flagCount < "+ Constants.THRESHOLD_MESSAGE_FLAG
-            +" and user.flagCount < " + Constants.USER_FLAG_THRESHOLD + " and (user.deviceShadowBan = false or user = ?)";
+            +" and user.flagCount < " + Constants.USER_FLAG_THRESHOLD + " and (user.shadowBan = false or user = ?)";
 
     public List<Message> getTopMessagesWithoutBanned(ChatUser loggedInUser, int limit) {
         return Message.find(BASE_MSG_QUERY + " order by score desc", this, loggedInUser).fetch(limit);
@@ -332,7 +332,11 @@ public class ChatRoom extends Model {
         return Message.find(BASE_MSG_QUERY + " order by id desc", this,loggedInUser).fetch(limit);
     }
 
-    public List<Message> getMessagesWithoutBanned(ChatUser loggedInUser, long afterMessageId, int limit) {
+    public List<Message> getMessagesWithoutBannedBefore(ChatUser loggedInUser, long beforeMessageId, int limit) {
+        return Message.find(BASE_MSG_QUERY + " and id < ? order by id desc", this, loggedInUser, beforeMessageId).fetch(limit);
+    }
+
+    public List<Message> getMessagesWithoutBannedAfter(ChatUser loggedInUser, long afterMessageId, int limit) {
         List<Message> messages = Message.find(BASE_MSG_QUERY + " and id > ? order by id asc", this, loggedInUser, afterMessageId).fetch(limit);
         Collections.reverse(messages);
         return messages;
@@ -353,10 +357,6 @@ public class ChatRoom extends Model {
 
     public boolean isRedditModerator(ChatUser user) {
         return getModerators().contains(user);
-    }
-
-    public List<Message> getMessagesWithoutBannedBefore(ChatUser loggedInUser, long beforeMessageId, int limit) {
-        return Message.find(BASE_MSG_QUERY + " and id < ? order by id desc", this, loggedInUser, beforeMessageId).fetch(limit);
     }
 
     /**
