@@ -1,5 +1,6 @@
 package controllers;
 
+import com.larvalabs.redditchat.realtime.ChatRoomStream;
 import com.larvalabs.redditchat.util.TopAlert;
 import models.ChatRoom;
 import models.ChatUser;
@@ -33,6 +34,9 @@ public class RoomManage extends PreloadUserController {
             chatRoom.save();
             TopAlert alert = new TopAlert(TopAlert.Type.SUCCESS, "Room updated.", "Room information saved.");
             alert.toFlash(flash);
+
+            ChatRoomStream.getEventStream(chatRoom.getName()).sendRoomUpdate(chatRoom);
+
             WebSocket.room(chatRoom.getName());
         }
     }
