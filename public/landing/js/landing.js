@@ -34,6 +34,14 @@ jQuery.extend( jQuery.easing,
             window.location.hash = $target;
         });
     });
-    
+
+    $(document).on('click', '#signin', function(e){
+      if ($(window).width() < 850) {
+        window.location.href = "/auth?compact=true";
+      }
+      else {
+        window.location.href = "/auth";
+      }
+    })
   });
 }(window.jQuery);
