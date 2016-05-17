@@ -244,9 +244,9 @@ public class Application extends PreloadUserController {
     }
     */
 
-    public static void startAuthForGuest(String roomName) {
+    public static void startAuthForGuest(String roomName, Boolean compact) {
         session.put(SESSION_JOINROOM, roomName);
-        auth(null);
+        auth(compact);
     }
 
     public static void auth(Boolean compact) {
