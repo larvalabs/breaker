@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import ChatMessageHeader from './ChatMessageHeader'
 import ChatShortMessage from './ChatShortMessage'
 import ChatMessage from './ChatMessage'
+import MessageHistory from './MessageHistory'
 import Config from '../config'
 import { connect } from 'react-redux';
 import Immutable from 'immutable'
@@ -58,6 +59,7 @@ class ChatThread extends Component {
     let filteredMessages = props.messages.filter((message) => message);
 
     return <ul id="thread" className="list-group list-group-lg no-radius m-b-none m-t-n-xxs">
+      <MessageHistory />
       {
         filteredMessages.map((message, index) => {
           let previous = null;
