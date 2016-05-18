@@ -20,9 +20,13 @@ var Header = React.createClass({
     this.props.dispatch(toggleSettings());
   },
   renderLogin: function(){
+    let signInUrl = `/application/startauthforguest?roomName=${this.props.roomName}`;
+    if(window.innerWidth < 850){
+      signInUrl += "&compact=true"
+    }
     return <ul className="nav navbar-nav navbar-right">
       <li style={{textAlign: "center", paddingRight: "1em", fontWeight: "600"}}>
-        <a href={`/application/startauthforguest?roomName=${this.props.roomName}`}>
+        <a href={signInUrl}>
             Sign in
         </a>
       </li>
