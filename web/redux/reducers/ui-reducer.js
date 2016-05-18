@@ -21,6 +21,9 @@ export default function ui(state=Immutable.Map({connected: false, sidebar_open: 
     case(menuTypes.UI_SETTINGS_OPEN): {
       return state.set('settings_open', true)
     }
+    case(menuTypes.UI_SETTINGS_CLOSE): {
+      return state.set('settings_open', false)
+    }
     case(chatTypes.CHAT_LINK_COLLAPSED): {
       return state.set('collapsedLinks', state.get('collapsedLinks', Immutable.Set()).add(action.messageId));
     }
