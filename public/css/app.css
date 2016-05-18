@@ -5469,10 +5469,4 @@ li.chat-message-root .message-body, li.chat-message-short .message-body, li.chat
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 1000;
-  width: 100%;
-  overflow: visible;
-  -webkit-backface-visibility: visible;
-  -moz-backface-visibility: visible;
-  backface-visibility: visible;
 }
