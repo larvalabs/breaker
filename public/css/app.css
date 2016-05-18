@@ -892,6 +892,8 @@ body {
   text-decoration: none;
   background-color: transparent;
   border: none;
+  border-radius: initial;
+  box-shadow:none;
 }
 
 .navbar-brand {

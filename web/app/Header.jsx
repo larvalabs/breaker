@@ -61,12 +61,12 @@ var Header = React.createClass({
     </ul>
   },
   renderSettingsCog: function(){
-    let classes = "pull-right visible-xs dk";
+    let classes = "pull-right visible-xs";
     if(this.props.settings_open){
       classes += " active";
     }
-    let iconColor = this.props.room.getIn(['styles', 'sidebarTextColor']);
-    let iconBGColor = this.props.room.getIn(['styles', 'sidebarBackgroundColor']);
+    let iconColor = this.props.room.getIn(['styles', 'sidebarTextColor'], "#EAEBED");
+    let iconBGColor = this.props.room.getIn(['styles', 'sidebarBackgroundColor'], "#3a3f51");
 
     return  <button className={classes}
                     ui-toggle-className="show"
@@ -80,9 +80,10 @@ var Header = React.createClass({
   renderSidebarHamburger: function(){
     let classes = "pull-right visible-xs";
     let active = this.props.sidebar_open ? " active" : "";
-    let iconColor = this.props.room.getIn(['styles', 'sidebarTextColor']);
+    let iconColor = this.props.room.getIn(['styles', 'sidebarTextColor'], "#EAEBED");
+    let iconBGColor = this.props.room.getIn(['styles', 'sidebarBackgroundColor'], "#3a3f51");
     return <button className={classes + active} ui-toggle-className="off-screen" target=".app-aside" ui-scroll="app" onClick={this.onSidebarButtonClick}>
-      <i className="glyphicon glyphicon-align-justify" style={{color: iconColor}}/>
+      <i className="glyphicon glyphicon-align-justify" style={{color: iconColor, background: iconBGColor}}/>
     </button>
   },
   renderUnreadCount(props){
