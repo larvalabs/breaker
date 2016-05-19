@@ -5472,3 +5472,22 @@ li.chat-message-root .message-body, li.chat-message-short .message-body, li.chat
   left: 0;
   right: 0;
 }
+
+.message-fetch-message {
+  text-align: center;
+  padding: 30px 0;
+}
+
+.message-fetch-message span.text-muted {
+  font-style: italic;
+}
+
+.message-fetch-message a.more {
+  color: #23b7e5;
+}
+
+.message-fetch-message .divider {
+  width: 10%;
+  margin: 5px auto 0;
+  border-bottom: 1px dashed #98a6ad;
+}
