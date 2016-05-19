@@ -32,6 +32,10 @@ class ChatThread extends Component {
     </div>
   }
   renderThreadMessageOldWay(props, currentMessage, previousMessage){
+    if(currentMessage.get('type') === 'first_sentinel'){
+      return null
+    }
+
     if(this.shouldRenderShortMessage(previousMessage, currentMessage)){
       return <ChatShortMessage key={currentMessage.get('uuid')}
                                message={currentMessage}
@@ -46,7 +50,6 @@ class ChatThread extends Component {
   }
 
   renderThreadMessage(props, message, previous){
-
     if(Config.features.useFlairStyle(this.props.roomName)){
       return this.renderThreadMessageNewWay(props, message, previous)
     }

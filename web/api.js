@@ -9,8 +9,7 @@ export var API = {
     return request.get("/application/leaveRoom?roomName=" + roomName)
   },
 
-  fetchMoreMessages(roomName, fromMessageId){
-    let count = 10;
+  fetchMoreMessages(roomName, fromMessageId, count){
     return request.get(`/application/getmessages?roomName=${roomName}&id=${fromMessageId}&limit=${count}&before=true`)
   }
 };

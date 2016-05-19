@@ -12,12 +12,17 @@ export default class MessageHistory extends Component {
       return <span className="text-muted">Getting history...</span>
     }
 
+    if(!this.props.hasMore){
+      return <span className="text-muted">This is the beginning of /r/{this.props.currentRoom}</span>
+    }
+
     return <a className="more" onClick={this.props.handleMoreMessages}>More</a>
   }
   render(){
-    if(this.props.message_count < 20){
+    if(this.props.messageCount < 20){
       return null;
     }
+    
     return <li className="message-fetch-message">
       {this.renderTitle()}
       <div className="divider"></div>
@@ -28,15 +33,20 @@ export default class MessageHistory extends Component {
 MessageHistory.defaultProps = {
   message_count: 0,
   loading: false,
+  hasMore: true,
   handleMoreMessages: () => {}
 };
 
 function mapStateToProps(state) {
-
+  let roomMessages = state.getIn(['roomMessages', state.get('currentRoom')], Immutable.List());
+  let firstMessage = state.getIn(['messages', roomMessages.first()]);
+  let hasMore = firstMessage.get('type', '') !== 'first_sentinel';
+  let messageCount = roomMessages.size;
   return {
     loading: state.getIn(['ui', 'moreMessagesLoading']),
     currentRoom: state.get('currentRoom'),
-    message_count: state.getIn(['roomMessages', state.get('currentRoom')], Immutable.List()).size
+    hasMore,
+    messageCount
   }
 }
 

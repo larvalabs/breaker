@@ -11,7 +11,6 @@ export default function roomMessages(state=Immutable.Map(), action) {
     }
     case (chatTypes.CHAT_LOADED_MESSAGES): {
       return state.update(action.room, (currentMessageList) => {
-        debugger;
         return Immutable.List(action.messages.map((message) => message.uuid)).reverse().concat(currentMessageList)
       });
     }
