@@ -27,7 +27,7 @@
     "react": "^15.0.1",
     "react-autosuggest": "rickhanlonii/react-autosuggest#enhancements",
     "react-document-title": "^2.0.1",
-    "react-dom": "^15.0.1",
+    "react-dom": "^15.0.0",
     "react-redux": "^4.4.2",
     "react-timeago": "^3.0.0-beta.3",
     "redux": "^3.4.0",
