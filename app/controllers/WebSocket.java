@@ -263,40 +263,40 @@ public class WebSocket extends PreloadUserController {
             } else if (awaitResult instanceof WebSocketClose) {
                 processWebsocketClose(user, connectionId, roomConnections);
             } else if (awaitResult instanceof ChatRoomStream.Event) {
-                processEvent(singleUserArray, roomConnections, (ChatRoomStream.Event) awaitResult);
+                processEvent(singleUserArray, roomConnections, (ChatRoomStream.Event) awaitResult, connectionId);
             }
         }
 
-        private static void processEvent(JsonUser[] userArray, HashMap<String, RoomConnection> roomConnections, ChatRoomStream.Event awaitResult) {
-            JsonUser user = userArray[0];
+        private static void processEvent(JsonUser[] userArray, HashMap<String, RoomConnection> roomConnections, ChatRoomStream.Event awaitResult, String connectionId) {
+            JsonUser thisConnectionUser = userArray[0];
 
             // Bail out if this is directed a specific user, don't process
-            if (awaitResult.toUsername != null && !awaitResult.toUsername.equals(user.username)) {
+            if (awaitResult.toUsername != null && !awaitResult.toUsername.equals(thisConnectionUser.username)) {
                 return;
             }
 
             if (awaitResult instanceof ChatRoomStream.ServerCommand) {
                 // Case: A command affecting users
                 ChatRoomStream.ServerCommand commandEvent = (ChatRoomStream.ServerCommand) awaitResult;
-                if (commandEvent.command.username != null && commandEvent.command.username.equals(user.username)) {
+                if (commandEvent.command.username != null && commandEvent.command.username.equals(thisConnectionUser.username)) {
                     Logger.info("Received " + commandEvent.command.type + " for this user.");
                     if (commandEvent.command.type.shouldCloseClientSocket()) {
-                        Logger.info(user.username + " has been disconnected from " + commandEvent.room.name);
+                        Logger.info(thisConnectionUser.username + " has been disconnected from " + commandEvent.room.name);
 
                         RoomConnection roomConnection = roomConnections.get(commandEvent.room.name);
                         ChatRoom roomModel = roomConnection.room.loadModelFromDatabase();
-                        ChatUser userModel = user.loadModelFromDatabase();
+                        ChatUser userModel = thisConnectionUser.loadModelFromDatabase();
 
                         userModel.leaveChatRoom(roomModel);
                         roomConnections.remove(commandEvent.room.name);
 
-                        sendLocalServerMessage(roomConnection, user.username, commandEvent.command.username + " was kicked.");
+                        sendLocalServerMessage(roomConnection, thisConnectionUser.username, commandEvent.command.username + " was kicked.");
                         disconnect();
                     }
                 }
             } else if (awaitResult instanceof ChatRoomStream.UpdateUserEvent) {
                 ChatRoomStream.UpdateUserEvent updateEvent = (ChatRoomStream.UpdateUserEvent) awaitResult;
-                if (updateEvent.user.equals(user)) {
+                if (updateEvent.user.equals(thisConnectionUser)) {
                     Logger.info("Updated local user object from event: " + updateEvent.user.username);
                     userArray[0] = updateEvent.user;
                 }
@@ -315,6 +315,20 @@ public class WebSocket extends PreloadUserController {
                     roomConnections.get(updateEvent.room.name).room = updateEvent.room;
                 }
                 outbound.send(updateEvent.toJson());
+            } else if (awaitResult instanceof ChatRoomStream.Leave) {
+                ChatRoomStream.Leave event = (ChatRoomStream.Leave) awaitResult;
+                outbound.send(awaitResult.toJson());
+                if (event.user.username.equalsIgnoreCase(thisConnectionUser.username)) {
+                    RoomConnection roomConnection = roomConnections.get(event.room.name);
+                    roomConnection.chatRoomEventStream.removeStream(event.room, event.user, connectionId);
+                }
+            } else if (awaitResult instanceof ChatRoomStream.RoomLeave) {
+                ChatRoomStream.RoomLeave event = (ChatRoomStream.RoomLeave) awaitResult;
+                outbound.send(awaitResult.toJson());
+                if (event.user.username.equalsIgnoreCase(thisConnectionUser.username)) {
+                    RoomConnection roomConnection = roomConnections.get(event.room.name);
+                    roomConnection.chatRoomEventStream.removeStream(event.room, event.user, connectionId);
+                }
             } else {
                 // Case: New message on a chat room
                 ChatRoomStream.Event event = (ChatRoomStream.Event) awaitResult;
@@ -330,7 +344,7 @@ public class WebSocket extends PreloadUserController {
             for (RoomConnection roomConnection : roomConnections.values()) {
                 ChatRoom.userNotPresent(roomConnection.room.name, user.username, connectionId);
                 // If this was the last connection that user had to the room then broadcast they've left
-                roomConnection.chatRoomEventStream.leave(roomConnection.room, user, connectionId);
+                roomConnection.chatRoomEventStream.leave(roomConnection.room, user);
                 if (!ChatRoom.isUserPresent(roomConnection.room.name, user.username)) {
                     Logger.debug("Last connection for " + user.username + " on channel " + roomConnection.room.name + " disconnected, broadcasting leave.");
                 }

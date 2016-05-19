@@ -9,6 +9,9 @@ export default function rooms(state=Immutable.Map(), action) {
     case (socketTypes.SOCK_MEMBERS): {
       return state.set(action.message.room.name, Immutable.fromJS(action.message.room));
     }
+    case (socketTypes.SOCK_ROOMLEAVE): {
+      return state.remove(action.message.room.name);
+    }
     case (socketTypes.SOCK_ROOM_LIST): {
       var nextState = state;
       for (var room of action.message.rooms) {

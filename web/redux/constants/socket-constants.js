@@ -6,6 +6,7 @@ export const SOCK_MESSAGE = 'sock-message';
 export const SOCK_SERVER = 'sock-server';
 export const SOCK_JOIN = 'sock-join';
 export const SOCK_LEAVE = 'sock-leave';
+export const SOCK_ROOMLEAVE = 'sock-roomleave';
 export const SOCK_MEMBERS = 'sock-members';
 export const SOCK_UNKNOWN = 'sock-unknown';
 export const SOCK_UPDATE_USER = 'sock-update-user';

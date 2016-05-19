@@ -7,6 +7,7 @@ const MESSAGE_TYPE_MESSAGE = "message";
 const MESSAGE_TYPE_SERVER = "servermessage";
 const MESSAGE_TYPE_JOIN = "join";
 const MESSAGE_TYPE_LEAVE = "leave";
+const MESSAGE_TYPE_ROOMLEAVE = "roomleave";
 const MESSAGE_TYPE_MEMBERS = "memberlist";
 const MESSAGE_TYPE_UPDATE_USER = "updateuser";
 const MESSAGE_TYPE_UPDATE_ROOM = "updateroom";
@@ -39,6 +40,9 @@ export function onSocketMessage(message) {
       }
       case MESSAGE_TYPE_LEAVE: {
         return dispatch({type: actions.SOCK_LEAVE, message});
+      }
+      case MESSAGE_TYPE_ROOMLEAVE: {
+        return dispatch({type: actions.SOCK_ROOMLEAVE, message});
       }
       case MESSAGE_TYPE_MEMBERS: {
         return dispatch({type: actions.SOCK_MEMBERS, message});

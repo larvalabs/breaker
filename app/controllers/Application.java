@@ -2,9 +2,7 @@ package controllers;
 
 import com.google.gson.JsonObject;
 import com.larvalabs.redditchat.Constants;
-import com.larvalabs.redditchat.dataobj.JsonMessage;
-import com.larvalabs.redditchat.dataobj.JsonUserSearch;
-import com.larvalabs.redditchat.dataobj.JsonUtil;
+import com.larvalabs.redditchat.dataobj.*;
 import com.larvalabs.redditchat.realtime.ChatRoomStream;
 import com.larvalabs.redditchat.util.RedditUtil;
 import com.larvalabs.redditchat.util.Util;
@@ -456,6 +454,8 @@ public class Application extends PreloadUserController {
         ChatUser user = connected();
         ChatRoom chatRoom = ChatRoom.findOrCreateForName(roomName);
         user.leaveChatRoom(chatRoom);
+        ChatRoomStream.getEventStream(roomName).roomLeave(JsonChatRoom.from(chatRoom, chatRoom.getModeratorUsernames()),
+                JsonUser.fromUser(user, ChatRoom.isUserOnlineInAnyRoom(user.getUsername())));
         renderText("ok");
     }
 

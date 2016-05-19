@@ -29,6 +29,21 @@ function moveMemberStates(state, action, remove, add){
   });
 }
 
+function deleteFrom(state, roomName, setName, username) {
+  return state.updateIn([roomName, setName], o => {
+    if(!o) {
+      return Immutable.OrderedSet([]);
+    }
+    return o.delete(username);
+  });
+}
+
+function removeMemberAllStates(state, action) {
+  let newState = deleteFrom(state, state, action.message.room.name, "offline", action.message.user.username);
+  newState = deleteFrom(newState, action.message.room.name, "online", action.message.user.username);
+  return deleteFrom(newState, action.message.room.name, "mods", action.message.user.username);
+}
+
 export default function members(state=Immutable.Map(), action) {
   switch(action.type){
     case (socketTypes.SOCK_MEMBERS): {
@@ -39,6 +54,9 @@ export default function members(state=Immutable.Map(), action) {
     }
     case (socketTypes.SOCK_LEAVE): {
       return moveMemberOfflineState(state, action);
+    }
+    case (socketTypes.SOCK_ROOMLEAVE): {
+      return removeMemberAllStates(state, action);
     }
     case(socketTypes.SOCK_REFRESH): {
       return stateFromJS(action.state.members)

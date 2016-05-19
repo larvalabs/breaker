@@ -88,15 +88,19 @@ public class ChatRoomStream {
     /**
      * A user leave the room
      */
-    public void leave(JsonChatRoom room, JsonUser user, String connectionId) {
-        // todo Review whether this can leak, i.e. if we don't always get proper disconnect events from the socket
-        // todo Could do a periodic cleanup where we remove streams that haven't been accessed in a while
+    public void leave(JsonChatRoom room, JsonUser user) {
+        publishEvent(new Leave(room, user));
+    }
+
+    public void roomLeave(JsonChatRoom room, JsonUser user) {
+        publishEvent(new RoomLeave(room, user));
+    }
+
+    public void removeStream(JsonChatRoom room, JsonUser user, String connectionId) {
         userStreams.remove(getStreamKey(room.name, user.username, connectionId));
         if (room.isDefaultRoom()) {
             Stats.sample(Stats.StatKey.USER_STREAMS_OPEN, userStreams.size());
         }
-        user.online = false;
-        publishEvent(new Leave(room, user));
     }
 
     /**
@@ -185,6 +189,7 @@ public class ChatRoomStream {
         public static final String TYPE_SERVERMESSAGE = "servermessage";
         public static final String TYPE_SERVERCOMMAND = "servercommand";
         public static final String TYPE_LEAVE = "leave";
+        public static final String TYPE_ROOMLEAVE = "roomleave";
         public static final String TYPE_UPDATE_USER = "updateuser";
         public static final String TYPE_UPDATE_ROOM = "updateroom";
         public static final String TYPE_UPDATE_MESSAGE = "updatemessage";
@@ -222,6 +227,8 @@ public class ChatRoomStream {
                 return gson.fromJson(jsonStr, Message.class);
             } else if (type.equals(TYPE_LEAVE)) {
                 return gson.fromJson(jsonStr, Leave.class);
+            } else if (type.equals(TYPE_ROOMLEAVE)) {
+                return gson.fromJson(jsonStr, RoomLeave.class);
             } else if (type.equals(TYPE_SERVERMESSAGE)) {
                 // Note these server commands are normally only sent locally to the websocket
                 return gson.fromJson(jsonStr, ServerMessage.class);
@@ -301,6 +308,20 @@ public class ChatRoomStream {
 
         public Leave(JsonChatRoom room, JsonUser user) {
             super(TYPE_LEAVE, room);
+            this.user = user;
+        }
+
+    }
+
+    public static class RoomLeave extends Event {
+
+        public JsonUser user;
+
+        public RoomLeave() {
+        }
+
+        public RoomLeave(JsonChatRoom room, JsonUser user) {
+            super(TYPE_ROOMLEAVE, room);
             this.user = user;
         }
 
