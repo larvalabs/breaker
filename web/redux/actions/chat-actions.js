@@ -93,7 +93,7 @@ function failedLoadingMoreMessages(error){
 export function handleMoreMessages() {
   return (dispatch, getState) => {
     let state = getState();
-    let count = 10;
+    let count = 20;
     let currentRoom = state.get('currentRoom');
     let firstMessage = state.getIn(
         ['messages', state.getIn(['roomMessages', currentRoom], Immutable.List()).first()
