@@ -5475,7 +5475,7 @@ li.chat-message-root .message-body, li.chat-message-short .message-body, li.chat
 
 .message-fetch-message {
   text-align: center;
-  padding: 15px;
+  padding: 30px 0;
 }
 
 .message-fetch-message span.text-muted {

@@ -7,6 +7,7 @@ export default class MessageHistory extends Component {
   constructor(props){
     super(props);
   }
+
   renderTitle(){
     if(this.props.loading){
       return <span className="text-muted">Getting history...</span>

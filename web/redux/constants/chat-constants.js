@@ -11,3 +11,6 @@ export const CHAT_RESET_INPUT_FOCUS = 'chat-reset-input-focus';
 export const CHAT_LOADING_MESSAGES = 'chat-loading-messages';
 export const CHAT_LOADED_MESSAGES = 'chat-loaded-messages';
 export const CHAT_FAILED_LOADING_MESSAGES = 'chat-failed-loading-messages';
+
+export const CHAT_SCROLL_TO_MESSAGE = 'chat-scroll-to-message';
+export const CHAT_RESET_SCROLL_TO_MESSAGE = 'chat-reset-scroll-to-message';

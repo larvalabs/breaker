@@ -43,6 +43,14 @@ export function resetChatInputFocus() {
   return { type: actions.CHAT_RESET_INPUT_FOCUS};
 }
 
+export function scrollToMessage(messageId) {
+  return { type: actions.CHAT_SCROLL_TO_MESSAGE, messageId};
+}
+
+export function resetScrollToMessage() {
+  return { type: actions.CHAT_RESET_INPUT_FOCUS};
+}
+
 export function chatBlurred(roomName) {
   return { type: actions.CHAT_BLURRED, roomName };
 }
@@ -90,17 +98,21 @@ export function handleMoreMessages() {
     let firstMessage = state.getIn(
         ['messages', state.getIn(['roomMessages', currentRoom], Immutable.List()).first()
     ]);
-    dispatch(loadingMoreMessages());
-    API.fetchMoreMessages(currentRoom, firstMessage.get('id')).then((response) => {
-      if(response.data.length < count){
-        response.data.push({
-          "uuid": currentRoom + "_first_sentinel",
-          "type": "first_sentinel"
-        })
-      }
-      dispatch(loadedMoreMessages(currentRoom, response.data))
-    }).catch((error) => {
-      dispatch(failedLoadingMoreMessages(error))
-    })
+    if(firstMessage.get('type') !== 'first_sentinel') {
+      dispatch(loadingMoreMessages());
+      API.fetchMoreMessages(currentRoom, firstMessage.get('id')).then((response) => {
+        if (response.data.length < count) {
+          response.data.push({
+            "uuid": currentRoom + "_first_sentinel",
+            "type": "first_sentinel"
+          })
+        }
+
+        dispatch(scrollToMessage(firstMessage.get('uuid')));
+        dispatch(loadedMoreMessages(currentRoom, response.data));
+      }).catch((error) => {
+        dispatch(failedLoadingMoreMessages(error))
+      })
+    }
   }
 }
