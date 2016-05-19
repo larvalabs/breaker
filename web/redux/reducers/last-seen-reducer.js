@@ -11,6 +11,9 @@ export default function lastSeen(state=Immutable.Map(), action) {
     case(chatTypes.CHAT_ROOM_CHANGED): {
       return state.set(action.roomName, action.lastMessageTime)
     }
+    case(socketTypes.SOCK_ROOMLEAVE): {
+      return state.delete(action.message.room.name)
+    }
     case(socketTypes.SOCK_REFRESH): {
       return stateFromJS(action.state.lastSeenTimes)
     }

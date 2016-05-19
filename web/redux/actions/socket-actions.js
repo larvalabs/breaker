@@ -1,6 +1,7 @@
 import * as actions from '../constants/socket-constants';
 import socket from '../../socket';
 import { API } from '../../api'
+import * as chatActions from './chat-actions';
 
 const MESSAGE_TYPE_ROOM_LIST = "roomlist";
 const MESSAGE_TYPE_MESSAGE = "message";
@@ -8,6 +9,7 @@ const MESSAGE_TYPE_SERVER = "servermessage";
 const MESSAGE_TYPE_JOIN = "join";
 const MESSAGE_TYPE_LEAVE = "leave";
 const MESSAGE_TYPE_ROOMLEAVE = "roomleave";
+const MESSAGE_TYPE_USERLEAVE = "userleave";
 const MESSAGE_TYPE_MEMBERS = "memberlist";
 const MESSAGE_TYPE_UPDATE_USER = "updateuser";
 const MESSAGE_TYPE_UPDATE_ROOM = "updateroom";
@@ -42,7 +44,21 @@ export function onSocketMessage(message) {
         return dispatch({type: actions.SOCK_LEAVE, message});
       }
       case MESSAGE_TYPE_ROOMLEAVE: {
+        let store = getStore();
+        let removedRoomName = message.room.name;
+        let selectedRoom = store.get("rooms").first().get('name');
+        store.get("rooms").reduce((prev, nextValue, nextKey) => {
+          if(prev === removedRoomName) {
+            selectedRoom = nextKey;
+          }
+
+          return nextKey
+        }, "");
+        dispatch(chatActions.handleChangeRoom(selectedRoom));
         return dispatch({type: actions.SOCK_ROOMLEAVE, message});
+      }
+      case MESSAGE_TYPE_USERLEAVE: {
+        return dispatch({type: actions.SOCK_USERLEAVE, message});
       }
       case MESSAGE_TYPE_MEMBERS: {
         return dispatch({type: actions.SOCK_MEMBERS, message});

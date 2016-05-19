@@ -324,10 +324,12 @@ public class WebSocket extends PreloadUserController {
                 }
             } else if (awaitResult instanceof ChatRoomStream.RoomLeave) {
                 ChatRoomStream.RoomLeave event = (ChatRoomStream.RoomLeave) awaitResult;
-                outbound.send(awaitResult.toJson());
                 if (event.user.username.equalsIgnoreCase(thisConnectionUser.username)) {
                     RoomConnection roomConnection = roomConnections.get(event.room.name);
                     roomConnection.chatRoomEventStream.removeStream(event.room, event.user, connectionId);
+                    outbound.send(awaitResult.toJson());
+                } else {
+                    outbound.send(new ChatRoomStream.UserLeave(event.room, event.user).toJson());
                 }
             } else {
                 // Case: New message on a chat room

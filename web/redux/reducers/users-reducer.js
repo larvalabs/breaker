@@ -7,6 +7,7 @@ export default function users(state=Immutable.Map(), action) {
   switch (action.type) {
     case (socketTypes.SOCK_LEAVE):
     case (socketTypes.SOCK_ROOMLEAVE):
+    case (socketTypes.SOCK_USERLEAVE):
     case (socketTypes.SOCK_JOIN): {
       return state.set(action.message.user.username, Immutable.fromJS(action.message.user))
     }

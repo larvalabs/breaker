@@ -55,7 +55,7 @@ export default function members(state=Immutable.Map(), action) {
     case (socketTypes.SOCK_LEAVE): {
       return moveMemberOfflineState(state, action);
     }
-    case (socketTypes.SOCK_ROOMLEAVE): {
+    case (socketTypes.SOCK_USERLEAVE): {
       return removeMemberAllStates(state, action);
     }
     case(socketTypes.SOCK_REFRESH): {

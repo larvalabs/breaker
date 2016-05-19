@@ -190,6 +190,7 @@ public class ChatRoomStream {
         public static final String TYPE_SERVERCOMMAND = "servercommand";
         public static final String TYPE_LEAVE = "leave";
         public static final String TYPE_ROOMLEAVE = "roomleave";
+        public static final String TYPE_USERLEAVE = "userleave";
         public static final String TYPE_UPDATE_USER = "updateuser";
         public static final String TYPE_UPDATE_ROOM = "updateroom";
         public static final String TYPE_UPDATE_MESSAGE = "updatemessage";
@@ -229,6 +230,8 @@ public class ChatRoomStream {
                 return gson.fromJson(jsonStr, Leave.class);
             } else if (type.equals(TYPE_ROOMLEAVE)) {
                 return gson.fromJson(jsonStr, RoomLeave.class);
+            } else if (type.equals(TYPE_USERLEAVE)) {
+                return gson.fromJson(jsonStr, UserLeave.class);
             } else if (type.equals(TYPE_SERVERMESSAGE)) {
                 // Note these server commands are normally only sent locally to the websocket
                 return gson.fromJson(jsonStr, ServerMessage.class);
@@ -322,6 +325,20 @@ public class ChatRoomStream {
 
         public RoomLeave(JsonChatRoom room, JsonUser user) {
             super(TYPE_ROOMLEAVE, room);
+            this.user = user;
+        }
+
+    }
+
+    public static class UserLeave extends Event {
+
+        public JsonUser user;
+
+        public UserLeave() {
+        }
+
+        public UserLeave(JsonChatRoom room, JsonUser user) {
+            super(TYPE_USERLEAVE, room);
             this.user = user;
         }
 
