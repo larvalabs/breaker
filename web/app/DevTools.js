@@ -5,12 +5,14 @@ import DockMonitor from 'redux-devtools-dock-monitor';
 import Dispatcher from 'redux-devtools-dispatch';
 import MultipleMonitors from 'redux-devtools-multiple-monitors';
 
+import * as scrollActions from '../redux/actions/scroll-actions'
 import * as chatActions from '../redux/actions/chat-actions'
 import * as socketActions from '../redux/actions/socket-actions'
 
 const actionCreators = {
   chat : chatActions,
-  socket: socketActions
+  socket: socketActions,
+  scroll: scrollActions
 };
 
 export default createDevTools(

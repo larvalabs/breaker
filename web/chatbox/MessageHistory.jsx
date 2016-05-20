@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import Immutable from 'immutable'
 import { connect } from 'react-redux'
-import * as chatActions from '../redux/actions/chat-actions'
+import * as scrollActions from '../redux/actions/scroll-actions'
 
 export default class MessageHistory extends Component {
   constructor(props){
@@ -57,7 +57,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return {
     handleMoreMessages(){
-      dispatch(chatActions.handleMoreMessages())
+      dispatch(scrollActions.handleMoreMessages())
     }
   }
 }

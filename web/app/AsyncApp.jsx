@@ -7,12 +7,14 @@ import Main from './Main'
 import Immutable from 'immutable'
 import ChatDocumentTitle from './ChatDocumentTitle'
 import Config from '../config'
+import { scrollToRoomNameReset } from '../redux/actions/scroll-actions'
 
 class AsyncApp extends Component {
   render(){
     const { roomName ,
             rooms, room, unreadCount,
-            sidebarOpen } = this.props;
+            sidebarOpen, scrollToRoomNameReset,
+            scrollToRoomName } = this.props;
     return (
       <ChatDocumentTitle unreadCount={unreadCount} roomName={roomName}>
         <div className={`app app-header-fixed app-aside-fixed ${this.props.roomName}`}>
@@ -20,7 +22,9 @@ class AsyncApp extends Component {
           <Sidebar roomList={rooms}
                    roomName={roomName}
                    open={sidebarOpen}
-                   room={room} />
+                   room={room}
+                   scrollToRoomNameReset={scrollToRoomNameReset}
+                   scrollToRoomName={scrollToRoomName}/>
           <Main />
         </div>
       </ChatDocumentTitle>
@@ -53,8 +57,17 @@ function mapStateToProps(state) {
     room: state.getIn(['rooms', roomName], Immutable.Map()),
     sidebarOpen: state.getIn(['ui', 'sidebar_open']),
     settingsOpen: state.getIn(['ui', 'settings_open']),
-    unreadCount
+    unreadCount,
+    scrollToRoomName: state.getIn(['ui', 'scrollToRoomName'])
   }
 }
 
-export default connect(mapStateToProps)(AsyncApp)
+function mapDispatchToProps(dispatch){
+  return {
+    scrollToRoomNameReset(){
+      dispatch(scrollToRoomNameReset())
+    }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(AsyncApp)

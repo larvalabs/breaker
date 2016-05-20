@@ -1,10 +1,18 @@
 import React from 'react';
 import Config from '../config'
 import Immutable from 'immutable'
-
+import ReactDOM from 'react-dom'
 import SidebarRoomListElm from './SidebarRoomListElm'
 
 export default React.createClass({
+  componentDidUpdate() {
+    if(this.props.scrollToRoomName) {
+      let roomList = ReactDOM.findDOMNode(this.refs.roomList);
+      let scrollTo = ReactDOM.findDOMNode(this.refs[this.props.scrollToRoomName]);
+      roomList.scrollTop = scrollTo.offsetTop;
+      this.props.scrollToRoomNameReset();
+    }
+  },
   getDefaultProps: function(){
     return {
       roomList: Immutable.Map(),
@@ -22,6 +30,7 @@ export default React.createClass({
       {
         this.props.roomList.toArray().map((room) => {
             return <SidebarRoomListElm key={room.get('name')}
+                                       ref={room.get('name')}
                                        room={room}
                                        active={room.get('name') == this.props.roomName}/>;
         })
@@ -37,7 +46,7 @@ export default React.createClass({
     return (
       <aside id="aside" className={classes} style={styles}>
         <div className="aside-wrap">
-          <div className="navi-wrap">
+          <div className="navi-wrap" ref="roomList">
             <nav ui-nav className="navi clearfix">
               {this.renderYourRooms()}
             </nav>

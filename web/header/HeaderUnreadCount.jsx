@@ -1,5 +1,7 @@
 import React, {Component} from 'react'
 import Immutable from 'immutable'
+import { connect } from "react-redux";
+import { handleScrollToNextUnread } from '../redux/actions/scroll-actions'
 
 
 export default class HeaderUnreadCount extends Component {
@@ -12,7 +14,9 @@ export default class HeaderUnreadCount extends Component {
 
     return <div className="unread-count-total pull-right">
       <b className="unreadcount label bg-info pull-right"
-         style={{backgroundColor: backgroundColor, color: textColor}}>{this.props.unreadCount}</b>
+         title="Jump to next unread room"
+         style={{backgroundColor: backgroundColor, color: textColor, cursor: "pointer"}}
+         onClick={this.props.scrollToUnreadRoom}>{this.props.unreadCount}</b>
     </div>
   }
 }
@@ -21,3 +25,13 @@ HeaderUnreadCount.defaultProps = {
   room: Immutable.Map(),
   unreadCount: 0
 };
+
+function mapDispatchToProps(dispatch){
+  return {
+    scrollToUnreadRoom(){
+      dispatch(handleScrollToNextUnread())
+    }
+  }
+}
+
+export default connect(null, mapDispatchToProps)(HeaderUnreadCount)

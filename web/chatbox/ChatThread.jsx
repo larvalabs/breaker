@@ -6,7 +6,7 @@ import MessageHistory from './MessageHistory'
 import Config from '../config'
 import { connect } from 'react-redux';
 import Immutable from 'immutable'
-import * as chatActions from '../redux/actions/chat-actions'
+import * as scrollActions from '../redux/actions/scroll-actions'
 import ReactDOM from 'react-dom'
 
 class ChatThread extends Component {
@@ -135,10 +135,10 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return {
     handleMoreMessages(){
-      dispatch(chatActions.handleMoreMessages())
+      dispatch(scrollActions.handleMoreMessages())
     },
     resetScrollToMessageId(){
-      dispatch(chatActions.resetScrollToMessage())
+      dispatch(scrollActions.resetScrollToMessage())
     }
   }
 }
