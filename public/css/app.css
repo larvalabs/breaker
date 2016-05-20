@@ -5489,6 +5489,7 @@ li.chat-message-root .message-body, li.chat-message-short .message-body, li.chat
 .room-options{
   margin-left: 5px;
   color: #A6AEB2;
+  cursor: default;
 }
 
 .room-options a:hover{
