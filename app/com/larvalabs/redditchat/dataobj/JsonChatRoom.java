@@ -38,12 +38,12 @@ public class JsonChatRoom implements Serializable {
     public String[] usernamesPresent;
     public JsonMessage[] messages;
 
-    public JsonChatRoom(long id, String displayName, long numberUsers,
+    public JsonChatRoom(long id, String name, String displayName, long numberUsers,
                         long liveUserCount, String iconUrl, int iconUrlSource, boolean noIconAvailableFromStore,
                         String banner, String flairScale, boolean isPrivate, JsonRoomStyles jsonRoomStyles,
                         List<String> moderators) {
         this.id = id;
-        this.name = displayName.toLowerCase();
+        this.name = name;
         this.displayName = displayName;
         this.numberUsers = numberUsers;
         this.liveUserCount = liveUserCount;
@@ -68,7 +68,7 @@ public class JsonChatRoom implements Serializable {
                 room.sidebarUnreadColor, room.sidebarUnreadTextColor, room.signinButtonColor,
                 room.signinButtonTextColor);
 
-        JsonChatRoom jsonChatRoom = new JsonChatRoom(room.getId(), room.name,
+        JsonChatRoom jsonChatRoom = new JsonChatRoom(room.getId(), room.name, room.displayName,
                 room.numberOfUsers,
                 room.getCurrentUserCount(), room.getIconUrl(),
                 room.getIconUrlSource(), room.isNoIconAvailableFromStore(), room.getBanner(),

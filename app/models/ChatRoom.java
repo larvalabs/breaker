@@ -32,6 +32,7 @@ public class ChatRoom extends Model {
 
     @Column(unique = true)
     public String name;
+    public String displayName;
 
     public int iconUrlSource = ICON_SOURCE_NONE;
     public boolean noIconAvailableFromStore = false;
@@ -75,8 +76,9 @@ public class ChatRoom extends Model {
 
     public boolean privateRoom;
 
-    public ChatRoom(String name) {
-        this.name = name;
+    public ChatRoom(String displayName) {
+        this.name = displayName.toLowerCase();
+        this.displayName = displayName;
         this.numberOfUsers = 0;
     }
 
@@ -92,80 +94,16 @@ public class ChatRoom extends Model {
         return name;
     }
 
-    public String getSidebarBackgroundColor(){
-        return sidebarBackgroundColor;
-    }
-
-    public void setSidebarBackgroundColor(String sidebarBackgroundColor){
-        this.sidebarBackgroundColor = sidebarBackgroundColor;
-    }
-
-    public String getSidebarTextColor(){
-        return sidebarTextColor;
-    }
-
-    public void setSidebarTextColor(String sidebarTextColor){
-        this.sidebarTextColor = sidebarTextColor;
-    }
-
-    public String getSigninButtonTextColor(){
-        return signinButtonTextColor;
-    }
-
-    public String getSidebarRoomSelectedColor(){
-        return sidebarRoomSelectedColor;
-    }
-
-    public String getSidebarRoomHoverColor(){
-        return sidebarRoomHoverColor;
-    }
-
-    public String getSidebarRoomTextColor(){
-        return sidebarRoomTextColor;
-    }
-
-    public String getSidebarUnreadColor(){
-        return sidebarUnreadColor;
-    }
-
-    public String getSidebarUnreadTextColor(){
-        return sidebarUnreadTextColor;
-    }
-
-    public String getSigninButtonColor(){
-        return signinButtonColor;
-    }
-
-    public void setSidebarRoomSelectedColor(String sidebarRoomSelectedColor){
-        this.sidebarRoomSelectedColor = sidebarRoomSelectedColor;
-    }
-
-    public void setSidebarRoomHoverColor(String sidebarRoomHoverColor){
-        this.sidebarRoomHoverColor = sidebarRoomHoverColor;
-    }
-
-    public void setSidebarRoomTextColor(String sidebarRoomTextColor){
-        this.sidebarRoomTextColor = sidebarRoomTextColor;
-    }
-
-    public void setSidebarUnreadColor(String sidebarUnreadColor){
-        this.sidebarUnreadColor = sidebarUnreadColor;
-    }
-
-    public void setSidebarUnreadTextColor(String sidebarUnreadTextColor){
-        this.sidebarUnreadTextColor = sidebarUnreadTextColor;
-    }
-
-    public void setSigninButtonColor(String signinButtonColor){
-        this.signinButtonColor = signinButtonColor;
-    }
-
-    public void setSigninButtonTextColor(String signinButtonTextColor){
-        this.signinButtonTextColor = signinButtonTextColor;
-    }
-
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
     public String getIconUrl() {
@@ -309,6 +247,78 @@ public class ChatRoom extends Model {
 
     public void setPrivateRoom(boolean privateRoom) {
         this.privateRoom = privateRoom;
+    }
+
+    public String getSidebarBackgroundColor(){
+        return sidebarBackgroundColor;
+    }
+
+    public void setSidebarBackgroundColor(String sidebarBackgroundColor){
+        this.sidebarBackgroundColor = sidebarBackgroundColor;
+    }
+
+    public String getSidebarTextColor(){
+        return sidebarTextColor;
+    }
+
+    public void setSidebarTextColor(String sidebarTextColor){
+        this.sidebarTextColor = sidebarTextColor;
+    }
+
+    public String getSigninButtonTextColor(){
+        return signinButtonTextColor;
+    }
+
+    public String getSidebarRoomSelectedColor(){
+        return sidebarRoomSelectedColor;
+    }
+
+    public String getSidebarRoomHoverColor(){
+        return sidebarRoomHoverColor;
+    }
+
+    public String getSidebarRoomTextColor(){
+        return sidebarRoomTextColor;
+    }
+
+    public String getSidebarUnreadColor(){
+        return sidebarUnreadColor;
+    }
+
+    public String getSidebarUnreadTextColor(){
+        return sidebarUnreadTextColor;
+    }
+
+    public String getSigninButtonColor(){
+        return signinButtonColor;
+    }
+
+    public void setSidebarRoomSelectedColor(String sidebarRoomSelectedColor){
+        this.sidebarRoomSelectedColor = sidebarRoomSelectedColor;
+    }
+
+    public void setSidebarRoomHoverColor(String sidebarRoomHoverColor){
+        this.sidebarRoomHoverColor = sidebarRoomHoverColor;
+    }
+
+    public void setSidebarRoomTextColor(String sidebarRoomTextColor){
+        this.sidebarRoomTextColor = sidebarRoomTextColor;
+    }
+
+    public void setSidebarUnreadColor(String sidebarUnreadColor){
+        this.sidebarUnreadColor = sidebarUnreadColor;
+    }
+
+    public void setSidebarUnreadTextColor(String sidebarUnreadTextColor){
+        this.sidebarUnreadTextColor = sidebarUnreadTextColor;
+    }
+
+    public void setSigninButtonColor(String signinButtonColor){
+        this.signinButtonColor = signinButtonColor;
+    }
+
+    public void setSigninButtonTextColor(String signinButtonTextColor){
+        this.signinButtonTextColor = signinButtonTextColor;
     }
 
     // Do stuff zone

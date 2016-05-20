@@ -36,19 +36,17 @@ public class JsonMessage implements Serializable {
 
     // Optionally filled when showing list of messages loaded from various rooms
     public String roomName;
-    public String roomDisplayName;
 
     // Optionally filled if translation exists
 //    public String translatedMessage;
 //    public String translatedLanguage;
 
-    public JsonMessage(long id, String uuid, String username, String roomDisplayName, String message, String imageUrl, String imageThumbUrl, int likeCount, boolean userDidLike,
+    public JsonMessage(long id, String uuid, String username, String roomName, String message, String imageUrl, String imageThumbUrl, int likeCount, boolean userDidLike,
                        Date createDate, boolean newSinceLastSession, String detectedLanguage) {
         this.id = id;
         this.uuid = uuid;
         this.username = username;
-        this.roomName = roomDisplayName.toLowerCase();
-        this.roomDisplayName = roomDisplayName;
+        this.roomName = roomName;
         this.message = message;
         this.imageUrl = imageUrl;
         this.imageThumbUrl = imageThumbUrl;
@@ -65,11 +63,10 @@ public class JsonMessage implements Serializable {
         }
     }
 
-    public JsonMessage(String uuid, String username, String roomDisplayName, String message) {
+    public JsonMessage(String uuid, String username, String roomName, String message) {
         this.uuid = uuid;
         this.username = username;
-        this.roomName = roomDisplayName.toLowerCase();
-        this.roomDisplayName = roomDisplayName;
+        this.roomName = roomName;
         this.message = message;
         this.createDate = new Date();
         this.createDateLongUTC = createDate.getTime();
@@ -118,7 +115,6 @@ public class JsonMessage implements Serializable {
      * Note: Ignores new status of messages
      * @param messages
      * @param loggedInUser
-     * @param addChatRoomReferences Load the details of the chat room for each message. Slower, but used when the messages all come from different rooms.
      * @return
      */
     public static JsonMessage[] convert(List<Message> messages, ChatUser loggedInUser, ListType type) {

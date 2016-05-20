@@ -61,7 +61,7 @@ public class JsonUtil {
             ChatRoom thisRoom = chatRoomJoin.getRoom();
             ChatUser thisUser = chatRoomJoin.getUser();
 //            Logger.info("Preload " + thisRoom.getName() + " for " + thisUser.getUsername());
-            String roomName = thisRoom.getName().toLowerCase();
+            String roomName = thisRoom.getName();
             if (!state.rooms.containsKey(roomName)) {
                 state.rooms.put(roomName, JsonChatRoom.from(thisRoom, thisRoom.getModeratorUsernames()));
             }
