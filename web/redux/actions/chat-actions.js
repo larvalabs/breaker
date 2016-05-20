@@ -98,7 +98,7 @@ export function handleMoreMessages() {
     let firstMessage = state.getIn(
         ['messages', state.getIn(['roomMessages', currentRoom], Immutable.List()).first()
     ]);
-    if(firstMessage.get('type') !== 'first_sentinel') {
+    if(firstMessage && firstMessage.get('type') !== 'first_sentinel') {
       dispatch(loadingMoreMessages());
       API.fetchMoreMessages(currentRoom, firstMessage.get('id')).then((response) => {
         if (response.data.length < count) {

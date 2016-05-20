@@ -2,6 +2,7 @@ import Immutable from 'immutable';
 import * as menuTypes from '../constants/menu-constants'
 import * as socketTypes from '../constants/socket-constants'
 import * as chatTypes from '../constants/chat-constants'
+import * as scrollTypes from '../constants/scroll-constants'
 
 
 export default function ui(state=Immutable.Map({connected: false, sidebar_open: false, settings_open: false}), action) {
@@ -41,6 +42,12 @@ export default function ui(state=Immutable.Map({connected: false, sidebar_open: 
     }
     case(chatTypes.CHAT_RESET_SCROLL_TO_MESSAGE): {
       return state.set('scrollToMessageId', null);
+    }
+    case(scrollTypes.SCROLL_TO_ROOM_NAME): {
+      return state.set('scrollToRoomName', action.roomName);
+    }
+    case(scrollTypes.SCROLL_TO_ROOM_NAME_RESET): {
+      return state.set('scrollToRoomName', null);
     }
     case(chatTypes.CHAT_LOADING_MESSAGES): {
       return state.set('moreMessagesLoading', true);
