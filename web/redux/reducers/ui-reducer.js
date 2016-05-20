@@ -37,10 +37,10 @@ export default function ui(state=Immutable.Map({connected: false, sidebar_open: 
     case(chatTypes.CHAT_RESET_INPUT_FOCUS): {
       return state.set('setInputFocus', false);
     }
-    case(chatTypes.CHAT_SCROLL_TO_MESSAGE): {
+    case(scrollTypes.SCROLL_TO_MESSAGE_ID): {
       return state.set('scrollToMessageId', action.messageId);
     }
-    case(chatTypes.CHAT_RESET_SCROLL_TO_MESSAGE): {
+    case(scrollTypes.SCROLL_TO_MESSAGE_ID_RESET): {
       return state.set('scrollToMessageId', null);
     }
     case(scrollTypes.SCROLL_TO_ROOM_NAME): {
