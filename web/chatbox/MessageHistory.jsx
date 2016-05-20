@@ -41,7 +41,10 @@ MessageHistory.defaultProps = {
 function mapStateToProps(state) {
   let roomMessages = state.getIn(['roomMessages', state.get('currentRoom')], Immutable.List());
   let firstMessage = state.getIn(['messages', roomMessages.first()]);
-  let hasMore = firstMessage.get('type', '') !== 'first_sentinel';
+  let hasMore = false;
+  if(firstMessage){
+    hasMore = firstMessage.get('type', '') !== 'first_sentinel'
+  }
   let messageCount = roomMessages.size;
   return {
     loading: state.getIn(['ui', 'moreMessagesLoading']),

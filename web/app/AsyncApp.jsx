@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 
-import Header from './Header'
+import Header from '../header/Header'
 import Sidebar from '../sidebar/Sidebar'
 import Main from './Main'
 import Immutable from 'immutable'
@@ -10,13 +10,13 @@ import Config from '../config'
 
 class AsyncApp extends Component {
   render(){
-    const { user, roomName ,
-            rooms, room, userIsMod, unreadCount,
+    const { roomName ,
+            rooms, room, unreadCount,
             sidebarOpen } = this.props;
     return (
       <ChatDocumentTitle unreadCount={unreadCount} roomName={roomName}>
         <div className={`app app-header-fixed app-aside-fixed ${this.props.roomName}`}>
-          <Header user={user} roomName={roomName} room={room} userIsMod={userIsMod} unreadCount={unreadCount}/>
+          <Header unreadCount={unreadCount}/>
           <Sidebar roomList={rooms}
                    roomName={roomName}
                    open={sidebarOpen}
@@ -30,15 +30,9 @@ class AsyncApp extends Component {
 
 function mapStateToProps(state) {
   let roomName = state.get('currentRoom');
-  let user = state.get('authUser');
   let members = state.getIn(['members']);
   let rooms = state.get('rooms');
   let lastReadTimes = state.get('lastSeenTimes');
-
-  let userIsMod;
-  if (members && members.get('breakerapp')) {
-    userIsMod = !!state.getIn(['members', roomName, 'mods', user.get('username')]);
-  }
 
   if(Config.guest){
     rooms = rooms.filter(room => room.get('name') === roomName);
@@ -54,12 +48,9 @@ function mapStateToProps(state) {
   }, 0);
 
   return {
-    user: user,
-    userIsMod: userIsMod,
     roomName: roomName,
     rooms: rooms,
     room: state.getIn(['rooms', roomName], Immutable.Map()),
-    unreadCounts: state.get('unreadCounts'),
     sidebarOpen: state.getIn(['ui', 'sidebar_open']),
     settingsOpen: state.getIn(['ui', 'settings_open']),
     unreadCount

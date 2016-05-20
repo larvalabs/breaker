@@ -114,9 +114,16 @@ class ChatThread extends Component {
 function mapStateToProps(state) {
   let roomName = state.get('currentRoom');
   let messages = state.getIn(['roomMessages', roomName], Immutable.List()).map((uuid) => state.getIn(['messages', uuid]));
+  let firstMessage = messages.first();
+  let firstMessageID = null;
+
+  if(firstMessage){
+    firstMessageID = firstMessage.get('uuid')
+  }
+
 
   return {
-    firstMessageID: messages.first().get('uuid'),
+    firstMessageID,
     scrollToMessageId: state.getIn(['ui', 'scrollToMessageId']),
     messages: messages,
     users: state.get('users'),
