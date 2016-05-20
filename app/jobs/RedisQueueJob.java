@@ -64,7 +64,7 @@ public class RedisQueueJob extends Job {
     public static void publish(ChatRoomStream.Event event) {
 //        Logger.info("Sending event to redis");
         if (Play.mode.isProd()) {
-            Stats.count(Stats.StatKey.REDIS_MESSAGES, 1);
+//            Stats.count(Stats.StatKey.REDIS_MESSAGES, 1);
         }
         Redis.publish(CHANNEL, event.toJson());
     }
