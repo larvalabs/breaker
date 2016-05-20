@@ -21,6 +21,7 @@ public class JsonChatRoom implements Serializable {
 
     public long id;
     public String name;
+    public String displayName;
     public long numberUsers;
     public long liveUserCount;
     public String iconUrl;
@@ -37,12 +38,13 @@ public class JsonChatRoom implements Serializable {
     public String[] usernamesPresent;
     public JsonMessage[] messages;
 
-    public JsonChatRoom(long id, String name, long numberUsers,
+    public JsonChatRoom(long id, String displayName, long numberUsers,
                         long liveUserCount, String iconUrl, int iconUrlSource, boolean noIconAvailableFromStore,
                         String banner, String flairScale, boolean isPrivate, JsonRoomStyles jsonRoomStyles,
                         List<String> moderators) {
         this.id = id;
-        this.name = name;
+        this.name = displayName.toLowerCase();
+        this.displayName = displayName;
         this.numberUsers = numberUsers;
         this.liveUserCount = liveUserCount;
         this.iconUrl = iconUrl;

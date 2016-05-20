@@ -61,21 +61,22 @@ public class JsonUtil {
             ChatRoom thisRoom = chatRoomJoin.getRoom();
             ChatUser thisUser = chatRoomJoin.getUser();
 //            Logger.info("Preload " + thisRoom.getName() + " for " + thisUser.getUsername());
-            if (!state.rooms.containsKey(thisRoom.getName())) {
-                state.rooms.put(thisRoom.getName(), JsonChatRoom.from(thisRoom, thisRoom.getModeratorUsernames()));
+            String roomName = thisRoom.getName().toLowerCase();
+            if (!state.rooms.containsKey(roomName)) {
+                state.rooms.put(roomName, JsonChatRoom.from(thisRoom, thisRoom.getModeratorUsernames()));
             }
 
-            JsonRoomMembers roomMembers = state.members.get(thisRoom.getName());
+            JsonRoomMembers roomMembers = state.members.get(roomName);
             if (roomMembers == null) {
                 roomMembers = new JsonRoomMembers();
-                state.members.put(thisRoom.getName(), roomMembers);
+                state.members.put(roomName.toLowerCase(), roomMembers);
             }
             JsonUser jsonUser = state.users.get(thisUser.getUsername());
             if (jsonUser == null) {
                 jsonUser = JsonUser.fromUserNoFlairLoad(thisUser, usernamesPresent.contains(thisUser.getUsername()));
                 state.users.put(jsonUser.username, jsonUser);
             }
-            jsonUser.addFlair(thisRoom.getName(), new JsonFlair(chatRoomJoin.getFlairText(), chatRoomJoin.getFlairCss(), chatRoomJoin.getFlairPosition()));
+            jsonUser.addFlair(roomName.toLowerCase(), new JsonFlair(chatRoomJoin.getFlairText(), chatRoomJoin.getFlairCss(), chatRoomJoin.getFlairPosition()));
             if (thisRoom.getModerators().contains(thisUser)) {  // check if slow
                 roomMembers.mods.add(jsonUser.username);
             } else if (jsonUser.online) {
@@ -83,9 +84,9 @@ public class JsonUtil {
             } else {
                 roomMembers.offline.add(jsonUser.username);
             }
-            state.members.put(thisRoom.getName(), roomMembers);
+            state.members.put(roomName, roomMembers);
 
-            if (!state.roomMessages.containsKey(thisRoom.getName())) {
+            if (!state.roomMessages.containsKey(roomName)) {
                 long messagesStart = System.currentTimeMillis();
                 ArrayList<JsonMessage> roomMessages = BreakerCache.getLastMessages(thisRoom);
                 ArrayList<String> messageIds = new ArrayList<>();
@@ -93,12 +94,12 @@ public class JsonUtil {
                     state.messages.put(roomMessage.uuid, roomMessage);
                     messageIds.add(roomMessage.uuid);
                 }
-                state.roomMessages.put(thisRoom.getName(), messageIds);
+                state.roomMessages.put(roomName, messageIds);
                 Logger.info("Messages load time: " + (System.currentTimeMillis() - messagesStart));
             }
 
             if (user.equals(thisUser)) {
-                state.lastSeenTimes.put(thisRoom.getName(), chatRoomJoin.getLastSeenMessageTime());
+                state.lastSeenTimes.put(roomName, chatRoomJoin.getLastSeenMessageTime());
             }
         }
 

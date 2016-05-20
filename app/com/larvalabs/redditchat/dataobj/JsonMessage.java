@@ -36,17 +36,19 @@ public class JsonMessage implements Serializable {
 
     // Optionally filled when showing list of messages loaded from various rooms
     public String roomName;
+    public String roomDisplayName;
 
     // Optionally filled if translation exists
 //    public String translatedMessage;
 //    public String translatedLanguage;
 
-    public JsonMessage(long id, String uuid, String username, String roomName, String message, String imageUrl, String imageThumbUrl, int likeCount, boolean userDidLike,
+    public JsonMessage(long id, String uuid, String username, String roomDisplayName, String message, String imageUrl, String imageThumbUrl, int likeCount, boolean userDidLike,
                        Date createDate, boolean newSinceLastSession, String detectedLanguage) {
         this.id = id;
         this.uuid = uuid;
         this.username = username;
-        this.roomName = roomName;
+        this.roomName = roomDisplayName.toLowerCase();
+        this.roomDisplayName = roomDisplayName;
         this.message = message;
         this.imageUrl = imageUrl;
         this.imageThumbUrl = imageThumbUrl;
@@ -63,10 +65,11 @@ public class JsonMessage implements Serializable {
         }
     }
 
-    public JsonMessage(String uuid, String username, String roomName, String message) {
+    public JsonMessage(String uuid, String username, String roomDisplayName, String message) {
         this.uuid = uuid;
         this.username = username;
-        this.roomName = roomName;
+        this.roomName = roomDisplayName.toLowerCase();
+        this.roomDisplayName = roomDisplayName;
         this.message = message;
         this.createDate = new Date();
         this.createDateLongUTC = createDate.getTime();
