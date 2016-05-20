@@ -2,7 +2,7 @@ import React from "react";
 import { connect } from 'react-redux'
 import Immutable from 'immutable'
 import Config from '../config'
-import {toggleSidebar, toggleSettings} from '../redux/actions/menu-actions'
+import {toggleSidebar, toggleSettings, handleLeaveRoom} from '../redux/actions/menu-actions'
 
 var Header = React.createClass({
   getDefaultProps: function() {
@@ -122,25 +122,42 @@ var Header = React.createClass({
       <li className="m-t-xs m-b-xxs middle" >
         <span id="room-title" className="h4 m-n font-thin h4 text-black">
           <a href={"https://reddit.com/r/" + this.props.roomName} target="_blank">#{this.props.roomName}</a></span>
-        {this.renderModCustomize()}
+        {this.renderNameMenu()}
         <br/>
-        <small id="room-modmessage" className="text-muted">
+        <small style={{marginLeft: "10px"}}id="room-modmessage" className="text-muted">
           {this.props.room.get('banner') ? this.props.room.get('banner') : Config.settings.default_banner}
         </small>
       </li>
 
     </ul>
   },
-  renderModCustomize: function () {
+  handleLeaveRoom: function(){
+    if(Config.guest){
+      return null;
+    }
+    return this.props.dispatch(handleLeaveRoom(this.props.roomName))
+  },
+  renderLeaveRoom: function() {
+    if(Config.guest){
+      return null;
+    }
+
+    return <span>| <a href="#" onClick={this.handleLeaveRoom}>leave</a></span>
+  },
+  renderEditRoom: function() {
+    if(!this.props.userIsMod && !Config.admin){
+      return null;
+    }
+
+    return <span> | <a id="room-pref" href={`/roommanage/roomprefs?roomName=${this.props.roomName}`}>edit</a></span>
+  },
+  renderNameMenu: function () {
     if(!this.props.room.get('name')){
       return null;
     }
 
-    if(!this.props.userIsMod && !Config.admin){
-      return null;
-    }
-    return <span>
-      <a id="room-pref" href={`/roommanage/roomprefs?roomName=${this.props.roomName}`}> (customize)</a>
+    return <span className="room-options">
+      {this.renderLeaveRoom()} {this.renderEditRoom()}
     </span>
   },
   renderRoomIcon: function() {

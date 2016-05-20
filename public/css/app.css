@@ -5459,12 +5459,6 @@ li.chat-message-root .message-body, li.chat-message-short .message-body, li.chat
   text-align: right;
 }
 
-.close-room {
-  position:absolute;
-  top: 5px;
-  left: 2px;
-}
-
 .app-content {
   position: absolute;
   top: 0;
@@ -5490,4 +5484,19 @@ li.chat-message-root .message-body, li.chat-message-short .message-body, li.chat
   width: 10%;
   margin: 5px auto 0;
   border-bottom: 1px dashed #98a6ad;
+}
+
+.room-options{
+  margin-left: 5px;
+  color: #A6AEB2;
+}
+
+.room-options a:hover{
+  text-decoration: underline;
+  color: #4F5264;
+}
+
+#room-title {
+  font-weight: 600;
+  color: #4F5264;
 }
