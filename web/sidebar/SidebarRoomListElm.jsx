@@ -1,8 +1,6 @@
 import React, {Component} from 'react'
 import { connect } from 'react-redux';
 import Immutable from 'immutable'
-import SidebarLeaveRoom from './SidebarLeaveRoom'
-import { handleLeaveRoom } from '../redux/actions/menu-actions'
 
 import * as chatActions from '../redux/actions/chat-actions'
 
@@ -13,7 +11,6 @@ class SidebarRoomListElm extends Component {
     this.getStyles = this.getStyles.bind(this);
     this.onMouseEnter = this.onMouseEnter.bind(this);
     this.onMouseLeave = this.onMouseLeave.bind(this);
-    this.handleLeaveRoom = this.handleLeaveRoom.bind(this);
     this.state = {};
   }
   onElementClicked(event){
@@ -60,10 +57,6 @@ class SidebarRoomListElm extends Component {
     let iconColor = props.currentRoom.getIn(['styles', 'sidebarTextColor']);
     return <i style={{color: iconColor}} className="fa fa-lock private-icon" />
   }
-  handleLeaveRoom(event){
-    event.preventDefault();
-    this.props.dispatch(handleLeaveRoom(this.props.room.get('name')));
-  }
   render() {
     let roomIcon = this.props.room.get('iconUrl', null);
     if (!roomIcon) {
@@ -79,8 +72,6 @@ class SidebarRoomListElm extends Component {
 
       <a className="roomselect" data-roomname={this.props.room.get('name')} style={this.getStyles()}
          onMouseLeave={this.onMouseLeave} onMouseEnter={this.onMouseEnter}>
-        <SidebarLeaveRoom show={this.state.hover} 
-                          styles={this.props.currentRoom.get('styles')} onLeave={this.handleLeaveRoom}/>
         {this.renderUnreadCount(this.props)}
         {this.renderPrivateIconIfNecessary(this.props)}
         <img className="roomIconSmall" src={roomIcon}/>
