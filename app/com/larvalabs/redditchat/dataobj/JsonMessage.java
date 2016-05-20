@@ -115,7 +115,6 @@ public class JsonMessage implements Serializable {
      * Note: Ignores new status of messages
      * @param messages
      * @param loggedInUser
-     * @param addChatRoomReferences Load the details of the chat room for each message. Slower, but used when the messages all come from different rooms.
      * @return
      */
     public static JsonMessage[] convert(List<Message> messages, ChatUser loggedInUser, ListType type) {

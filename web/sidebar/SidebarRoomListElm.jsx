@@ -76,7 +76,7 @@ class SidebarRoomListElm extends Component {
         {this.renderPrivateIconIfNecessary(this.props)}
         <img className="roomIconSmall" src={roomIcon}/>
         <span className={`roomname ${active}`}
-              style={{marginLeft: "2px", color: roomNameColor}}>#{this.props.room.get('name')}</span>
+              style={{marginLeft: "2px", color: roomNameColor}}>#{this.props.room.get('displayName')}</span>
       </a>
     </li>
   }

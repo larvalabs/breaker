@@ -166,6 +166,8 @@ public class WebSocket extends PreloadUserController {
             environment = "dev";
         }
 
+        roomName = roomName.toLowerCase();
+
         Logger.info("Websocket join time for " + user.getUsername() + ": " + (System.currentTimeMillis() - startTime));
 
         render("index.html", user, rooms, userString, roomName, environment, roomsString, usersString, membersString,
