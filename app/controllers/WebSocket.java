@@ -347,6 +347,7 @@ public class WebSocket extends PreloadUserController {
             Logger.info("Socket closed: " + user.username + ":" + connectionId);
             for (RoomConnection roomConnection : roomConnections.values()) {
                 ChatRoom.userNotPresent(roomConnection.room.name, user.username, connectionId);
+                user.online = false;
                 // If this was the last connection that user had to the room then broadcast they've left
                 roomConnection.chatRoomEventStream.leave(roomConnection.room, user);
                 if (!ChatRoom.isUserPresent(roomConnection.room.name, user.username)) {
