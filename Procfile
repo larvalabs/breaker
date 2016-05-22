@@ -1,1 +1,1 @@
-web: play run --http.port=$PORT $PLAY_OPTS
+web: with_jmap play run --http.port=$PORT $PLAY_OPTS
