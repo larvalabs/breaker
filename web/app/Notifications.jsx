@@ -10,6 +10,11 @@ class Notifications extends Component {
   }
   
   render() {
+
+    if(Config.guest){
+      return null
+    }
+
     const { notification } = this.props;
     let options = null;
     if(notification.get('options')){
