@@ -7,6 +7,7 @@ import messages from './message-entites-reducer';
 import rooms from './rooms-reducer';
 import users from './users-reducer';
 import lastSeenTimes from './last-seen-reducer';
+import notification from './notification-reducer';
 
 import { combineReducers } from 'redux-immutable';
 
@@ -24,7 +25,8 @@ const App = combineReducers({
   messages,
   bannerMessage,
   ui,
-  lastSeenTimes
+  lastSeenTimes,
+  notification
 });
 
 export default App;
