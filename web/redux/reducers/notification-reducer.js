@@ -39,7 +39,10 @@ export default function notification(state=initialState, action) {
           body: action.body,
           icon: 'http://georgeosddev.github.io/react-web-notification/example/Notifications_button_24.png',
           lang: 'en',
-          dir: 'ltr'
+          dir: 'ltr',
+          data: {
+            roomName: action.roomName
+          }
         }
       });
     }

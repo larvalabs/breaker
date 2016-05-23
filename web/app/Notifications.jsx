@@ -49,26 +49,26 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch){
   return {
-    handleNotSupported(){
-      return dispatch(notifyActions.handleNotSupported())
+    handleNotSupported(event){
+      return dispatch(notifyActions.handleNotSupported(event))
     },
-    handlePermissionGranted(){
-      return dispatch(notifyActions.handlePermissionGranted())
+    handlePermissionGranted(event){
+      return dispatch(notifyActions.handlePermissionGranted(event))
     },
-    handlePermissionDenied(){
-      return dispatch(notifyActions.handlePermissionDenied())
+    handlePermissionDenied(event){
+      return dispatch(notifyActions.handlePermissionDenied(event))
     },
-    handleNotificationOnShow(){
-      return dispatch(notifyActions.handleNotificationOnShow())
+    handleNotificationOnShow(event){
+      return dispatch(notifyActions.handleNotificationOnShow(event))
     },
-    handleNotificationOnClick(){
-      return dispatch(notifyActions.handleNotificationOnClick())
+    handleNotificationOnClick(event){
+      return dispatch(notifyActions.handleNotificationOnClick(event))
     },
-    handleNotificationOnClose(){
-      return dispatch(notifyActions.handleNotificationOnClose())
+    handleNotificationOnClose(event){
+      return dispatch(notifyActions.handleNotificationOnClose(event))
     },
-    handleNotificationOnError(){
-      return dispatch(notifyActions.handleNotificationOnError())
+    handleNotificationOnError(event){
+      return dispatch(notifyActions.handleNotificationOnError(event))
     }
   }
 }

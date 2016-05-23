@@ -1,4 +1,5 @@
 import * as actions from '../constants/notification-constants';
+import * as chatActions from '../actions/chat-actions';
 
 
 export function handleNotSupported(){
@@ -17,8 +18,12 @@ export function handleNotificationOnShow(){
   return {type: actions.NOTIFY_ON_SHOW}
 }
 
-export function handleNotificationOnClick(){
-  return {type: actions.NOTIFY_ON_CLICK}
+export function handleNotificationOnClick(event){
+  return (dispatch, getStore) => {
+    window.focus();
+    dispatch(chatActions.handleChangeRoom(event.target.data.roomName));
+    dispatch({type: actions.NOTIFY_ON_CLICK});
+  }
 }
 
 export function handleNotificationOnClose(){
@@ -30,8 +35,8 @@ export function handleNotificationOnError(){
   return {type: actions.NOTIFY_ON_ERROR}
 }
 
-export function handleSendNotification(title, body) {
-  return {type: actions.NOTIFY_SEND, title, body}
+export function handleSendNotification(title, body, roomName) {
+  return {type: actions.NOTIFY_SEND, title, body, roomName}
 }
 
 export function handleMessageUserMentionNotification(message) {
@@ -51,7 +56,7 @@ export function handleMessageUserMentionNotification(message) {
     }
 
     if(message.message.mentionedUsernames.indexOf(authUsername) > -1){
-      dispatch(handleSendNotification(message.user.username, message.message.message))
+      dispatch(handleSendNotification(message.user.username, message.message.message, message.room.name))
     }
   }
 }
