@@ -19,7 +19,6 @@ export function handleNotificationOnShow(){
 
 export function handleNotificationOnClick(){
   return {type: actions.NOTIFY_ON_CLICK}
-
 }
 
 export function handleNotificationOnClose(){
@@ -33,4 +32,37 @@ export function handleNotificationOnError(){
 
 export function handleSendNotification(title, body) {
   return {type: actions.NOTIFY_SEND, title, body}
+}
+
+export function handleMessageUserMentionNotification(message) {
+  return (dispatch, getStore) => {
+    // Prop validation
+    if(!message.message.mentionedUsernames || !message.message.mentionedUsernames.length){
+      return null
+    }
+
+    if(message.message.mentionedUsernames.length < 1){
+      return null
+    }
+
+    const authUsername = getStore().getIn(['authUser', 'username'], "").toLowerCase();
+    if(message.user.username.toLowerCase() === authUsername){
+      return null
+    }
+
+    if(message.message.mentionedUsernames.indexOf(authUsername) > -1){
+      dispatch(handleSendNotification(message.user.username, message.message.message))
+    }
+  }
+}
+
+export function handleNewMessageNotification(message) {
+  return (dispatch) => {
+    // Prop validation
+    if(!message || !message.message || !message.user || !message.user.username || !message.message.message){
+      return null
+    }
+
+    dispatch(handleMessageUserMentionNotification(message))
+  }
 }

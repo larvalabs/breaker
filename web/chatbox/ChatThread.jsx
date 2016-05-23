@@ -23,7 +23,7 @@ class ChatThread extends Component {
     }
   }
   handleOnScroll(event){
-    if(event.nativeEvent.srcElement.scrollTop === 0) {
+    if(event.nativeEvent.srcElement && event.nativeEvent.srcElement.scrollTop === 0) {
       this.props.handleMoreMessages();
     }
   }
