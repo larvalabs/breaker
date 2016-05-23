@@ -245,6 +245,10 @@ public class WebSocket extends PreloadUserController {
                 awaitAndProcessInput(jsonUser, connectionId, roomConnections);
             }
 
+            // Just to be sure, in case we didn't get a proper disconnect
+            for (RoomConnection roomConnection : roomConnections.values()) {
+                roomConnection.chatRoomEventStream.removeStream(roomConnection.room, jsonUser[0], connectionId);
+            }
         }
 
         private static void awaitAndProcessInput(JsonUser[] singleUserArray, String connectionId, HashMap<String, RoomConnection> roomConnections) {

@@ -83,3 +83,23 @@
 175 <190>1 2016-05-22T12:54:18.336976+00:00 app web.1 - - 21: 14673 1173840 com.larvalabs.redditchat.dataobj.JsonChatRoom Context
 175 <190>1 2016-05-22T13:14:21.197880+00:00 app web.1 - - 18: 14159 1132720 com.larvalabs.redditchat.dataobj.JsonChatRoom Context
 175 <190>1 2016-05-22T13:34:23.317766+00:00 app web.1 - - 22: 15132 1210560 com.larvalabs.redditchat.dataobj.JsonChatRoom Context
+
+
+2016-05-23T14:30:33.800897+00:00 app[web.1]: 14:30:33,800 INFO  ~ sample#userstreams=16
+2016-05-23T14:30:33.800971+00:00 app[web.1]: 14:30:33,800 INFO  ~ User streams for default room ---
+2016-05-23T14:30:33.801029+00:00 app[web.1]: 14:30:33,801 INFO  ~ Userstream: breakerapp-megamatt2000-cf4b17f4-eceb-45ea-a5d6-84c39f5fa0a4
+2016-05-23T14:30:33.801069+00:00 app[web.1]: 14:30:33,801 INFO  ~ Userstream: breakerapp-guest-3b287e15-e449-4fae-808e-068d22667446
+2016-05-23T14:30:33.801111+00:00 app[web.1]: 14:30:33,801 INFO  ~ Userstream: breakerapp-thecharleskerr-eecb6350-5b4c-4f88-a2a0-343e3b4e3496
+2016-05-23T14:30:33.801150+00:00 app[web.1]: 14:30:33,801 INFO  ~ Userstream: breakerapp-guest-fe4c6a29-f55d-484e-933b-9bef298f9932
+2016-05-23T14:30:33.801189+00:00 app[web.1]: 14:30:33,801 INFO  ~ Userstream: breakerapp-guest-e6730031-f8eb-4a81-a308-6aeb3dae9257
+2016-05-23T14:30:33.801264+00:00 app[web.1]: 14:30:33,801 INFO  ~ Userstream: breakerapp-guest-39d83105-ae66-40fe-97f9-4628e0032115
+2016-05-23T14:30:33.801323+00:00 app[web.1]: 14:30:33,801 INFO  ~ Userstream: breakerapp-thecharleskerr-08f81160-d8a8-4898-ac8e-a8f851587668
+2016-05-23T14:30:33.801377+00:00 app[web.1]: 14:30:33,801 INFO  ~ Userstream: breakerapp-thecharleskerr-84d94795-a2cc-43b7-b074-55b8d09effdf
+2016-05-23T14:30:33.801422+00:00 app[web.1]: 14:30:33,801 INFO  ~ Userstream: breakerapp-megamatt2000-159184f8-b7b4-42e4-a9e9-9169c8f65ce4
+2016-05-23T14:30:33.801465+00:00 app[web.1]: 14:30:33,801 INFO  ~ Userstream: breakerapp-guest-7b02ffee-24ee-4923-96f7-28705018e98d
+2016-05-23T14:30:33.801547+00:00 app[web.1]: 14:30:33,801 INFO  ~ Userstream: breakerapp-guest-b42997a9-741b-458a-a0ea-3e5ea29ec2d9
+2016-05-23T14:30:33.801602+00:00 app[web.1]: 14:30:33,801 INFO  ~ Userstream: breakerapp-megamatt2000-1c89314f-7020-4b57-8e9f-ee7e3a88496b
+2016-05-23T14:30:33.801643+00:00 app[web.1]: 14:30:33,801 INFO  ~ Userstream: breakerapp-megamatt2000-d6200346-5730-46df-8d71-43deee21db55
+2016-05-23T14:30:33.801683+00:00 app[web.1]: 14:30:33,801 INFO  ~ Userstream: breakerapp-thecharleskerr-7c25874a-92a3-49b6-b54f-4c5dd51557d1
+2016-05-23T14:30:33.801723+00:00 app[web.1]: 14:30:33,801 INFO  ~ Userstream: breakerapp-guest-3bdd1ede-aa89-44a1-a33f-d83b36f7a315
+2016-05-23T14:30:33.801766+00:00 app[web.1]: 14:30:33,801 INFO  ~ Userstream: breakerapp-guest-4eb99091-f85f-46c9-b749-67b22c51ca5c
