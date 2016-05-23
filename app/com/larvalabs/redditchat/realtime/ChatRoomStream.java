@@ -74,6 +74,10 @@ public class ChatRoomStream {
         }
         if (room.isDefaultRoom()) {
             Stats.sample(Stats.StatKey.USER_STREAMS_OPEN, userStreams.size());
+            Logger.info("User streams for default room ---");
+            for (String key : userStreams.keySet()) {
+                Logger.info("Userstream: " + key);
+            }
         }
         return userEventStream;
     }
