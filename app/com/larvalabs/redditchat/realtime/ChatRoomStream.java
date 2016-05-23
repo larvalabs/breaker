@@ -10,22 +10,105 @@ import com.larvalabs.redditchat.dataobj.JsonMessage;
 import com.larvalabs.redditchat.dataobj.JsonUser;
 import com.larvalabs.redditchat.util.Stats;
 import com.larvalabs.redditchat.util.Util;
-import controllers.WebSocket;
 import jobs.RedisQueueJob;
 import models.ChatRoom;
 import models.ChatUser;
 import play.Logger;
+import play.libs.F;
 import play.libs.F.EventStream;
 
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutionException;
 
 public class ChatRoomStream {
+
+    public static class WeakReferenceEventStream<T> {
+
+        final int bufferSize;
+        final ConcurrentLinkedQueue<T> events = new ConcurrentLinkedQueue<T>();
+        final List<WeakReference<F.Promise<T>>> waiting = Collections.synchronizedList(new ArrayList<WeakReference<F.Promise<T>>>());
+
+        public WeakReferenceEventStream() {
+            this.bufferSize = 100;
+        }
+
+        public WeakReferenceEventStream(int maxBufferSize) {
+            this.bufferSize = maxBufferSize;
+        }
+
+        public synchronized F.Promise<T> nextEvent() {
+            if (events.isEmpty()) {
+                LazyTask task = new LazyTask();
+                waiting.add(new WeakReference<F.Promise<T>>(task));
+                return task;
+            }
+            return new LazyTask(events.peek());
+        }
+
+        public synchronized void publish(T event) {
+            if (events.size() > bufferSize) {
+                Logger.warn("Dropping message.  If this is catastrophic to your app, use a BlockingEvenStream instead");
+                events.poll();
+            }
+            events.offer(event);
+            notifyNewEvent();
+        }
+
+        void notifyNewEvent() {
+            T value = events.peek();
+            for (WeakReference<F.Promise<T>> taskRef : waiting) {
+                if (taskRef.get() != null) {
+                    taskRef.get().invoke(value);
+                }
+            }
+            waiting.clear();
+        }
+
+        int getWaitingTaskCount() {
+            return waiting.size();
+        }
+
+        class LazyTask extends F.Promise<T> {
+
+            public LazyTask() {
+            }
+
+            public LazyTask(T value) {
+                invoke(value);
+            }
+
+            @Override
+            public T get() throws InterruptedException, ExecutionException {
+                T value = super.get();
+                markAsRead(value);
+                return value;
+            }
+
+            @Override
+            public T getOrNull() {
+                T value = super.getOrNull();
+                markAsRead(value);
+                return value;
+            }
+
+            private void markAsRead(T value) {
+                if (value != null) {
+                    events.remove(value);
+                }
+            }
+        }
+    }
 
     public static final int STREAM_SIZE = 0;
     public static final int PRELOAD_NUM_MSGS_ON_STARTUP = STREAM_SIZE;
 
-    private ConcurrentHashMap<String, EventStream<Event>> userStreams = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<String, WeakReferenceEventStream<Event>> userStreams = new ConcurrentHashMap<>();
 
     private String name;
 
@@ -61,15 +144,15 @@ public class ChatRoomStream {
      * For WebSocket, when a user join the room we return a continuous event stream
      * of ChatEvent
      */
-    public EventStream<ChatRoomStream.Event> join(ChatRoom room, ChatUser user, String connectionId, boolean broadcastJoin) {
+    public WeakReferenceEventStream<Event> join(ChatRoom room, ChatUser user, String connectionId, boolean broadcastJoin) {
         if (broadcastJoin) {
             JsonUser jsonUser = JsonUser.fromUser(user, true);
             publishEvent(new Join(JsonChatRoom.from(room, room.getModeratorUsernames()), jsonUser));
         }
         String streamKey = getStreamKey(room.getName(), user.getUsername(), connectionId);
-        EventStream<Event> userEventStream = userStreams.get(streamKey);
+        WeakReferenceEventStream<Event> userEventStream = userStreams.get(streamKey);
         if (userEventStream == null) {
-            userEventStream = new EventStream<Event>();
+            userEventStream = new WeakReferenceEventStream<>();
             userStreams.put(streamKey, userEventStream);
         }
         if (room.isDefaultRoom()) {
@@ -151,7 +234,7 @@ public class ChatRoomStream {
     }
 
     public void publishEventInternal(Event event) {
-        for (EventStream<Event> userEventStream : userStreams.values()) {
+        for (WeakReferenceEventStream<Event> userEventStream : userStreams.values()) {
             userEventStream.publish(event);
         }
     }

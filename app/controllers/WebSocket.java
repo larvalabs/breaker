@@ -194,11 +194,11 @@ public class WebSocket extends PreloadUserController {
     private static class RoomConnection {
         public JsonChatRoom room;
         public ChatRoomStream chatRoomEventStream;
-        public EventStream<ChatRoomStream.Event> eventStream;
+        public ChatRoomStream.WeakReferenceEventStream<ChatRoomStream.Event> eventStream;
         public boolean isModerator;
         public boolean canPost;
 
-        public RoomConnection(JsonChatRoom room, ChatRoomStream chatRoomEventStream, EventStream<ChatRoomStream.Event> eventStream, boolean isModerator, boolean canPost) {
+        public RoomConnection(JsonChatRoom room, ChatRoomStream chatRoomEventStream, ChatRoomStream.WeakReferenceEventStream<ChatRoomStream.Event> eventStream, boolean isModerator, boolean canPost) {
             this.room = room;
             this.chatRoomEventStream = chatRoomEventStream;
             this.eventStream = eventStream;
@@ -444,7 +444,7 @@ public class WebSocket extends PreloadUserController {
             }
             room.userPresent(user.username, connectionId);
             boolean isModerator = room.isModerator(userModel);
-            EventStream<ChatRoomStream.Event> eventStreamForThisUser = chatRoomStreamForRoom.join(room, userModel, connectionId, broadcastJoin);
+            ChatRoomStream.WeakReferenceEventStream<ChatRoomStream.Event> eventStreamForThisUser = chatRoomStreamForRoom.join(room, userModel, connectionId, broadcastJoin);
 
             roomConnections.put(room.name, new RoomConnection(JsonChatRoom.from(room, room.getModeratorUsernames()),
                     chatRoomStreamForRoom, eventStreamForThisUser, isModerator, room.userCanPost(userModel)));
