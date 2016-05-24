@@ -5521,6 +5521,6 @@ li.chat-message-root .message-body, li.chat-message-short .message-body, li.chat
 }
 /* Subreddit Stylesheet fixes */
 
-button, button:hover, button:active {
+.navbar-header button, .navbar-header button:hover, .navbar-header button:active {
   background-color: transparent !important;
 }

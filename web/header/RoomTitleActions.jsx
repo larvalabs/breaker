@@ -18,7 +18,7 @@ class RoomTitleActions extends Component {
       return null;
     }
 
-    return <span> | <a id="room-pref" href={`/roommanage/roomprefs?roomName=${this.props.roomName}`}>edit</a></span>
+    return <span> | <a id="room-pref" href={`/roommanage/roomprefs?roomName=${this.props.room.get('name')}`}>edit</a></span>
   }
   render(){
     if(!this.props.room.get('name')){
