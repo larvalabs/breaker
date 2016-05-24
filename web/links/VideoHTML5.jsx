@@ -76,7 +76,7 @@ export default class VideoYouTube extends Component {
   }
   render(){
     return <div className="link-info">
-      <h5 className="site"><a href="https://youtube.com" target="_blank">YouTube</a></h5>
+      <h5 className="site"><a href={this.props.linkInfo.get('url')}>{this.props.linkInfo.get('site')}</a></h5>
       <TitleCollapsible title={this.props.linkInfo.get('title')} url={this.props.linkInfo.get('url')}
                         uuid={this.props.linkInfo.get('uuid')}>
         <div className="video html5" style={this.calculateDimensionStyles()}>
