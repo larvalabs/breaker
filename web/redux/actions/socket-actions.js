@@ -2,6 +2,7 @@ import * as actions from '../constants/socket-constants';
 import socket from '../../socket';
 import { API } from '../../api'
 import * as chatActions from './chat-actions';
+import * as notifyActions from './notification-actions';
 
 const MESSAGE_TYPE_ROOM_LIST = "roomlist";
 const MESSAGE_TYPE_MESSAGE = "message";
@@ -32,6 +33,8 @@ export function onSocketMessage(message) {
           let shapedMessage = {lastReadTime: message.message.createDateLongUTC, room: message.room};
           dispatch({type: actions.SOCK_UPDATE_LAST_READ, message: shapedMessage});
         }
+
+        dispatch(notifyActions.handleNewMessageNotification(message));
         return dispatch({type: actions.SOCK_MESSAGE, message});
       }
       case MESSAGE_TYPE_SERVER: {

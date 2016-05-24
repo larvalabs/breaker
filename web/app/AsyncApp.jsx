@@ -8,6 +8,8 @@ import Immutable from 'immutable'
 import ChatDocumentTitle from './ChatDocumentTitle'
 import Config from '../config'
 import { scrollToRoomNameReset } from '../redux/actions/scroll-actions'
+import Notifications from './Notifications'
+
 
 class AsyncApp extends Component {
   render(){
@@ -17,7 +19,9 @@ class AsyncApp extends Component {
             scrollToRoomName } = this.props;
     return (
       <ChatDocumentTitle unreadCount={unreadCount} roomName={roomName}>
+
         <div className={`app app-header-fixed app-aside-fixed ${this.props.roomName}`}>
+          <Notifications />
           <Header unreadCount={unreadCount}/>
           <Sidebar roomList={rooms}
                    roomName={roomName}
