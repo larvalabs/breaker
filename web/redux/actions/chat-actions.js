@@ -64,7 +64,11 @@ export function handleChangeRoom(roomName) {
     let lastMessageTime = state.getIn(['messages', state.getIn(['roomMessages', roomName]).last(), 'createDateLongUTC']);
     dispatch(changeRoom(roomName, lastMessageTime));
     dispatch(menuActions.sidebarClose());
-    dispatch(setChatInputFocus())
+
+    if(window.innerWidth > 450) {
+      // Don't do this on mobile
+      dispatch(setChatInputFocus())
+    }
   }
 }
 

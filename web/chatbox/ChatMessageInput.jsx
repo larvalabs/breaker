@@ -22,20 +22,19 @@ class ChatMessageInput extends Component {
     this.onSuggestionSelected = this.onSuggestionSelected.bind(this);
     this.getSuggestionValue = this.getSuggestionValue.bind(this);
     this.getSuggestions = this.getSuggestions.bind(this);
-    this.handleRef = this.handleRef.bind(this)
+    this.handleRef = this.handleRef.bind(this);
     this.state = {
       value: '',
       suggestions: this.getSuggestions('')
     };
   }
   componentDidMount(){
-    this.props.setInputFocus();
+    this.props.setChatInputFocus();
   }
   componentDidUpdate() {
-    if(!this.props.setInputFocus) {
+    if(!this.props.setInputFocusValue) {
       return false;
     }
-
     this._input.focus();
     this.props.inputFocusWasSet();
   }
@@ -147,13 +146,13 @@ function mapStateToProps(state) {
   let membersMap = state.getIn(['members', roomName], Immutable.Map());
   let members = membersMap.reduce((a, b) => a.union(b), Immutable.OrderedSet()).toList();
   let connected = state.getIn(['ui', 'connected']);
-  let setInputFocus = state.getIn(['ui', 'setInputFocus'], false);
+  let setInputFocusValue = state.getIn(['ui', 'setInputFocus'], false);
 
   return {
     members,
     roomName,
     connected,
-    setInputFocus
+    setInputFocusValue
   }
 }
 
@@ -162,7 +161,7 @@ function mapDispatchToProps(dispatch) {
     inputFocusWasSet() {
       dispatch(resetChatInputFocus());
     },
-    setInputFocus() {
+    setChatInputFocus() {
       dispatch(setChatInputFocus());
     },
     sendNewMessage(roomName, message){
