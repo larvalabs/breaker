@@ -5,6 +5,7 @@ import com.larvalabs.redditchat.Constants;
 import com.larvalabs.redditchat.dataobj.*;
 import com.larvalabs.redditchat.realtime.ChatRoomStream;
 import com.larvalabs.redditchat.util.RedditUtil;
+import com.larvalabs.redditchat.util.RedisUtil;
 import com.larvalabs.redditchat.util.Util;
 import jobs.RedditLinkBotJob;
 import jobs.UpdateAllUsersFromRedditRecurringJob;
@@ -455,7 +456,7 @@ public class Application extends PreloadUserController {
         ChatRoom chatRoom = ChatRoom.findOrCreateForName(roomName);
         user.leaveChatRoom(chatRoom);
         ChatRoomStream.getEventStream(roomName).roomLeave(JsonChatRoom.from(chatRoom, chatRoom.getModeratorUsernames()),
-                JsonUser.fromUser(user, ChatRoom.isUserOnlineInAnyRoom(user.getUsername())));
+                JsonUser.fromUser(user, RedisUtil.isUserOnlineInAnyRoom(user.getUsername())));
         renderText("ok");
     }
 

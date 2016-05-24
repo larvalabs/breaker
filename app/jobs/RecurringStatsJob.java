@@ -1,5 +1,6 @@
 package jobs;
 
+import com.larvalabs.redditchat.util.RedisUtil;
 import com.larvalabs.redditchat.util.Stats;
 import models.ChatRoom;
 import play.Invoker;
@@ -30,7 +31,7 @@ public class RecurringStatsJob extends Job {
         Stats.sample(Stats.StatKey.REQUESTS_ACTIVE, Invoker.executor.getActiveCount());
         Stats.sample(Stats.StatKey.REQUESTS_QUEUED, Invoker.executor.getQueue().size());
 
-        Stats.sample(Stats.StatKey.USERS_CONNECTED, ChatRoom.getAllOnlineUsersForAllRooms().size());
+        Stats.sample(Stats.StatKey.USERS_CONNECTED, RedisUtil.getAllOnlineUsersForAllRooms().size());
 
         Logger.info("Stats job runtime: " + (System.currentTimeMillis() - start));
     }

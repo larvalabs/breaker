@@ -1,5 +1,6 @@
 package com.larvalabs.redditchat.dataobj;
 
+import com.larvalabs.redditchat.util.RedisUtil;
 import models.ChatRoom;
 import models.ChatUser;
 import models.ChatUserRoomJoin;
@@ -55,7 +56,7 @@ public class JsonUtil {
                 .setParameter("user", user);
         List<ChatUserRoomJoin> resultList = getAllStuffQuery.getResultList();
 
-        TreeSet<String> usernamesPresent = ChatRoom.getAllOnlineUsersForAllRooms();
+        TreeSet<String> usernamesPresent = RedisUtil.getAllOnlineUsersForAllRooms();
         usernamesPresent.add(user.getUsername());   // Make sure user we're preloading it marked as online
         for (ChatUserRoomJoin chatRoomJoin : resultList) {
             ChatRoom thisRoom = chatRoomJoin.getRoom();

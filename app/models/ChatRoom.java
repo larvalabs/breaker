@@ -2,6 +2,7 @@ package models;
 
 import com.larvalabs.redditchat.Constants;
 import com.larvalabs.redditchat.dataobj.JsonUser;
+import com.larvalabs.redditchat.util.RedisUtil;
 import com.sun.istack.internal.Nullable;
 import jobs.SaveLastReadTimeForAllPendingJob;
 import play.Logger;
@@ -20,15 +21,11 @@ import java.util.*;
 @Table(name = "chatroom")
 public class ChatRoom extends Model {
 
-    public static final double CHANCE_CLEAN_REDIS_PRESENCE = 0.1;
-    private static Random random = new Random();
-
     public static final String SUBREDDIT_ANDROID = "android";
 
     public static final int ICON_SOURCE_NONE = 0;
     public static final int ICON_SOURCE_PLAY_STORE = 1;
     public static final int ICON_SOURCE_HIAPK = 2;
-    public static final String REDISKEY_PRESENCE_GLOBAL = "presence__global";
 
     @Column(unique = true)
     public String name;
@@ -463,24 +460,21 @@ public class ChatRoom extends Model {
         }
     }
 
-    private static String getRedisPresenceKeyForRoom(String roomName) {
-        return "presence_" + roomName;
-    }
-
     public long getCurrentUserCount() {
-        return getCurrentUserCount(name);
+        return RedisUtil.getCurrentUserCount(name);
     }
 
-    public static long getCurrentUserCount(String roomName) {
-        try {
-            int time = (int) (System.currentTimeMillis() / 1000);
-            Long zcount = Redis.zcount(getRedisPresenceKeyForRoom(roomName), time - Constants.PRESENCE_TIMEOUT_SEC, time);
-//        Logger.info(appPackage + " live count " + zcount);
-            return zcount;
-        } catch (Exception e) {
-            Logger.error("Error contacting redis.");
-            return 0;
+    /**
+     * Check if the username is present, optionally loads the usernames present.
+     * @param user
+     * @param usernamesPresent if null, load usernames present from redis
+     * @return
+     */
+    public boolean isUserPresent(ChatUser user, @Nullable Set<String> usernamesPresent) {
+        if (usernamesPresent == null) {
+            usernamesPresent = getUsernamesPresent();
         }
+        return usernamesPresent.contains(user.username);
     }
 
     /**
@@ -530,182 +524,23 @@ public class ChatRoom extends Model {
     }
 
     public TreeSet<String> getUsernamesPresent() {
-        return getUsernamesPresent(name);
-    }
-
-    // note: could consider doing this as a separate set of just usernames
-    public static TreeSet<String> getUsernamesPresent(String roomName) {
-        try {
-            int time = (int) (System.currentTimeMillis() / 1000);
-            Set<String> usersPresent = Redis.zrangeByScore(getRedisPresenceKeyForRoom(roomName), time - Constants.PRESENCE_TIMEOUT_SEC, time);
-            TreeSet<String> usernamesPresent = new TreeSet<String>();
-            for (String usernameAndConnStr : usersPresent) {
-                usernamesPresent.add(splitUsernameAndConnection(usernameAndConnStr)[0]);
-            }
-
-/*
-        usersPresent.add("test1");
-        usersPresent.add("horribleidiot");
-        usersPresent.add("giantmoron");
-        usersPresent.add("bigloser");
-        usersPresent.add("wingotango");
-*/
-            return usernamesPresent;
-        } catch (Exception e) {
-            Logger.error(e, "Error contacting redis.");
-            return new TreeSet<String>();
-        }
+        return RedisUtil.getUsernamesPresent(name);
     }
 
     /**
      * Check if the username is present, loads the list of usernames present.
-     * @param user
      * @return
      */
     public boolean isUserPresent(String username) {
-        return isUserPresent(name, username);
-    }
-
-    /**
-     * Check if the username is present, optionally loads the usernames present.
-     * @param user
-     * @param usernamesPresent if null, load usernames present from redis
-     * @return
-     */
-    public boolean isUserPresent(ChatUser user, @Nullable Set<String> usernamesPresent) {
-        if (usernamesPresent == null) {
-            usernamesPresent = getUsernamesPresent();
-        }
-        return usernamesPresent.contains(user.username);
-/*
-        try {
-            Double zscore = Redis.zscore(getRedisPresenceKeyForRoom(), user.username);
-            return zscore != null;
-        } catch (Exception e) {
-            Logger.error("Error contacting redis.");
-        }
-        return false;
-*/
-    }
-
-    public static boolean isUserPresent(String roomName, String username) {
-        return getUsernamesPresent(roomName).contains(username);
+        return RedisUtil.isUserPresent(name, username);
     }
 
     public void userPresent(String username, String connectionId) {
-        userPresent(name, username, connectionId);
-    }
-
-    public static void userPresent(String roomName, String username, String connectionId) {
-        try {
-            int time = (int) (System.currentTimeMillis() / 1000);
-            Redis.zadd(getRedisPresenceKeyForRoom(roomName), time, getUsernameAndConnectionString(username, connectionId));
-            if (random.nextFloat() < CHANCE_CLEAN_REDIS_PRESENCE) {
-                // this is just housekeeping to keep the sets from getting too big
-                cleanPresenceSet(roomName);
-            }
-            userPresentGlobal(username);
-        } catch (Exception e) {
-            Logger.error(e, "Error contacting redis.");
-        }
-    }
-
-    private static String getUsernameAndConnectionString(String username, String connectionId) {
-        return username + ":" + connectionId;
-    }
-
-    /**
-     * Add to list of all online users across rooms
-     * @param username
-     */
-    private static void userPresentGlobal(String username) {
-        try {
-            int time = (int) (System.currentTimeMillis() / 1000);
-            Redis.zadd(REDISKEY_PRESENCE_GLOBAL, time, username);
-            if (random.nextFloat() < CHANCE_CLEAN_REDIS_PRESENCE) {
-                // this is just housekeeping to keep the sets from getting too big
-                cleanPresenceSetGlobal();
-            }
-        } catch (Exception e) {
-            Logger.error(e, "Error contacting redis.");
-        }
-    }
-
-    private static void userNotPresentGlobal(String username) {
-        try {
-            Redis.zrem(REDISKEY_PRESENCE_GLOBAL, username);
-        } catch (Exception e) {
-            Logger.error(e, "Error contacting redis.");
-        }
-    }
-
-    /**
-     * Housekeeping to keep list sizes under control
-     */
-    private static void cleanPresenceSetGlobal() {
-        try {
-            int time = (int) (System.currentTimeMillis() / 1000);
-            Long removed = Redis.zremrangeByScore(REDISKEY_PRESENCE_GLOBAL, 0, time - Constants.PRESENCE_TIMEOUT_SEC * 2);
-//            Logger.debug("Clean of presence set for " + name + " removed " + removed + " elements.");
-        } catch (Exception e) {
-            Logger.error(e, "Error contacting redis.");
-        }
-    }
-
-    /**
-     * This might be better in another class
-     * @return List of all online usernames, across all rooms.
-     */
-    public static TreeSet<String> getAllOnlineUsersForAllRooms() {
-        try {
-            int time = (int) (System.currentTimeMillis() / 1000);
-            Set<String> usersPresent = Redis.zrangeByScore(REDISKEY_PRESENCE_GLOBAL, time - Constants.PRESENCE_TIMEOUT_SEC, time);
-            TreeSet<String> usernamesPresent = new TreeSet<String>();
-            for (String username : usersPresent) {
-                usernamesPresent.add(username);
-            }
-
-            return usernamesPresent;
-        } catch (Exception e) {
-            Logger.error(e, "Error contacting redis.");
-            return new TreeSet<String>();
-        }
-    }
-
-    public static boolean isUserOnlineInAnyRoom(String username) {
-        return getAllOnlineUsersForAllRooms().contains(username);
-    }
-
-    /**
-     *
-     * @param
-     * @return [0] = username, [1] = connectionId
-     */
-    private static String[] splitUsernameAndConnection(String combined) {
-        return combined.split(":");
+        RedisUtil.userPresent(name, username, connectionId);
     }
 
     public void userNotPresent(String username, String connectionId) {
-        userNotPresent(name, username, connectionId);
-    }
-
-    public static void userNotPresent(String roomName, String username, String connectionId) {
-        try {
-            Redis.zrem(getRedisPresenceKeyForRoom(roomName), getUsernameAndConnectionString(username, connectionId));
-            userNotPresentGlobal(username);
-        } catch (Exception e) {
-            Logger.error(e, "Error contacting redis.");
-        }
-    }
-
-    private static void cleanPresenceSet(String roomName) {
-        try {
-            int time = (int) (System.currentTimeMillis() / 1000);
-            Long removed = Redis.zremrangeByScore(getRedisPresenceKeyForRoom(roomName), 0, time - Constants.PRESENCE_TIMEOUT_SEC * 2);
-//            Logger.debug("Clean of presence set for " + name + " removed " + removed + " elements.");
-        } catch (Exception e) {
-            Logger.error(e, "Error contacting redis.");
-        }
+        RedisUtil.userNotPresent(name, username, connectionId);
     }
 
     private static String makeKeyForLastReadTime(String roomName, String username) {

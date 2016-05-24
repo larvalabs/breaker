@@ -3,6 +3,7 @@ package jobs;
 import com.larvalabs.redditchat.dataobj.JsonChatRoom;
 import com.larvalabs.redditchat.realtime.ChatRoomStream;
 import com.larvalabs.redditchat.util.RedditUtil;
+import com.larvalabs.redditchat.util.RedisUtil;
 import com.larvalabs.redditchat.util.Stats;
 import controllers.Application;
 import models.ChatRoom;
@@ -42,7 +43,7 @@ public class NotifyMentionedUsersJob extends Job {
         String baseUrl = Play.configuration.getProperty("application.baseUrl");
         String url = baseUrl + "/c/" + chatRoom.getName();
 
-        TreeSet<String> allOnlineUsersForAllRooms = ChatRoom.getAllOnlineUsersForAllRooms();
+        TreeSet<String> allOnlineUsersForAllRooms = RedisUtil.getAllOnlineUsersForAllRooms();
 
         Set<ChatUser> mentionedUsers = message.updateMentionedUsers();
         if (mentionedUsers != null && mentionedUsers.size() > 0) {

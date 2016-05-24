@@ -2,6 +2,7 @@ package models;
 
 import com.larvalabs.redditchat.Constants;
 import com.larvalabs.redditchat.dataobj.JsonFlair;
+import com.larvalabs.redditchat.util.RedisUtil;
 import com.larvalabs.redditchat.util.Util;
 import jobs.UpdateUserFromRedditJob;
 import org.apache.commons.lang.StringUtils;
@@ -613,7 +614,7 @@ public class ChatUser extends Model {
     }
 
     public boolean isUserOnlineInAnyRoom() {
-        return ChatRoom.isUserOnlineInAnyRoom(username);
+        return RedisUtil.isUserOnlineInAnyRoom(username);
     }
 
 }

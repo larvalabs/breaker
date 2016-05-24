@@ -7,6 +7,7 @@ import com.larvalabs.redditchat.ChatCommands;
 import com.larvalabs.redditchat.Constants;
 import com.larvalabs.redditchat.dataobj.*;
 import com.larvalabs.redditchat.realtime.ChatRoomStream;
+import com.larvalabs.redditchat.util.RedisUtil;
 import com.larvalabs.redditchat.util.Stats;
 import com.larvalabs.redditchat.util.Util;
 import jobs.SaveNewMessageJob;
@@ -249,6 +250,7 @@ public class WebSocket extends PreloadUserController {
             for (RoomConnection roomConnection : roomConnections.values()) {
                 roomConnection.chatRoomEventStream.removeStream(roomConnection.room, jsonUser[0], connectionId);
             }
+            RedisUtil.userNotPresentGlobal(jsonUser[0].username, connectionId);
         }
 
         private static void awaitAndProcessInput(JsonUser[] singleUserArray, String connectionId, HashMap<String, RoomConnection> roomConnections) {
@@ -350,12 +352,12 @@ public class WebSocket extends PreloadUserController {
             // Case: The socket has been closed
             Logger.info("Socket closed: " + user.username + ":" + connectionId);
             for (RoomConnection roomConnection : roomConnections.values()) {
-                ChatRoom.userNotPresent(roomConnection.room.name, user.username, connectionId);
+                RedisUtil.userNotPresent(roomConnection.room.name, user.username, connectionId);
                 user.online = false;
                 // If this was the last connection that user had to the room then broadcast they've left
                 roomConnection.chatRoomEventStream.leave(roomConnection.room, user);
                 roomConnection.chatRoomEventStream.removeStream(roomConnection.room, user, connectionId);
-                if (!ChatRoom.isUserPresent(roomConnection.room.name, user.username)) {
+                if (!RedisUtil.isUserPresent(roomConnection.room.name, user.username)) {
                     Logger.debug("Last connection for " + user.username + " on channel " + roomConnection.room.name + " disconnected, broadcasting leave.");
                 }
             }
@@ -380,7 +382,7 @@ public class WebSocket extends PreloadUserController {
                     if (roomConnection != null) {
                         if (message.toLowerCase().equals("##ping##")) {
                             for (RoomConnection connection : roomConnections.values()) {
-                                ChatRoom.userPresent(connection.room.name, user.username, connectionId);
+                                RedisUtil.userPresent(connection.room.name, user.username, connectionId);
                             }
                             // todo also add to global users connected set for easier stats
                             //                        Logger.debug("Ping msg - skipping.");
