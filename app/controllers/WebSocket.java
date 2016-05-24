@@ -412,7 +412,8 @@ public class WebSocket extends PreloadUserController {
                             if (roomConnection.canPost) {
                                 String uuid = Util.getUUID();
                                 JsonMessage jsonMessage = JsonMessage.makePresavedMessage(uuid, user.username, roomConnection.room.name, message);
-                                outbound.send(new ChatRoomStream.Message(jsonMessage, roomConnection.room, user).toJson());
+                                // Disabled for now until can figure out double sending problem
+//                                outbound.send(new ChatRoomStream.Message(jsonMessage, roomConnection.room, user).toJson());
                                 new SaveNewMessageJob(uuid, user.username, roomName, message, jsonMessage.createDate).now();
                                 roomConnection.chatRoomEventStream.say(jsonMessage, roomConnection.room, user);
                                 Stats.count(Stats.StatKey.MESSAGE, 1);
