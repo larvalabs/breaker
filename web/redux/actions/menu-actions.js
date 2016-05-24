@@ -17,6 +17,13 @@ function settingsClose() {
   return { type: actions.UI_SETTINGS_CLOSE };
 }
 
+export function handleCloseAllMenus(){
+  return dispatch => {
+    dispatch(sidebarClose());
+    dispatch(settingsClose());
+  }
+}
+
 function leaveRoom(newActiveRoom){
   return { type: actions.ROOM_LEAVE, newActiveRoom };
 }
@@ -35,7 +42,7 @@ export function toggleSidebar() {
   return (dispatch, getState) => {
     
     if(getState().getIn(['ui', 'sidebar_open'], false)){
-      return dispatch(sidebarClose())
+      return dispatch(handleCloseAllMenus())
     }
     return dispatch(sidebarOpen())
   }

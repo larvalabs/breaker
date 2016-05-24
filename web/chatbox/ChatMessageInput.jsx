@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import  Autosuggest from 'react-autosuggest';
 import { connect } from 'react-redux';
 import {sendNewMessage, resetChatInputFocus, setChatInputFocus} from '../redux/actions/chat-actions'
+import {handleCloseAllMenus} from '../redux/actions/menu-actions'
 import Immutable from 'immutable'
 
 const theme = {
@@ -121,6 +122,7 @@ class ChatMessageInput extends Component {
         value,
         onChange: this.onChange,
         onKeyDown: this.handleKeyPress,
+        onFocus: this.props.closeSidebar,
         disabled: !this.props.connected,
         ref: this.handleRef
       };
@@ -158,6 +160,9 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
+    closeSidebar() {
+      dispatch(handleCloseAllMenus());
+    },
     inputFocusWasSet() {
       dispatch(resetChatInputFocus());
     },
