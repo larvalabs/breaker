@@ -16,6 +16,8 @@ body {
   border: none !important;
   box-shadow: none !important;
   background-color: transparent !important;
+  height: auto !important;
+  width: auto !important;
 }
 
 body{
@@ -5504,4 +5506,10 @@ li.chat-message-root .message-body, li.chat-message-short .message-body, li.chat
 
 .navi ul.nav li a.roomselect {
   padding: 5px 15px
+}
+
+/* Subreddit Stylesheet fixes */
+
+button, button:hover, button:active {
+  background-color: transparent !important;
 }
