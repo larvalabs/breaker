@@ -54,10 +54,10 @@ public class NotifyMentionedUsersJob extends Job {
 
                     if (!allOnlineUsersForAllRooms.contains(mentionedUser.getUsername())) {
                         String subject = "You were mentioned in " + chatRoom.getName() + " chat";
-                        String content = "/u/" + message.getUser().getUsername() + " mentioned you in " + chatRoom.getName() + " chat:\n\n "
-                                + "\"" + message.getMessageText() + "\"\n\n"
-                                + "To respond: " + url + "\n\n"
-                                + "To opt out of any future messages: https://www.breakerapp.com/optout/" + message.getUuid() + "/" + mentionedUser.getUsername();
+                        String content = "/u/" + message.getUser().getUsername() + " mentioned you in [" + chatRoom.getName() + " chat]("+url+"):\n\n "
+                                + "> " + message.getMessageText() + "\n\n"
+                                + "[respond](" + url + ") | "
+                                + "[opt out](https://www.breakerapp.com/optout/" + message.getUuid() + "/" + mentionedUser.getUsername() + ")";
                         try {
                             RedditUtil.sendPrivateMessageFromBot(mentionedUser.getUsername(), subject, content);
                             eventStream.sayFromServer(JsonChatRoom.from(chatRoom, chatRoom.getModeratorUsernames()), message.getUser().getUsername(),
