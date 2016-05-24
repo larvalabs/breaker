@@ -833,6 +833,7 @@ body {
 .vbox .row-row {
   display: table-row;
   height: 100%;
+  padding-bottom: 71px;
 }
 
 .vbox .row-row .cell {
@@ -5220,6 +5221,10 @@ a.text-#000000:hover {
   background: #fff;
 }
 
+#threadparent {
+  padding-bottom: 71px;
+}
+
 li.chat-message-root:first-child {
   padding-top: 15px !important;
 }
@@ -5508,6 +5513,12 @@ li.chat-message-root .message-body, li.chat-message-short .message-body, li.chat
   padding: 5px 15px
 }
 
+.input-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
 /* Subreddit Stylesheet fixes */
 
 button, button:hover, button:active {

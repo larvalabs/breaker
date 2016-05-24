@@ -7,11 +7,11 @@ class MobileRoomOverlay extends Component {
   render() {
     let styles = {
       position:"absolute", 
-      top: "0", 
-      left: "0", 
-      right: "0", 
+      top: 0,
+      left: 0,
+      right: 0,
       bottom: "71px",
-      zIndex: "1",
+      zIndex: 1,
       display: this.props.show ? "block" : "none"
     };
     return <div style={styles} onClick={this.props.closeSidebar}></div>
