@@ -12,6 +12,7 @@ import * as socketActions from '../redux/actions/socket-actions'
 import * as notifyActions from '../redux/actions/notification-actions'
 import * as chatConstants from '../redux/constants/chat-constants'
 import * as socketConstants from '../redux/constants/socket-constants'
+import * as menuConstants from '../redux/constants/menu-constants'
 
 const actionCreators = {
   chat : chatActions,
@@ -31,7 +32,8 @@ export default createDevTools(
         chatConstants.CHAT_FOCUSED,
         chatConstants.CHAT_SET_INPUT_FOCUS,
         chatConstants.CHAT_RESET_INPUT_FOCUS,
-        socketConstants.SOCK_UPDATE_LAST_READ
+        socketConstants.SOCK_UPDATE_LAST_READ,
+        menuConstants.UI_SIDEBAR_CLOSE
       ]}>
       <MultipleMonitors>
         <LogMonitor />

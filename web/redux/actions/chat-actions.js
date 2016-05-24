@@ -63,7 +63,7 @@ export function handleChangeRoom(roomName) {
     let state = getState();
     let lastMessageTime = state.getIn(['messages', state.getIn(['roomMessages', roomName]).last(), 'createDateLongUTC']);
     dispatch(changeRoom(roomName, lastMessageTime));
-    dispatch(menuActions.sidebarClose());
+    dispatch(menuActions.handleCloseAllMenus());
 
     if(window.innerWidth > 450) {
       // Don't do this on mobile
