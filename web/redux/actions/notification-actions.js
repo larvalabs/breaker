@@ -62,10 +62,16 @@ export function handleMessageUserMentionNotification(message) {
 }
 
 export function handleNewMessageNotification(message) {
-  return (dispatch) => {
+  return (dispatch, getStore) => {
     // Prop validation
-    if(!message || !message.message || !message.user || !message.user.username || !message.message.message){
-      return null
+    if(!message || !message.message || !message.user || !message.room ||
+        !message.user.username || !message.message.message){
+      return null;
+    }
+    
+    let store = getStore();
+    if(store.get('currentRoom') === message.room.name && store.getIn(['ui', '__HAS_FOCUS__'])){
+      return null;
     }
 
     dispatch(handleMessageUserMentionNotification(message))
