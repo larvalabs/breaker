@@ -410,9 +410,9 @@ public class WebSocket extends PreloadUserController {
                             if (roomConnection.canPost) {
                                 String uuid = Util.getUUID();
                                 JsonMessage jsonMessage = JsonMessage.makePresavedMessage(uuid, user.username, roomConnection.room.name, message);
-                                outbound.sendJson(jsonMessage);
+                                outbound.send(new ChatRoomStream.Message(jsonMessage, roomConnection.room, user).toJson());
                                 new SaveNewMessageJob(uuid, user.username, roomName, message, jsonMessage.createDate).now();
-                                roomConnection.chatRoomEventStream.say(jsonMessage,  roomConnection.room, user);
+                                roomConnection.chatRoomEventStream.say(jsonMessage, roomConnection.room, user);
                                 Stats.count(Stats.StatKey.MESSAGE, 1);
                             } else {
                                 Logger.info("User " + user.username + " cannot post to " + roomName);
