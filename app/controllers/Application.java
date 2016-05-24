@@ -276,6 +276,8 @@ public class Application extends PreloadUserController {
 
                 user.linkKarma = me.get("link_karma").getAsLong();
                 user.commentKarma = me.get("comment_karma").getAsLong();
+                user.redditUserCreatedUTC = me.get("created_utc").getAsLong();
+                user.redditUserSuspended = me.get("is_suspended").getAsBoolean();
                 user.lastResponseApiMe = me.toString();
                 user.save();
 

@@ -23,6 +23,10 @@ public class JsonUser implements Serializable {
     public String profileImageUrl;
     public String statusMessage;
     public boolean bot;
+    public long linkKarma;
+    public long commentKarma;
+    public long redditUserCreatedUTC;
+    public boolean redditUserSuspended;
 
     public HashMap<String, JsonFlair> flair = new HashMap<>();
 
@@ -32,6 +36,7 @@ public class JsonUser implements Serializable {
 
     public JsonUser(long id, String username, String notificationPreference, Date lastSeen,
                     long lastSeenLongUTC, long totalLikes, String profileImageUrl, String statusMessage, boolean bot,
+                    long linkKarma, long commentKarma, long redditUserCreatedUTC, boolean redditUserSuspended,
                     boolean online, HashMap<String, JsonFlair> flair) {
         this.id = id;
         this.username = username;
@@ -42,6 +47,10 @@ public class JsonUser implements Serializable {
         this.profileImageUrl = profileImageUrl;
         this.statusMessage = statusMessage;
         this.bot = bot;
+        this.linkKarma = linkKarma;
+        this.commentKarma = commentKarma;
+        this.redditUserCreatedUTC = redditUserCreatedUTC;
+        this.redditUserSuspended = redditUserSuspended;
         this.online = online;
         this.flair = flair;
     }
@@ -56,6 +65,7 @@ public class JsonUser implements Serializable {
         return new JsonUser(user.getId(), user.username, user.notificationPreference,
                 user.getLastSeenDate(), user.getLastSeenDate().getTime(),
                 user.getLikeCount(), user.getProfileImageUrl(), user.getStatusMessage(), user.isBot(),
+                user.getLinkKarma(), user.getCommentKarma(), user.getRedditUserCreatedUTC(), user.isRedditUserSuspended(),
                 isOnline, user.getFlairAsJson());
     }
 
@@ -69,6 +79,7 @@ public class JsonUser implements Serializable {
         return new JsonUser(user.getId(), user.username, user.notificationPreference,
                 user.getLastSeenDate(), user.getLastSeenDate().getTime(),
                 user.getLikeCount(), user.getProfileImageUrl(), user.getStatusMessage(), user.isBot(),
+                user.getLinkKarma(), user.getCommentKarma(), user.getRedditUserCreatedUTC(), user.isRedditUserSuspended(),
                 isOnline, null);
     }
 

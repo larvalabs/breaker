@@ -10,3 +10,7 @@ update chatroom set displayname=name;
 update chatroom set name=LOWER(displayname);
 
 -- ALL DEPLOYED ABOVE
+
+-- reddit user create date and suspended value
+alter table chatuser add column redditUserCreatedUTC int8 default -1;
+alter table chatuser add column redditUserSuspended boolean default false;

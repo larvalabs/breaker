@@ -48,6 +48,8 @@ public class ChatUser extends Model {
     public String email;
     public long linkKarma;
     public long commentKarma;
+    public long redditUserCreatedUTC = -1;
+    public boolean redditUserSuspended = false;
 
     public Date createDate = new Date();
     public Date lastSeenDate = createDate;
@@ -165,6 +167,22 @@ public class ChatUser extends Model {
 
     public void setCommentKarma(long commentKarma) {
         this.commentKarma = commentKarma;
+    }
+
+    public long getRedditUserCreatedUTC() {
+        return redditUserCreatedUTC;
+    }
+
+    public void setRedditUserCreatedUTC(long redditUserCreatedUTC) {
+        this.redditUserCreatedUTC = redditUserCreatedUTC;
+    }
+
+    public boolean isRedditUserSuspended() {
+        return redditUserSuspended;
+    }
+
+    public void setRedditUserSuspended(boolean redditUserSuspended) {
+        this.redditUserSuspended = redditUserSuspended;
     }
 
     public Date getCreateDate() {
