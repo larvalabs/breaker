@@ -61,7 +61,7 @@ class ChatBox extends Component {
       <div id="threadparent" className="vbox">
         {this.renderMessage(this.props)}
         <ChatThread users={this.props.users} roomName={this.props.roomName}/>
-        <div className="padder padder-v b-t b-light text-center">
+        <div className="input-container padder padder-v b-t b-light text-center">
           {this.renderMessageInput()}
         </div>
       </div>
