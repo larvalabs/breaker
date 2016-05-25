@@ -316,32 +316,25 @@ public class WebSocket extends PreloadUserController {
 
             // Loop while the socket is open
             while (inbound.isOpen()) {
-                awaitAndProcessInput(jsonUser, connectionId, roomConnectionManager);
+                ChatRoomStream.WaitAnyPromise waitAnyPromise = ChatRoomStream.waitAnyWithResultInfo(roomConnectionManager.getPromises());
+                Object awaitResult = await(waitAnyPromise);
+
+                // Case: TextEvent received on the socket
+                if (awaitResult instanceof WebSocketFrame) {
+                    processWebsocketFrame(jsonUser[0], connectionId, roomConnectionManager, (WebSocketFrame) awaitResult);
+                } else if (awaitResult instanceof WebSocketClose) {
+                    processWebsocketClose(jsonUser[0], connectionId, roomConnectionManager);
+                } else if (awaitResult instanceof ChatRoomStream.Event) {
+                    processEvent(jsonUser, roomConnectionManager, (ChatRoomStream.Event) awaitResult, connectionId);
+                }
+
+                int indexRedeemed = waitAnyPromise.getIndexRedeemed();
+                roomConnectionManager.redeemPromise(indexRedeemed);
             }
 
             // Just to be sure, in case we didn't get a proper disconnect
             roomConnectionManager.disconnect(jsonUser[0], connectionId);
             RedisUtil.userNotPresentGlobal(jsonUser[0].username, connectionId);
-        }
-
-        private static void awaitAndProcessInput(JsonUser[] singleUserArray, String connectionId,
-                                                 RoomConnectionManager roomConnectionManager) {
-            JsonUser user = singleUserArray[0];
-
-            ChatRoomStream.WaitAnyPromise waitAnyPromise = ChatRoomStream.waitAnyWithResultInfo(roomConnectionManager.getPromises());
-            Object awaitResult = await(waitAnyPromise);
-
-            // Case: TextEvent received on the socket
-            if (awaitResult instanceof WebSocketFrame) {
-                processWebsocketFrame(user, connectionId, roomConnectionManager, (WebSocketFrame) awaitResult);
-            } else if (awaitResult instanceof WebSocketClose) {
-                processWebsocketClose(user, connectionId, roomConnectionManager);
-            } else if (awaitResult instanceof ChatRoomStream.Event) {
-                processEvent(singleUserArray, roomConnectionManager, (ChatRoomStream.Event) awaitResult, connectionId);
-            }
-
-            int indexRedeemed = waitAnyPromise.getIndexRedeemed();
-            roomConnectionManager.redeemPromise(indexRedeemed);
         }
 
         private static void processEvent(JsonUser[] userArray, RoomConnectionManager roomConnectionManager, ChatRoomStream.Event awaitResult, String connectionId) {
