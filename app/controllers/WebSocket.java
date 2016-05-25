@@ -16,6 +16,7 @@ import models.ChatUser;
 import models.ChatUserRoomJoin;
 import play.Logger;
 import play.Play;
+import play.libs.F;
 import play.libs.F.EventStream;
 import play.libs.F.Promise;
 import play.mvc.Http;
@@ -241,9 +242,19 @@ public class WebSocket extends PreloadUserController {
 
             Stats.count(Stats.StatKey.WEBSOCKET_CONNECT, 1);
 
+            Promise[] roomEventPromises = new Promise[roomConnections.size() + 1];
+            RoomConnection[] roomConnectionsForPromises = new RoomConnection[roomConnections.size()];
+            roomEventPromises[0] = inbound.nextEvent();
+            int i = 1;
+            for (RoomConnection roomConnection : roomConnections.values()) {
+                roomEventPromises[i] = roomConnection.eventStream.nextEvent();
+                roomConnectionsForPromises[i - 1] = roomConnection;
+                i++;
+            }
+
             // Loop while the socket is open
             while (inbound.isOpen()) {
-                awaitAndProcessInput(jsonUser, connectionId, roomConnections);
+                awaitAndProcessInput(jsonUser, connectionId, roomConnections, roomEventPromises, roomConnectionsForPromises);
             }
 
             // Just to be sure, in case we didn't get a proper disconnect
@@ -253,17 +264,13 @@ public class WebSocket extends PreloadUserController {
             RedisUtil.userNotPresentGlobal(jsonUser[0].username, connectionId);
         }
 
-        private static void awaitAndProcessInput(JsonUser[] singleUserArray, String connectionId, HashMap<String, RoomConnection> roomConnections) {
+        private static void awaitAndProcessInput(JsonUser[] singleUserArray, String connectionId,
+                                                 HashMap<String, RoomConnection> roomConnections,
+                                                 Promise[] roomEventPromises, RoomConnection[] roomConnectionsForPromises) {
             JsonUser user = singleUserArray[0];
-            Promise[] roomEventPromises = new Promise[roomConnections.size() + 1];
-            roomEventPromises[0] = inbound.nextEvent();
-            int i = 1;
-            for (RoomConnection roomConnection : roomConnections.values()) {
-                roomEventPromises[i] = roomConnection.eventStream.nextEvent();
-                i++;
-            }
 
-            Object awaitResult = await(Promise.waitAny(roomEventPromises));
+            ChatRoomStream.WaitAnyPromise waitAnyPromise = ChatRoomStream.waitAnyWithResultInfo(roomEventPromises);
+            Object awaitResult = await(waitAnyPromise);
 
             // Case: TextEvent received on the socket
             if (awaitResult instanceof WebSocketFrame) {
@@ -272,6 +279,14 @@ public class WebSocket extends PreloadUserController {
                 processWebsocketClose(user, connectionId, roomConnections);
             } else if (awaitResult instanceof ChatRoomStream.Event) {
                 processEvent(singleUserArray, roomConnections, (ChatRoomStream.Event) awaitResult, connectionId);
+            }
+
+            int indexRedeemed = waitAnyPromise.getIndexRedeemed();
+            Logger.info("Redeemed promise index: " + indexRedeemed);
+            if (indexRedeemed == 0) {
+                roomEventPromises[0] = inbound.nextEvent();
+            } else {
+                roomEventPromises[indexRedeemed] = roomConnectionsForPromises[indexRedeemed - 1].eventStream.nextEvent();
             }
         }
 
@@ -296,7 +311,7 @@ public class WebSocket extends PreloadUserController {
                         ChatUser userModel = thisConnectionUser.loadModelFromDatabase();
 
                         userModel.leaveChatRoom(roomModel);
-                        roomConnections.remove(commandEvent.room.name);
+                        removeConnection(commandEvent.room.name, roomConnections);
 
                         sendLocalServerMessage(roomConnection, thisConnectionUser.username, commandEvent.command.username + " was kicked.");
                         disconnect();
@@ -436,7 +451,8 @@ public class WebSocket extends PreloadUserController {
             outbound.send(new ChatRoomStream.ServerMessage(roomConnection.room, toUsername, JsonUser.fromUser(ChatUser.getSystemUser(), true), message).toJson());
         }
 
-        private static void addConnection(ChatUser userModel, JsonUser user, String connectionId, HashMap<String, RoomConnection> roomConnections, ChatRoom room) {
+        private static void addConnection(ChatUser userModel, JsonUser user, String connectionId,
+                                          HashMap<String, RoomConnection> roomConnections, ChatRoom room) {
             ChatRoomStream chatRoomStreamForRoom = ChatRoomStream.getEventStream(room.name);
 
             // Socket connected, join the chat room
@@ -453,6 +469,10 @@ public class WebSocket extends PreloadUserController {
                     chatRoomStreamForRoom, eventStreamForThisUser, isModerator, room.userCanPost(userModel)));
         }
 
+        private static void removeConnection(String roomName, HashMap<String, RoomConnection> roomConnections) {
+            RoomConnection roomConnection = roomConnections.remove(roomName);
+//            connectionList.remove(roomConnection);
+        }
     }
 
 }
