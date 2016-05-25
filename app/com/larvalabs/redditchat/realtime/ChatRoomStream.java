@@ -18,6 +18,7 @@ import play.libs.F;
 import play.libs.F.EventStream;
 
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -60,7 +61,6 @@ public class ChatRoomStream {
                     }
                 }
 
-                // todo replace
                 int index = -1;
                 for (int i = 0; i < futures.length; i++) {
                     F.Promise<T> future = futures[i];
@@ -74,8 +74,16 @@ public class ChatRoomStream {
                 if (resultOrNull != null) {
                     result.invoke(resultOrNull, index);
                 } else {
-                    // todo get exception
-                    result.invokeWithException(new Exception(), index);
+                    try {
+                        // Note: exception
+                        Class<? extends F.Promise> promiseClass = completed.getClass();
+                        Field exceptionField = promiseClass.getField("exception");
+                        exceptionField.setAccessible(true);
+                        result.invokeWithException((Throwable) exceptionField.get(completed), index);
+                    } catch (NoSuchFieldException | IllegalAccessException e) {
+                        result.invokeWithException(new Exception(), index);
+                        Logger.warn("No exception field in promise.");
+                    }
                 }
             }
         };
