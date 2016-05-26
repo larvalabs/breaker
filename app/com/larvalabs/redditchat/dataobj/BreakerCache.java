@@ -28,29 +28,33 @@ public class BreakerCache {
     }
 
     public static void clearMessagesCache(String roomName) {
-        messageCache.remove(getMessagesKey(roomName));
+        synchronized (messageCache) {
+            messageCache.remove(getMessagesKey(roomName));
+        }
         Logger.info("Clear message cache for " + roomName);
     }
 
     public static ArrayList<JsonMessage> getLastMessages(ChatRoom room) {
-        ArrayList<JsonMessage> roomMessages = messageCache.get(getMessagesKey(room.getName()));
-        if (roomMessages == null || !CACHE_ENABLED) {
-            Logger.info("Cache miss room messages for " + room.getName());
-            roomMessages = new ArrayList<JsonMessage>();
-            List<Message> messageList = room.getMessages(Constants.DEFAULT_MESSAGE_LIMIT);
-            for (Message message : messageList) {
-                JsonMessage jsonMessage = JsonMessage.from(message, message.getUser().getUsername(), room.getName());
-                if (message.isHasLinks()) {
-                    jsonMessage.setLinkInfo(message.getLinks());
+        synchronized (messageCache) {
+            ArrayList<JsonMessage> roomMessages = messageCache.get(getMessagesKey(room.getName()));
+            if (roomMessages == null || !CACHE_ENABLED) {
+                Logger.info("Cache miss room messages for " + room.getName());
+                roomMessages = new ArrayList<JsonMessage>();
+                List<Message> messageList = room.getMessages(Constants.DEFAULT_MESSAGE_LIMIT);
+                for (Message message : messageList) {
+                    JsonMessage jsonMessage = JsonMessage.from(message, message.getUser().getUsername(), room.getName());
+                    if (message.isHasLinks()) {
+                        jsonMessage.setLinkInfo(message.getLinks());
+                    }
+                    roomMessages.add(jsonMessage);
                 }
-                roomMessages.add(jsonMessage);
+                Collections.reverse(roomMessages);
+                messageCache.put(getMessagesKey(room.getName()), roomMessages);
+            } else {
+                Logger.info("Cache hit room messages for " + room.getName());
             }
-            Collections.reverse(roomMessages);
-            messageCache.put(getMessagesKey(room.getName()), roomMessages);
-        } else {
-            Logger.info("Cache hit room messages for " + room.getName());
+            return roomMessages;
         }
-        return roomMessages;
     }
 
     public static void clearUsersCacheAll() {
