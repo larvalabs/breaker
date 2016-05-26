@@ -5,4 +5,5 @@ export const NOTIFY_ON_SHOW = 'notify-on-show';
 export const NOTIFY_ON_CLICK = 'notify-on-click';
 export const NOTIFY_ON_CLOSE = 'notify-on-close';
 export const NOTIFY_ON_ERROR = 'notify-on-error';
+
 export const NOTIFY_SEND = 'notify-send';

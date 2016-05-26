@@ -1,16 +1,18 @@
-import React, {Component} from 'react'
-import Immutable from 'immutable'
-import UsernameAndFlair from '../userlist/UsernameAndFlair.jsx'
-import UserAvatar from '../userlist/UserAvatar'
-import Clear from '../util/Clear'
-import ChatMessageTimeago from './ChatMessageTimeago'
+import React, { Component } from 'react';
+import Immutable from 'immutable';
+
+import UsernameAndFlair from '../user/UsernameAndFlair.jsx';
+import UserAvatar from '../user/UserAvatar';
+import Clear from '../util/Clear';
+import ChatMessageTimeago from './ChatMessageTimeago';
+
 
 export default class ChatMessage extends Component {
-  render(){
-    if(this.props.previous && this.props.previous.get('username') === this.props.message.get('username')){
-      return null
+  render() {
+    if (this.props.previous && this.props.previous.get('username') === this.props.message.get('username')) {
+      return null;
     }
-    let liClasses = "chat-message-root list-group-item no-border p-t-s p-b-xs clearfix b-l-3x b-l-white";
+    const liClasses = 'chat-message-root list-group-item no-border p-t-s p-b-xs clearfix b-l-3x b-l-white';
 
     return (
       <li className={liClasses}>
@@ -20,7 +22,7 @@ export default class ChatMessage extends Component {
           <UsernameAndFlair user={this.props.user} roomName={this.props.roomName} />
         </Clear>
       </li>
-    )
+    );
   }
 }
 

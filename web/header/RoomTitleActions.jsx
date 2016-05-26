@@ -1,33 +1,38 @@
-import React, {Component} from 'react'
-import { connect } from 'react-redux' 
-import Immutable from 'immutable'
-import {handleLeaveRoom} from '../redux/actions/menu-actions'
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import Immutable from 'immutable';
 
-import Config from '../config'
+import Config from '../config';
+
+import { handleLeaveRoom } from '../redux/actions/menu-actions';
+
 
 class RoomTitleActions extends Component {
   renderLeaveRoom() {
-    if(Config.guest){
+    if (Config.guest) {
       return null;
     }
 
-    return <span>| <a href="#" onClick={this.props.handleLeaveRoom}>leave</a></span>
+    return <span>| <a href="#" onClick={this.props.handleLeaveRoom}>leave</a></span>;
   }
   renderEditRoom() {
-    if(!this.props.userIsMod && !Config.admin){
+    if (!this.props.userIsMod && !Config.admin) {
       return null;
     }
 
-    return <span> | <a id="room-pref" href={`/roommanage/roomprefs?roomName=${this.props.room.get('name')}`}>edit</a></span>
+    return <span> | <a id="room-pref" href={`/roommanage/roomprefs?roomName=${this.props.room.get('name')}`}>edit</a></span>;
   }
-  render(){
-    if(!this.props.room.get('name')){
+
+  render() {
+    if (!this.props.room.get('name')) {
       return null;
     }
 
-    return <span className="room-options">
-      {this.renderLeaveRoom()} {this.renderEditRoom()}
-    </span>
+    return (
+      <span className="room-options">
+        {this.renderLeaveRoom()} {this.renderEditRoom()}
+      </span>
+    );
   }
 }
 
@@ -36,20 +41,16 @@ RoomTitleActions.defaultProps = {
   userIsMod: false
 };
 
-
-function mapStateToProps(state) {
-  return {}
-}
-
 function mapDispatchToProps(dispatch, ownProps) {
   return {
-    handleLeaveRoom(){
-      if(Config.guest){
+    handleLeaveRoom() {
+      if (Config.guest) {
         return null;
       }
-      dispatch(handleLeaveRoom(ownProps.room.get('name')))
+
+      dispatch(handleLeaveRoom(ownProps.room.get('name')));
     }
-  }
+  };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(RoomTitleActions)
+export default connect(null, mapDispatchToProps)(RoomTitleActions);

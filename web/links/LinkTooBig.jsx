@@ -1,20 +1,23 @@
-import React, {Component} from 'react'
-import Immutable from 'immutable'
-import formatBytes from '../util/formatters'
+import React, { Component } from 'react';
 
-export default class Image extends Component {
-  constructor(props){
-    super(props);
-  }
-  render(){
-    let displaySize = formatBytes(this.props.size, 0);
-    return <div className="link-info">
-      <i className="link-too-big">Link not expanded because <strong>{displaySize}</strong> is too big. <a href={this.props.url} target="_blank">Open it in a new tab.</a></i>
-    </div>
+import formatBytes from '../util/formatters';
+
+
+export default class LinkTooBig extends Component {
+  render() {
+    const displaySize = formatBytes(this.props.size, 0);
+    return (
+      <div className="link-info">
+        <i className="link-too-big">
+          Link not expanded because <strong>{displaySize}</strong> is too big.&nbsp;
+          <a href={this.props.url} target="_blank">Open it in a new tab.</a>
+        </i>
+      </div>
+    );
   }
 }
 
-Image.defaultProps = {
+LinkTooBig.defaultProps = {
   title: null,
-  url: null,
+  url: null
 };

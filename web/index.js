@@ -1,8 +1,9 @@
-import ReactDOM from "react-dom";
-import React from "react";
-import App from "./app/App";
+import ReactDOM from 'react-dom';
+import React from 'react';
+import App from './app/App';
 import startSocket from './socket';
-import registerFocusHandler from './focus'
+import registerFocusHandler from './focus';
+
 
 registerFocusHandler();
 startSocket();

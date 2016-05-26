@@ -1,23 +1,35 @@
-import React, {Component} from 'react'
-import Immutable from 'immutable'
-import { connect } from "react-redux";
-import { handleScrollToNextUnread } from '../redux/actions/scroll-actions'
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import Immutable from 'immutable';
+
+import { handleScrollToNextUnread } from '../redux/actions/scroll-actions';
 
 
 export default class HeaderUnreadCount extends Component {
-  render(){
-    let backgroundColor = this.props.room.getIn(['styles', 'sidebarUnreadColor']);
-    let textColor = this.props.room.getIn(['styles', 'sidebarUnreadTextColor']);
-    if(this.props.unreadCount < 1) {
+  render() {
+    const backgroundColor = this.props.room.getIn(['styles', 'sidebarUnreadColor']);
+    const color = this.props.room.getIn(['styles', 'sidebarUnreadTextColor']);
+    const unreadStyles = {
+      cursor: 'pointer',
+      backgroundColor,
+      color
+    };
+
+    if (this.props.unreadCount < 1) {
       return null;
     }
 
-    return <div className="unread-count-total pull-right">
-      <b className="unreadcount label bg-info pull-right"
-         title="Jump to next unread room"
-         style={{backgroundColor: backgroundColor, color: textColor, cursor: "pointer"}}
-         onClick={this.props.scrollToUnreadRoom}>{this.props.unreadCount}</b>
-    </div>
+    return (
+      <div className="unread-count-total pull-right">
+        <b className="unreadcount label bg-info pull-right"
+           title="Jump to next unread room"
+           style={unreadStyles}
+           onClick={this.props.scrollToUnreadRoom}
+        >
+          {this.props.unreadCount}
+        </b>
+      </div>
+    );
   }
 }
 
@@ -26,12 +38,12 @@ HeaderUnreadCount.defaultProps = {
   unreadCount: 0
 };
 
-function mapDispatchToProps(dispatch){
+function mapDispatchToProps(dispatch) {
   return {
-    scrollToUnreadRoom(){
-      dispatch(handleScrollToNextUnread())
+    scrollToUnreadRoom() {
+      dispatch(handleScrollToNextUnread());
     }
-  }
+  };
 }
 
-export default connect(null, mapDispatchToProps)(HeaderUnreadCount)
+export default connect(null, mapDispatchToProps)(HeaderUnreadCount);

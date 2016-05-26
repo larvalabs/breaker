@@ -1,48 +1,54 @@
-import React from 'react';
-import Config from '../config'
-import Immutable from 'immutable'
-import ReactDOM from 'react-dom'
-import SidebarRoomListElm from './SidebarRoomListElm'
+import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
+import Immutable from 'immutable';
 
-export default React.createClass({
+import Config from '../config';
+
+import SidebarRoomRoom from './SidebarRoom';
+
+
+export default class Sidebar extends Component {
   componentDidUpdate() {
-    if(this.props.scrollToRoomName) {
-      let roomList = ReactDOM.findDOMNode(this.refs.roomList);
-      let scrollTo = ReactDOM.findDOMNode(this.refs[this.props.scrollToRoomName]);
+    if (this.props.scrollToRoomName) {
+      const roomList = ReactDOM.findDOMNode(this.refs.roomList);
+      const scrollTo = ReactDOM.findDOMNode(this.refs[this.props.scrollToRoomName]);
       roomList.scrollTop = scrollTo.offsetTop;
       this.props.scrollToRoomNameReset();
     }
-  },
-  getDefaultProps: function(){
-    return {
-      roomList: Immutable.Map(),
-      roomName: null,
-    }
-  },
-  renderYourRooms: function(){
+  }
 
-    let sidebarColor = this.props.room.getIn(['styles', 'sidebarTextColor']);
+  renderYourRooms() {
+    const sidebarColor = this.props.room.getIn(['styles', 'sidebarTextColor']);
+    const yourRoomsStyles = { color: sidebarColor };
+    return (
+      <ul id="roomlist" className="nav">
+        <li key="your-rooms" className="hidden-folded padder m-t m-b-sm text-muted text-xs">
+          <span style={yourRoomsStyles}>Your Rooms</span>
+        </li>
+        {
+          this.props.roomList.toArray().map((room) => {
+            return (
+                <SidebarRoomRoom key={room.get('name')}
+                                 ref={room.get('name')}
+                                 room={room}
+                                 active={room.get('name') === this.props.roomName}
+                                 styles={this.props.styles}
+                />
+            );
+          })
+        }
+      </ul>
+    );
+  }
 
-    return <ul id="roomlist" className="nav">
-      <li key="your-rooms" className="hidden-folded padder m-t m-b-sm text-muted text-xs">
-        <span style={{color: sidebarColor}}>Your Rooms</span>
-      </li>
-      {
-        this.props.roomList.toArray().map((room) => {
-            return <SidebarRoomListElm key={room.get('name')}
-                                       ref={room.get('name')}
-                                       room={room}
-                                       active={room.get('name') == this.props.roomName}/>;
-        })
-      }
-    </ul>
-  },
-  render: function () {
-    let classes = "app-aside hidden-xs bg-dark";
-    let styles = Config.styles.getSidebarColorForRoom(this.props.room);
-    if(this.props.open){
-      classes += " off-screen";
+  render() {
+    const styles = Config.styles.getSidebarColorForRoom(this.props.room);
+
+    let classes = 'app-aside hidden-xs bg-dark';
+    if (this.props.open) {
+      classes += ' off-screen';
     }
+
     return (
       <aside id="aside" className={classes} style={styles}>
         <div className="aside-wrap">
@@ -53,6 +59,13 @@ export default React.createClass({
           </div>
         </div>
       </aside>
-    )
+    );
   }
-})
+}
+
+Sidebar.defaultProps = {
+  styles: Immutable.Map(),
+  roomList: Immutable.Map(),
+  roomName: null,
+  scrollToRoomNameReset: () => {}
+};

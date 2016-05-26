@@ -1,3 +1,6 @@
+import { combineReducers } from 'redux-immutable';
+import Immutable from 'immutable';
+
 import ui from './ui-reducer';
 import bannerMessage from './banner-message-reducer';
 import currentRoom from './current-room-reducer';
@@ -9,10 +12,9 @@ import users from './users-reducer';
 import lastSeenTimes from './last-seen-reducer';
 import notification from './notification-reducer';
 
-import { combineReducers } from 'redux-immutable';
 
-function authUser(state=Immutable.Map(), action) {
-  return state
+function authUser(state = Immutable.Map()) {
+  return state;
 }
 
 const App = combineReducers({
