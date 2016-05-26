@@ -4,7 +4,7 @@ import Immutable from 'immutable';
 
 import Config from '../config';
 
-import SidebarRoomListElm from './SidebarRoomListElm';
+import SidebarRoomRoom from './SidebarRoom';
 
 
 export default class Sidebar extends Component {
@@ -28,10 +28,11 @@ export default class Sidebar extends Component {
         {
           this.props.roomList.toArray().map((room) => {
             return (
-                <SidebarRoomListElm key={room.get('name')}
-                                    ref={room.get('name')}
-                                    room={room}
-                                    active={room.get('name') === this.props.roomName}
+                <SidebarRoomRoom key={room.get('name')}
+                                 ref={room.get('name')}
+                                 room={room}
+                                 active={room.get('name') === this.props.roomName}
+                                 styles={this.props.styles}
                 />
             );
           })
@@ -63,6 +64,8 @@ export default class Sidebar extends Component {
 }
 
 Sidebar.defaultProps = {
+  styles: Immutable.Map(),
   roomList: Immutable.Map(),
-  roomName: null
+  roomName: null,
+  scrollToRoomNameReset: () => {}
 };

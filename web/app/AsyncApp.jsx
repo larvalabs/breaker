@@ -18,7 +18,7 @@ class AsyncApp extends Component {
     const { roomName,
             rooms, room, unreadCount,
             sidebarOpen, resetScrollToRoomName,
-            scrollToRoomName } = this.props;
+            scrollToRoomName, sidebarStyles } = this.props;
     return (
       <ChatDocumentTitle unreadCount={unreadCount} roomName={roomName}>
 
@@ -30,7 +30,8 @@ class AsyncApp extends Component {
                    open={sidebarOpen}
                    room={room}
                    scrollToRoomNameReset={resetScrollToRoomName}
-                   scrollToRoomName={scrollToRoomName}/>
+                   scrollToRoomName={scrollToRoomName} styles={sidebarStyles}
+          />
           <Main />
         </div>
       </ChatDocumentTitle>
@@ -55,7 +56,10 @@ function mapStateToProps(state) {
     }, 0);
   }, 0);
 
+  const sidebarStyles = state.getIn(['rooms', state.get('currentRoom'), 'styles'], Immutable.Map());
+
   return {
+    sidebarStyles,
     roomName,
     rooms,
     room: state.getIn(['rooms', roomName], Immutable.Map()),
