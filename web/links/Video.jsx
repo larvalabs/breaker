@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Immutable from 'immutable';
 
 import VideoHTML5 from './VideoHTML5';
+import VideoYouTube from './VideoYouTube';
 
 
 export default class Video extends Component {
