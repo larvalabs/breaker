@@ -47,7 +47,9 @@ function init() {
       }
 
       if (Date.now() - lastPingTime > Config.settings.max_stale_state_millis) {
+        console.log("Ping overtime - refreshing state and reconnecting!");
         store.dispatch(socketActions.handleStateRefresh());
+        socket.refresh();
       }
 
       lastPingTime = Date.now();
