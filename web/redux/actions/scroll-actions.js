@@ -1,6 +1,6 @@
 import Immutable from 'immutable';
 
-import { API } from '../../api';
+import API from '../../api';
 
 import * as actions from '../constants/scroll-constants';
 import * as chatActions from '../actions/chat-actions';

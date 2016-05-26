@@ -1,5 +1,5 @@
 import socket from '../../socket';
-import { API } from '../../api';
+import API from '../../api';
 
 import * as actions from '../constants/socket-constants';
 import * as chatActions from './chat-actions';

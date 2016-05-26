@@ -1,4 +1,4 @@
-import { API } from '../../api';
+import API from '../../api';
 
 import * as actions from '../constants/menu-constants';
 
