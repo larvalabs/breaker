@@ -1,5 +1,7 @@
+import { API } from '../../api';
+
 import * as actions from '../constants/menu-constants';
-import { API } from '../../api'
+
 
 export function sidebarOpen() {
   return { type: actions.UI_SIDEBAR_OPEN };
@@ -17,43 +19,41 @@ function settingsClose() {
   return { type: actions.UI_SETTINGS_CLOSE };
 }
 
-export function handleCloseAllMenus(){
+export function handleCloseAllMenus() {
   return dispatch => {
     dispatch(sidebarClose());
     dispatch(settingsClose());
-  }
+  };
 }
 
-function leaveRoom(newActiveRoom){
+function leaveRoom(newActiveRoom) {
   return { type: actions.ROOM_LEAVE, newActiveRoom };
 }
 
 export function handleLeaveRoom(roomName) {
-  return (dispatch, getState) => {
+  return (dispatch) => {
     API.leaveRoom(roomName).then(() => {
       dispatch(leaveRoom(roomName));
     }).catch((e) => {
-      console.log("Failed to leave room", e)
-    })
-  }
+      console.log('Failed to leave room', e);  // eslint-disable-line
+    });
+  };
 }
 
 export function toggleSidebar() {
   return (dispatch, getState) => {
-    
-    if(getState().getIn(['ui', 'sidebar_open'], false)){
-      return dispatch(handleCloseAllMenus())
+    if (getState().getIn(['ui', 'sidebar_open'], false)) {
+      return dispatch(handleCloseAllMenus());
     }
-    return dispatch(sidebarOpen())
-  }
+    return dispatch(sidebarOpen());
+  };
 }
 
 export function toggleSettings() {
   return (dispatch, getState) => {
-
-    if(getState().getIn(['ui', 'settings_open'], false)){
-      return dispatch(settingsClose())
+    if (getState().getIn(['ui', 'settings_open'], false)) {
+      return dispatch(settingsClose());
     }
-    return dispatch(settingsOpen())
-  }
+    return dispatch(settingsOpen());
+  };
 }

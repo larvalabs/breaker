@@ -1,36 +1,37 @@
 import Immutable from 'immutable';
-import * as notifyTypes from '../constants/notification-constants'
+
+import * as notifyTypes from '../constants/notification-constants';
+
 
 const initialState = Immutable.fromJS({
   ignore: true,
-  title: ""
+  title: ''
 });
 
-
-export default function notification(state=initialState, action) {
-  switch(action.type){
-    case(notifyTypes.NOTIFY_PERMISSION_GREANTED): {
+export default function notification(state = initialState, action) {
+  switch (action.type) {
+    case (notifyTypes.NOTIFY_PERMISSION_GREANTED): {
       return state.set('ignore', false);
     }
-    case(notifyTypes.NOTIFY_PERMISSION_DENIED): {
+    case (notifyTypes.NOTIFY_PERMISSION_DENIED): {
       return state.set('ignore', true);
     }
-    case(notifyTypes.NOTIFY_NOT_SUPPORTED): {
+    case (notifyTypes.NOTIFY_NOT_SUPPORTED): {
       return state.set('ignore', true);
     }
-    case(notifyTypes.NOTIFY_ON_CLICK): {
+    case (notifyTypes.NOTIFY_ON_CLICK): {
       return state;
     }
-    case(notifyTypes.NOTIFY_ON_CLOSE): {
+    case (notifyTypes.NOTIFY_ON_CLOSE): {
       return state;
     }
-    case(notifyTypes.NOTIFY_ON_ERROR): {
+    case (notifyTypes.NOTIFY_ON_ERROR): {
       return state;
     }
-    case(notifyTypes.NOTIFY_ON_SHOW): {
+    case (notifyTypes.NOTIFY_ON_SHOW): {
       return state;
     }
-    case(notifyTypes.NOTIFY_SEND): {
+    case (notifyTypes.NOTIFY_SEND): {
       return Immutable.fromJS({
         ignore: state.get('ignore'),
         title: action.title,
@@ -48,7 +49,7 @@ export default function notification(state=initialState, action) {
     }
 
     default: {
-      return state
+      return state;
     }
   }
 }

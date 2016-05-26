@@ -1,14 +1,17 @@
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
+import Immutable from 'immutable';
+
+import Config from '../../config';
 import rootReducer from '../reducers/root-reducer';
-import DevTools from '../../app/DevTools'
-import Immutable from 'immutable'
-import Config from '../../config'
+
+import DevTools from '../../app/DevTools';
+
 
 export default function configureStore(initialState = Immutable.Map()) {
   let finalCreateStore;
 
-  if(!Config.settings.dev_tools){
+  if (!Config.settings.dev_tools) {
     finalCreateStore = applyMiddleware(thunk)(createStore);
   } else {
     finalCreateStore = compose(

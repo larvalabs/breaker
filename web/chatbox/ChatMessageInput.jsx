@@ -1,15 +1,17 @@
-import React, {Component} from 'react';
-import  Autosuggest from 'react-autosuggest';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import {sendNewMessage, resetChatInputFocus, setChatInputFocus} from '../redux/actions/chat-actions'
-import {handleCloseAllMenus} from '../redux/actions/menu-actions'
-import Immutable from 'immutable'
+import Immutable from 'immutable';
+
+import Autosuggest from 'react-autosuggest';
+import { sendNewMessage, resetChatInputFocus, setChatInputFocus } from '../redux/actions/chat-actions';
+import { handleCloseAllMenus } from '../redux/actions/menu-actions';
+
 
 const theme = {
-  "suggestionsContainer" : "suggestionsContainer",
-  "input": "form-control input-message",
-  "suggestion": "suggestion",
-  "suggestionFocused": "suggestionFocused"
+  suggestionsContainer: 'suggestionsContainer',
+  input: 'form-control input-message',
+  suggestion: 'suggestion',
+  suggestionFocused: 'suggestionFocused'
 };
 
 // HERE BE DRAGONS
@@ -29,48 +31,49 @@ class ChatMessageInput extends Component {
       suggestions: this.getSuggestions('')
     };
   }
-  componentDidMount(){
+  
+  componentDidMount() {
     this.props.setChatInputFocus();
   }
+  
   componentDidUpdate() {
-    if(!this.props.setInputFocusValue) {
+    if (!this.props.setInputFocusValue) {
       return false;
     }
     this._input.focus();
     this.props.inputFocusWasSet();
   }
-  handleRef(ref){
-    this._input = ref;
-  }
-  onChange(event, { newValue, method }) {
+
+  onChange(event, { newValue }) {
     return this.setState({
       value: newValue
-    })
+    });
   }
 
   handleKeyPress(event) {
-    if(event.key == 'Enter' && !event.isSuggestionSelected){
+    if (event.key === 'Enter' && !event.isSuggestionSelected) {
       event.preventDefault();
       this.props.sendNewMessage(this.props.roomName, event.target.value);
       this.setState({
-        value: ""
+        value: ''
       });
+
       this.props.onMessageInput();
     }
   }
 
-  onSuggestionsUpdateRequested({ value, reason }) {
+  onSuggestionsUpdateRequested({ value }) {
     this.setState({
       suggestions: this.getSuggestions(value)
     });
   }
 
-  onSuggestionSelected(event, { suggestion, suggestionValue, sectionIndex, method }){
-    if(method=='enter') {
+  onSuggestionSelected(event, { method }) {
+    if (method === 'enter') {
       // This prevents the handleKeyPress from submitting text
       //  when selecting an autocomplete
       event.persist();
-      event.isSuggestionSelected = true;
+      event.isSuggestionSelected = true; // eslint-disable-line
     }
   }
 
@@ -78,22 +81,23 @@ class ChatMessageInput extends Component {
     // When a suggestion is selected, we want to fill in
     // the suggestion in the rest of the input text.
     // Note: We assume the suggestion is always at the end.
-    const lastInputTokens = this.state.value.trim().split(" ");
+    const lastInputTokens = this.state.value.trim().split(' ');
     const lastToken = lastInputTokens.pop();
-    const lastTokenIsMention = lastToken.length !== 0 && lastToken[0] == "@";
+    const lastTokenIsMention = lastToken.length !== 0 && lastToken[0] == '@';
 
-    if(lastTokenIsMention) {
-      let inputWithoutLastToken = lastInputTokens.join(" ");
-      return (inputWithoutLastToken + " @").trim() + suggestion + " "
+    if (lastTokenIsMention) {
+      const inputWithoutLastToken = lastInputTokens.join(' ');
+      const inputWithAtTrimmed = `${inputWithoutLastToken} @`.trim();
+      return `${inputWithAtTrimmed}${suggestion} `;
     }
     return suggestion;
   }
 
   getSuggestions(value) {
-    const lastInputToken = value.toLowerCase().split(" ").pop();
-    const userIsAttemptingMention = lastInputToken[0] === "@" && lastInputToken.length > 1;
-    if(!userIsAttemptingMention){
-      return []
+    const lastInputToken = value.toLowerCase().split(' ').pop();
+    const userIsAttemptingMention = lastInputToken[0] === '@' && lastInputToken.length > 1;
+    if (!userIsAttemptingMention) {
+      return [];
     }
 
     const queryWithoutAt = lastInputToken.slice(1, lastInputToken.length);
@@ -103,39 +107,48 @@ class ChatMessageInput extends Component {
     }).toJS();
   }
 
+  handleRef(ref) {
+    this._input = ref;
+  }
+
   renderSuggestion(suggestion) {
     return (
         <span>{suggestion}</span>
     );
   }
-  renderPlaceholder(props){
-    if(!props.connected){
-      return "Disconnected from server"
+
+  renderPlaceholder(props) {
+    if (!props.connected) {
+      return 'Disconnected from server';
     }
 
-    return `Type a message to #${props.roomName}...`
+    return `Type a message to #${props.roomName}...`;
   }
-  render() {
-      const { value, suggestions } = this.state;
-      const inputProps = {
-        placeholder: this.renderPlaceholder(this.props),
-        value,
-        onChange: this.onChange,
-        onKeyDown: this.handleKeyPress,
-        onFocus: this.props.closeSidebar,
-        disabled: !this.props.connected,
-        ref: this.handleRef
-      };
 
-      return <Autosuggest suggestions={suggestions}
+  render() {
+    const { value, suggestions } = this.state;
+    const inputProps = {
+      placeholder: this.renderPlaceholder(this.props),
+      value,
+      onChange: this.onChange,
+      onKeyDown: this.handleKeyPress,
+      onFocus: this.props.closeSidebar,
+      disabled: !this.props.connected,
+      ref: this.handleRef
+    };
+
+    return (
+      <Autosuggest suggestions={suggestions}
                    onSuggestionsUpdateRequested={this.onSuggestionsUpdateRequested}
                    getSuggestionValue={this.getSuggestionValue}
                    onSuggestionSelected={this.onSuggestionSelected}
                    renderSuggestion={this.renderSuggestion}
                    inputProps={inputProps}
                    theme={theme}
-                   tabToSelect={true}
-                   selectFirstSuggestion={true}/>;
+                   tabToSelect
+                   selectFirstSuggestion
+      />
+    );
   }
 }
 
@@ -144,18 +157,18 @@ ChatMessageInput.defaultProps = {
 };
 
 function mapStateToProps(state) {
-  let roomName = state.get('currentRoom');
-  let membersMap = state.getIn(['members', roomName], Immutable.Map());
-  let members = membersMap.reduce((a, b) => a.union(b), Immutable.OrderedSet()).toList();
-  let connected = state.getIn(['ui', 'connected']);
-  let setInputFocusValue = state.getIn(['ui', 'setInputFocus'], false);
+  const roomName = state.get('currentRoom');
+  const membersMap = state.getIn(['members', roomName], Immutable.Map());
+  const members = membersMap.reduce((a, b) => a.union(b), Immutable.OrderedSet()).toList();
+  const connected = state.getIn(['ui', 'connected']);
+  const setInputFocusValue = state.getIn(['ui', 'setInputFocus'], false);
 
   return {
     members,
     roomName,
     connected,
     setInputFocusValue
-  }
+  };
 }
 
 function mapDispatchToProps(dispatch) {
@@ -169,13 +182,13 @@ function mapDispatchToProps(dispatch) {
     setChatInputFocus() {
       dispatch(setChatInputFocus());
     },
-    sendNewMessage(roomName, message){
+    sendNewMessage(roomName, message) {
       dispatch(sendNewMessage({
-        message: message,
-        roomName: roomName
-      }))
+        message,
+        roomName
+      }));
     }
-  }
+  };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChatMessageInput)
