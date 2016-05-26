@@ -8,8 +8,14 @@ let lastPingTime = null;
 const ReconnectingWebSocket = window.ReconnectingWebSocket;
 
 function init() {
+  var socketOptions = {
+    debug: false,
+    reconnectInterval: 5000,
+    reconnectDecay: 1.5,
+    timeoutInterval: 15000,
+  };
   const websocketUrl = Config.websocket_url.replace('ws:', 'wss:');
-  socket = new ReconnectingWebSocket(websocketUrl);
+  socket = new ReconnectingWebSocket(websocketUrl, null, socketOptions);
   let pingTimeout = null;
 
   socket.onopen = () => {
