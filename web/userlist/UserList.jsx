@@ -39,7 +39,7 @@ function mapStateToProps(state) {
   const roomOnlineUserNames = roomMembers.get('online', Immutable.List());
   const onlineUsers = roomOnlineUserNames.subtract(roomModUserNames).map((member) => users.get(member));
 
-  const roomOfflineUserNames = roomMembers.get('offline', Immutable.List()).filter(u => u === 'breakerbot');
+  const roomOfflineUserNames = roomMembers.get('offline', Immutable.List()).filter(u => u !== 'guest');
   const offlineUsers = roomOfflineUserNames.subtract(roomModUserNames).map((member) => users.get(member));
 
   return {
