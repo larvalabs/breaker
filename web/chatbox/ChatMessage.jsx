@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import Immutable from 'immutable';
 import TimeAgo from 'react-timeago';
 
-import UsernameAndFlair from '../userlist/UsernameAndFlair.jsx';
-import UserAvatar from '../userlist/UserAvatar';
+import UsernameAndFlair from '../user/UsernameAndFlair.jsx';
+import UserAvatar from '../user/UserAvatar';
 import Message from './Message';
 
 

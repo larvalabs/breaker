@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import Immutable from 'immutable';
 
-import UsernameAndFlair from '../userlist/UsernameAndFlair.jsx';
-import UserAvatar from '../userlist/UserAvatar';
+import UsernameAndFlair from '../user/UsernameAndFlair.jsx';
+import UserAvatar from '../user/UserAvatar';
 import Clear from '../util/Clear';
 import ChatMessageTimeago from './ChatMessageTimeago';
 

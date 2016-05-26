@@ -1,28 +1,26 @@
 import React, { Component } from 'react';
 import Immutable from 'immutable';
 
-import UsernameAndFlair from './UsernameAndFlair';
-import UserAvatar from './UserAvatar';
-import UserStatusMessage from './UserStatusMessage';
+import UsernameAndFlair from '../user/UsernameAndFlair';
+import UserAvatar from '../user/UserAvatar';
+import UserStatusMessage from '../user/UserStatusMessage';
 import Clear from '../util/Clear';
 
 
 export default class UserListItem extends Component {
   render() {
-    if (this.props.user.get('username') === 'guest') {
+    const { user, roomName } = this.props;
+
+    if (user.get('username') === 'guest') {
       return null;
     }
 
     return (
-      <li key={this.props.user.get('id')} className="list-group-item user-list-item">
-        <UserAvatar user={this.props.user} roomName={this.props.roomName}/>
+      <li className="list-group-item user-list-item">
+        <UserAvatar user={user} roomName={roomName}/>
         <Clear>
-          <UsernameAndFlair user={this.props.user} roomName={this.props.roomName}
-                            classOnly={this.props.roomName === 'nba'} noFlair
-          />
-          <UserStatusMessage user={this.props.user}
-                             roomName={this.props.roomName}
-          />
+          <UsernameAndFlair user={user} roomName={roomName} classOnly={roomName === 'nba'} noFlair />
+          <UserStatusMessage user={user} roomName={roomName} />
         </Clear>
       </li>
     );

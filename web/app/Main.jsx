@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import ChatBox from '../chatbox/ChatBox';
-import UserListBox from '../userlist/UserListBox';
+import UserListBox from '../userlist/UserList';
 import MobileRoomOverlay from './MobileRoomOverlay';
 
 
