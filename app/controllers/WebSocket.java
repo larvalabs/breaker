@@ -16,7 +16,6 @@ import models.ChatUser;
 import models.ChatUserRoomJoin;
 import play.Logger;
 import play.Play;
-import play.libs.F.EventStream;
 import play.libs.F.Promise;
 import play.mvc.Http;
 import play.mvc.Http.WebSocketClose;
@@ -208,6 +207,80 @@ public class WebSocket extends PreloadUserController {
         }
     }
 
+    private static class RoomConnectionManager {
+        HashMap<String, RoomConnection> roomConnections = new HashMap<java.lang.String, RoomConnection>();
+        List<RoomConnection> roomConnectionList = new ArrayList<>();
+        Promise[] roomConnectionsPromises;
+        Http.Inbound inbound;
+
+        public RoomConnectionManager(Http.Inbound inbound) {
+            this.inbound = inbound;
+        }
+
+        private void addConnection(ChatUser userModel, JsonUser user, String connectionId, ChatRoom room) {
+            ChatRoomStream chatRoomStreamForRoom = ChatRoomStream.getEventStream(room.name);
+
+            // Socket connected, join the chat room
+            // If this is the first connection this user has to the room then broadcast
+            boolean broadcastJoin = !room.isUserPresent(user.username);
+            if (broadcastJoin) {
+                Logger.debug("First connection for " + user.username + ", broadcasting join for connectionId " + connectionId);
+            }
+            room.userPresent(user.username, connectionId);
+            boolean isModerator = room.isModerator(userModel);
+            ChatRoomStream.WeakReferenceEventStream<ChatRoomStream.Event> eventStreamForThisUser = chatRoomStreamForRoom.join(room, userModel, connectionId, broadcastJoin);
+
+            RoomConnection roomConnection = new RoomConnection(JsonChatRoom.from(room, room.getModeratorUsernames()),
+                    chatRoomStreamForRoom, eventStreamForThisUser, isModerator, room.userCanPost(userModel));
+            roomConnections.put(room.name, roomConnection);
+            roomConnectionList.add(roomConnection);
+        }
+
+        private void removeConnection(String roomName) {
+            RoomConnection roomConnection = roomConnections.remove(roomName);
+            roomConnectionList.remove(roomConnection);
+            roomConnectionsPromises = null;
+        }
+
+        public RoomConnection getRoom(String name) {
+            return roomConnections.get(name);
+        }
+
+        public Iterator<RoomConnection> iterateRoomConnections() {
+            return roomConnectionList.iterator();
+        }
+
+        public RoomConnection get(int index) {
+            return roomConnectionList.get(index);
+        }
+
+        public Promise[] getPromises() {
+            if (roomConnectionsPromises == null) {
+                roomConnectionsPromises = new Promise[roomConnections.size() + 1];
+                roomConnectionsPromises[0] = inbound.nextEvent();
+                for (int i = 1; i < roomConnectionsPromises.length; i++) {
+                    RoomConnection roomConnection = roomConnectionList.get(i - 1);
+                    roomConnectionsPromises[i] = roomConnection.eventStream.nextEvent();
+                }
+            }
+            return roomConnectionsPromises;
+        }
+
+        public void redeemPromise(int index) {
+            if (index == 0) {
+                roomConnectionsPromises[0] = inbound.nextEvent();
+            } else {
+                roomConnectionsPromises[index] = roomConnectionList.get(index - 1).eventStream.nextEvent();
+            }
+        }
+
+        public void disconnect(JsonUser user, String connectionId) {
+            for (RoomConnection roomConnection : roomConnectionList) {
+                roomConnection.chatRoomEventStream.removeStream(roomConnection.room, user, connectionId);
+            }
+        }
+    }
+
     public static class ChatRoomSocket extends WebSocketController {
 
         public static void join() {
@@ -220,7 +293,7 @@ public class WebSocket extends PreloadUserController {
             String connectionId = Util.getUUID();
             List<ChatUserRoomJoin> chatRoomJoins = user.getChatRoomJoins();
 
-            HashMap<String, RoomConnection> roomConnections = new HashMap<java.lang.String, RoomConnection>();
+            RoomConnectionManager roomConnectionManager = new RoomConnectionManager(inbound);
             ArrayList<JsonChatRoom> jsonChatRoomsList = new ArrayList<JsonChatRoom>();
 
             // This is a single element array because the current json user can get updated by events in an inner loop
@@ -232,7 +305,7 @@ public class WebSocket extends PreloadUserController {
                     ChatRoom room = chatRoomJoin.getRoom();
                     if (Constants.CHATROOM_DEFAULT.equals(room.name) || room.isOpen()) {
                         jsonChatRoomsList.add(JsonChatRoom.from(room, room.getModeratorUsernames()));
-                        addConnection(user, jsonUser[0], connectionId, roomConnections, room);
+                        roomConnectionManager.addConnection(user, jsonUser[0], connectionId, room);
                         Logger.debug("Connecting to chat room stream for " + room.getName()+", canpost "+room.userCanPost(user));
                         i++;
                     }
@@ -243,39 +316,28 @@ public class WebSocket extends PreloadUserController {
 
             // Loop while the socket is open
             while (inbound.isOpen()) {
-                awaitAndProcessInput(jsonUser, connectionId, roomConnections);
+                ChatRoomStream.WaitAnyPromise waitAnyPromise = ChatRoomStream.waitAnyWithResultInfo(roomConnectionManager.getPromises());
+                Object awaitResult = await(waitAnyPromise);
+
+                // Case: TextEvent received on the socket
+                if (awaitResult instanceof WebSocketFrame) {
+                    processWebsocketFrame(jsonUser[0], connectionId, roomConnectionManager, (WebSocketFrame) awaitResult);
+                } else if (awaitResult instanceof WebSocketClose) {
+                    processWebsocketClose(jsonUser[0], connectionId, roomConnectionManager);
+                } else if (awaitResult instanceof ChatRoomStream.Event) {
+                    processEvent(jsonUser, roomConnectionManager, (ChatRoomStream.Event) awaitResult, connectionId);
+                }
+
+                int indexRedeemed = waitAnyPromise.getIndexRedeemed();
+                roomConnectionManager.redeemPromise(indexRedeemed);
             }
 
             // Just to be sure, in case we didn't get a proper disconnect
-            for (RoomConnection roomConnection : roomConnections.values()) {
-                roomConnection.chatRoomEventStream.removeStream(roomConnection.room, jsonUser[0], connectionId);
-            }
+            roomConnectionManager.disconnect(jsonUser[0], connectionId);
             RedisUtil.userNotPresentGlobal(jsonUser[0].username, connectionId);
         }
 
-        private static void awaitAndProcessInput(JsonUser[] singleUserArray, String connectionId, HashMap<String, RoomConnection> roomConnections) {
-            JsonUser user = singleUserArray[0];
-            Promise[] roomEventPromises = new Promise[roomConnections.size() + 1];
-            roomEventPromises[0] = inbound.nextEvent();
-            int i = 1;
-            for (RoomConnection roomConnection : roomConnections.values()) {
-                roomEventPromises[i] = roomConnection.eventStream.nextEvent();
-                i++;
-            }
-
-            Object awaitResult = await(Promise.waitAny(roomEventPromises));
-
-            // Case: TextEvent received on the socket
-            if (awaitResult instanceof WebSocketFrame) {
-                processWebsocketFrame(user, connectionId, roomConnections, (WebSocketFrame) awaitResult);
-            } else if (awaitResult instanceof WebSocketClose) {
-                processWebsocketClose(user, connectionId, roomConnections);
-            } else if (awaitResult instanceof ChatRoomStream.Event) {
-                processEvent(singleUserArray, roomConnections, (ChatRoomStream.Event) awaitResult, connectionId);
-            }
-        }
-
-        private static void processEvent(JsonUser[] userArray, HashMap<String, RoomConnection> roomConnections, ChatRoomStream.Event awaitResult, String connectionId) {
+        private static void processEvent(JsonUser[] userArray, RoomConnectionManager roomConnectionManager, ChatRoomStream.Event awaitResult, String connectionId) {
             JsonUser thisConnectionUser = userArray[0];
 
             // Bail out if this is directed a specific user, don't process
@@ -291,12 +353,12 @@ public class WebSocket extends PreloadUserController {
                     if (commandEvent.command.type.shouldCloseClientSocket()) {
                         Logger.info(thisConnectionUser.username + " has been disconnected from " + commandEvent.room.name);
 
-                        RoomConnection roomConnection = roomConnections.get(commandEvent.room.name);
+                        RoomConnection roomConnection = roomConnectionManager.getRoom(commandEvent.room.name);
                         ChatRoom roomModel = roomConnection.room.loadModelFromDatabase();
                         ChatUser userModel = thisConnectionUser.loadModelFromDatabase();
 
                         userModel.leaveChatRoom(roomModel);
-                        roomConnections.remove(commandEvent.room.name);
+                        roomConnectionManager.removeConnection(commandEvent.room.name);
 
                         sendLocalServerMessage(roomConnection, thisConnectionUser.username, commandEvent.command.username + " was kicked.");
                         disconnect();
@@ -311,29 +373,29 @@ public class WebSocket extends PreloadUserController {
                 outbound.send(updateEvent.toJson());
             } else if (awaitResult instanceof ChatRoomStream.UpdateRoomEvent) {
                 ChatRoomStream.UpdateRoomEvent updateEvent = (ChatRoomStream.UpdateRoomEvent) awaitResult;
-                if (roomConnections.containsKey(updateEvent.room.name)) {
+                if (roomConnectionManager.roomConnections.containsKey(updateEvent.room.name)) {
                     Logger.info("Updated local room object from event: " + updateEvent.room.name);
-                    roomConnections.get(updateEvent.room.name).room = updateEvent.room;
+                    roomConnectionManager.getRoom(updateEvent.room.name).room = updateEvent.room;
                 }
                 outbound.send(updateEvent.toJson());
             } else if (awaitResult instanceof ChatRoomStream.UpdateMessageEvent) {
                 ChatRoomStream.UpdateMessageEvent updateEvent = (ChatRoomStream.UpdateMessageEvent) awaitResult;
-                if (roomConnections.containsKey(updateEvent.room.name)) {
+                if (roomConnectionManager.roomConnections.containsKey(updateEvent.room.name)) {
                     Logger.info("Updated local room object from event: " + updateEvent.room.name);
-                    roomConnections.get(updateEvent.room.name).room = updateEvent.room;
+                    roomConnectionManager.getRoom(updateEvent.room.name).room = updateEvent.room;
                 }
                 outbound.send(updateEvent.toJson());
             } else if (awaitResult instanceof ChatRoomStream.Leave) {
                 ChatRoomStream.Leave event = (ChatRoomStream.Leave) awaitResult;
                 outbound.send(awaitResult.toJson());
                 if (event.user.username.equalsIgnoreCase(thisConnectionUser.username)) {
-                    RoomConnection roomConnection = roomConnections.get(event.room.name);
+                    RoomConnection roomConnection = roomConnectionManager.getRoom(event.room.name);
                     roomConnection.chatRoomEventStream.removeStream(event.room, event.user, connectionId);
                 }
             } else if (awaitResult instanceof ChatRoomStream.RoomLeave) {
                 ChatRoomStream.RoomLeave event = (ChatRoomStream.RoomLeave) awaitResult;
                 if (event.user.username.equalsIgnoreCase(thisConnectionUser.username)) {
-                    RoomConnection roomConnection = roomConnections.get(event.room.name);
+                    RoomConnection roomConnection = roomConnectionManager.getRoom(event.room.name);
                     roomConnection.chatRoomEventStream.removeStream(event.room, event.user, connectionId);
                     outbound.send(awaitResult.toJson());
                 } else {
@@ -348,10 +410,10 @@ public class WebSocket extends PreloadUserController {
             }
         }
 
-        private static void processWebsocketClose(JsonUser user, String connectionId, HashMap<String, RoomConnection> roomConnections) {
+        private static void processWebsocketClose(JsonUser user, String connectionId, RoomConnectionManager roomConnectionManager) {
             // Case: The socket has been closed
             Logger.info("Socket closed: " + user.username + ":" + connectionId);
-            for (RoomConnection roomConnection : roomConnections.values()) {
+            for (RoomConnection roomConnection : roomConnectionManager.roomConnectionList) {
                 RedisUtil.userNotPresent(roomConnection.room.name, user.username, connectionId);
                 user.online = false;
                 // If this was the last connection that user had to the room then broadcast they've left
@@ -364,7 +426,7 @@ public class WebSocket extends PreloadUserController {
             disconnect();
         }
 
-        private static void processWebsocketFrame(JsonUser user, String connectionId, HashMap<String, RoomConnection> roomConnections, WebSocketFrame awaitResult) {
+        private static void processWebsocketFrame(JsonUser user, String connectionId, RoomConnectionManager roomConnectionManager, WebSocketFrame awaitResult) {
             WebSocketFrame frame = awaitResult;
             if (!frame.isBinary && frame.textData != null) {
                 String userMessageJson = frame.textData;
@@ -378,10 +440,10 @@ public class WebSocket extends PreloadUserController {
                         Logger.debug("After cleaning message length was 0, dropping.");
                         return;
                     }
-                    RoomConnection roomConnection = roomConnections.get(roomName);
+                    RoomConnection roomConnection = roomConnectionManager.getRoom(roomName);
                     if (roomConnection != null) {
                         if (message.toLowerCase().equals("##ping##")) {
-                            for (RoomConnection connection : roomConnections.values()) {
+                            for (RoomConnection connection : roomConnectionManager.roomConnectionList) {
                                 RedisUtil.userPresent(connection.room.name, user.username, connectionId);
                             }
                             // todo also add to global users connected set for easier stats
@@ -435,24 +497,6 @@ public class WebSocket extends PreloadUserController {
         private static void sendLocalServerMessage(RoomConnection roomConnection, String toUsername, String message) {
             outbound.send(new ChatRoomStream.ServerMessage(roomConnection.room, toUsername, JsonUser.fromUser(ChatUser.getSystemUser(), true), message).toJson());
         }
-
-        private static void addConnection(ChatUser userModel, JsonUser user, String connectionId, HashMap<String, RoomConnection> roomConnections, ChatRoom room) {
-            ChatRoomStream chatRoomStreamForRoom = ChatRoomStream.getEventStream(room.name);
-
-            // Socket connected, join the chat room
-            // If this is the first connection this user has to the room then broadcast
-            boolean broadcastJoin = !room.isUserPresent(user.username);
-            if (broadcastJoin) {
-                Logger.debug("First connection for " + user.username + ", broadcasting join for connectionId " + connectionId);
-            }
-            room.userPresent(user.username, connectionId);
-            boolean isModerator = room.isModerator(userModel);
-            ChatRoomStream.WeakReferenceEventStream<ChatRoomStream.Event> eventStreamForThisUser = chatRoomStreamForRoom.join(room, userModel, connectionId, broadcastJoin);
-
-            roomConnections.put(room.name, new RoomConnection(JsonChatRoom.from(room, room.getModeratorUsernames()),
-                    chatRoomStreamForRoom, eventStreamForThisUser, isModerator, room.userCanPost(userModel)));
-        }
-
     }
 
 }

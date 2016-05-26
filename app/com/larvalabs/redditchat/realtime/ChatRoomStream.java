@@ -18,6 +18,7 @@ import play.libs.F;
 import play.libs.F.EventStream;
 
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -27,6 +28,73 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutionException;
 
 public class ChatRoomStream {
+
+    public static class WaitAnyPromise<T> extends F.Promise<T> {
+        private int indexRedeemed;
+
+        public void invoke(T result, int indexRedeemed) {
+            this.indexRedeemed = indexRedeemed;
+            super.invoke(result);
+        }
+
+        public void invokeWithException(Throwable t, int indexRedeemed) {
+            this.indexRedeemed = indexRedeemed;
+            super.invokeWithException(t);
+        }
+
+        public int getIndexRedeemed() {
+            return indexRedeemed;
+        }
+    }
+
+
+    public static <T> WaitAnyPromise<T> waitAnyWithResultInfo(final F.Promise<T>... futures) {
+        final WaitAnyPromise<T> result = new WaitAnyPromise<>();
+
+        final F.Action<F.Promise<T>> action = new F.Action<F.Promise<T>>() {
+
+            @Override
+            public void invoke(F.Promise<T> completed) {
+                synchronized (this) {
+                    if (result.isDone()) {
+                        return;
+                    }
+                }
+
+                int index = -1;
+                for (int i = 0; i < futures.length; i++) {
+                    F.Promise<T> future = futures[i];
+                    if (future == completed) {
+                        index = i;
+                        break;
+                    }
+                }
+
+                T resultOrNull = completed.getOrNull();
+                if (resultOrNull != null) {
+                    result.invoke(resultOrNull, index);
+                } else {
+                    try {
+                        // Note: exception
+                        Class<? extends F.Promise> promiseClass = completed.getClass();
+                        Field exceptionField = promiseClass.getField("exception");
+                        exceptionField.setAccessible(true);
+                        result.invokeWithException((Throwable) exceptionField.get(completed), index);
+                    } catch (NoSuchFieldException | IllegalAccessException e) {
+                        result.invokeWithException(new Exception(), index);
+                        Logger.warn("No exception field in promise.");
+                    }
+                }
+            }
+        };
+
+        for (F.Promise<T> f : futures) {
+            f.onRedeem(action);
+        }
+
+        return result;
+    }
+
 
     public static class WeakReferenceEventStream<T> {
 
