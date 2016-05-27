@@ -37,10 +37,26 @@ export default class UserListItems extends Component {
   render() {
     const { title } = this.props;
 
+    const wrapperStyles = {
+      padding: '.5em 1.2em'
+    };
+
+    const titleStyles = {
+      borderBottom: '1px solid #D6D7D8',
+      paddingBottom: '.25em',
+      marginBottom: '0.5em',
+    };
+
+    const listStyles = {
+      padding: '0 0.5em'
+    };
+
     return (
-      <div className="wrapper-md m-b-n-md">
-        <div className="m-b-sm text-md">{title}</div>
-        {this.renderItemsOrMessage()}
+      <div className="wrapper-md m-b-n-md" style={wrapperStyles}>
+        <div className="m-b-sm text-md" style={titleStyles}>{title}</div>
+        <div style={listStyles}>
+          {this.renderItemsOrMessage()}
+        </div>
       </div>
     );
   }
