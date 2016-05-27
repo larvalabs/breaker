@@ -1,5 +1,6 @@
 package models;
 
+import com.google.gson.JsonObject;
 import com.larvalabs.redditchat.Constants;
 import com.larvalabs.redditchat.dataobj.JsonFlair;
 import com.larvalabs.redditchat.util.RedisUtil;
@@ -399,7 +400,7 @@ public class ChatUser extends Model {
         chatRoom.save();
         Logger.info("User " + username + ": " + chatRoom.name + " : " + chatRoom.numberOfUsers);
 
-        new UpdateUserFromRedditJob(getId()).now();
+        new UpdateUserFromRedditJob(getId()).afterRequest();
     }
 
     public void leaveChatRoom(ChatRoom chatRoom) {
@@ -635,4 +636,11 @@ public class ChatUser extends Model {
         return RedisUtil.isUserOnlineInAnyRoom(username);
     }
 
+    public void updateUserFromRedditJson(JsonObject userJson) {
+        linkKarma = userJson.get("link_karma").getAsLong();
+        commentKarma = userJson.get("comment_karma").getAsLong();
+        redditUserCreatedUTC = userJson.get("created_utc").getAsLong();
+        redditUserSuspended = userJson.get("is_suspended").getAsBoolean();
+        lastResponseApiMe = userJson.toString();
+    }
 }

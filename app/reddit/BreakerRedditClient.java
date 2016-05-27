@@ -30,6 +30,7 @@ public class BreakerRedditClient {
     final private String MODERATORS_URL = BASIC_URL + "/r/{0}/about/moderators.json";
     final private String ABOUT_URL = BASIC_URL + "/r/{0}/about.json";
     final private String ABOUT_URL_LOGGED_IN = OAUTH_URL + "/r/{0}/about";
+    final private String ME_URL = OAUTH_URL + "/api/v1/me";
 
     public static class RedditJsonUserlist {
         public RedditJsonUserData data;
@@ -118,6 +119,10 @@ public class BreakerRedditClient {
 
     public JSONObject getSubsModerated(ChatUser chatUser) throws RedditRequestError {
         return getJsonForUser(chatUser, USER_SUBS_MODERATED_URL);
+    }
+
+    public JSONObject getRedditUserDetails(ChatUser chatUser) throws RedditRequestError {
+        return getJsonForUser(chatUser, ME_URL);
     }
 
     public ArrayList<String> getSubNamesModerated(ChatUser chatUser) throws RedditRequestError {

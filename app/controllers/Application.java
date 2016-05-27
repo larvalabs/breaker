@@ -274,11 +274,7 @@ public class Application extends PreloadUserController {
                     Logger.info("Refresh token: " + tokens.refresh);
                 }
 
-                user.linkKarma = me.get("link_karma").getAsLong();
-                user.commentKarma = me.get("comment_karma").getAsLong();
-                user.redditUserCreatedUTC = me.get("created_utc").getAsLong();
-                user.redditUserSuspended = me.get("is_suspended").getAsBoolean();
-                user.lastResponseApiMe = me.toString();
+                user.updateUserFromRedditJson(me);
                 user.save();
 
                 ChatRoom defaultChat = ChatRoom.findByName(Constants.CHATROOM_DEFAULT);

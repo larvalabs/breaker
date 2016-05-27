@@ -2,6 +2,9 @@ package jobs;
 
 import com.amazonaws.util.json.JSONException;
 import com.amazonaws.util.json.JSONObject;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.larvalabs.redditchat.dataobj.BreakerCache;
 import com.larvalabs.redditchat.realtime.ChatRoomStream;
 import models.ChatRoom;
@@ -50,6 +53,13 @@ public class UpdateUserFromRedditJob extends Job {
 
         // Refresh access token for user
         BreakerRedditClient breakerRedditClient = new BreakerRedditClient();
+
+        JSONObject redditUserDetails = breakerRedditClient.getRedditUserDetails(chatUser);
+        // todo This json object type conversion seems a bit unfortunate
+        JsonParser jsonParser = new JsonParser();
+        chatUser.updateUserFromRedditJson((JsonObject) jsonParser.parse(redditUserDetails.toString()));
+        chatUser.save();
+
         List<ChatUserRoomJoin> chatRoomJoins = chatUser.getChatRoomJoins();
         for (ChatUserRoomJoin chatUserRoomJoin : chatRoomJoins) {
             ChatRoom room = chatUserRoomJoin.getRoom();

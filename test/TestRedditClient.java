@@ -126,4 +126,14 @@ public class TestRedditClient extends UnitTest {
         assertFalse(client.doesSubredditExist("nowaydoesthisthingexist1298752"));
         assertTrue(client.doesSubredditExist("android"));
     }
+
+    @Test
+    public void testGetUserDetails() throws Exception {
+        BreakerRedditClient client = new BreakerRedditClient();
+        ChatUser user = getTestUser1();
+        JSONObject redditUserDetails = client.getRedditUserDetails(user);
+        assertEquals(user.getUsername(), redditUserDetails.getString("name"));
+        assertTrue(redditUserDetails.getLong("link_karma") > 0);
+        assertEquals(0, redditUserDetails.getLong("comment_karma"));
+    }
 }
