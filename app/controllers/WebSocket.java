@@ -223,9 +223,11 @@ public class WebSocket extends PreloadUserController {
             // Socket connected, join the chat room
             // If this is the first connection this user has to the room then broadcast
             boolean broadcastJoin = !room.isUserPresent(user.username);
+/*
             if (broadcastJoin) {
                 Logger.debug("First connection for " + user.username + ", broadcasting join for connectionId " + connectionId);
             }
+*/
             room.userPresent(user.username, connectionId);
             boolean isModerator = room.isModerator(userModel);
             ChatRoomStream.WeakReferenceEventStream<ChatRoomStream.Event> eventStreamForThisUser = chatRoomStreamForRoom.join(room, userModel, connectionId, broadcastJoin);
@@ -293,6 +295,8 @@ public class WebSocket extends PreloadUserController {
             String connectionId = Util.getUUID();
             List<ChatUserRoomJoin> chatRoomJoins = user.getChatRoomJoins();
 
+            Logger.debug(user.getUsername() + " connecting to websocket and " + chatRoomJoins.size() + " rooms.");
+
             RoomConnectionManager roomConnectionManager = new RoomConnectionManager(inbound);
             ArrayList<JsonChatRoom> jsonChatRoomsList = new ArrayList<JsonChatRoom>();
 
@@ -306,7 +310,6 @@ public class WebSocket extends PreloadUserController {
                     if (Constants.CHATROOM_DEFAULT.equals(room.name) || room.isOpen()) {
                         jsonChatRoomsList.add(JsonChatRoom.from(room, room.getModeratorUsernames()));
                         roomConnectionManager.addConnection(user, jsonUser[0], connectionId, room);
-                        Logger.debug("Connecting to chat room stream for " + room.getName()+", canpost "+room.userCanPost(user));
                         i++;
                     }
                 }
@@ -416,11 +419,11 @@ public class WebSocket extends PreloadUserController {
             for (RoomConnection roomConnection : roomConnectionManager.roomConnectionList) {
                 RedisUtil.userNotPresent(roomConnection.room.name, user.username, connectionId);
                 user.online = false;
-                // If this was the last connection that user had to the room then broadcast they've left
-                roomConnection.chatRoomEventStream.leave(roomConnection.room, user);
-                roomConnection.chatRoomEventStream.removeStream(roomConnection.room, user, connectionId);
                 if (!RedisUtil.isUserPresent(roomConnection.room.name, user.username)) {
                     Logger.debug("Last connection for " + user.username + " on channel " + roomConnection.room.name + " disconnected, broadcasting leave.");
+                    // If this was the last connection that user had to the room then broadcast they've left
+                    roomConnection.chatRoomEventStream.leave(roomConnection.room, user);
+                    roomConnection.chatRoomEventStream.removeStream(roomConnection.room, user, connectionId);
                 }
             }
             disconnect();

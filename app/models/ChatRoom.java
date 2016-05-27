@@ -619,11 +619,11 @@ public class ChatRoom extends Model {
             return false;
         }
         if (chatUser.getLinkKarma() + chatUser.getCommentKarma() < getKarmaThreshold()) {
-            Logger.debug("User is below karma threshold.");
+            Logger.debug("User is below karma threshold for " + name);
             return false;
         }
         if (chatUser.isFlagBanned() || chatUser.isShadowBan()) {
-            Logger.debug("User " + chatUser.getUsername() + " is flag or shadow banned.");
+            Logger.debug("User " + chatUser.getUsername() + " is flag or shadow banned from " + name);
             return false;
         }
         return true;
