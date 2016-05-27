@@ -4,11 +4,7 @@ import Immutable from 'immutable';
 
 export default class SidebarRoomPrivateIcon extends Component {
   render() {
-    const { room, styles } = this.props;
-
-    if (!room.get('isPrivate')) {
-      return null;
-    }
+    const { styles } = this.props;
 
     const iconStyles = {
       color: styles.get('sidebarTextColor')
@@ -19,6 +15,5 @@ export default class SidebarRoomPrivateIcon extends Component {
 }
 
 SidebarRoomPrivateIcon.defaultProps = {
-  room: Immutable.Map(),
   styles: Immutable.Map()
 };

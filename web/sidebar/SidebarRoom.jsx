@@ -33,7 +33,6 @@ class SidebarRoomListElm extends Component {
       <li className={liStyles} onClick={this.onElementClicked}>
         <SidebarRoomSelect styles={styles} active={active}>
           <SidebarRoomUnreadCount room={room} styles={styles}/>
-          <SidebarRoomPrivateIcon room={room} styles={styles}/>
           <SidebarRoomAvatar room={room}/>
           <SidebarRoomName room={room} styles={styles}/>
         </SidebarRoomSelect>
