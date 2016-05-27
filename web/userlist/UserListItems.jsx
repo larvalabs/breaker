@@ -6,7 +6,7 @@ import UserListItem from './UserListItem.jsx';
 
 export default class UserListItems extends Component {
   renderMessage() {
-    const messageStyle = { textAlign: 'center' };
+    const messageStyle = { textAlign: 'center', marginBottom: '2em'};
 
     return (
       <div style={messageStyle}>
