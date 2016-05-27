@@ -11,7 +11,8 @@ import ChatLoginInput from './ChatLoginInput';
 
 const $ = window.jQuery;
 
-class ChatBox extends Component {
+
+class Chat extends Component {
   constructor(props) {
     super(props);
     this.onMessageInput = this.onMessageInput.bind(this);
@@ -74,7 +75,7 @@ class ChatBox extends Component {
   }
 }
 
-ChatBox.defaultProps = {
+Chat.defaultProps = {
   messages: []
 };
 
@@ -89,4 +90,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps)(ChatBox);
+export default connect(mapStateToProps)(Chat);

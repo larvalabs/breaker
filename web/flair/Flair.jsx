@@ -6,15 +6,15 @@ import Config from '../config';
 
 class Flair extends Component {
   hasText(flairSettings) {
-    return flairSettings.get('flairText') && flairSettings.get('flairText') !== "null"
+    return flairSettings.get('flairText') && flairSettings.get('flairText') !== 'null';
   }
 
   hasCssClass(flairSettings) {
-    return flairSettings.get('flairCss') && flairSettings.get('flairCss') !== "null"
+    return flairSettings.get('flairCss') && flairSettings.get('flairCss') !== 'null';
   }
 
   hasFlair(flairSettings) {
-    return this.hasCssClass(flairSettings) || this.hasText(flairSettings)
+    return this.hasCssClass(flairSettings) || this.hasText(flairSettings);
   }
 
   renderFlair() {
@@ -51,7 +51,8 @@ function mapStateToProps(state) {
   const roomName = state.get('currentRoom');
 
   return {
-    room: state.getIn(['rooms', roomName])
+    room: state.getIn(['rooms', roomName]),
+    roomName
   };
 }
 

@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 export default class ChatLoginInput extends Component {
 
   render() {
+    const { roomName } = this.props;
     const buttonBackground = this.props.room.getIn(['styles', 'signinButtonColor']);
     const buttonText = this.props.room.getIn(['styles', 'signinButtonTextColor']);
     const buttonStyles = {
@@ -13,7 +14,7 @@ export default class ChatLoginInput extends Component {
     };
 
     return (
-      <a href={`/application/startauthforguest?roomName=${this.props.roomName}`}>
+      <a href={`/application/startauthforguest?roomName=${roomName}`}>
         <button type="submit" className="btn btn-lg btn-info btn-block" style={buttonStyles}>
           <i className="fa fa-reddit btn-addon pull-left" />&nbsp;&nbsp;Sign in with Reddit to chat
         </button>

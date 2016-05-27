@@ -35,10 +35,6 @@ class Message extends Component {
 
   renderHTMLMessage() {
     let classes = 'message-body m-t-midxs';
-    if (Config.features.useFlairStyle(this.props.roomName)) {
-      classes += ' flair-message-hack';
-    }
-
     const message = this.props.message.get('messageHtml').replace(/@(\w+)/g, this.renderFormattedMention);
     return <div className={classes} dangerouslySetInnerHTML={ { __html: message } }></div>;
   }

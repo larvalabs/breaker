@@ -9,10 +9,6 @@ import Message from './Message';
 
 export default class ChatMessage extends Component {
   renderUserImage() {
-    if (Config.features.useFlairStyle(this.props.roomName)) {
-      return null;
-    }
-
     return (
       <a className="avatar thumb-sm pull-left m-r hidden-xs"
          href={`https://reddit.com/u/${this.props.user.get('username')}`} target="_blank"

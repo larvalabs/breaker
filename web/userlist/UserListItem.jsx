@@ -17,7 +17,7 @@ export default class UserListItem extends Component {
 
     return (
       <li className="list-group-item user-list-item" style={{ overflow: 'hidden' }}>
-        <UserAvatar user={user} roomName={roomName}/>
+        <UserAvatar user={user}/>
         <Clear>
           <UsernameAndFlair user={user} roomName={roomName} classOnly={roomName === 'nba'} noFlair />
           <UserDescription user={user} roomName={roomName} />

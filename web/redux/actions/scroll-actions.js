@@ -32,8 +32,8 @@ export function handleMoreMessages() {
           });
         }
 
-        dispatch(scrollToMessage(firstMessage.get('uuid')));
         dispatch(chatActions.loadedMoreMessages(currentRoom, response.data));
+        dispatch(scrollToMessage(firstMessage.get('uuid')));
       }).catch((error) => {
         dispatch(chatActions.failedLoadingMoreMessages(error));
       });

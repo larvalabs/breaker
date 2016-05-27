@@ -7,8 +7,8 @@ import Config from '../config';
 import Header from '../header/Header';
 import Sidebar from '../sidebar/Sidebar';
 import Main from './Main';
-import ChatDocumentTitle from './ChatDocumentTitle';
-import Notifications from './Notifications';
+import DocumentTitle from '../document/DocumentTitle';
+import Notifications from '../notifications/Notifications';
 
 import { scrollToRoomNameReset } from '../redux/actions/scroll-actions';
 
@@ -20,7 +20,7 @@ class AsyncApp extends Component {
             sidebarOpen, resetScrollToRoomName,
             scrollToRoomName, sidebarStyles } = this.props;
     return (
-      <ChatDocumentTitle unreadCount={unreadCount} roomName={roomName}>
+      <DocumentTitle unreadCount={unreadCount} roomName={roomName}>
 
         <div className={`app app-header-fixed app-aside-fixed ${this.props.roomName}`}>
           <Notifications />
@@ -34,7 +34,7 @@ class AsyncApp extends Component {
           />
           <Main />
         </div>
-      </ChatDocumentTitle>
+      </DocumentTitle>
     );
   }
 }

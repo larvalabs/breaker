@@ -4,15 +4,13 @@ import Config from '../config';
 
 export default class UserAvatar extends Component {
   render() {
-    if (Config.features.useFlairStyle(this.props.roomName)) {
+    const { user } = this.props;
+
+    if (user.get('username') === 'breakerbotsystem') {
       return null;
     }
 
-    if (this.props.user.get('username') === 'breakerbotsystem') {
-      return null;
-    }
-
-    let userImage = this.props.user.get('profileImageUrl');
+    let userImage = user.get('profileImageUrl');
     if (!userImage) {
       userImage = '/public/img/user-anon.png';
     }
@@ -22,8 +20,8 @@ export default class UserAvatar extends Component {
       anonOpacityStyle = { opacity: '0.2' };
     }
 
-    const userLink = `https://reddit.com/u/${this.props.user.get('username')}`;
-    const onlineClass = this.props.user.get('online') ? 'on' : 'off';
+    const userLink = `https://reddit.com/u/${user.get('username')}`;
+    const onlineClass = user.get('online') ? 'on' : 'off';
 
     return (
       <a href={userLink} className="pull-left thumb-sm avatar m-r hidden-xs" target="_blank">
