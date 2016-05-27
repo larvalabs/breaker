@@ -419,11 +419,11 @@ public class WebSocket extends PreloadUserController {
             for (RoomConnection roomConnection : roomConnectionManager.roomConnectionList) {
                 RedisUtil.userNotPresent(roomConnection.room.name, user.username, connectionId);
                 user.online = false;
+                roomConnection.chatRoomEventStream.removeStream(roomConnection.room, user, connectionId);
                 if (!RedisUtil.isUserPresent(roomConnection.room.name, user.username)) {
-                    Logger.debug("Last connection for " + user.username + " on channel " + roomConnection.room.name + " disconnected, broadcasting leave.");
+//                    Logger.debug("Last connection for " + user.username + " on channel " + roomConnection.room.name + " disconnected, broadcasting leave.");
                     // If this was the last connection that user had to the room then broadcast they've left
                     roomConnection.chatRoomEventStream.leave(roomConnection.room, user);
-                    roomConnection.chatRoomEventStream.removeStream(roomConnection.room, user, connectionId);
                 }
             }
             disconnect();
