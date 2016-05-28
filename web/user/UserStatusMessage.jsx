@@ -1,14 +1,29 @@
 import React, { Component } from 'react';
+import Immutable from 'immutable';
+
 import Config from '../config';
 
 
 export default class UserStatusMessage extends Component {
   render() {
-    if (Config.features.useFlairStyle(this.props.roomName)) {
-      const flairText = this.props.user.getIn(['flair', this.props.roomName, 'flairText']);
-      return <small className="text-muted">{flairText}</small>;
+    const { user, roomName } = this.props;
+
+    let statusMessage = user.get('statusMessage') ? user.get('statusMessage') : null;
+    if (Config.features.useFlairStyle(roomName)) {
+      statusMessage = user.getIn(['flair', roomName, 'flairText']);
     }
-    const statusMessage = this.props.user.get('statusMessage') ? this.props.user.get('statusMessage') : '\u00a0';
-    return <small className="text-muted">{statusMessage}</small>;
+
+    if (!statusMessage) {
+      return null;
+    }
+
+    return (
+        <span className="status-message" style={{ fontSize: '.9em' }}>{statusMessage}</span>
+    );
   }
 }
+
+UserStatusMessage.defaultProps = {
+  user: Immutable.Map(),
+  roomName: ''
+};

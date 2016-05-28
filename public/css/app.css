@@ -165,10 +165,10 @@ li.chat-message-root .message-body, li.chat-message-short .message-body, li.chat
 }
 
 .roomlistentry .roomselect i.private-icon {
-  float: right;
-  line-height: 50px;
-  margin-right: -15px;
-
+  margin-right: 2px;
+}
+.roomlistentry .roomselect i.private-icon:before {
+  vertical-align: middle;
 }
 
 .link-info {
@@ -326,6 +326,20 @@ li.chat-message-root .message-body, li.chat-message-short .message-body, li.chat
   left: 0;
   right: 0;
 }
+
+.description {
+  min-height: 1em;
+  line-height: 1em;
+}
+
+.since:before {
+  content: "\2022";
+  margin: 0 .2em;
+}
+
+.karma {
+  color: #777;
+}
 /* Subreddit Stylesheet fixes */
 
 .navbar-header button, .navbar-header button:hover, .navbar-header button:active {
@@ -335,3 +349,4 @@ li.chat-message-root .message-body, li.chat-message-short .message-body, li.chat
 .bottom:after {
   content: none !important;
 }
+
