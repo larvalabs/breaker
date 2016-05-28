@@ -15,14 +15,10 @@ import models.ChatRoom;
 import models.ChatUser;
 import play.Logger;
 import play.libs.F;
-import play.libs.F.EventStream;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutionException;
@@ -96,24 +92,24 @@ public class ChatRoomStream {
     }
 
 
-    public static class WeakReferenceEventStream<T> {
+    public static class SingleWaiterWeakReferenceEventStream<T> {
 
         final int bufferSize;
         final ConcurrentLinkedQueue<T> events = new ConcurrentLinkedQueue<T>();
-        final List<WeakReference<F.Promise<T>>> waiting = Collections.synchronizedList(new ArrayList<WeakReference<F.Promise<T>>>());
+        WeakReference<F.Promise<T>> waiting;
 
-        public WeakReferenceEventStream() {
+        public SingleWaiterWeakReferenceEventStream() {
             this.bufferSize = 100;
         }
 
-        public WeakReferenceEventStream(int maxBufferSize) {
+        public SingleWaiterWeakReferenceEventStream(int maxBufferSize) {
             this.bufferSize = maxBufferSize;
         }
 
         public synchronized F.Promise<T> nextEvent() {
             if (events.isEmpty()) {
                 LazyTask task = new LazyTask();
-                waiting.add(new WeakReference<F.Promise<T>>(task));
+                waiting = new WeakReference<F.Promise<T>>(task);
                 return task;
             }
             return new LazyTask(events.peek());
@@ -130,16 +126,12 @@ public class ChatRoomStream {
 
         void notifyNewEvent() {
             T value = events.peek();
-            for (WeakReference<F.Promise<T>> taskRef : waiting) {
-                if (taskRef.get() != null) {
-                    taskRef.get().invoke(value);
+            if (waiting != null) {
+                if (waiting.get() != null) {
+                    waiting.get().invoke(value);
                 }
             }
-            waiting.clear();
-        }
-
-        int getWaitingTaskCount() {
-            return waiting.size();
+//            waiting.clear();
         }
 
         class LazyTask extends F.Promise<T> {
@@ -167,7 +159,13 @@ public class ChatRoomStream {
 
             private void markAsRead(T value) {
                 if (value != null) {
-                    events.remove(value);
+                    boolean removed = events.remove(value);
+                    if (!removed) {
+                        Logger.info("Event not in queue");
+                    }
+                    if (events.size() > 0) {
+                        Logger.info("Events in queue");
+                    }
                 }
             }
         }
@@ -176,7 +174,7 @@ public class ChatRoomStream {
     public static final int STREAM_SIZE = 0;
     public static final int PRELOAD_NUM_MSGS_ON_STARTUP = STREAM_SIZE;
 
-    private ConcurrentHashMap<String, WeakReferenceEventStream<Event>> userStreams = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<String, SingleWaiterWeakReferenceEventStream<Event>> userStreams = new ConcurrentHashMap<>();
 
     private String name;
 
@@ -212,15 +210,15 @@ public class ChatRoomStream {
      * For WebSocket, when a user join the room we return a continuous event stream
      * of ChatEvent
      */
-    public WeakReferenceEventStream<Event> join(ChatRoom room, ChatUser user, String connectionId, boolean broadcastJoin) {
+    public SingleWaiterWeakReferenceEventStream<Event> join(ChatRoom room, ChatUser user, String connectionId, boolean broadcastJoin) {
         if (broadcastJoin) {
             JsonUser jsonUser = JsonUser.fromUser(user, true);
             publishEvent(new Join(JsonChatRoom.from(room, room.getModeratorUsernames()), jsonUser));
         }
         String streamKey = getStreamKey(room.getName(), user.getUsername(), connectionId);
-        WeakReferenceEventStream<Event> userEventStream = userStreams.get(streamKey);
+        SingleWaiterWeakReferenceEventStream<Event> userEventStream = userStreams.get(streamKey);
         if (userEventStream == null) {
-            userEventStream = new WeakReferenceEventStream<>();
+            userEventStream = new SingleWaiterWeakReferenceEventStream<>(6);
             userStreams.put(streamKey, userEventStream);
         }
         if (room.isDefaultRoom()) {
@@ -302,7 +300,7 @@ public class ChatRoomStream {
     }
 
     public void publishEventInternal(Event event) {
-        for (WeakReferenceEventStream<Event> userEventStream : userStreams.values()) {
+        for (SingleWaiterWeakReferenceEventStream<Event> userEventStream : userStreams.values()) {
             userEventStream.publish(event);
         }
     }

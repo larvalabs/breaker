@@ -194,11 +194,11 @@ public class WebSocket extends PreloadUserController {
     private static class RoomConnection {
         public JsonChatRoom room;
         public ChatRoomStream chatRoomEventStream;
-        public ChatRoomStream.WeakReferenceEventStream<ChatRoomStream.Event> eventStream;
+        public ChatRoomStream.SingleWaiterWeakReferenceEventStream<ChatRoomStream.Event> eventStream;
         public boolean isModerator;
         public boolean canPost;
 
-        public RoomConnection(JsonChatRoom room, ChatRoomStream chatRoomEventStream, ChatRoomStream.WeakReferenceEventStream<ChatRoomStream.Event> eventStream, boolean isModerator, boolean canPost) {
+        public RoomConnection(JsonChatRoom room, ChatRoomStream chatRoomEventStream, ChatRoomStream.SingleWaiterWeakReferenceEventStream<ChatRoomStream.Event> eventStream, boolean isModerator, boolean canPost) {
             this.room = room;
             this.chatRoomEventStream = chatRoomEventStream;
             this.eventStream = eventStream;
@@ -230,7 +230,7 @@ public class WebSocket extends PreloadUserController {
 */
             room.userPresent(user.username, connectionId);
             boolean isModerator = room.isModerator(userModel);
-            ChatRoomStream.WeakReferenceEventStream<ChatRoomStream.Event> eventStreamForThisUser = chatRoomStreamForRoom.join(room, userModel, connectionId, broadcastJoin);
+            ChatRoomStream.SingleWaiterWeakReferenceEventStream<ChatRoomStream.Event> eventStreamForThisUser = chatRoomStreamForRoom.join(room, userModel, connectionId, broadcastJoin);
 
             RoomConnection roomConnection = new RoomConnection(JsonChatRoom.from(room, room.getModeratorUsernames()),
                     chatRoomStreamForRoom, eventStreamForThisUser, isModerator, room.userCanPost(userModel));
@@ -273,6 +273,12 @@ public class WebSocket extends PreloadUserController {
                 roomConnectionsPromises[0] = inbound.nextEvent();
             } else {
                 roomConnectionsPromises[index] = roomConnectionList.get(index - 1).eventStream.nextEvent();
+            }
+        }
+
+        public void redeemAll() {
+            for (int i = 0; i < roomConnectionsPromises.length; i++) {
+                redeemPromise(i);
             }
         }
 
@@ -331,8 +337,9 @@ public class WebSocket extends PreloadUserController {
                     processEvent(jsonUser, roomConnectionManager, (ChatRoomStream.Event) awaitResult, connectionId);
                 }
 
-                int indexRedeemed = waitAnyPromise.getIndexRedeemed();
-                roomConnectionManager.redeemPromise(indexRedeemed);
+//                int indexRedeemed = waitAnyPromise.getIndexRedeemed();
+//                roomConnectionManager.redeemPromise(indexRedeemed);
+                roomConnectionManager.redeemAll();
             }
 
             // Just to be sure, in case we didn't get a proper disconnect

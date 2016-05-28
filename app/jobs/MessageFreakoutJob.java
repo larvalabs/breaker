@@ -19,10 +19,12 @@ import java.util.List;
  */
 public class MessageFreakoutJob extends Job {
 
+    public long runtime;
     public Long roomId;
 
-    public MessageFreakoutJob(Long roomId) {
+    public MessageFreakoutJob(Long roomId, long runtime) {
         this.roomId = roomId;
+        this.runtime = runtime;
     }
 
     @Override
@@ -35,7 +37,7 @@ public class MessageFreakoutJob extends Job {
             JsonChatRoom jsonChatRoom = JsonChatRoom.from(room, room.getModeratorUsernames());
             Logger.info("Message freakout for room " + room.getName());
             for (int i = 0; i < 5; i++) {
-                JsonMessage jsonMessage = JsonMessage.makePresavedMessage(Util.getUUID(), megamatt2000, room.getName(), "Message " + i);
+                JsonMessage jsonMessage = JsonMessage.makePresavedMessage(Util.getUUID(), megamatt2000, room.getName(), "Message " + i + " at " + runtime);
                 ChatRoomStream.getEventStream(room.getName()).say(jsonMessage, jsonChatRoom, jsonUser);
             }
         }
