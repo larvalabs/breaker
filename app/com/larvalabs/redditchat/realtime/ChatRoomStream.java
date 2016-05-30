@@ -160,12 +160,6 @@ public class ChatRoomStream {
             private void markAsRead(T value) {
                 if (value != null) {
                     boolean removed = events.remove(value);
-                    if (!removed) {
-                        Logger.info("Event not in queue");
-                    }
-                    if (events.size() > 0) {
-                        Logger.info("Events in queue");
-                    }
                 }
             }
         }
