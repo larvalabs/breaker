@@ -1,3 +1,9 @@
+## Introduction
+
+Breaker is a chat room for every subreddit. You log in with your reddit username and automatically get your flair, mod status, and karma. If you are a mod we allow you to configure reddit karma thresholds for posting, bans, and cross posting of links from your sub.
+
+Written in Java and React and open sourced here for everyone to help improve. Instructions for how to build and contribute to the project are below, or you can log in to chat over at http://www.breakerapp.com
+
 ## Installation instructions
 
 1. Download Play 1.4.2: https://downloads.typesafe.com/play/1.4.2/play-1.4.2.zip
@@ -8,8 +14,10 @@
 6. Clone this repo somewhere
 7. Inside the newly cloned folder, run "play deps"
 8. Update database credentials (see [Database](#database) below)
-9. `npm install && webpack`
-10. `play run`
+9. Copy .env.sample to .env and set appropriate values. None of them are strictly necessary to run a local server but things like the AWS keys are needed to upload profile pictures, etc.
+10. `source .env`
+11. `npm install && webpack`
+12. `play run`
 
 ## Web Client
 
