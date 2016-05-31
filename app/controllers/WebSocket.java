@@ -309,42 +309,46 @@ public class WebSocket extends PreloadUserController {
             // This is a single element array because the current json user can get updated by events in an inner loop
             JsonUser[] jsonUser = new JsonUser[]{JsonUser.fromUser(user, true)};
 
-            {
-                int i = 0;
-                for (ChatUserRoomJoin chatRoomJoin : chatRoomJoins) {
-                    ChatRoom room = chatRoomJoin.getRoom();
-                    if (Constants.CHATROOM_DEFAULT.equals(room.name) || room.isOpen()) {
-                        jsonChatRoomsList.add(JsonChatRoom.from(room, room.getModeratorUsernames()));
-                        roomConnectionManager.addConnection(user, jsonUser[0], connectionId, room);
-                        i++;
+            try {
+                {
+                    int i = 0;
+                    for (ChatUserRoomJoin chatRoomJoin : chatRoomJoins) {
+                        ChatRoom room = chatRoomJoin.getRoom();
+                        if (Constants.CHATROOM_DEFAULT.equals(room.name) || room.isOpen()) {
+                            jsonChatRoomsList.add(JsonChatRoom.from(room, room.getModeratorUsernames()));
+                            roomConnectionManager.addConnection(user, jsonUser[0], connectionId, room);
+                            i++;
+                        }
                     }
                 }
-            }
 
-            Stats.count(Stats.StatKey.WEBSOCKET_CONNECT, 1);
+                Stats.count(Stats.StatKey.WEBSOCKET_CONNECT, 1);
 
-            // Loop while the socket is open
-            while (inbound.isOpen()) {
-                ChatRoomStream.WaitAnyPromise waitAnyPromise = ChatRoomStream.waitAnyWithResultInfo(roomConnectionManager.getPromises());
-                Object awaitResult = await(waitAnyPromise);
+                // Loop while the socket is open
+                while (inbound.isOpen()) {
+                    ChatRoomStream.WaitAnyPromise waitAnyPromise = ChatRoomStream.waitAnyWithResultInfo(roomConnectionManager.getPromises());
+                    Object awaitResult = await(waitAnyPromise);
 
-                // Case: TextEvent received on the socket
-                if (awaitResult instanceof WebSocketFrame) {
-                    processWebsocketFrame(jsonUser[0], connectionId, roomConnectionManager, (WebSocketFrame) awaitResult);
-                } else if (awaitResult instanceof WebSocketClose) {
-                    processWebsocketClose(jsonUser[0], connectionId, roomConnectionManager);
-                } else if (awaitResult instanceof ChatRoomStream.Event) {
-                    processEvent(jsonUser, roomConnectionManager, (ChatRoomStream.Event) awaitResult, connectionId);
+                    // Case: TextEvent received on the socket
+                    if (awaitResult instanceof WebSocketFrame) {
+                        processWebsocketFrame(jsonUser[0], connectionId, roomConnectionManager, (WebSocketFrame) awaitResult);
+                    } else if (awaitResult instanceof WebSocketClose) {
+                        processWebsocketClose(jsonUser[0], connectionId, roomConnectionManager);
+                    } else if (awaitResult instanceof ChatRoomStream.Event) {
+                        processEvent(jsonUser, roomConnectionManager, (ChatRoomStream.Event) awaitResult, connectionId);
+                    }
+
+    //                int indexRedeemed = waitAnyPromise.getIndexRedeemed();
+    //                roomConnectionManager.redeemPromise(indexRedeemed);
+                    roomConnectionManager.redeemAll();
                 }
-
-//                int indexRedeemed = waitAnyPromise.getIndexRedeemed();
-//                roomConnectionManager.redeemPromise(indexRedeemed);
-                roomConnectionManager.redeemAll();
+            } finally {
+                // Just to be sure, in case we didn't get a proper disconnect
+                Logger.warn("WEBSOCKETEXCEPTIONCLOSE: Closing streams for user " + jsonUser[0].username + " due to exception in websocket.");
+                roomConnectionManager.disconnect(jsonUser[0], connectionId);
+                RedisUtil.userNotPresentGlobal(jsonUser[0].username, connectionId);
             }
 
-            // Just to be sure, in case we didn't get a proper disconnect
-            roomConnectionManager.disconnect(jsonUser[0], connectionId);
-            RedisUtil.userNotPresentGlobal(jsonUser[0].username, connectionId);
         }
 
         private static void processEvent(JsonUser[] userArray, RoomConnectionManager roomConnectionManager, ChatRoomStream.Event awaitResult, String connectionId) {
@@ -414,6 +418,14 @@ public class WebSocket extends PreloadUserController {
             } else {
                 // Case: New message on a chat room
                 ChatRoomStream.Event event = (ChatRoomStream.Event) awaitResult;
+                ChatRoomStream.Event topEventInRoomStream = roomConnectionManager.getRoom(event.room.name).eventStream.peekTopEvent();
+                if (topEventInRoomStream != null) {
+                    if ((System.currentTimeMillis() - topEventInRoomStream.timestamp) > Constants.STREAM_TIMEOUT_MILLIS) {
+                        Logger.warn("Stream for user " + thisConnectionUser.username + " timed out on room " + event.room.name + " : disconnecting and removing streams.");
+                        processWebsocketClose(thisConnectionUser, connectionId, roomConnectionManager);
+                        return;
+                    }
+                }
                 String json = event.toJson();
 //                    Logger.debug("Sending event to " + user.username + ":" + connectionId + " - " + json);
                 outbound.send(json);

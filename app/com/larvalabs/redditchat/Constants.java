@@ -3,6 +3,8 @@ package com.larvalabs.redditchat;
 import controllers.Application;
 import org.apache.commons.codec.binary.Base64;
 
+import java.util.concurrent.TimeUnit;
+
 public class Constants {
 
     public static final String REDDIT_BASE_URL = "https://www.reddit.com";
@@ -17,6 +19,7 @@ public class Constants {
     public static final long MAX_PROFILE_IMAGE_SIZE_BYTES = 300 * 1000;
     public static final int NUM_PEOPLE_TO_OPEN_ROOM = 0;
     public static final int DEFAULT_MIN_KARMA_REQUIRED_TO_POST = 2;
+    public static final long STREAM_TIMEOUT_MILLIS = TimeUnit.MINUTES.toMillis(2);
 
     public enum Flair {
         DEV_SAME_ROOM(0x1F451),

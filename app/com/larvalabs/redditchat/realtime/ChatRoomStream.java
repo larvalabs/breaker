@@ -134,6 +134,10 @@ public class ChatRoomStream {
 //            waiting.clear();
         }
 
+        public synchronized T peekTopEvent() {
+            return events.peek();
+        }
+
         class LazyTask extends F.Promise<T> {
 
             public LazyTask() {
