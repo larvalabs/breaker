@@ -6,14 +6,6 @@ import Config from '../config';
 
 export default class HeaderUserMenu extends Component {
   renderUsername() {
-    if (Config.features.useFlairStyle(this.props.room.get('name'))) {
-      return (
-        <div>
-          <span className="hidden-sm hidden-md">{this.props.user.get('username')}</span> <b className="caret" />
-        </div>
-      );
-    }
-
     return (
       <div>
         <span className="thumb-sm avatar pull-right m-t-n-sm m-b-n-sm m-l-sm">

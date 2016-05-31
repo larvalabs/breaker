@@ -12,7 +12,7 @@ export default class UserDescription extends Component {
     return (
       <div className="text-muted description">
         <UserKarma user={user} />
-        <UserStatusMessage user={user} roomName={this.props.roomName}/>
+        <UserStatusMessage user={user} />
       </div>
     );
   }
@@ -20,5 +20,4 @@ export default class UserDescription extends Component {
 
 UserDescription.defaultProps = {
   user: Immutable.Map(),
-  roomName: ''
 };

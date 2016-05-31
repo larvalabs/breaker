@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 
-import ChatBox from '../chatbox/ChatBox';
-import UserListBox from '../userlist/UserList';
-import MobileRoomOverlay from './MobileRoomOverlay';
+import Chat from '../chat/Chat';
+import UserList from '../userlist/UserList';
+import MobileRoomOverlay from '../mobile/MobileRoomOverlay';
 
 
 export default class Main extends Component {
@@ -12,8 +12,8 @@ export default class Main extends Component {
         <div className="app-content-body app-content-full h-full">
           <MobileRoomOverlay />
           <div className="hbox bg-light ">
-            <ChatBox />
-            <UserListBox />
+            <Chat />
+            <UserList />
           </div>
         </div>
       </div>

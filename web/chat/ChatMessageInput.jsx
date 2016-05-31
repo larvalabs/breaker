@@ -15,7 +15,6 @@ const theme = {
 };
 
 // HERE BE DRAGONS
-
 class ChatMessageInput extends Component {
   constructor(props) {
     super(props);
@@ -31,35 +30,25 @@ class ChatMessageInput extends Component {
       suggestions: this.getSuggestions('')
     };
   }
-  
+
   componentDidMount() {
     this.props.setChatInputFocus();
   }
-  
+
   componentDidUpdate() {
-    if (!this.props.setInputFocusValue) {
+    const { setInputFocusValue, inputFocusWasSet } = this.props;
+
+    if (!setInputFocusValue) {
       return false;
     }
     this._input.focus();
-    this.props.inputFocusWasSet();
+    inputFocusWasSet();
   }
 
   onChange(event, { newValue }) {
     return this.setState({
       value: newValue
     });
-  }
-
-  handleKeyPress(event) {
-    if (event.key === 'Enter' && !event.isSuggestionSelected) {
-      event.preventDefault();
-      this.props.sendNewMessage(this.props.roomName, event.target.value);
-      this.setState({
-        value: ''
-      });
-
-      this.props.onMessageInput();
-    }
   }
 
   onSuggestionsUpdateRequested({ value }) {
@@ -83,7 +72,7 @@ class ChatMessageInput extends Component {
     // Note: We assume the suggestion is always at the end.
     const lastInputTokens = this.state.value.trim().split(' ');
     const lastToken = lastInputTokens.pop();
-    const lastTokenIsMention = lastToken.length !== 0 && lastToken[0] == '@';
+    const lastTokenIsMention = lastToken.length !== 0 && lastToken[0] === '@';
 
     if (lastTokenIsMention) {
       const inputWithoutLastToken = lastInputTokens.join(' ');
@@ -94,6 +83,7 @@ class ChatMessageInput extends Component {
   }
 
   getSuggestions(value) {
+    const { members } = this.props;
     const lastInputToken = value.toLowerCase().split(' ').pop();
     const userIsAttemptingMention = lastInputToken[0] === '@' && lastInputToken.length > 1;
     if (!userIsAttemptingMention) {
@@ -101,10 +91,23 @@ class ChatMessageInput extends Component {
     }
 
     const queryWithoutAt = lastInputToken.slice(1, lastInputToken.length);
-
-    return this.props.members.filter(member => {
+    return members.filter(member => {
       return member.toLowerCase().slice(0, lastInputToken.length - 1) === queryWithoutAt;
     }).toJS();
+  }
+
+  handleKeyPress(event) {
+    const { roomName, onSendNewMessage, onMessageInput } = this.props;
+
+    if (event.key === 'Enter' && !event.isSuggestionSelected) {
+      event.preventDefault();
+      onSendNewMessage(roomName, event.target.value);
+      this.setState({
+        value: ''
+      });
+
+      onMessageInput();
+    }
   }
 
   handleRef(ref) {
@@ -118,22 +121,26 @@ class ChatMessageInput extends Component {
   }
 
   renderPlaceholder(props) {
-    if (!props.connected) {
+    const { connected, roomName } = this.props;
+
+    if (!connected) {
       return 'Disconnected from server';
     }
 
-    return `Type a message to #${props.roomName}...`;
+    return `Type a message to #${roomName}...`;
   }
 
   render() {
     const { value, suggestions } = this.state;
+    const { connected, closeSidebar } = this.props;
+
     const inputProps = {
-      placeholder: this.renderPlaceholder(this.props),
+      placeholder: this.renderPlaceholder(),
       value,
       onChange: this.onChange,
       onKeyDown: this.handleKeyPress,
-      onFocus: this.props.closeSidebar,
-      disabled: !this.props.connected,
+      onFocus: closeSidebar,
+      disabled: !connected,
       ref: this.handleRef
     };
 
@@ -153,7 +160,14 @@ class ChatMessageInput extends Component {
 }
 
 ChatMessageInput.defaultProps = {
-  roomName: null
+  roomName: '',
+  members: Immutable.Map(),
+  connected: true,
+  setInputFocusValue: false,
+  closeSidebar: () => {},
+  inputFocusWasSet: () => {},
+  setChatInputFocus: () => {},
+  onSendNewMessage: () => {}
 };
 
 function mapStateToProps(state) {
@@ -182,7 +196,7 @@ function mapDispatchToProps(dispatch) {
     setChatInputFocus() {
       dispatch(setChatInputFocus());
     },
-    sendNewMessage(roomName, message) {
+    onSendNewMessage(roomName, message) {
       dispatch(sendNewMessage({
         message,
         roomName

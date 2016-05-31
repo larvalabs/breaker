@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Immutable from 'immutable';
 
@@ -7,19 +7,22 @@ import * as scrollActions from '../redux/actions/scroll-actions';
 
 export default class MessageHistory extends Component {
   renderTitle() {
-    if (this.props.loading) {
+    const { loading, currentRoom, hasMore, handleMoreMessages } = this.props;
+    if (loading) {
       return <span className="text-muted">Getting history...</span>;
     }
 
-    if (!this.props.hasMore) {
-      return <span className="text-muted">This is the beginning of /r/{this.props.currentRoom}</span>;
+    if (!hasMore) {
+      return <span className="text-muted">This is the beginning of /r/{currentRoom}</span>;
     }
 
-    return <a className="more" onClick={this.props.handleMoreMessages}>More</a>;
+    return <a className="more" onClick={handleMoreMessages}>More</a>;
   }
 
   render() {
-    if (this.props.messageCount < 20) {
+    const { messageCount } = this.props;
+
+    if (messageCount < 20) {
       return null;
     }
 
@@ -36,6 +39,7 @@ MessageHistory.defaultProps = {
   message_count: 0,
   loading: false,
   hasMore: true,
+  currentRoom: '',
   handleMoreMessages: () => {}
 };
 

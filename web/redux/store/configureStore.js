@@ -5,7 +5,7 @@ import Immutable from 'immutable';
 import Config from '../../config';
 import rootReducer from '../reducers/root-reducer';
 
-import DevTools from '../../app/DevTools';
+import DevTools from '../../dev/DevTools';
 
 
 export default function configureStore(initialState = Immutable.Map()) {

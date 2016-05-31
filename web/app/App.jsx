@@ -5,7 +5,7 @@ import store from '../redux/store/store';
 import Config from '../config';
 
 import AsyncApp from './AsyncApp';
-import DevTools from './DevTools';
+import DevTools from '../dev/DevTools';
 
 
 export default class App extends Component {
