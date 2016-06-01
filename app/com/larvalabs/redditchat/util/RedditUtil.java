@@ -10,6 +10,7 @@ import net.dean.jraw.managers.InboxManager;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import play.Logger;
+import play.Play;
 
 import java.io.IOException;
 
@@ -18,10 +19,10 @@ import java.io.IOException;
  */
 public class RedditUtil {
 
-    public static final String CLIENT_ID_BOT = "***REMOVED***";
-    public static final String CLIENT_SECRET_BOT = "***REMOVED***";
+    public static final String CLIENT_ID_BOT = Play.configuration.getProperty("reddit.breakerbot.clientid");
+    public static final String CLIENT_SECRET_BOT = Play.configuration.getProperty("reddit.breakerbot.secret");
     public static final String USERNAME_BOT = "breakerappbot";
-    public static final String PASSWORD_BOT = "***REMOVED***";
+    public static final String PASSWORD_BOT = Play.configuration.getProperty("reddit.breakerbot.password");
 
     public static void sendPrivateMessageFromBot(String toUsername, String subject, String content) throws ApiException {
         RedditClient redditClient = getRedditClient();

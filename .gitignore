@@ -42,3 +42,7 @@ node_modules
 
 # Webpack output
 /public/dist/
+
+# Environment
+.env.dev
+.env

@@ -4,6 +4,7 @@ import models.ChatUser;
 import org.junit.Before;
 import org.junit.Test;
 import play.Logger;
+import play.Play;
 import play.libs.Mail;
 import play.test.Fixtures;
 import play.test.UnitTest;
@@ -29,26 +30,26 @@ public class TestRedditClient extends UnitTest {
         ChatUser chatUser = new ChatUser("1");
         chatUser.username = "megamatt2000";
         // NOTE: These access tokens change every time to relogin into the site, need a better way to test
-        chatUser.accessToken = "***REMOVED***";
-        chatUser.refreshToken = "***REMOVED***";
+        chatUser.accessToken = Play.configuration.getProperty("reddit.matt.accesstoken");
+        chatUser.refreshToken = Play.configuration.getProperty("reddit.matt.refreshtoken");
         chatUser.save();
         return chatUser;
     }
 
     public static ChatUser getTestUser1() {
         ChatUser chatUser = new ChatUser("1");
-        chatUser.username = "breakerapptest1";  // pass: redblue12
-        chatUser.accessToken = "***REMOVED***";
-        chatUser.refreshToken = "***REMOVED***";
+        chatUser.username = "breakerapptest1";
+        chatUser.accessToken = Play.configuration.getProperty("reddit.testuser1.accesstoken");
+        chatUser.refreshToken = Play.configuration.getProperty("reddit.testuser1.refreshtoken");
         chatUser.save();
         return chatUser;
     }
 
     public static ChatUser getTestUser2() {
         ChatUser chatUser = new ChatUser("2");
-        chatUser.username = "breakerapptest2";  // pass: redblue12
-        chatUser.accessToken = "***REMOVED***";
-        chatUser.refreshToken = "***REMOVED***";
+        chatUser.username = "breakerapptest2";
+        chatUser.accessToken = Play.configuration.getProperty("reddit.testuser2.accesstoken");
+        chatUser.refreshToken = Play.configuration.getProperty("reddit.testuser2.refreshtoken");
         chatUser.save();
         return chatUser;
     }
@@ -84,7 +85,7 @@ public class TestRedditClient extends UnitTest {
         // Refresh access token for user
         BreakerRedditClient breakerRedditClient = new BreakerRedditClient();
         ArrayList<String> subNamesModerated = breakerRedditClient.getSubNamesModerated(chatUser);
-        assertEquals(4, subNamesModerated.size());
+        assertEquals(5, subNamesModerated.size());
         assertTrue(subNamesModerated.contains("appchat"));
         assertTrue(subNamesModerated.contains("breakerapp"));
     }
@@ -106,14 +107,15 @@ public class TestRedditClient extends UnitTest {
         assertTrue(client.isSubredditPrivate(megaprivatetest));
 
         ChatUser user = getTestUser1();
+        ChatUser user2 = getTestUser2();
 //        JSONObject subsModerated = client.getSubsModerated(user);
 //        Logger.info("Subs: " + subsModerated);
 //        JSONObject android = client.getRedditUserFlairForSubreddit(user, "android");
 //        Logger.info(android.toString());
         assertTrue(client.doesUserHaveAccessToSubreddit(user, megaprivatetest));
-        assertFalse(client.doesUserHaveAccessToSubreddit(getTestUser2(), megaprivatetest));
+        assertFalse(client.doesUserHaveAccessToSubreddit(user2, megaprivatetest));
         try {
-            client.doesUserHaveAccessToSubreddit(getTestUser2(), "clearlydoesntexist1234567789");
+            client.doesUserHaveAccessToSubreddit(user2, "clearlydoesntexist1234567789");
             assertFalse("Should not get here, line above should have thrown not found.", true);
         } catch (RedditRequestError redditRequestError) {
             //

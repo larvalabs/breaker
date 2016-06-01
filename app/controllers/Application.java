@@ -52,25 +52,6 @@ public class Application extends PreloadUserController {
     public static final String SESSION_WAITROOM = "waitroomname";
     public static final String HTTPS_WWW_BREAKERAPP_COM = "https://www.breakerapp.com";
 
-    public static void testForceLogin() {
-        setUserInSession(ChatUser.findByUsername("chattest1"));
-        test();
-    }
-
-    public static void fakeOtherUser() throws ChatUser.UserBannedException {
-        ChatUser user = new ChatUser(Util.getUUID());
-        user.setUsername("chattest-" + System.currentTimeMillis());
-        user.save();
-        try {
-            user.joinChatRoom(ChatRoom.findByName(Constants.CHATROOM_DEFAULT));
-        } catch (ChatUser.NoAccessToPrivateRoomException e) {
-            e.printStackTrace();
-        } catch (ChatUser.UnableToCheckAccessToPrivateRoom unableToCheckAccessToPrivateRoom) {
-            unableToCheckAccessToPrivateRoom.printStackTrace();
-        }
-        WebSocket.room("breakerapp");
-    }
-
     public static void index() {
         ChatUser chatUser = connected();
         if (chatUser != null) {
@@ -206,42 +187,7 @@ public class Application extends PreloadUserController {
                 return;
             }
         }
-
-
     }
-
-/*
-    public static void roomWaitAccept(String roomName) {
-        if (roomName == null) {
-            index();
-            return;
-        }
-
-        if (user == null) {
-            session.put(SESSION_WAITROOM, roomName);
-            auth();
-        } else {
-            ChatRoom room = ChatRoom.findByName(roomName);
-            if (ChatUserRoomJoin.findByUserAndRoom(user, room) == null) {
-                Logger.debug("User not already waiting for this room, reducing count needed.");
-                room.setNumNeededToOpen(room.getNumNeededToOpen() - 1);
-                if (room.getNumNeededToOpen() == 0) {
-                    room.setOpen(true);
-                }
-                room.save();
-                user.joinChatRoom(room);
-            }
-
-
-            if (room.getNumNeededToOpen() == 0) {
-                // todo make template
-                render("Application/roomWaitOpen.html", user, room);
-            } else {
-                render(user, room);
-            }
-        }
-    }
-    */
 
     public static void startAuthForGuest(String roomName, Boolean compact) {
         session.put(SESSION_JOINROOM, roomName);
@@ -344,11 +290,14 @@ public class Application extends PreloadUserController {
 
     private static HashMap<String, String> getOauthHeaders(String token) {
         HashMap<String, String> headers = new HashMap<String, String>();
-        headers.put("User-Agent", "chat/0.1 by megamatt2000");
+        headers.put("User-Agent", "breakerapp/0.1 by megamatt2000");
         headers.put("Authorization", "bearer " + WS.encode(token));
         return headers;
     }
 
+    /**
+     * @deprecated Done on client side now.
+     */
     public static void userSearch(String roomName, String query) {
         Logger.info("Searching in room " + roomName + " for user " + query);
         ChatRoom room = ChatRoom.findByName(roomName);
@@ -436,19 +385,6 @@ public class Application extends PreloadUserController {
         ImageIO.write(image, "png", response.out);
     }
 
-    public static void adminOpenRoom(String roomName) {
-        ChatUser user = connected();
-        if (user.isAdmin()) {
-            ChatRoom room = ChatRoom.findByName(roomName);
-            room.setOpen(true);
-            room.setNumNeededToOpen(0);
-            room.save();
-            WebSocket.room(roomName);
-        } else {
-            error();
-        }
-    }
-
     public static void leaveRoom(String roomName) {
         ChatUser user = connected();
         ChatRoom chatRoom = ChatRoom.findOrCreateForName(roomName);
@@ -456,52 +392,6 @@ public class Application extends PreloadUserController {
         ChatRoomStream.getEventStream(roomName).roomLeave(JsonChatRoom.from(chatRoom, chatRoom.getModeratorUsernames()),
                 JsonUser.fromUser(user, RedisUtil.isUserOnlineInAnyRoom(user.getUsername())));
         renderText("ok");
-    }
-
-    public static void testPM() throws ApiException {
-        RedditUtil.sendPrivateMessageFromBot("megamatt2000", "Server test PM", "Testing as of time " + System.currentTimeMillis());
-        renderText("ok");
-    }
-
-    public static void runRedditUpdate(Long userId) {
-        if (userId != null) {
-            new UpdateUserFromRedditJob(userId).now();
-        } else {
-            new UpdateAllUsersFromRedditRecurringJob().now();
-        }
-        renderText("OK");
-    }
-
-    public static void testQuery() {
-        Logger.info("Starting query...");
-        Query getAllStuffQuery = JPA.em().createQuery("select ur from ChatUserRoomJoin ur join fetch ur.room urr join fetch ur.user u where ur.room in (select room from ChatUserRoomJoin ur2 where ur2.user = ?)")
-                .setParameter(1, ChatUser.findByUsername("megamatt2000"));
-        List<ChatUserRoomJoin> resultList = getAllStuffQuery.getResultList();
-        Logger.info("Iterating results...");
-        for (ChatUserRoomJoin roomJoin : resultList) {
-            Logger.info("Result: " + roomJoin.getRoom().getName() + " : " + roomJoin.getUser().getUsername());
-        }
-        Logger.info("Done.");
-    }
-
-    public static void testLinkbot(String subname) {
-        new RedditLinkBotJob(subname).now();
-        renderText("ok");
-    }
-
-    public static void makeMod(String roomname, String username, boolean mod) {
-        ChatRoom room = ChatRoom.findByName(roomname);
-        ChatUser user = ChatUser.findByUsername(username);
-        if (mod) {
-            user.moderateRoom(room);
-        } else {
-            user.getModeratedRooms().remove(room);
-        }
-        user.save();
-        room.refresh();
-        ChatRoomStream.getEventStream(room.getName()).sendUserUpdate(room, user, true);
-        ChatRoomStream.getEventStream(room.getName()).sendRoomUpdate(room);
-        renderText("OK");
     }
 
     public static void initialState() {
@@ -555,4 +445,115 @@ public class Application extends PreloadUserController {
         }
         renderJSON(jsonMessages);
     }
+
+    /*
+        ADMIN FUNCTIONS
+     */
+
+    public static void adminOpenRoom(String roomName) {
+        ChatUser user = connected();
+        if (user.isAdmin()) {
+            ChatRoom room = ChatRoom.findByName(roomName);
+            room.setOpen(true);
+            room.setNumNeededToOpen(0);
+            room.save();
+            WebSocket.room(roomName);
+        } else {
+            error();
+        }
+    }
+
+    public static void testPM() throws ApiException {
+        if (connected().isAdmin()) {
+            RedditUtil.sendPrivateMessageFromBot("megamatt2000", "Server test PM", "Testing as of time " + System.currentTimeMillis());
+            renderText("ok");
+        } else {
+            error("User is not an admin.");
+        }
+    }
+
+    public static void runRedditUpdate(Long userId) {
+        if (connected().isAdmin()) {
+            if (userId != null) {
+                new UpdateUserFromRedditJob(userId).now();
+            } else {
+                new UpdateAllUsersFromRedditRecurringJob().now();
+            }
+            renderText("OK");
+        } else {
+            error("User is not an admin.");
+        }
+    }
+
+    public static void testQuery() {
+        if (connected().isAdmin()) {
+            Logger.info("Starting query...");
+            Query getAllStuffQuery = JPA.em().createQuery("select ur from ChatUserRoomJoin ur join fetch ur.room urr join fetch ur.user u where ur.room in (select room from ChatUserRoomJoin ur2 where ur2.user = ?)")
+                    .setParameter(1, ChatUser.findByUsername("megamatt2000"));
+            List<ChatUserRoomJoin> resultList = getAllStuffQuery.getResultList();
+            Logger.info("Iterating results...");
+            for (ChatUserRoomJoin roomJoin : resultList) {
+                Logger.info("Result: " + roomJoin.getRoom().getName() + " : " + roomJoin.getUser().getUsername());
+            }
+            Logger.info("Done.");
+        } else {
+            error("User is not an admin.");
+        }
+    }
+
+    public static void testLinkbot(String subname) {
+        if (connected().isAdmin()) {
+            new RedditLinkBotJob(subname).now();
+            renderText("ok");
+        } else {
+            error("User is not an admin.");
+        }
+    }
+
+    public static void makeMod(String roomname, String username, boolean mod) {
+        if (connected().isAdmin()) {
+            ChatRoom room = ChatRoom.findByName(roomname);
+            ChatUser user = ChatUser.findByUsername(username);
+            if (mod) {
+                user.moderateRoom(room);
+            } else {
+                user.getModeratedRooms().remove(room);
+            }
+            user.save();
+            room.refresh();
+            ChatRoomStream.getEventStream(room.getName()).sendUserUpdate(room, user, true);
+            ChatRoomStream.getEventStream(room.getName()).sendRoomUpdate(room);
+            renderText("OK");
+        } else {
+            error("User is not an admin.");
+        }
+    }
+
+    /**
+     * Test methods
+     */
+
+    public static void testForceLogin() {
+        if (Play.mode.isDev()) {
+            setUserInSession(ChatUser.findByUsername("chattest1"));
+            test();
+        }
+    }
+
+    public static void fakeOtherUser() throws ChatUser.UserBannedException {
+        if (Play.mode.isDev()) {
+            ChatUser user = new ChatUser(Util.getUUID());
+            user.setUsername("chattest-" + System.currentTimeMillis());
+            user.save();
+            try {
+                user.joinChatRoom(ChatRoom.findByName(Constants.CHATROOM_DEFAULT));
+            } catch (ChatUser.NoAccessToPrivateRoomException e) {
+                e.printStackTrace();
+            } catch (ChatUser.UnableToCheckAccessToPrivateRoom unableToCheckAccessToPrivateRoom) {
+                unableToCheckAccessToPrivateRoom.printStackTrace();
+            }
+            WebSocket.room("breakerapp");
+        }
+    }
+
 }
