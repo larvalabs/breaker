@@ -11,31 +11,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="module-library">
-      <library name="Project Libraries">
-        <CLASSES>
-          <root url="file:///usr/local/Cellar/play13/1.3.1/libexec/modules/docviewer/lib" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="file:///usr/local/Cellar/play13/1.3.1/libexec/modules/docviewer/src" />
-        </SOURCES>
-        <jarDirectory url="file://$MODULE_DIR$/lib" recursive="false" />
-        <jarDirectory url="file:///usr/local/Cellar/play13/1.3.1/libexec/modules/docviewer/lib" recursive="false" />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library name="Redis module">
-        <CLASSES>
-          <root url="file://$MODULE_DIR$/modules/redis-0.3/lib" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="file://$MODULE_DIR$/modules/redis-0.3/src" />
-        </SOURCES>
-        <jarDirectory url="file://$MODULE_DIR$/modules/redis-0.3/lib" recursive="false" />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
       <library>
         <CLASSES>
           <root url="file://$MODULE_DIR$/lib" />
@@ -45,23 +20,26 @@
         <jarDirectory url="file://$MODULE_DIR$/lib" recursive="false" />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="lib" level="project" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../play-1.4.2/framework/play-1.4.2.jar!/" />
+          <root url="jar:///opt/play-1.3.1/framework/play-1.3.1.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="play-redis" level="project" />
+    <orderEntry type="library" name="play-docviewer" level="project" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="file://$MODULE_DIR$/../play-1.4.2/framework/lib" />
+          <root url="file:///opt/play-1.3.1/framework/lib" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
-        <jarDirectory url="file://$MODULE_DIR$/../play-1.4.2/framework/lib" recursive="false" />
+        <jarDirectory url="file:///opt/play-1.3.1/framework/lib" recursive="false" />
       </library>
     </orderEntry>
   </component>

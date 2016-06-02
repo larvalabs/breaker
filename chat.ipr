@@ -20,7 +20,7 @@
     </annotationProcessing>
   </component>
   <component name="CopyrightManager" default="" />
-  <component name="DataSourceManagerImpl" format="xml" hash="2183780669">
+  <component name="DataSourceManagerImpl" format="xml" hash="2069717651">
     <data-source source="LOCAL" name="PostgreSQL - redditchat@localhost" uuid="8574837b-0841-4b77-9ec8-b77692ecaa69">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
@@ -182,5 +182,29 @@
       <schema-pattern>redditchat.pg_catalog redditchat.public</schema-pattern>
       <default-schemas>redditchat.public</default-schemas>
     </data-source>
+  </component>
+  <component name="libraryTable">
+    <library name="lib">
+      <CLASSES>
+        <root url="file://$PROJECT_DIR$/lib" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+      <jarDirectory url="file://$PROJECT_DIR$/lib" recursive="false" />
+    </library>
+    <library name="play-docviewer">
+      <CLASSES>
+        <root url="jar:///opt/play-1.3.1/modules/docviewer/lib/play-docviewer.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="play-redis">
+      <CLASSES>
+        <root url="jar:///opt/play-1.3.1/modules/redis-0.3/lib/play-redis.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
   </component>
 </project>
