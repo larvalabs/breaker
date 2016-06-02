@@ -183,4 +183,28 @@
       <default-schemas>redditchat.public</default-schemas>
     </data-source>
   </component>
+  <component name="libraryTable">
+    <library name="lib">
+      <CLASSES>
+        <root url="file://$PROJECT_DIR$/lib" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+      <jarDirectory url="file://$PROJECT_DIR$/lib" recursive="false" />
+    </library>
+    <library name="play-docviewer">
+      <CLASSES>
+        <root url="jar:///opt/play-1.3.1/modules/docviewer/lib/play-docviewer.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="play-redis">
+      <CLASSES>
+        <root url="jar:///opt/play-1.3.1/modules/redis-0.3/lib/play-redis.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+  </component>
 </project>

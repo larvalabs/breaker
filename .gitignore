@@ -20,7 +20,6 @@ solr/data
 *.fnm
 *.tvd
 *.
-*.iml
 *.doc
 *.tvf
 *.tvx
@@ -36,6 +35,8 @@ public/newsite/compass/.sass-cache
 # User-specific stuff:
 .idea/
 *.iml
+*.ids
+*.ipr
 
 # Node stuff
 node_modules
