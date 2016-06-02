@@ -1,8 +1,8 @@
 ## Introduction
 
-Breaker is a chat room for every subreddit. You log in with your reddit username and automatically get your flair, mod status, and karma. If you are a mod we allow you to configure reddit karma thresholds for posting, bans, and cross posting of links from your sub.
+Breaker is a chat room for every subreddit. You log in with your reddit username and automatically get your flair, mod status, karma, and more. If you are a mod we allow you to configure reddit karma thresholds for posting, bans, and cross posting of links from your sub.
 
-Written in Java and React and open sourced here for everyone to help improve. Instructions for how to build and contribute to the project are below, or you can log in to chat over at http://www.breakerapp.com
+Breaker is written in Java and React and open sourced here for everyone to help improve. Instructions for how to build and contribute to the project are below, or you can log in to chat over at http://www.breakerapp.com
 
 ## Installation instructions
 
@@ -76,10 +76,6 @@ ChatRoomStream is basically a list of recent ChatRoomStream.Event instances (mes
 #### RedisQueueJob
 
 This is the long-running job that's each server's connection to the redis queue.
-
-### Frontend
-
-The frontend is a super simple jquery single page type thing. There's an ultra-simple javascript templating system that generates pieces of the page (messages, user status entries, etc). It's slightly budget but it works ok. It's all in room3.html. I used a template for the design which is probably not coded that well, is fairly complicated to work with, and has some bugs. A whole range of front end changes are up for discussion.
 
 ### Misc
 
