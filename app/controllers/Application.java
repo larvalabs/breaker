@@ -545,6 +545,17 @@ public class Application extends PreloadUserController {
         }
     }
 
+    public static void addOptOut(String username) {
+        if (connected().isAdmin()) {
+            OptOutUser optOutUser = new OptOutUser(username);
+            optOutUser.save();
+            renderText("OK");
+        } else {
+            error("User is not an admin.");
+        }
+
+    }
+
     /**
      * Test methods
      */

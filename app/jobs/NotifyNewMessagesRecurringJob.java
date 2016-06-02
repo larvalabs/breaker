@@ -12,7 +12,7 @@ import java.util.List;
  * Created by matt on 4/27/16.
  */
 //@Every("24h")
-@On("0 0 8 * * ?")
+//@On("0 0 8 * * ?")
 public class NotifyNewMessagesRecurringJob extends Job {
 
     @Override
