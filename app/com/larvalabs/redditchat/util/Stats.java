@@ -20,6 +20,8 @@ public class Stats {
         REDIS_MESSAGES("redismessage"),
         REDDIT_PM_SUCCESS("redditpm.success"),
         REDDIT_PM_FAILED("redditpm.failed"),
+        REDDIT_NEWMSGNOTIFICATION_SUCCESS("redditnewmsgnotification.success"),
+        REDDIT_NEWMSGNOTIFICATION_FAILED("redditnewmsgnotification.failed"),
         ;
 
         private String key;

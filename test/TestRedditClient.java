@@ -17,42 +17,7 @@ import java.util.List;
 /**
  * Created by matt on 4/27/16.
  */
-public class TestRedditClient extends UnitTest {
-
-    @Before
-    public void setUp() throws Exception {
-        // todo Probably need to figure out test Redis database
-        Fixtures.deleteDatabase();
-        Mail.Mock.reset();
-    }
-
-    private ChatUser getUser() {
-        ChatUser chatUser = new ChatUser("1");
-        chatUser.username = "megamatt2000";
-        // NOTE: These access tokens change every time to relogin into the site, need a better way to test
-        chatUser.accessToken = Play.configuration.getProperty("reddit.matt.accesstoken");
-        chatUser.refreshToken = Play.configuration.getProperty("reddit.matt.refreshtoken");
-        chatUser.save();
-        return chatUser;
-    }
-
-    public static ChatUser getTestUser1() {
-        ChatUser chatUser = new ChatUser("1");
-        chatUser.username = "breakerapptest1";
-        chatUser.accessToken = Play.configuration.getProperty("reddit.testuser1.accesstoken");
-        chatUser.refreshToken = Play.configuration.getProperty("reddit.testuser1.refreshtoken");
-        chatUser.save();
-        return chatUser;
-    }
-
-    public static ChatUser getTestUser2() {
-        ChatUser chatUser = new ChatUser("2");
-        chatUser.username = "breakerapptest2";
-        chatUser.accessToken = Play.configuration.getProperty("reddit.testuser2.accesstoken");
-        chatUser.refreshToken = Play.configuration.getProperty("reddit.testuser2.refreshtoken");
-        chatUser.save();
-        return chatUser;
-    }
+public class TestRedditClient extends BreakerTest {
 
     @Test
     public void testRefreshToken() throws Exception {

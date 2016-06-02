@@ -7,9 +7,7 @@ import com.larvalabs.redditchat.realtime.ChatRoomStream;
 import com.larvalabs.redditchat.util.RedditUtil;
 import com.larvalabs.redditchat.util.RedisUtil;
 import com.larvalabs.redditchat.util.Util;
-import jobs.RedditLinkBotJob;
-import jobs.UpdateAllUsersFromRedditRecurringJob;
-import jobs.UpdateUserFromRedditJob;
+import jobs.*;
 import models.*;
 import net.dean.jraw.ApiException;
 import org.apache.commons.codec.binary.Base64;
@@ -523,6 +521,24 @@ public class Application extends PreloadUserController {
             room.refresh();
             ChatRoomStream.getEventStream(room.getName()).sendUserUpdate(room, user, true);
             ChatRoomStream.getEventStream(room.getName()).sendRoomUpdate(room);
+            renderText("OK");
+        } else {
+            error("User is not an admin.");
+        }
+    }
+
+    public static void runNewMessagesNotifications(long userId) {
+        if (connected().isAdmin()) {
+            new NotifyNewMessagesJob(userId).now();
+            renderText("OK");
+        } else {
+            error("User is not an admin.");
+        }
+    }
+
+    public static void runAllNewMessagesNotifications() {
+        if (connected().isAdmin()) {
+            new NotifyNewMessagesRecurringJob().now();
             renderText("OK");
         } else {
             error("User is not an admin.");

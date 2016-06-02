@@ -31,7 +31,7 @@ public class RedditUtil {
         InboxManager ibm = new InboxManager(redditClient);
         ibm.compose(toUsername, subject, content);
 
-        Logger.info("Private message sent from bot to " + toUsername);
+        Logger.info("Private message sent from bot to " + toUsername + ": " + subject + " : " + content);
 
 //        System.out.println(me.toString());
     }

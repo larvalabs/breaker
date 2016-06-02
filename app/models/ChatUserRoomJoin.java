@@ -111,7 +111,11 @@ public class ChatUserRoomJoin extends Model {
     }
 
     public long getNumNewMessages() {
-        return Message.count("room = ? and id > ?", room, lastSeenMessageId);
+        return Message.count("room = ? and createDate > ?", room, new Date(lastSeenMessageTime));
+    }
+
+    public long getNumNewMessagesIgnoringBots() {
+        return Message.count("room = ? and createDate > ? and user.bot = false", room, new Date(lastSeenMessageTime));
     }
 
     public boolean updateFlairIfDifferent(String flairText, String flairCss, String flairPosition) {
