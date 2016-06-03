@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Immutable from 'immutable';
 
 import * as scrollActions from '../redux/actions/scroll-actions';
-
+import { getMoreMessagesLoading } from '../redux/selectors/ui-selectors';
+import { getCurrentRoomHasMoreMessages, getMessageCountCurrentRoom } from '../redux/selectors/room-messages-selectors';
 
 export default class MessageHistory extends Component {
   renderTitle() {
@@ -36,28 +36,19 @@ export default class MessageHistory extends Component {
 }
 
 MessageHistory.defaultProps = {
-  message_count: 0,
+  currentRoom: '',
+  messageCount: 0,
   loading: false,
   hasMore: true,
-  currentRoom: '',
   handleMoreMessages: () => {}
 };
 
 function mapStateToProps(state) {
-  const roomMessages = state.getIn(['roomMessages', state.get('currentRoom')], Immutable.List());
-  const firstMessage = state.getIn(['messages', roomMessages.first()]);
-  const messageCount = roomMessages.size;
-
-  let hasMore = false;
-  if (firstMessage) {
-    hasMore = firstMessage.get('type', '') !== 'first_sentinel';
-  }
-
   return {
-    loading: state.getIn(['ui', 'moreMessagesLoading']),
     currentRoom: state.get('currentRoom'),
-    hasMore,
-    messageCount
+    loading: getMoreMessagesLoading(state),
+    hasMore: getCurrentRoomHasMoreMessages(state),
+    messageCount: getMessageCountCurrentRoom(state)
   };
 }
 

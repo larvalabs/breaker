@@ -20,6 +20,13 @@ export const getSettingsOpen = createSelector(
 export const getScrollToRoomName = createSelector(
     [getUi],
     (ui) => {
-      return ui.get('scrollToRoomName')
+      return ui.get('scrollToRoomName');
+    }
+);
+
+export const getMoreMessagesLoading = createSelector(
+    [getUi],
+    (ui) => {
+      return ui.get('moreMessagesLoading', false);
     }
 );
