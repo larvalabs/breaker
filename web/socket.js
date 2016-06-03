@@ -8,7 +8,7 @@ let lastPingTime = null;
 const ReconnectingWebSocket = window.ReconnectingWebSocket;
 
 function init() {
-  var socketOptions = {
+  const socketOptions = {
     debug: false,
     reconnectInterval: 5000,
     reconnectDecay: 1.5,
@@ -47,7 +47,7 @@ function init() {
       }
 
       if (Date.now() - lastPingTime > Config.settings.max_stale_state_millis) {
-        console.log("Ping overtime - refreshing state and reconnecting!");
+        console.log('Ping overtime - refreshing state and reconnecting!');  // eslint-disable-line
         store.dispatch(socketActions.handleStateRefresh());
         socket.refresh();
       }

@@ -1,4 +1,4 @@
-import { createSelector } from 'reselect'
+import { createSelector } from 'reselect';
 import Immutable from 'immutable';
 
 import Config from '../../config';
@@ -10,7 +10,7 @@ export const getAllRooms = createSelector(
   [getRooms, getCurrentRoomName],
   (rooms, currentRoomName) => {
     if (Config.guest) {
-      rooms = rooms.filter(room => room.get('name') === currentRoomName);
+      return rooms.filter(room => room.get('name') === currentRoomName);
     }
 
     return rooms;
@@ -30,4 +30,3 @@ export const getCurrentRoomStyles = createSelector(
       return currentRoom.get('styles', Immutable.Map());
     }
 );
-

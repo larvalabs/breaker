@@ -69,4 +69,3 @@ export const getAllCollapsedLinks = createSelector(
       return links;
     }
 );
-

@@ -1,7 +1,7 @@
-import { createSelector } from 'reselect'
+import { createSelector } from 'reselect';
 import Immutable from 'immutable';
 
-const getAuthUser = (state) => state.get('members');
+
 const getMembers = (state) => state.get('members');
 const getCurrentRoomName = (state) => state.get('currentRoom');
 
