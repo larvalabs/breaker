@@ -47,4 +47,4 @@ export default class DocumentTitle extends Component {
 DocumentTitle.defaultProps = {
   unreadCount: 0,
   roomName: ''
-}
+};

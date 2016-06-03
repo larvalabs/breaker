@@ -1,6 +1,5 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import Immutable from 'immutable';
 
 import Header from '../header/Header';
 import Sidebar from '../sidebar/Sidebar';

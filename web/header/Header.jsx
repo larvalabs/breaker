@@ -7,6 +7,9 @@ import RoomTitleInfo from './RoomTitleInfo';
 import HeaderUserMenu from './HeaderUserMenu';
 import HeaderLogoMenuBox from './HeaderLogoMenuBox';
 
+import { getCurrentRoom } from '../redux/selectors/rooms-selectors'
+import { getAuthUserIsMod } from '../redux/selectors/auth-user-selectors'
+import { getSettingsOpen, getSidebarOpen } from '../redux/selectors/ui-selectors'
 
 class Header extends Component {
   render() {
@@ -40,22 +43,14 @@ Header.defaultProps = {
 };
 
 function mapStateToProps(state) {
-  const user = state.get('authUser');
-  const roomName = state.get('currentRoom');
-  const members = state.getIn(['members']);
-
-  let userIsMod;
-  if (members && members.get('breakerapp')) {
-    userIsMod = !!state.getIn(['members', roomName, 'mods', user.get('username')]);
-  }
 
   return {
-    user,
-    userIsMod,
-    roomName,
-    room: state.getIn(['rooms', roomName], Immutable.Map()),
-    sidebar_open: state.getIn(['ui', 'sidebar_open'], false),
-    settings_open: state.getIn(['ui', 'settings_open'], false)
+    user: state.get('authUser'),
+    userIsMod: getAuthUserIsMod(state),
+    roomName: state.get('currentRoom'),
+    room: getCurrentRoom(state),
+    sidebar_open: getSidebarOpen(state),
+    settings_open: getSettingsOpen(state)
   };
 }
 
