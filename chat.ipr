@@ -56,7 +56,7 @@
     <includedPredefinedLibrary name="ECMAScript 6" />
   </component>
   <component name="JavaScriptSettings">
-    <option name="languageLevel" value="ES6" />
+    <option name="languageLevel" value="JSX" />
   </component>
   <component name="Palette2">
     <group name="Swing">
