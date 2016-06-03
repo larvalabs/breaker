@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.larvalabs.redditchat.ChatCommands;
 import com.larvalabs.redditchat.Constants;
+import com.larvalabs.redditchat.dataobj.BreakerCache;
 import com.larvalabs.redditchat.dataobj.JsonChatRoom;
 import com.larvalabs.redditchat.dataobj.JsonMessage;
 import com.larvalabs.redditchat.dataobj.JsonUser;
@@ -301,6 +302,7 @@ public class ChatRoomStream {
     }
 
     public void publishEventInternal(Event event) {
+        BreakerCache.handleEvent(event);
         for (SingleWaiterWeakReferenceEventStream<Event> userEventStream : userStreams.values()) {
             userEventStream.publish(event);
         }

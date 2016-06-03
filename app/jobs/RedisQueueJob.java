@@ -33,7 +33,6 @@ public class RedisQueueJob extends Job {
             ChatRoomStream.Event event = ChatRoomStream.Event.fromJson(message);
             if (!event.fromServerID.equals(ChatRoomStream.SERVER_ID)) {
                 ChatRoomStream.getEventStream(event.room.name).publishEventInternal(event);
-                BreakerCache.handleEvent(event);
             } else {
 //                Logger.info("Not processing message from redis queue, it comes from us: " + ChatRoomStream.SERVER_ID);
             }
