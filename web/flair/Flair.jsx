@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 
 import Config from '../config';
 
+import { getCurrentRoom } from '../redux/selectors/rooms-selectors';
+
 
 class Flair extends Component {
   hasText(flairSettings) {
@@ -18,7 +20,7 @@ class Flair extends Component {
   }
 
   renderFlair() {
-    const flairSettings = this.props.user.getIn(['flair', this.props.roomName]);
+    const flairSettings = this.props.user.getIn(['flair', this.props.room.get('name')]);
     if (!flairSettings) {
       return null;
     }
@@ -48,11 +50,8 @@ class Flair extends Component {
 
 
 function mapStateToProps(state) {
-  const roomName = state.get('currentRoom');
-
   return {
-    room: state.getIn(['rooms', roomName]),
-    roomName
+    room: getCurrentRoom(state)
   };
 }
 

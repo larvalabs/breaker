@@ -15,6 +15,7 @@ import {
     getFirstMessageIdForCurrentRoom
 } from '../redux/selectors/message-entities-selectors';
 
+
 class ChatThread extends Component {
   constructor(props) {
     super(props);

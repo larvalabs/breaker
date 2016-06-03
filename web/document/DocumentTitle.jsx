@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import ReactDocumentTitle from 'react-document-title';
-import { getTotalLastSeenTimes } from '../redux/selectors/last-seen-selectors'
+import { getTotalLastSeenTimes } from '../redux/selectors/last-seen-selectors';
 
 
 class DocumentTitle extends Component {
@@ -52,7 +52,6 @@ DocumentTitle.defaultProps = {
 };
 
 function mapStateToProps(state) {
-
   return {
     roomName: state.get('currentRoom'),
     unreadCount: getTotalLastSeenTimes(state)
