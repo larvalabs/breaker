@@ -5,7 +5,6 @@ import Immutable from 'immutable';
 import * as chatActions from '../redux/actions/chat-actions';
 
 import SidebarRoomUnreadCount from './SidebarRoomUnreadCount';
-import SidebarRoomPrivateIcon from './SidebarRoomPrivateIcon';
 import SidebarRoomAvatar from './SidebarRoomAvatar';
 import SidebarRoomSelect from './SidebarRoomSelect';
 import SidebarRoomName from './SidebarRoomName';
