@@ -34,10 +34,14 @@
   <component name="EntryPointsManager">
     <entry_points version="2.0" />
   </component>
+  <component name="EslintConfiguration">
+    <custom-configuration-file used="true" path="$PROJECT_DIR$/.eslintrc" />
+  </component>
   <component name="InspectionProjectProfileManager">
     <profile version="1.0">
       <option name="myName" value="Project Default" />
       <option name="myLocal" value="true" />
+      <inspection_tool class="Eslint" enabled="true" level="ERROR" enabled_by_default="true" />
       <inspection_tool class="JSMethodCanBeStatic" enabled="false" level="WARNING" enabled_by_default="false" />
       <inspection_tool class="LoggerInitializedWithForeignClass" enabled="false" level="WARNING" enabled_by_default="false">
         <option name="loggerClassName" value="org.apache.log4j.Logger,org.slf4j.LoggerFactory,org.apache.commons.logging.LogFactory,java.util.logging.Logger" />
@@ -190,12 +194,7 @@
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
   </component>
   <component name="dataSourceStorageLocal">
-    <data-source name="PostgreSQL - redditchat@localhost" uuid="8574837b-0841-4b77-9ec8-b77692ecaa69">
-      <secret-storage>master_key</secret-storage>
-      <user-name>matt</user-name>
-      <schema-pattern>redditchat.pg_catalog redditchat.public</schema-pattern>
-      <default-schemas>redditchat.public</default-schemas>
-    </data-source>
+    <data-source name="PostgreSQL - redditchat@localhost" uuid="8574837b-0841-4b77-9ec8-b77692ecaa69" />
   </component>
   <component name="libraryTable">
     <library name="lib">
