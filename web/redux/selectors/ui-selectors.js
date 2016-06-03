@@ -1,0 +1,25 @@
+import { createSelector } from 'reselect'
+
+
+const getUi = (state) => state.get('ui');
+
+export const getSidebarOpen = createSelector(
+    [getUi],
+    (ui) => {
+      return ui.get('sidebar_open', false);
+    }
+);
+
+export const getSettingsOpen = createSelector(
+    [getUi],
+    (ui) => {
+      return ui.get('settings_open', false);
+    }
+);
+
+export const getScrollToRoomName = createSelector(
+    [getUi],
+    (ui) => {
+      return ui.get('scrollToRoomName')
+    }
+);

@@ -2,8 +2,6 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Immutable from 'immutable';
 
-import Config from '../config';
-
 import Header from '../header/Header';
 import Sidebar from '../sidebar/Sidebar';
 import Main from './Main';
@@ -11,7 +9,9 @@ import DocumentTitle from '../document/DocumentTitle';
 import Notifications from '../notifications/Notifications';
 
 import { scrollToRoomNameReset } from '../redux/actions/scroll-actions';
-
+import { getTotalLastSeenTimes } from '../redux/selectors/last-seen-selectors'
+import { getSettingsOpen, getSidebarOpen, getScrollToRoomName } from '../redux/selectors/ui-selectors'
+import { getAllRooms, getCurrentRoom, getCurrentRoomStyles } from '../redux/selectors/rooms-selectors'
 
 class AsyncApp extends Component {
   render() {
@@ -40,33 +40,15 @@ class AsyncApp extends Component {
 }
 
 function mapStateToProps(state) {
-  const roomName = state.get('currentRoom');
-  let rooms = state.get('rooms');
-  let lastReadTimes = state.get('lastSeenTimes');
-
-  if (Config.guest) {
-    rooms = rooms.filter(room => room.get('name') === roomName);
-    lastReadTimes = lastReadTimes.filter((_, currRoomName) => currRoomName === roomName)
-  }
-
-  const unreadCount = lastReadTimes.reduce((total, lastReadTime, currRoomName) => {
-    return total + state.getIn(['roomMessages', currRoomName]).reduce((innerTotal, messageId) => {
-      const messageTime = state.getIn(['messages', messageId, 'createDateLongUTC']);
-      return messageTime && messageTime - lastReadTime > 0 ? innerTotal + 1 : innerTotal;
-    }, 0);
-  }, 0);
-
-  const sidebarStyles = state.getIn(['rooms', state.get('currentRoom'), 'styles'], Immutable.Map());
-
   return {
-    sidebarStyles,
-    roomName,
-    rooms,
-    room: state.getIn(['rooms', roomName], Immutable.Map()),
-    sidebarOpen: state.getIn(['ui', 'sidebar_open']),
-    settingsOpen: state.getIn(['ui', 'settings_open']),
-    unreadCount,
-    scrollToRoomName: state.getIn(['ui', 'scrollToRoomName'])
+    roomName: state.get('currentRoom'),
+    sidebarStyles: getCurrentRoomStyles(state),
+    rooms: getAllRooms(state),
+    room: getCurrentRoom(state),
+    sidebarOpen: getSidebarOpen(state),
+    settingsOpen: getSettingsOpen(state),
+    unreadCount: getTotalLastSeenTimes(state),
+    scrollToRoomName: getScrollToRoomName(state)
   };
 }
 
