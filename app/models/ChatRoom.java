@@ -27,6 +27,10 @@ public class ChatRoom extends Model {
     public static final int ICON_SOURCE_PLAY_STORE = 1;
     public static final int ICON_SOURCE_HIAPK = 2;
 
+    public static final String PREFVAL_LINKBOT_ALLNEW = "allnew";
+    public static final String PREFVAL_LINKBOT_NEWTOP = "newtop";
+    public static final String PREFVAL_LINKBOT_NONE = "none";
+
     @Column(unique = true)
     public String name;
     public String displayName;
@@ -72,6 +76,8 @@ public class ChatRoom extends Model {
     public String signinButtonTextColor;
 
     public boolean privateRoom;
+
+    public String linkBotPref = PREFVAL_LINKBOT_NEWTOP;
 
     public ChatRoom(String displayName) {
         this.name = displayName.toLowerCase();
@@ -316,6 +322,26 @@ public class ChatRoom extends Model {
 
     public void setSigninButtonTextColor(String signinButtonTextColor){
         this.signinButtonTextColor = signinButtonTextColor;
+    }
+
+    public String getLinkBotPref() {
+        return linkBotPref;
+    }
+
+    public void setLinkBotPref(String linkBotPref) {
+        this.linkBotPref = linkBotPref;
+    }
+
+    public boolean isLinkBotPrefAllNew() {
+        return linkBotPref != null && linkBotPref.equals(PREFVAL_LINKBOT_ALLNEW);
+    }
+
+    public boolean isLinkBotPrefNewTop() {
+        return linkBotPref != null && linkBotPref.equals(PREFVAL_LINKBOT_NEWTOP);
+    }
+
+    public boolean isLinkBotNone() {
+        return linkBotPref != null && linkBotPref.equals(PREFVAL_LINKBOT_NONE);
     }
 
     // Do stuff zone

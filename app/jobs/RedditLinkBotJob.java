@@ -17,6 +17,7 @@ import play.Logger;
 import play.jobs.Every;
 import play.jobs.Job;
 
+import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
@@ -45,6 +46,11 @@ public class RedditLinkBotJob extends Job {
             return;
         }
 
+        if (room.isLinkBotNone()) {
+            Logger.info("Room " + room.getName() + " set to not post links, skipping job.");
+            return;
+        }
+
         List<Message> messages = room.getMessages(1);
         if (messages != null && messages.size() > 0) {
             Message message = messages.get(0);
@@ -55,10 +61,20 @@ public class RedditLinkBotJob extends Job {
         }
 
         String subredditJsonUrl = "https://www.reddit.com/r/" + subredditToProcess + "/hot.json?sort=hot";
+        if (room.isLinkBotPrefAllNew()) {
+            Logger.info("Room " + room.getName() + " is set to post all new links, switching URLs.");
+            subredditJsonUrl = "https://www.reddit.com/r/" + subredditToProcess + "/new.json?sort=new";
+        }
         URLConnection urlConnection = new URL(subredditJsonUrl).openConnection();
         // set user agent to avoid throttling
         urlConnection.setRequestProperty("User-Agent", "web:breakerapp:v0.1");
-        String jsonStr = IOUtils.toString(urlConnection.getInputStream());
+        String jsonStr = null;
+        try {
+            jsonStr = IOUtils.toString(urlConnection.getInputStream());
+        } catch (IOException e) {
+            Logger.error("Unable to retrieve posts for room " + room.getName() + " due to IOException with code: " + e.getMessage());
+            return;
+        }
 
         JSONObject overallJsonObj = new JSONObject(jsonStr);
         JSONArray jsonArray = overallJsonObj.getJSONObject("data").getJSONArray("children");

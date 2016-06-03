@@ -223,6 +223,31 @@
                                     </div>
                                 </div>
 
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Link Bot Posting Options</label>
+                                    <div class="col-sm-10">
+                                        <div class="radio">
+                                            <label>
+                                                <input type="radio" name="linkBotPref" id="optionsRadios1" value="${chatRoom.PREFVAL_LINKBOT_ALLNEW}" ${chatRoom.getLinkBotPref().equals(chatRoom.PREFVAL_LINKBOT_ALLNEW) ? "checked=''" : ""}>
+                                                Post all new submissions
+                                            </label>
+                                        </div>
+                                        <div class="radio">
+                                            <label>
+                                                <input type="radio" name="linkBotPref" id="optionsRadios2" value="${chatRoom.PREFVAL_LINKBOT_NEWTOP}" ${chatRoom.getLinkBotPref().equals(chatRoom.PREFVAL_LINKBOT_NEWTOP) ? "checked=''" : ""}>
+                                                Post when a new top submission is found
+                                            </label>
+                                        </div>
+                                        <div class="radio">
+                                            <label>
+                                                <input type="radio" name="linkBotPref" id="optionsRadios3" value="${chatRoom.PREFVAL_LINKBOT_NONE}" ${chatRoom.getLinkBotPref().equals(chatRoom.PREFVAL_LINKBOT_NONE) ? "checked=''" : ""}>
+                                                Don't post anything
+                                            </label>
+                                        </div>
+
+                                    </div>
+                                </div>
+
                                 <div class="line line-dashed b-b line-lg pull-in"></div>
                                 <div class="form-group">
                                     <div class="col-sm-4 col-sm-offset-2">

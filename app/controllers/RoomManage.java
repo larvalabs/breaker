@@ -22,7 +22,7 @@ public class RoomManage extends PreloadUserController {
         }
     }
 
-    public static void savePrefs(Long roomId, String banner, String iconUrl, Integer karmaThreshold) {
+    public static void savePrefs(Long roomId, String banner, String iconUrl, Integer karmaThreshold, String linkBotPref) {
         ChatUser user = connected();
         ChatRoom chatRoom = ChatRoom.findById(roomId);
         if (!chatRoom.isModerator(user)) {
@@ -31,6 +31,7 @@ public class RoomManage extends PreloadUserController {
             chatRoom.setBanner(banner);
             chatRoom.setIconUrl(iconUrl);
             chatRoom.setKarmaThreshold(karmaThreshold == null ? 0 : karmaThreshold);
+            chatRoom.setLinkBotPref(linkBotPref);
             chatRoom.save();
             TopAlert alert = new TopAlert(TopAlert.Type.SUCCESS, "Room updated.", "Room information saved.");
             alert.toFlash(flash);

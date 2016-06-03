@@ -14,3 +14,6 @@ alter table chatuser add column redditUserCreatedUTC int8 default -1;
 alter table chatuser add column redditUserSuspended boolean default false;
 
 -- ALL DEPLOYED ABOVE
+
+-- link bot room preferences
+update chatroom set linkBotPref = 'newtop';
