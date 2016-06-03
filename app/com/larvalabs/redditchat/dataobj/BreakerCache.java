@@ -2,9 +2,11 @@ package com.larvalabs.redditchat.dataobj;
 
 import com.larvalabs.redditchat.Constants;
 import com.larvalabs.redditchat.realtime.ChatRoomStream;
+import com.larvalabs.redditchat.util.Stats;
 import models.ChatRoom;
 import models.ChatUser;
 import models.Message;
+import org.apache.commons.collections4.map.LRUMap;
 import play.Logger;
 import play.cache.Cache;
 
@@ -16,9 +18,10 @@ import java.util.*;
 public class BreakerCache {
 
     public static final boolean CACHE_ENABLED = true;
+    public static Random random = new Random();
 
     private static HashMap<String, ArrayList<JsonMessage>> messageCache = new HashMap<String, ArrayList<JsonMessage>>();
-    private static HashMap<String, ArrayList<JsonUser>> userCache = new HashMap<String, ArrayList<JsonUser>>();
+    private static LRUMap<String, JsonUser> userCache = new LRUMap<>(1000);
 
     private static final String KEY_MESSAGES = "messages-";
     private static final String KEY_USER = "user-";
@@ -66,45 +69,44 @@ public class BreakerCache {
         userCache.remove(roomName);
     }
 
-    public static ArrayList<JsonUser> getUsersForRoom(ChatRoom room) {
-        ArrayList<JsonUser> usersForRoom = userCache.get(room.getName());
-        if (usersForRoom == null || !CACHE_ENABLED) {
-            Logger.info("Cache miss userlist for " + room.getName());
-            List<ChatUser> roomUsers = room.getUsers();
-            TreeSet<String> usernamesPresent = room.getUsernamesPresent();
-            usersForRoom = new ArrayList<JsonUser>();
-            for (ChatUser roomUser : roomUsers) {
-                JsonUser jsonUser = JsonUser.fromUser(roomUser, usernamesPresent.contains(roomUser.getUsername()));
-                usersForRoom.add(jsonUser);
-            }
-            userCache.put(room.getName(), usersForRoom);
-        } else {
-            Logger.info("Cache hit userlist for " + room.getName());
+    public static JsonUser getJsonUser(String username) {
+        synchronized (userCache) {
+            return userCache.get(username);
         }
-        return usersForRoom;
     }
 
-    public static void handleEvent(ChatRoomStream.Event event) {
-        if (event instanceof ChatRoomStream.Message && !(event instanceof ChatRoomStream.ServerMessage)) {
-            ChatRoomStream.Message messageEvent = (ChatRoomStream.Message) event;
-            clearMessagesCache(messageEvent.room.name);
-        } else if (event instanceof ChatRoomStream.Join) {
-            ChatRoomStream.Join joinEvent = (ChatRoomStream.Join) event;
-            if (userCache.containsKey(joinEvent.room.name)) {
-                ArrayList<JsonUser> jsonUsers = userCache.get(joinEvent.room.name);
-                boolean found = false;
-                for (JsonUser jsonUser : jsonUsers) {
-                    if (jsonUser.username.equals(joinEvent.user.username)) {
-                        found = true;
-                        break;
-                    }
-                }
-
-                if (!found) {
-                    Logger.info("Clearing room member cache because new user joined: " + joinEvent.user.username);
-                    clearUsersCache(joinEvent.room.name);
-                }
+    public static JsonUser putJsonUser(JsonUser user) {
+        synchronized (userCache) {
+            if (random.nextFloat() < 0.1f) {
+                Stats.sample(Stats.StatKey.USER_CACHE_SIZE, userCache.size());
             }
+            return userCache.put(user.username, user);
+        }
+    }
+
+    public static void removeUser(String username) {
+        synchronized (userCache) {
+            userCache.remove(username);
+        }
+    }
+
+    public static void handleEvent(ChatRoomStream.Event serverEvent) {
+        if (serverEvent instanceof ChatRoomStream.Message && !(serverEvent instanceof ChatRoomStream.ServerMessage)) {
+            ChatRoomStream.Message event = (ChatRoomStream.Message) serverEvent;
+            clearMessagesCache(event.room.name);
+            putJsonUser(event.user);
+        } else if (serverEvent instanceof ChatRoomStream.UpdateUserEvent) {
+            ChatRoomStream.UpdateUserEvent event = (ChatRoomStream.UpdateUserEvent) serverEvent;
+            putJsonUser(event.user);
+        } else if (serverEvent instanceof ChatRoomStream.Join) {
+            ChatRoomStream.Join event = (ChatRoomStream.Join) serverEvent;
+            putJsonUser(event.user);
+        } else if (serverEvent instanceof ChatRoomStream.Leave) {
+            ChatRoomStream.Leave event = (ChatRoomStream.Leave) serverEvent;
+            putJsonUser(event.user);
+        } else if (serverEvent instanceof ChatRoomStream.RoomLeave) {
+            ChatRoomStream.RoomLeave event = (ChatRoomStream.RoomLeave) serverEvent;
+            putJsonUser(event.user);
         }
     }
 

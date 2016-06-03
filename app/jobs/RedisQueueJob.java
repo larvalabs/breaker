@@ -31,8 +31,12 @@ public class RedisQueueJob extends Job {
         public void onMessage(String channel, String message) {
 //            Logger.info("Received message on redis channel " + channel + ": " + message);
             ChatRoomStream.Event event = ChatRoomStream.Event.fromJson(message);
-            ChatRoomStream.getEventStream(event.room.name).publishEventInternal(event);
-            BreakerCache.handleEvent(event);
+            if (!event.fromServerID.equals(ChatRoomStream.SERVER_ID)) {
+                ChatRoomStream.getEventStream(event.room.name).publishEventInternal(event);
+                BreakerCache.handleEvent(event);
+            } else {
+//                Logger.info("Not processing message from redis queue, it comes from us: " + ChatRoomStream.SERVER_ID);
+            }
         }
 
         @Override

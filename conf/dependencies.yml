@@ -9,6 +9,7 @@ require:
     - org.jsoup -> jsoup 1.9.1
     - net.dean.jraw -> JRAW 0.8.0
     - provided -> link-unfurl 0.1
+    - org.apache.commons -> commons-collections4 4.1
     - commons-codec -> commons-codec 1.10:
         force: true
 

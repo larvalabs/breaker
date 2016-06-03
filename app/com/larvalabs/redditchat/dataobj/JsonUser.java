@@ -5,6 +5,7 @@ import com.sun.istack.internal.Nullable;
 import controllers.Application;
 import models.ChatRoom;
 import models.ChatUser;
+import play.Logger;
 
 import javax.validation.constraints.Null;
 import java.io.Serializable;
@@ -62,11 +63,21 @@ public class JsonUser implements Serializable {
      * @return
      */
     public static JsonUser fromUser(ChatUser user, boolean isOnline) {
-        return new JsonUser(user.getId(), user.username, user.notificationPreference,
-                user.getLastSeenDate(), user.getLastSeenDate().getTime(),
-                user.getLikeCount(), user.getProfileImageUrl(), user.getStatusMessage(), user.isBot(),
-                user.getLinkKarma(), user.getCommentKarma(), user.getRedditUserCreatedUTC(), user.isRedditUserSuspended(),
-                isOnline, user.getFlairAsJson());
+        JsonUser jsonUser = BreakerCache.getJsonUser(user.username);
+        if (jsonUser == null) {
+            Logger.info("Cache miss: " + user.username);
+            jsonUser = new JsonUser(user.getId(), user.username, user.notificationPreference,
+                    user.getLastSeenDate(), user.getLastSeenDate().getTime(),
+                    user.getLikeCount(), user.getProfileImageUrl(), user.getStatusMessage(), user.isBot(),
+                    user.getLinkKarma(), user.getCommentKarma(), user.getRedditUserCreatedUTC(), user.isRedditUserSuspended(),
+                    isOnline, user.getFlairAsJson());
+            BreakerCache.putJsonUser(jsonUser);
+        }
+        if (isOnline != jsonUser.online) {
+            jsonUser.online = isOnline;
+            BreakerCache.putJsonUser(jsonUser);
+        }
+        return jsonUser;
     }
 
     /**

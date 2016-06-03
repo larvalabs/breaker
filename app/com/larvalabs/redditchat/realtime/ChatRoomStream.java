@@ -25,6 +25,8 @@ import java.util.concurrent.ExecutionException;
 
 public class ChatRoomStream {
 
+    public static final String SERVER_ID = Util.getUUID();
+
     public static class WaitAnyPromise<T> extends F.Promise<T> {
         private int indexRedeemed;
 
@@ -294,6 +296,7 @@ public class ChatRoomStream {
     }
 
     public void publishEvent(Event event) {
+        publishEventInternal(event);
         RedisQueueJob.publish(event);
     }
 
@@ -327,6 +330,7 @@ public class ChatRoomStream {
 
     public static abstract class Event {
 
+        public String fromServerID;
         public String type;
         public Long timestamp;
         public JsonChatRoom room;
@@ -353,6 +357,7 @@ public class ChatRoomStream {
             this.type = type;
             this.room = room;
             this.timestamp = System.currentTimeMillis();
+            this.fromServerID = SERVER_ID;
         }
 
         public Event(String type, JsonChatRoom room, String toUsername) {

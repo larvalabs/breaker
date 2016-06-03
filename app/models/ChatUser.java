@@ -2,7 +2,10 @@ package models;
 
 import com.google.gson.JsonObject;
 import com.larvalabs.redditchat.Constants;
+import com.larvalabs.redditchat.dataobj.BreakerCache;
 import com.larvalabs.redditchat.dataobj.JsonFlair;
+import com.larvalabs.redditchat.dataobj.JsonUser;
+import com.larvalabs.redditchat.realtime.ChatRoomStream;
 import com.larvalabs.redditchat.util.RedisUtil;
 import com.larvalabs.redditchat.util.Util;
 import jobs.UpdateUserFromRedditJob;
@@ -12,6 +15,7 @@ import play.Logger;
 import play.Play;
 import play.db.DB;
 import play.db.jpa.JPA;
+import play.db.jpa.JPABase;
 import play.db.jpa.Model;
 import reddit.BreakerRedditClient;
 import reddit.RedditRequestError;
@@ -642,5 +646,18 @@ public class ChatUser extends Model {
         redditUserCreatedUTC = userJson.get("created_utc").getAsLong();
         redditUserSuspended = userJson.get("is_suspended").getAsBoolean();
         lastResponseApiMe = userJson.toString();
+    }
+
+    /**
+     *
+     */
+
+    @Override
+    public <T extends JPABase> T save() {
+        Logger.info("SAVEOVERRIDE - ChatUser");
+        BreakerCache.removeUser(username);
+        // todo Probably should add a global channel for server object updates
+//        ChatRoomStream.getEventStream(Constants.CHATROOM_DEFAULT).sendUserUpdate();
+        return super.save();
     }
 }

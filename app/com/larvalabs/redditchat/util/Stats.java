@@ -22,6 +22,7 @@ public class Stats {
         REDDIT_PM_FAILED("redditpm.failed"),
         REDDIT_NEWMSGNOTIFICATION_SUCCESS("redditnewmsgnotification.success"),
         REDDIT_NEWMSGNOTIFICATION_FAILED("redditnewmsgnotification.failed"),
+        USER_CACHE_SIZE("usercache.size"),
         ;
 
         private String key;
