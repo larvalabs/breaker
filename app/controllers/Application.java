@@ -228,7 +228,7 @@ public class Application extends PreloadUserController {
                     Logger.error(e, "Unable to join default chat room for user " + username);
                 }
 
-                new UpdateUserFromRedditJob(user.getId()).now();
+                new UpdateUserFromRedditJob(user.getId()).afterRequest();
 
                 setUserInSession(user);
             }
