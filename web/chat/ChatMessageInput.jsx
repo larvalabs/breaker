@@ -5,6 +5,7 @@ import Immutable from 'immutable';
 import Autosuggest from 'react-autosuggest';
 import { sendNewMessage, resetChatInputFocus, setChatInputFocus } from '../redux/actions/chat-actions';
 import { handleCloseAllMenus } from '../redux/actions/menu-actions';
+import { ChatMessageLengthIndicator } from './ChatMessageLengthIndicator.jsx';
 
 import { getConnected, getSetInputFocus } from '../redux/selectors/ui-selectors';
 import { getAllMembersForCurrentRoom } from '../redux/selectors/members-selectors';
@@ -29,6 +30,11 @@ class ChatMessageInput extends Component {
     this.handleRef = this.handleRef.bind(this);
     this.state = {
       value: '',
+      indicatorProps: {
+        max: 500, // Change if part of the store,
+        visibleAt: 100,
+        highlightAt: 50
+      },
       suggestions: this.getSuggestions('')
     };
   }
@@ -98,6 +104,20 @@ class ChatMessageInput extends Component {
     }).toJS();
   }
 
+  getIndicator(indicatorProps, length) {
+    let indicator = undefined;
+    if (indicatorProps.max - length < indicatorProps.visibleAt) {
+      indicator = (
+        <ChatMessageLengthIndicator max={indicatorProps.max}
+                                              length={length}
+                                              highlightAt={indicatorProps.highlightAt}
+        />
+      );
+    }
+
+    return indicator;
+  }
+
   handleKeyPress(event) {
     const { roomName, onSendNewMessage, onMessageInput } = this.props;
 
@@ -118,7 +138,7 @@ class ChatMessageInput extends Component {
 
   renderSuggestion(suggestion) {
     return (
-        <span>{suggestion}</span>
+      <span>{suggestion}</span>
     );
   }
 
@@ -133,7 +153,7 @@ class ChatMessageInput extends Component {
   }
 
   render() {
-    const { value, suggestions } = this.state;
+    const { value, suggestions, indicatorProps } = this.state;
     const { connected, closeSidebar } = this.props;
 
     const inputProps = {
@@ -146,17 +166,23 @@ class ChatMessageInput extends Component {
       ref: this.handleRef
     };
 
+    const indicator = this.getIndicator(indicatorProps, value.length);
+    const divClasses = (indicator) ? 'input-group' : '';
+
     return (
-      <Autosuggest suggestions={suggestions}
-                   onSuggestionsUpdateRequested={this.onSuggestionsUpdateRequested}
-                   getSuggestionValue={this.getSuggestionValue}
-                   onSuggestionSelected={this.onSuggestionSelected}
-                   renderSuggestion={this.renderSuggestion}
-                   inputProps={inputProps}
-                   theme={theme}
-                   tabToSelect
-                   selectFirstSuggestion
-      />
+      <div className={divClasses}>
+        <Autosuggest suggestions={suggestions}
+                     onSuggestionsUpdateRequested={this.onSuggestionsUpdateRequested}
+                     getSuggestionValue={this.getSuggestionValue}
+                     onSuggestionSelected={this.onSuggestionSelected}
+                     renderSuggestion={this.renderSuggestion}
+                     inputProps={inputProps}
+                     theme={theme}
+                     tabToSelect
+                     selectFirstSuggestion
+        />
+        {indicator}
+      </div>
     );
   }
 }
