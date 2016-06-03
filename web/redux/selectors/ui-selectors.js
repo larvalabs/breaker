@@ -44,3 +44,10 @@ export const getSetInputFocus = createSelector(
       return ui.get('setInputFocus', false);
     }
 );
+
+export const getScrollToMessageId = createSelector(
+    [getUi],
+    (ui) => {
+      return ui.get('scrollToMessageId', null);
+    }
+);

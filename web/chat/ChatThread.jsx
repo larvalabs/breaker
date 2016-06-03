@@ -8,6 +8,12 @@ import ChatMessageWithGrouping from '../message/ChatMessageWithGrouping';
 
 import * as scrollActions from '../redux/actions/scroll-actions';
 
+import { getCurrentRoom } from '../redux/selectors/rooms-selectors';
+import { getScrollToMessageId } from '../redux/selectors/ui-selectors';
+import {
+    getAllMessagesEntitiesForCurrentRoom,
+    getFirstMessageIdForCurrentRoom
+} from '../redux/selectors/message-entities-selectors';
 
 class ChatThread extends Component {
   constructor(props) {
@@ -84,30 +90,17 @@ ChatThread.defaultProps = {
   room: Immutable.Map(),
   scrollToMessageId: null,
   firstMessageID: null,
-  roomName: '',
   resetScrollToMessageId: () => {},
   handleMoreMessages: () => {}
 };
 
 function mapStateToProps(state) {
-  const roomName = state.get('currentRoom');
-  const messages = state.getIn(['roomMessages', roomName], Immutable.List())
-      .map((uuid) => state.getIn(['messages', uuid]))
-      .filter((message) => message);
-  const firstMessage = messages.first();
-
-  let firstMessageID = null;
-  if (firstMessage) {
-    firstMessageID = firstMessage.get('uuid');
-  }
-
   return {
-    scrollToMessageId: state.getIn(['ui', 'scrollToMessageId']),
-    room: state.getIn(['rooms', roomName]),
+    room: getCurrentRoom(state),
     users: state.get('users'),
-    firstMessageID,
-    messages,
-    roomName
+    scrollToMessageId: getScrollToMessageId(state),
+    firstMessageID: getFirstMessageIdForCurrentRoom(state),
+    messages: getAllMessagesEntitiesForCurrentRoom(state)
   };
 }
 

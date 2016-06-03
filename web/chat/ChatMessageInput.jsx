@@ -122,7 +122,7 @@ class ChatMessageInput extends Component {
     );
   }
 
-  renderPlaceholder(props) {
+  renderPlaceholder() {
     const { connected, roomName } = this.props;
 
     if (!connected) {
@@ -201,4 +201,4 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ChatMessageInput)
+export default connect(mapStateToProps, mapDispatchToProps)(ChatMessageInput);
