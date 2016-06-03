@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import ReactDOM from 'react-dom';
 import Immutable from 'immutable';
 
@@ -6,14 +7,18 @@ import Config from '../config';
 
 import SidebarRoomRoom from './SidebarRoom';
 
+import { scrollToRoomNameReset } from '../redux/actions/scroll-actions';
+import { getSidebarOpen, getScrollToRoomName } from '../redux/selectors/ui-selectors';
+import { getAllRooms, getCurrentRoom, getCurrentRoomStyles } from '../redux/selectors/rooms-selectors';
 
-export default class Sidebar extends Component {
+
+class Sidebar extends Component {
   componentDidUpdate() {
     if (this.props.scrollToRoomName) {
       const roomList = ReactDOM.findDOMNode(this.refs.roomList);
       const scrollTo = ReactDOM.findDOMNode(this.refs[this.props.scrollToRoomName]);
       roomList.scrollTop = scrollTo.offsetTop;
-      this.props.scrollToRoomNameReset();
+      this.props.resetScrollToRoomName();
     }
   }
 
@@ -64,8 +69,32 @@ export default class Sidebar extends Component {
 }
 
 Sidebar.defaultProps = {
+  open: false,
   styles: Immutable.Map(),
-  roomList: Immutable.Map(),
+  room: Immutable.Map(),
   roomName: null,
-  scrollToRoomNameReset: () => {}
+  roomList: Immutable.Map(),
+  scrollToRoomName: null,
+  resetScrollToRoomName: () => {}
 };
+
+function mapStateToProps(state) {
+  return {
+    open: getSidebarOpen(state),
+    styles: getCurrentRoomStyles(state),
+    room: getCurrentRoom(state),
+    roomName: state.get('currentRoom'),
+    roomList: getAllRooms(state),
+    scrollToRoomName: getScrollToRoomName(state)
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    resetScrollToRoomName() {
+      dispatch(scrollToRoomNameReset());
+    }
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Sidebar);

@@ -7,9 +7,11 @@ import RoomTitleInfo from './RoomTitleInfo';
 import HeaderUserMenu from './HeaderUserMenu';
 import HeaderLogoMenuBox from './HeaderLogoMenuBox';
 
-import { getCurrentRoom } from '../redux/selectors/rooms-selectors'
-import { getAuthUserIsMod } from '../redux/selectors/auth-user-selectors'
-import { getSettingsOpen, getSidebarOpen } from '../redux/selectors/ui-selectors'
+import { getCurrentRoom } from '../redux/selectors/rooms-selectors';
+import { getAuthUserIsMod } from '../redux/selectors/auth-user-selectors';
+import { getSettingsOpen, getSidebarOpen } from '../redux/selectors/ui-selectors';
+import { getTotalLastSeenTimes } from '../redux/selectors/last-seen-selectors';
+
 
 class Header extends Component {
   render() {
@@ -39,18 +41,19 @@ Header.defaultProps = {
   roomName: null,
   userIsMod: false,
   settings_open: false,
-  sidebar_open: false
+  sidebar_open: false,
+  unreadCount: 0
 };
 
 function mapStateToProps(state) {
-
   return {
     user: state.get('authUser'),
     userIsMod: getAuthUserIsMod(state),
     roomName: state.get('currentRoom'),
     room: getCurrentRoom(state),
     sidebar_open: getSidebarOpen(state),
-    settings_open: getSettingsOpen(state)
+    settings_open: getSettingsOpen(state),
+    unreadCount: getTotalLastSeenTimes(state)
   };
 }
 
