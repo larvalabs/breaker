@@ -7,6 +7,12 @@ import sort from '../util/sort';
 import UserListItems from './UserListItems';
 import UserListScrollable from './UserListScrollable';
 
+import { 
+    getModUsersForCurrentRoom,
+    getOnlineUsersForCurrentRoom,
+    getOfflineUsersForCurrentRoom
+} from '../redux/selectors/users-selectors';
+
 
 class UserListBox extends Component {
   render() {
@@ -29,24 +35,11 @@ UserListBox.defaultProps = {
 };
 
 function mapStateToProps(state) {
-  const roomName = state.get('currentRoom');
-  const users = state.get('users');
-  const roomMembers = state.getIn(['members', roomName], Immutable.Map());
-
-  const roomModUserNames = state.getIn(['rooms', roomName, 'moderators'], Immutable.List());
-  const modUsers = roomModUserNames.map((member) => users.get(member));
-
-  const roomOnlineUserNames = roomMembers.get('online', Immutable.List());
-  const onlineUsers = roomOnlineUserNames.subtract(roomModUserNames).map((member) => users.get(member));
-
-  const roomOfflineUserNames = roomMembers.get('offline', Immutable.List()).filter(u => u !== 'guest');
-  const offlineUsers = roomOfflineUserNames.subtract(roomModUserNames).map((member) => users.get(member));
-
   return {
-    online: onlineUsers.sort(sort.usersAlphabetical),
-    mods: modUsers.sort(sort.usersAlphabetical),
-    offline: offlineUsers.sort(sort.usersAlphabetical),
-    roomName
+    roomName: state.get('currentRoom'),
+    online: getOnlineUsersForCurrentRoom(state),
+    mods: getModUsersForCurrentRoom(state),
+    offline: getOfflineUsersForCurrentRoom(state)
   };
 }
 

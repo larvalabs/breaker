@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import Immutable from 'immutable';
 
+import { makeGetLastSeenTimeForRoom } from '../redux/selectors/last-seen-selectors';
+
 
 class SidebarRoomUnreadCount extends Component {
   render() {
@@ -30,16 +32,13 @@ SidebarRoomUnreadCount.defaultProps = {
   unreadCount: 0
 };
 
-function mapStateToProps(state, ownProps) {
-  const lastReadTime = state.getIn(['lastSeenTimes', ownProps.room.get('name')]);
-  const unreadCount = state.getIn(['roomMessages', ownProps.room.get('name')]).reduce((total, messageId) => {
-    const messageTime = state.getIn(['messages', messageId, 'createDateLongUTC']);
-    return messageTime && messageTime - lastReadTime > 0 ? total + 1 : total;
-  }, 0);
-
-  return {
-    unreadCount
+const makeMapStateToProps = () => {
+  const getLastSeenTimeForRoom = makeGetLastSeenTimeForRoom();
+  return (state, ownProps) => {
+    return {
+      unreadCount: getLastSeenTimeForRoom(state, ownProps)
+    };
   };
-}
+};
 
-export default connect(mapStateToProps)(SidebarRoomUnreadCount);
+export default connect(makeMapStateToProps)(SidebarRoomUnreadCount);

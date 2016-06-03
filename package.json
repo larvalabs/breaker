@@ -6,7 +6,7 @@
   "scripts": {
     "start": "",
     "postinstall": "webpack --progress -p --config=webpack.config.prod.js",
-    "lint": "eslint web/chat"
+    "lint": "eslint web/*"
   },
   "pre-commit": [],
   "bugs": {
@@ -46,6 +46,7 @@
     "redux-devtools-multiple-monitors": "^1.0.1",
     "redux-immutable": "^3.0.6",
     "redux-thunk": "^2.0.1",
+    "reselect": "^2.5.1",
     "staydown": "^1.2.4",
     "webpack": "^1.12.15"
   },

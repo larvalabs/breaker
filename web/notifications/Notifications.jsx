@@ -35,7 +35,7 @@ class Notifications extends Component {
               options={options}
           />
         </div>
-    )
+    );
   }
 }
 

@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 
 import { handleCloseAllMenus } from '../redux/actions/menu-actions';
 
+import { getSettingsOrSidebarOpen } from '../redux/selectors/ui-selectors';
+
 
 class MobileRoomOverlay extends Component {
   render() {
@@ -22,13 +24,13 @@ class MobileRoomOverlay extends Component {
 
 function mapStateToProps(state) {
   return {
-    show: state.getIn(['ui', 'sidebar_open']) || state.getIn(['ui', 'settings_open'])
+    show: getSettingsOrSidebarOpen(state)
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    closeSidebar(){
+    closeSidebar() {
       dispatch(handleCloseAllMenus());
     }
   };
