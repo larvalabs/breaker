@@ -1,7 +1,7 @@
-import { createSelector } from 'reselect'
+import { createSelector } from 'reselect';
 
+import { getModsForCurrentRoom } from './members-selectors';
 
-import { getModsForCurrentRoom } from './members-selectors'
 
 const getAuthUser = (state) => state.get('authUser');
 

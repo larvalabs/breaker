@@ -19,6 +19,14 @@ export const getSettingsOpen = createSelector(
     }
 );
 
+
+export const getSettingsOrSidebarOpen = createSelector(
+    [getSidebarOpen, getSettingsOpen],
+    (sidebarOpen, settingsOpen) => {
+      return sidebarOpen || settingsOpen;
+    }
+);
+
 export const getScrollToRoomName = createSelector(
     [getUi],
     (ui) => {
