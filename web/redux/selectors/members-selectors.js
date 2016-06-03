@@ -15,16 +15,26 @@ export const getMembersForCurrentRoom = createSelector(
 export const getModsForCurrentRoom = createSelector(
     [getMembersForCurrentRoom],
     (membersForCurrentRoom) => {
-      return membersForCurrentRoom.get('mods', Immutable.List())
+      return membersForCurrentRoom.get('mods', Immutable.List());
     }
 );
 
-export const getSidebarOpen = createSelector(
-    [getModsForCurrentRoom],
-    (modUsernames) => {
-      let userIsMod;
-      if (members && members.get('breakerapp')) {
-        return modUsernames.constains(user.get('username'));
-      }
+export const getOnlineForCurrentRoom = createSelector(
+    [getMembersForCurrentRoom],
+    (membersForCurrentRoom) => {
+      return membersForCurrentRoom.get('online', Immutable.List());
+    }
+);
+
+export const getOfflineForCurrentRoom = createSelector(
+    [getMembersForCurrentRoom],
+    (membersForCurrentRoom) => {
+      return membersForCurrentRoom.get('offline', Immutable.List());
+    }
+);
+export const getAllMembersForCurrentRoom = createSelector(
+    [getModsForCurrentRoom, getOnlineForCurrentRoom, getOfflineForCurrentRoom],
+    (modUserNames, onlineUserNames, offlineUserNames) => {
+      return modUserNames.union(onlineUserNames).union(offlineUserNames);
     }
 );

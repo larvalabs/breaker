@@ -6,6 +6,8 @@ import Autosuggest from 'react-autosuggest';
 import { sendNewMessage, resetChatInputFocus, setChatInputFocus } from '../redux/actions/chat-actions';
 import { handleCloseAllMenus } from '../redux/actions/menu-actions';
 
+import { getConnected, getSetInputFocus } from '../redux/selectors/ui-selectors';
+import { getAllMembersForCurrentRoom } from '../redux/selectors/members-selectors';
 
 const theme = {
   suggestionsContainer: 'suggestionsContainer',
@@ -161,7 +163,7 @@ class ChatMessageInput extends Component {
 
 ChatMessageInput.defaultProps = {
   roomName: '',
-  members: Immutable.Map(),
+  members: Immutable.List(),
   connected: true,
   setInputFocusValue: false,
   closeSidebar: () => {},
@@ -171,17 +173,11 @@ ChatMessageInput.defaultProps = {
 };
 
 function mapStateToProps(state) {
-  const roomName = state.get('currentRoom');
-  const membersMap = state.getIn(['members', roomName], Immutable.Map());
-  const members = membersMap.reduce((a, b) => a.union(b), Immutable.OrderedSet()).toList();
-  const connected = state.getIn(['ui', 'connected']);
-  const setInputFocusValue = state.getIn(['ui', 'setInputFocus'], false);
-
   return {
-    members,
-    roomName,
-    connected,
-    setInputFocusValue
+    members: getAllMembersForCurrentRoom(state),
+    roomName: state.get('currentRoom'),
+    connected: getConnected(state),
+    setInputFocusValue: getSetInputFocus(state)
   };
 }
 

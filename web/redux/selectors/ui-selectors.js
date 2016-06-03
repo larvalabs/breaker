@@ -30,3 +30,17 @@ export const getMoreMessagesLoading = createSelector(
       return ui.get('moreMessagesLoading', false);
     }
 );
+
+export const getConnected = createSelector(
+    [getUi],
+    (ui) => {
+      return ui.get('connected', false);
+    }
+);
+
+export const getSetInputFocus = createSelector(
+    [getUi],
+    (ui) => {
+      return ui.get('setInputFocus', false);
+    }
+);
