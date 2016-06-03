@@ -1,7 +1,9 @@
-import { createSelector } from 'reselect'
+import { createSelector } from 'reselect';
+import Immutable from 'immutable';
 
 
 const getUi = (state) => state.get('ui');
+const getCollapsedLinks = (state) => state.getIn(['ui', 'collapsedLinks'], Immutable.List());
 
 export const getSidebarOpen = createSelector(
     [getUi],
@@ -51,3 +53,12 @@ export const getScrollToMessageId = createSelector(
       return ui.get('scrollToMessageId', null);
     }
 );
+
+
+export const getAllCollapsedLinks = createSelector(
+    [getCollapsedLinks],
+    (links) => {
+      return links;
+    }
+);
+

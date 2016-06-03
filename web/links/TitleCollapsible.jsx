@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Immutable from 'immutable';
 
 import formatBytes from '../util/formatters';
 
 import { toggleCollapseLink } from '../redux/actions/chat-actions';
-
+import { getAllCollapsedLinks } from '../redux/selectors/ui-selectors';
 
 export default class TitleCollapsible extends Component {
   constructor(props) {
@@ -73,8 +72,8 @@ TitleCollapsible.defaultProps = {
 
 function mapStateToProps(state, ownProps) {
   return {
-    collapsed: state.getIn(['ui', 'collapsedLinks'], Immutable.Map()).contains(ownProps.uuid)
+    collapsed: getAllCollapsedLinks(state).contains(ownProps.uuid)
   };
 }
 
-export default connect(mapStateToProps)(TitleCollapsible)
+export default connect(mapStateToProps)(TitleCollapsible);
