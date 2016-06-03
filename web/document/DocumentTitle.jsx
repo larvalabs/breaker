@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 import ReactDocumentTitle from 'react-document-title';
+import { getTotalLastSeenTimes } from '../redux/selectors/last-seen-selectors';
 
 
-export default class DocumentTitle extends Component {
+class DocumentTitle extends Component {
   componentDidMount() {
     const { roomName } = this.props;
 
@@ -47,4 +49,13 @@ export default class DocumentTitle extends Component {
 DocumentTitle.defaultProps = {
   unreadCount: 0,
   roomName: ''
+};
+
+function mapStateToProps(state) {
+  return {
+    roomName: state.get('currentRoom'),
+    unreadCount: getTotalLastSeenTimes(state)
+  };
 }
+
+export default connect(mapStateToProps)(DocumentTitle);

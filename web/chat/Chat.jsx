@@ -9,6 +9,8 @@ import ChatThread from './ChatThread';
 import ChatMessageInput from './ChatMessageInput';
 import ChatLoginInput from './ChatLoginInput';
 
+import { getCurrentRoom } from '../redux/selectors/rooms-selectors';
+
 const $ = window.jQuery;
 
 
@@ -43,29 +45,33 @@ class Chat extends Component {
     this.staydown.intend_down = true;
   }
 
-  renderMessage(props) {
-    const body = props.message.get('body');
-    const type = props.message.get('type');
+  renderMessage() {
+    const { message } = this.props;
+    const body = message.get('body');
+    const type = message.get('type');
 
     if (!body || !type) {
       return null;
     }
 
-    return <div className={`message-box ${type}`}>{props.message.get('body')}</div>;
+    return <div className={`message-box ${type}`}>{body}</div>;
   }
   renderMessageInput() {
+    const { room, roomName } = this.props;
+
     if (Config.guest) {
-      return <ChatLoginInput roomName={this.props.roomName} room={this.props.room}/>;
+      return <ChatLoginInput roomName={roomName} room={room}/>;
     }
 
-    return <ChatMessageInput roomName={this.props.roomName} onMessageInput={this.onMessageInput}/>;
+    return <ChatMessageInput roomName={roomName} onMessageInput={this.onMessageInput}/>;
   }
   render() {
+    const { users, roomName } = this.props;
     return (
       <div id="centercol" className="col">
         <div id="threadparent" className="vbox">
-          {this.renderMessage(this.props)}
-          <ChatThread users={this.props.users} roomName={this.props.roomName}/>
+          {this.renderMessage()}
+          <ChatThread users={users} roomName={roomName}/>
           <div className="input-container padder padder-v b-t b-light text-center">
             {this.renderMessageInput()}
           </div>
@@ -80,13 +86,11 @@ Chat.defaultProps = {
 };
 
 function mapStateToProps(state) {
-  const roomName = state.get('currentRoom');
-
   return {
     users: state.get('users'),
-    roomName,
+    roomName: state.get('currentRoom'),
     message: state.get('bannerMessage', Immutable.Map()),
-    room: state.getIn(['rooms', roomName])
+    room: getCurrentRoom(state)
   };
 }
 

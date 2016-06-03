@@ -37,9 +37,11 @@ public/newsite/compass/.sass-cache
 *.iml
 *.ids
 *.ipr
+chat.ipr
 
 # Node stuff
 node_modules
+npm-debug.log
 
 # Webpack output
 /public/dist/
