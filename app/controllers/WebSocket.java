@@ -97,7 +97,10 @@ public class WebSocket extends PreloadUserController {
             }
         } else {
             try {
-                user.joinChatRoom(room);
+                ChatUserRoomJoin userRoomJoin = ChatUserRoomJoin.findByUserAndRoom(user, room);
+                if (userRoomJoin == null) {
+                    user.joinChatRoom(room);
+                }
             } catch (ChatUser.UserBannedException e) {
                 // todo show message that they're banned
                 Application.index();
@@ -228,8 +231,8 @@ public class WebSocket extends PreloadUserController {
                 Logger.debug("First connection for " + user.username + ", broadcasting join for connectionId " + connectionId);
             }
 */
-            // todo Make this not wait for redis response
-            room.userPresent(user.username, connectionId);
+            // Replaced with bulk pipeline presence outside of loop
+//            room.userPresent(user.username, connectionId);
 
             ChatRoomStream.SingleWaiterWeakReferenceEventStream<ChatRoomStream.Event> eventStreamForThisUser = chatRoomStreamForRoom.join(room, userModel, connectionId, broadcastJoin);
 
@@ -314,6 +317,9 @@ public class WebSocket extends PreloadUserController {
             // This is a single element array because the current json user can get updated by events in an inner loop
             JsonUser[] jsonUser = new JsonUser[]{JsonUser.fromUser(user, true)};
             List<ChatRoom> bannedFromRooms = user.getBannedFromRooms();
+
+            // Bulk set user presence in a single pipelined command
+            RedisUtil.markUserPresentForAllTheirRooms(user.getUsername(), connectionId, chatRoomJoins);
 
             try {
                 {

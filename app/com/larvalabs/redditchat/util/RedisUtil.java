@@ -3,10 +3,13 @@ package com.larvalabs.redditchat.util;
 import com.larvalabs.redditchat.Constants;
 import com.sun.istack.internal.Nullable;
 import models.ChatUser;
+import models.ChatUserRoomJoin;
 import play.Logger;
 import play.Play;
 import play.modules.redis.Redis;
+import redis.clients.jedis.Pipeline;
 
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
@@ -63,6 +66,25 @@ public class RedisUtil {
         } catch (Exception e) {
             Logger.error(e, "Error contacting redis.");
         }
+    }
+
+    /**
+     * Set user present for all rooms present in the joins list. Executed with a redis pipeline so you save a roundtrip
+     * per room.
+     * @param username
+     * @param connectionId
+     * @param joins
+     */
+    public static void markUserPresentForAllTheirRooms(String username, String connectionId, List<ChatUserRoomJoin> joins) {
+        long startTime = System.currentTimeMillis();
+        int time = (int) (System.currentTimeMillis() / 1000);
+        Pipeline pipeline = Redis.pipelined();
+        for (ChatUserRoomJoin roomJoin : joins) {
+            pipeline.zadd(getRedisPresenceKeyForRoom(roomJoin.getRoom().getName()), time, getUsernameAndConnectionString(username, connectionId));
+        }
+        pipeline.zadd(REDISKEY_PRESENCE_GLOBAL, time, getUsernameAndConnectionString(username, connectionId));
+        pipeline.sync();
+        Stats.measure(Stats.StatKey.REDIS_TIMING_PIPELINEUSERPRESENT, (System.currentTimeMillis() - startTime));
     }
 
     private static String getUsernameAndConnectionString(String username, String connectionId) {
