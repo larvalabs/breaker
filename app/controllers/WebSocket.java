@@ -312,7 +312,7 @@ public class WebSocket extends PreloadUserController {
 
             // This is a single element array because the current json user can get updated by events in an inner loop
             JsonUser[] jsonUser = new JsonUser[]{JsonUser.fromUser(user, true)};
-            Set<ChatRoom> bannedFromRooms = user.getBannedFromRooms();
+            List<ChatRoom> bannedFromRooms = user.getBannedFromRooms();
 
             try {
                 {

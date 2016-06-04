@@ -4,8 +4,6 @@ import com.google.gson.JsonObject;
 import com.larvalabs.redditchat.Constants;
 import com.larvalabs.redditchat.dataobj.BreakerCache;
 import com.larvalabs.redditchat.dataobj.JsonFlair;
-import com.larvalabs.redditchat.dataobj.JsonUser;
-import com.larvalabs.redditchat.realtime.ChatRoomStream;
 import com.larvalabs.redditchat.util.RedisUtil;
 import com.larvalabs.redditchat.util.Util;
 import jobs.UpdateUserFromRedditJob;
@@ -82,10 +80,6 @@ public class ChatUser extends Model {
     @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(name = "user_flagging_user")
     public Set<ChatUser> flaggingUsers = new HashSet<ChatUser>();
-
-    @ManyToMany(cascade = CascadeType.PERSIST)
-    @JoinTable(name = "user_bannedroom")
-    public Set<ChatRoom> bannedFromRooms = new HashSet<ChatRoom>();
 
     public long lastSeenMentionedMessageId = -1;
 
@@ -339,14 +333,6 @@ public class ChatUser extends Model {
 
     public void setBot(boolean bot) {
         this.bot = bot;
-    }
-
-    public Set<ChatRoom> getBannedFromRooms() {
-        return bannedFromRooms;
-    }
-
-    public void setBannedFromRooms(Set<ChatRoom> bannedFromRooms) {
-        this.bannedFromRooms = bannedFromRooms;
     }
 
     // Static stuff
@@ -658,6 +644,10 @@ public class ChatUser extends Model {
         redditUserCreatedUTC = userJson.get("created_utc").getAsLong();
         redditUserSuspended = userJson.get("is_suspended").getAsBoolean();
         lastResponseApiMe = userJson.toString();
+    }
+
+    public List<ChatRoom> getBannedFromRooms() {
+        return ChatRoom.find("? member of bannedUsers", this).fetch();
     }
 
     /**
