@@ -25,7 +25,8 @@ public class Stats {
         REDDIT_NEWMSGNOTIFICATION_FAILED("redditnewmsgnotification.failed"),
         USER_CACHE_SIZE("usercache.size"),
         ROOM_CACHE_SIZE("roomcache.size"),
-        REDIS_TIMING_USERPRESENT("redis.timing.userpresent")
+        REDIS_TIMING_USERPRESENT("redis.timing.userpresent"),
+        LOAD_FULLSTATE_TIME("fullstate.timing.load")
         ;
 
         private String key;

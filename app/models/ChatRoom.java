@@ -648,7 +648,6 @@ public class ChatRoom extends Model {
      * @return
      */
     public boolean userCanPost(ChatUser chatUser, ChatUserRoomJoin roomJoin, boolean checkBanned) {
-        Logger.info("Checking user can post in room " + name);
         if (roomJoin == null) {
             roomJoin = ChatUserRoomJoin.findByUserAndRoom(chatUser, this);
         }
@@ -662,7 +661,7 @@ public class ChatRoom extends Model {
             }
         }
         if (chatUser.getLinkKarma() + chatUser.getCommentKarma() < getKarmaThreshold()) {
-            Logger.debug("User is below karma threshold for " + name);
+//            Logger.debug("User is below karma threshold for " + name);
             return false;
         }
         if (chatUser.isFlagBanned() || chatUser.isShadowBan()) {

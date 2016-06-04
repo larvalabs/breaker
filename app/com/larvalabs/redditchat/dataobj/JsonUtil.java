@@ -1,6 +1,7 @@
 package com.larvalabs.redditchat.dataobj;
 
 import com.larvalabs.redditchat.util.RedisUtil;
+import com.larvalabs.redditchat.util.Stats;
 import models.ChatRoom;
 import models.ChatUser;
 import models.ChatUserRoomJoin;
@@ -50,6 +51,7 @@ public class JsonUtil {
     }
 
     public static FullState loadFullStateForUser(ChatUser user) {
+        long startTime = System.currentTimeMillis();
         FullState state = new FullState();
 
         Query getAllStuffQuery = JPA.em().createQuery("select ur from ChatUserRoomJoin ur join fetch ur.room urr join fetch ur.user u where ur.room in (select room from ChatUserRoomJoin ur2 where ur2.user = :user)")
@@ -90,7 +92,7 @@ public class JsonUtil {
             state.members.put(roomName, roomMembers);
 
             if (!state.roomMessages.containsKey(roomName)) {
-                long messagesStart = System.currentTimeMillis();
+//                long messagesStart = System.currentTimeMillis();
                 ArrayList<JsonMessage> roomMessages = BreakerCache.getLastMessages(thisRoom);
                 ArrayList<String> messageIds = new ArrayList<>();
                 for (JsonMessage roomMessage : roomMessages) {
@@ -98,13 +100,15 @@ public class JsonUtil {
                     messageIds.add(roomMessage.uuid);
                 }
                 state.roomMessages.put(roomName, messageIds);
-                Logger.info("Messages load time: " + (System.currentTimeMillis() - messagesStart));
+//                Logger.info("Messages load time: " + (System.currentTimeMillis() - messagesStart));
             }
 
             if (user.equals(thisUser)) {
                 state.lastSeenTimes.put(roomName, chatRoomJoin.getLastSeenMessageTime());
             }
         }
+
+        Stats.measure(Stats.StatKey.LOAD_FULLSTATE_TIME, (System.currentTimeMillis() - startTime));
 
         return state;
     }
