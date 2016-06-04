@@ -114,7 +114,7 @@ public class RedditLinkBotJob extends Job {
 
                         JsonMessage jsonMessage = JsonMessage.from(message, botUser.getUsername(), room.getName());
                         jsonMessage.setLinkInfo(message.getLinks());
-                        ChatRoomStream.getEventStream(subredditToProcess).say(jsonMessage, JsonChatRoom.from(room, room.getModeratorUsernames()), JsonUser.fromUser(message.getUser(), true));
+                        ChatRoomStream.getEventStream(subredditToProcess).say(jsonMessage, JsonChatRoom.from(room), JsonUser.fromUser(message.getUser(), true));
 
                         numPosted++;
                         if (numPosted >= MAX_NUM_TO_POST_PER_RUN) {

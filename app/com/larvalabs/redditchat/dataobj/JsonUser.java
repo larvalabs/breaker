@@ -65,7 +65,7 @@ public class JsonUser implements Serializable {
     public static JsonUser fromUser(ChatUser user, boolean isOnline) {
         JsonUser jsonUser = BreakerCache.getJsonUser(user.username);
         if (jsonUser == null) {
-            Logger.info("Cache miss: " + user.username);
+            Logger.info("JsonUser cache miss: " + user.username);
             jsonUser = new JsonUser(user.getId(), user.username, user.notificationPreference,
                     user.getLastSeenDate(), user.getLastSeenDate().getTime(),
                     user.getLikeCount(), user.getProfileImageUrl(), user.getStatusMessage(), user.isBot(),

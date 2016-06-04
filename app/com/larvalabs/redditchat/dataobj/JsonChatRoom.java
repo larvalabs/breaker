@@ -4,6 +4,7 @@ import com.larvalabs.redditchat.Constants;
 import models.ChatRoom;
 import models.ChatUser;
 import models.ChatUserRoomJoin;
+import play.Logger;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -58,9 +59,27 @@ public class JsonChatRoom implements Serializable {
     }
 
     /**
+     * Check cache for a json rep of this room, otherwise create (including loading moderators)
+     * @param room
+     * @return
+     */
+    public static JsonChatRoom from(ChatRoom room) {
+        JsonChatRoom jsonChatRoom = BreakerCache.getJsonChatRoom(room.getName());
+        if (jsonChatRoom == null) {
+            Logger.info("JsonChatRoom cache miss: " + room.getName());
+            jsonChatRoom = from(room, room.getModeratorUsernames());
+            BreakerCache.putJsonChatRoom(jsonChatRoom);
+        } else {
+            Logger.info("JsonChatRoom cache hit: " + room.getName());
+        }
+        return jsonChatRoom;
+    }
+
+    /**
      * Get a json rep for this room but doens't load unread counts or starred status for logged in user.
      * @param room
      * @return
+     * @deprecated
      */
     public static JsonChatRoom from(ChatRoom room, List<String> moderators) {
         JsonRoomStyles jsonRoomStyles = new JsonRoomStyles(room.sidebarBackgroundColor, room.sidebarTextColor,
@@ -82,5 +101,9 @@ public class JsonChatRoom implements Serializable {
 
     public boolean isDefaultRoom() {
         return name.equals(Constants.CHATROOM_DEFAULT);
+    }
+
+    public boolean isModerator(String username) {
+        return moderators.contains(username);
     }
 }

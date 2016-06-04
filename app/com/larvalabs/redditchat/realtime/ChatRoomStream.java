@@ -214,7 +214,7 @@ public class ChatRoomStream {
     public SingleWaiterWeakReferenceEventStream<Event> join(ChatRoom room, ChatUser user, String connectionId, boolean broadcastJoin) {
         if (broadcastJoin) {
             JsonUser jsonUser = JsonUser.fromUser(user, true);
-            publishEvent(new Join(JsonChatRoom.from(room, room.getModeratorUsernames()), jsonUser));
+            publishEvent(new Join(JsonChatRoom.from(room), jsonUser));
         }
         String streamKey = getStreamKey(room.getName(), user.getUsername(), connectionId);
         SingleWaiterWeakReferenceEventStream<Event> userEventStream = userStreams.get(streamKey);
@@ -236,7 +236,7 @@ public class ChatRoomStream {
 //        String[] usernames = room.getUsernamesPresent().toArray(new String[]{});
 //        TreeSet<ChatUser> users = room.getPresentUserObjects();
 //        Logger.info("Sending member list of length " + users.size());
-        publishEvent(new MemberList(JsonChatRoom.from(room, room.getModeratorUsernames()), room.getAllUsersWithOnlineStatus()));
+        publishEvent(new MemberList(JsonChatRoom.from(room), room.getAllUsersWithOnlineStatus()));
     }
 
     /**
@@ -282,18 +282,18 @@ public class ChatRoomStream {
     public void sendMessageUpdate(ChatRoom room, models.Message message) {
         JsonMessage jsonMessage = JsonMessage.from(message, message.getUser().getUsername(), room.getName());
         jsonMessage.setLinkInfo(message.getLinks());
-        JsonChatRoom jsonRoom = JsonChatRoom.from(room, room.getModeratorUsernames());
+        JsonChatRoom jsonRoom = JsonChatRoom.from(room);
         publishEvent(new UpdateMessageEvent(jsonRoom, jsonMessage));
     }
 
     public void sendUserUpdate(ChatRoom room, ChatUser user, boolean isOnline) {
         JsonUser jsonUser = JsonUser.fromUser(user, isOnline);
-        JsonChatRoom jsonRoom = JsonChatRoom.from(room, room.getModeratorUsernames());
+        JsonChatRoom jsonRoom = JsonChatRoom.from(room);
         publishEvent(new UpdateUserEvent(jsonRoom, jsonUser));
     }
 
     public void sendRoomUpdate(ChatRoom room) {
-        publishEvent(new UpdateRoomEvent(JsonChatRoom.from(room, room.getModeratorUsernames())));
+        publishEvent(new UpdateRoomEvent(JsonChatRoom.from(room)));
     }
 
     public void publishEvent(Event event) {

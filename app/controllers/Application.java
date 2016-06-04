@@ -387,7 +387,7 @@ public class Application extends PreloadUserController {
         ChatUser user = connected();
         ChatRoom chatRoom = ChatRoom.findOrCreateForName(roomName);
         user.leaveChatRoom(chatRoom);
-        ChatRoomStream.getEventStream(roomName).roomLeave(JsonChatRoom.from(chatRoom, chatRoom.getModeratorUsernames()),
+        ChatRoomStream.getEventStream(roomName).roomLeave(JsonChatRoom.from(chatRoom),
                 JsonUser.fromUser(user, RedisUtil.isUserOnlineInAnyRoom(user.getUsername())));
         renderText("ok");
     }

@@ -1,12 +1,17 @@
 package models;
 
 import com.larvalabs.redditchat.Constants;
+import com.larvalabs.redditchat.dataobj.BreakerCache;
 import com.larvalabs.redditchat.dataobj.JsonUser;
+import com.larvalabs.redditchat.realtime.ChatRoomStream;
 import com.larvalabs.redditchat.util.RedisUtil;
 import com.sun.istack.internal.Nullable;
 import jobs.SaveLastReadTimeForAllPendingJob;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import play.Logger;
 import play.db.DB;
+import play.db.jpa.JPABase;
 import play.db.jpa.Model;
 import play.modules.redis.Redis;
 import reddit.BreakerRedditClient;
@@ -635,14 +640,26 @@ public class ChatRoom extends Model {
         return topRooms;
     }
 
-    public boolean userCanPost(ChatUser chatUser) {
-        ChatUserRoomJoin roomJoin = ChatUserRoomJoin.findByUserAndRoom(chatUser, this);
+    /**
+     *
+     * @param chatUser
+     * @param roomJoin Can be null, at which point we'll load it. Useful to provide when optimizing.
+     * @param checkBanned Check if user banned as well (requires an extra join)
+     * @return
+     */
+    public boolean userCanPost(ChatUser chatUser, ChatUserRoomJoin roomJoin, boolean checkBanned) {
+        Logger.info("Checking user can post in room " + name);
+        if (roomJoin == null) {
+            roomJoin = ChatUserRoomJoin.findByUserAndRoom(chatUser, this);
+        }
         if (roomJoin == null) {
             return false;
         }
-        if (getBannedUsers().contains(chatUser)) {
-            Logger.debug("User " + chatUser.getUsername() + " is banned from " + name + " and cannot post.");
-            return false;
+        if (checkBanned) {
+            if (getBannedUsers().contains(chatUser)) {
+                Logger.debug("User " + chatUser.getUsername() + " is banned from " + name + " and cannot post.");
+                return false;
+            }
         }
         if (chatUser.getLinkKarma() + chatUser.getCommentKarma() < getKarmaThreshold()) {
             Logger.debug("User is below karma threshold for " + name);
@@ -662,5 +679,20 @@ public class ChatRoom extends Model {
 
     public boolean isDefaultRoom() {
         return getName().equals(Constants.CHATROOM_DEFAULT);
+    }
+
+
+    /**
+     * Model overrides and other lower level methods
+     */
+
+    @Override
+    public <T extends JPABase> T save() {
+        Logger.info("SAVEOVERRIDE - ChatRoom");
+        BreakerCache.removeChatRoom(name);
+        // todo Could consider a global server update channel and send updates this way, however this should
+        // already currently be handled by the various room update methods elsewhere in the server
+//        ChatRoomStream.getEventStream(Constants.CHATROOM_DEFAULT).sendRoomUpdate(this);
+        return super.save();
     }
 }

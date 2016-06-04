@@ -63,8 +63,10 @@ public class JsonUtil {
             ChatUser thisUser = chatRoomJoin.getUser();
 //            Logger.info("Preload " + thisRoom.getName() + " for " + thisUser.getUsername());
             String roomName = thisRoom.getName();
-            if (!state.rooms.containsKey(roomName)) {
-                state.rooms.put(roomName, JsonChatRoom.from(thisRoom, thisRoom.getModeratorUsernames()));
+            JsonChatRoom jsonChatRoom = state.rooms.get(roomName);
+            if (jsonChatRoom == null) {
+                jsonChatRoom = JsonChatRoom.from(thisRoom);
+                state.rooms.put(roomName, jsonChatRoom);
             }
 
             JsonRoomMembers roomMembers = state.members.get(roomName);
@@ -78,7 +80,7 @@ public class JsonUtil {
                 state.users.put(jsonUser.username, jsonUser);
             }
             jsonUser.addFlair(roomName.toLowerCase(), new JsonFlair(chatRoomJoin.getFlairText(), chatRoomJoin.getFlairCss(), chatRoomJoin.getFlairPosition()));
-            if (thisRoom.getModerators().contains(thisUser)) {  // check if slow
+            if (jsonChatRoom.isModerator(thisUser.getUsername())) {
                 roomMembers.mods.add(jsonUser.username);
             } else if (jsonUser.online) {
                 roomMembers.online.add(jsonUser.username);

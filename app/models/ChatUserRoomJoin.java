@@ -16,6 +16,7 @@ import java.util.List;
 public class ChatUserRoomJoin extends Model {
 
     @ManyToOne
+    @Fetch(FetchMode.JOIN)
     @Index(name="userindex")
     public ChatUser user;
 

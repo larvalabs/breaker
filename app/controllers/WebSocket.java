@@ -122,7 +122,7 @@ public class WebSocket extends PreloadUserController {
         TreeMap<String, ArrayList<String>> roomMessages = fullState.roomMessages;
         Map<String, JsonMessage> messages = fullState.messages;
 
-        Logger.info("Websocket join time checkpoint post preload all state " + user.getUsername() + ": " + (System.currentTimeMillis() - startTime));
+        Logger.info("Websocket room time checkpoint post preload all state " + user.getUsername() + ": " + (System.currentTimeMillis() - startTime));
 
 //        Logger.info("Websocket join time checkpoint 1 for " + user.getUsername() + ": " + (System.currentTimeMillis() - startTime));
         String roomsString = gson.toJson(rooms);
@@ -132,7 +132,7 @@ public class WebSocket extends PreloadUserController {
         String messagesString = gson.toJson(messages);
         String lastSeenTimesString = gson.toJson(fullState.lastSeenTimes);
         long loadTime = System.currentTimeMillis() - startTime;
-        Logger.info("Websocket join time checkpoint 2 (post gson) for " + user.getUsername() + ": " + loadTime);
+        Logger.info("Websocket room time checkpoint 2 (post gson) for " + user.getUsername() + ": " + loadTime);
         Stats.measure(Stats.StatKey.INITIALPAGE_TIME, loadTime);
 
         // Links to other suggested rooms
@@ -168,7 +168,7 @@ public class WebSocket extends PreloadUserController {
 
         roomName = roomName.toLowerCase();
 
-        Logger.info("Websocket join time for " + user.getUsername() + ": " + (System.currentTimeMillis() - startTime));
+        Logger.info("Websocket room time for " + user.getUsername() + ": " + (System.currentTimeMillis() - startTime));
 
         render("index.html", user, rooms, userString, roomName, environment, roomsString, usersString, membersString,
                 roomMessagesString, messagesString, lastSeenTimesString);
@@ -217,23 +217,23 @@ public class WebSocket extends PreloadUserController {
             this.inbound = inbound;
         }
 
-        private void addConnection(ChatUser userModel, JsonUser user, String connectionId, ChatRoom room) {
+        private void addConnection(ChatUser userModel, JsonUser user, String connectionId, ChatRoom room, ChatUserRoomJoin roomJoin, boolean isModerator, boolean broadcastJoin) {
             ChatRoomStream chatRoomStreamForRoom = ChatRoomStream.getEventStream(room.name);
 
             // Socket connected, join the chat room
             // If this is the first connection this user has to the room then broadcast
-            boolean broadcastJoin = !room.isUserPresent(user.username);
+//            boolean broadcastJoin = !room.isUserPresent(user.username);
 /*
             if (broadcastJoin) {
                 Logger.debug("First connection for " + user.username + ", broadcasting join for connectionId " + connectionId);
             }
 */
+            // todo Make this not wait for redis response
             room.userPresent(user.username, connectionId);
-            boolean isModerator = room.isModerator(userModel);
             ChatRoomStream.SingleWaiterWeakReferenceEventStream<ChatRoomStream.Event> eventStreamForThisUser = chatRoomStreamForRoom.join(room, userModel, connectionId, broadcastJoin);
 
-            RoomConnection roomConnection = new RoomConnection(JsonChatRoom.from(room, room.getModeratorUsernames()),
-                    chatRoomStreamForRoom, eventStreamForThisUser, isModerator, room.userCanPost(userModel));
+            RoomConnection roomConnection = new RoomConnection(JsonChatRoom.from(room),
+                    chatRoomStreamForRoom, eventStreamForThisUser, isModerator, room.userCanPost(userModel, roomJoin, false));
             roomConnections.put(room.name, roomConnection);
             roomConnectionList.add(roomConnection);
         }
@@ -293,36 +293,45 @@ public class WebSocket extends PreloadUserController {
 
         public static void join() {
 
+            long startTime = System.currentTimeMillis();
+
             ChatUser user = getUser();
             if (user == null) {
                 disconnect();
                 return;
             }
             String connectionId = Util.getUUID();
+            Logger.info("Getting chat room joins");
             List<ChatUserRoomJoin> chatRoomJoins = user.getChatRoomJoins();
 
             Logger.debug(user.getUsername() + " connecting to websocket and " + chatRoomJoins.size() + " rooms.");
 
             RoomConnectionManager roomConnectionManager = new RoomConnectionManager(inbound);
             ArrayList<JsonChatRoom> jsonChatRoomsList = new ArrayList<JsonChatRoom>();
+            boolean alreadyOnline = RedisUtil.getAllOnlineUsersForAllRooms().contains(user.getUsername());
 
             // This is a single element array because the current json user can get updated by events in an inner loop
             JsonUser[] jsonUser = new JsonUser[]{JsonUser.fromUser(user, true)};
+            Set<ChatRoom> bannedFromRooms = user.getBannedFromRooms();
 
             try {
                 {
                     int i = 0;
                     for (ChatUserRoomJoin chatRoomJoin : chatRoomJoins) {
                         ChatRoom room = chatRoomJoin.getRoom();
-                        if (Constants.CHATROOM_DEFAULT.equals(room.name) || room.isOpen()) {
-                            jsonChatRoomsList.add(JsonChatRoom.from(room, room.getModeratorUsernames()));
-                            roomConnectionManager.addConnection(user, jsonUser[0], connectionId, room);
-                            i++;
+                        if (!bannedFromRooms.contains(room)) {
+                            if (Constants.CHATROOM_DEFAULT.equals(room.name) || room.isOpen()) {
+                                JsonChatRoom jsonChatRoom = JsonChatRoom.from(room);
+                                jsonChatRoomsList.add(jsonChatRoom);
+                                roomConnectionManager.addConnection(user, jsonUser[0], connectionId, room, chatRoomJoin, jsonChatRoom.isModerator(user.getUsername()), !alreadyOnline);
+                                i++;
+                            }
                         }
                     }
                 }
 
                 Stats.count(Stats.StatKey.WEBSOCKET_CONNECT, 1);
+                Logger.info("Websocket join time for " + user.getUsername() + ": " + (System.currentTimeMillis() - startTime));
 
                 // Loop while the socket is open
                 while (inbound.isOpen()) {
@@ -344,7 +353,7 @@ public class WebSocket extends PreloadUserController {
                 }
             } finally {
                 // Just to be sure, in case we didn't get a proper disconnect
-                Logger.warn("WEBSOCKETEXCEPTIONCLOSE: Closing streams for user " + jsonUser[0].username + " due to exception in websocket.");
+                Logger.warn("Closing streams for user " + jsonUser[0].username + " in websocket finally block.");
                 roomConnectionManager.disconnect(jsonUser[0], connectionId);
                 RedisUtil.userNotPresentGlobal(jsonUser[0].username, connectionId);
             }

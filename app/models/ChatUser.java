@@ -83,6 +83,10 @@ public class ChatUser extends Model {
     @JoinTable(name = "user_flagging_user")
     public Set<ChatUser> flaggingUsers = new HashSet<ChatUser>();
 
+    @ManyToMany(cascade = CascadeType.PERSIST)
+    @JoinTable(name = "user_bannedroom")
+    public Set<ChatRoom> bannedFromRooms = new HashSet<ChatRoom>();
+
     public long lastSeenMentionedMessageId = -1;
 
     public boolean shadowBan = false;
@@ -335,6 +339,14 @@ public class ChatUser extends Model {
 
     public void setBot(boolean bot) {
         this.bot = bot;
+    }
+
+    public Set<ChatRoom> getBannedFromRooms() {
+        return bannedFromRooms;
+    }
+
+    public void setBannedFromRooms(Set<ChatRoom> bannedFromRooms) {
+        this.bannedFromRooms = bannedFromRooms;
     }
 
     // Static stuff
@@ -649,7 +661,7 @@ public class ChatUser extends Model {
     }
 
     /**
-     *
+     * Model overrides and other lower level methods
      */
 
     @Override

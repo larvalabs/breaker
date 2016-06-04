@@ -60,11 +60,11 @@ public class NotifyMentionedUsersJob extends Job {
                                 + "[opt out](https://www.breakerapp.com/optout/" + message.getUuid() + "/" + mentionedUser.getUsername() + ")";
                         try {
                             RedditUtil.sendPrivateMessageFromBot(mentionedUser.getUsername(), subject, content);
-                            eventStream.sayFromServer(JsonChatRoom.from(chatRoom, chatRoom.getModeratorUsernames()), message.getUser().getUsername(),
+                            eventStream.sayFromServer(JsonChatRoom.from(chatRoom), message.getUser().getUsername(),
                                     "User " + mentionedUser.getUsername() + " is offline, so we notified them via PM on Reddit.");
                             Stats.count(Stats.StatKey.REDDIT_PM_SUCCESS, 1);
                         } catch (NetworkException | ApiException e) {
-                            eventStream.sayFromServer(JsonChatRoom.from(chatRoom, chatRoom.getModeratorUsernames()), message.getUser().getUsername(),
+                            eventStream.sayFromServer(JsonChatRoom.from(chatRoom), message.getUser().getUsername(),
                                     "Failed to notify " + mentionedUser.getUsername() + " via Reddit PM, please notify an admin.");
                             Stats.count(Stats.StatKey.REDDIT_PM_FAILED, 1);
                             e.printStackTrace();
@@ -72,7 +72,7 @@ public class NotifyMentionedUsersJob extends Job {
                     }
                 } else {
                     Logger.info("Not notifying mentioned user " + mentionedUser.getUsername() + " because of notification preference or because they are online.");
-                    eventStream.sayFromServer(JsonChatRoom.from(chatRoom, chatRoom.getModeratorUsernames()), message.getUser().getUsername(),
+                    eventStream.sayFromServer(JsonChatRoom.from(chatRoom), message.getUser().getUsername(),
                             "Not notifying " + mentionedUser.getUsername() + " via Reddit PM, they have requested to not receive PMs.");
                 }
             }

@@ -114,7 +114,7 @@ public class ChatCommands {
 
     public static void execCommand(ChatUser executingUser, ChatRoom room, String message,
                                    ChatRoomStream stream, Http.Outbound socket, ChatUser systemUser) throws NotEnoughPermissionsException, CommandNotRecognizedException {
-        JsonChatRoom jsonChatRoom = JsonChatRoom.from(room, room.getModeratorUsernames());
+        JsonChatRoom jsonChatRoom = JsonChatRoom.from(room);
         JsonUser systemJsonUser = JsonUser.fromUser(systemUser, true);
         if (!isCommand(message)) {
             Logger.debug("Error processing message, notifying user.");

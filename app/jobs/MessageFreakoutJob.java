@@ -34,7 +34,7 @@ public class MessageFreakoutJob extends Job {
             String megamatt2000 = "megamatt2000";
             ChatUser user = ChatUser.findByUsername(megamatt2000);
             JsonUser jsonUser = JsonUser.fromUser(user, true);
-            JsonChatRoom jsonChatRoom = JsonChatRoom.from(room, room.getModeratorUsernames());
+            JsonChatRoom jsonChatRoom = JsonChatRoom.from(room);
             Logger.info("Message freakout for room " + room.getName());
             for (int i = 0; i < 5; i++) {
                 JsonMessage jsonMessage = JsonMessage.makePresavedMessage(Util.getUUID(), megamatt2000, room.getName(), "Message " + i + " at " + runtime);

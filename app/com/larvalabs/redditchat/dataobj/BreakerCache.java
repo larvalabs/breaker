@@ -4,11 +4,9 @@ import com.larvalabs.redditchat.Constants;
 import com.larvalabs.redditchat.realtime.ChatRoomStream;
 import com.larvalabs.redditchat.util.Stats;
 import models.ChatRoom;
-import models.ChatUser;
 import models.Message;
 import org.apache.commons.collections4.map.LRUMap;
 import play.Logger;
-import play.cache.Cache;
 
 import java.util.*;
 
@@ -22,6 +20,7 @@ public class BreakerCache {
 
     private static HashMap<String, ArrayList<JsonMessage>> messageCache = new HashMap<String, ArrayList<JsonMessage>>();
     private static LRUMap<String, JsonUser> userCache = new LRUMap<>(1000);
+    private static LRUMap<String, JsonChatRoom> roomCache = new LRUMap<>(1000);
 
     private static final String KEY_MESSAGES = "messages-";
     private static final String KEY_USER = "user-";
@@ -42,16 +41,7 @@ public class BreakerCache {
             ArrayList<JsonMessage> roomMessages = messageCache.get(getMessagesKey(room.getName()));
             if (roomMessages == null || !CACHE_ENABLED) {
                 Logger.info("Cache miss room messages for " + room.getName());
-                roomMessages = new ArrayList<JsonMessage>();
-                List<Message> messageList = room.getMessages(Constants.DEFAULT_MESSAGE_LIMIT);
-                for (Message message : messageList) {
-                    JsonMessage jsonMessage = JsonMessage.from(message, message.getUser().getUsername(), room.getName());
-                    if (message.isHasLinks()) {
-                        jsonMessage.setLinkInfo(message.getLinks());
-                    }
-                    roomMessages.add(jsonMessage);
-                }
-                Collections.reverse(roomMessages);
+                roomMessages = getLastJsonMessages(room);
                 messageCache.put(getMessagesKey(room.getName()), roomMessages);
             } else {
                 Logger.info("Cache hit room messages for " + room.getName());
@@ -60,9 +50,32 @@ public class BreakerCache {
         }
     }
 
+    public static void preloadCacheForRoom(ChatRoom room) {
+        ArrayList<JsonMessage> lastJsonMessages = getLastJsonMessages(room);
+        synchronized (messageCache) {
+            messageCache.put(getMessagesKey(room.getName()), lastJsonMessages);
+        }
+    }
+
+    private static ArrayList<JsonMessage> getLastJsonMessages(ChatRoom room) {
+        ArrayList<JsonMessage> roomMessages = new ArrayList<JsonMessage>();
+        List<Message> messageList = room.getMessages(Constants.DEFAULT_MESSAGE_LIMIT);
+        for (Message message : messageList) {
+            JsonMessage jsonMessage = JsonMessage.from(message, message.getUser().getUsername(), room.getName());
+            if (message.isHasLinks()) {
+                jsonMessage.setLinkInfo(message.getLinks());
+            }
+            roomMessages.add(jsonMessage);
+        }
+        Collections.reverse(roomMessages);
+        return roomMessages;
+    }
+
     public static void clearUsersCacheAll() {
         Logger.info("Clearing all user cache values.");
-        userCache.clear();
+        synchronized (userCache) {
+            userCache.clear();
+        }
     }
 
     public static void clearUsersCache(String roomName) {
@@ -75,18 +88,52 @@ public class BreakerCache {
         }
     }
 
-    public static JsonUser putJsonUser(JsonUser user) {
+    public static void putJsonUser(JsonUser user) {
         synchronized (userCache) {
             if (random.nextFloat() < 0.1f) {
                 Stats.sample(Stats.StatKey.USER_CACHE_SIZE, userCache.size());
             }
-            return userCache.put(user.username, user);
+            userCache.put(user.username, user);
         }
     }
 
     public static void removeUser(String username) {
         synchronized (userCache) {
             userCache.remove(username);
+        }
+    }
+
+    public static void clearRoomCacheAll() {
+        Logger.info("Clearing all room cache values.");
+        synchronized (roomCache) {
+            roomCache.clear();
+        }
+    }
+
+    public static void clearRoomCache(String roomName) {
+        synchronized (roomCache) {
+            roomCache.remove(roomName);
+        }
+    }
+
+    public static JsonChatRoom getJsonChatRoom(String name) {
+        synchronized (roomCache) {
+            return roomCache.get(name);
+        }
+    }
+
+    public static void putJsonChatRoom(JsonChatRoom room) {
+        synchronized (roomCache) {
+            if (random.nextFloat() < 0.1f) {
+                Stats.sample(Stats.StatKey.ROOM_CACHE_SIZE, roomCache.size());
+            }
+            roomCache.put(room.name, room);
+        }
+    }
+
+    public static void removeChatRoom(String name) {
+        synchronized (roomCache) {
+            roomCache.remove(name);
         }
     }
 
@@ -107,6 +154,9 @@ public class BreakerCache {
         } else if (serverEvent instanceof ChatRoomStream.RoomLeave) {
             ChatRoomStream.RoomLeave event = (ChatRoomStream.RoomLeave) serverEvent;
             putJsonUser(event.user);
+        } else if (serverEvent instanceof ChatRoomStream.UpdateRoomEvent) {
+            ChatRoomStream.UpdateRoomEvent event = (ChatRoomStream.UpdateRoomEvent) serverEvent;
+            putJsonChatRoom(event.room);
         }
     }
 
