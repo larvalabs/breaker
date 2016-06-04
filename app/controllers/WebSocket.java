@@ -230,6 +230,7 @@ public class WebSocket extends PreloadUserController {
 */
             // todo Make this not wait for redis response
             room.userPresent(user.username, connectionId);
+
             ChatRoomStream.SingleWaiterWeakReferenceEventStream<ChatRoomStream.Event> eventStreamForThisUser = chatRoomStreamForRoom.join(room, userModel, connectionId, broadcastJoin);
 
             RoomConnection roomConnection = new RoomConnection(JsonChatRoom.from(room),
@@ -331,7 +332,9 @@ public class WebSocket extends PreloadUserController {
                 }
 
                 Stats.count(Stats.StatKey.WEBSOCKET_CONNECT, 1);
-                Logger.info("Websocket join time for " + user.getUsername() + ": " + (System.currentTimeMillis() - startTime));
+                long joinTime = System.currentTimeMillis() - startTime;
+                Logger.info("Websocket join time for " + user.getUsername() + ": " + joinTime);
+                Stats.measure(Stats.StatKey.WEBSOCKET_JOIN_TIME, joinTime);
 
                 // Loop while the socket is open
                 while (inbound.isOpen()) {

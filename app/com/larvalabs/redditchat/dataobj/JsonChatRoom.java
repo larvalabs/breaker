@@ -70,7 +70,7 @@ public class JsonChatRoom implements Serializable {
             jsonChatRoom = from(room, room.getModeratorUsernames());
             BreakerCache.putJsonChatRoom(jsonChatRoom);
         } else {
-            Logger.info("JsonChatRoom cache hit: " + room.getName());
+//            Logger.info("JsonChatRoom cache hit: " + room.getName());
         }
         return jsonChatRoom;
     }

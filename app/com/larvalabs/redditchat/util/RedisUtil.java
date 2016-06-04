@@ -49,6 +49,7 @@ public class RedisUtil {
 
     public static void userPresent(String roomName, String username, String connectionId) {
         try {
+            long startTime = System.currentTimeMillis();
             int time = (int) (System.currentTimeMillis() / 1000);
             Redis.zadd(getRedisPresenceKeyForRoom(roomName), time, getUsernameAndConnectionString(username, connectionId));
             if (random.nextFloat() < CHANCE_CLEAN_REDIS_PRESENCE) {
@@ -56,6 +57,7 @@ public class RedisUtil {
                 cleanPresenceSet(roomName);
             }
             userPresentGlobal(username, connectionId);
+            Stats.measure(Stats.StatKey.REDIS_TIMING_USERPRESENT, (System.currentTimeMillis() - startTime));
         } catch (Exception e) {
             Logger.error(e, "Error contacting redis.");
         }

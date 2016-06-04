@@ -44,7 +44,7 @@ public class BreakerCache {
                 roomMessages = getLastJsonMessages(room);
                 messageCache.put(getMessagesKey(room.getName()), roomMessages);
             } else {
-                Logger.info("Cache hit room messages for " + room.getName());
+//                Logger.info("Cache hit room messages for " + room.getName());
             }
             return roomMessages;
         }

@@ -15,6 +15,7 @@ public class Stats {
         REQUESTS_ACTIVE("requests.active"),
         REQUESTS_QUEUED("requests.queued"),
         WEBSOCKET_CONNECT("websocket.connect"), // Using this until I can find a place to get all connected sockets
+        WEBSOCKET_JOIN_TIME("websocket.jointime"),
         INITIALPAGE_TIME("initialpage"),
         USER_STREAMS_OPEN("userstreams"),
         REDIS_MESSAGES("redismessage"),
@@ -24,6 +25,7 @@ public class Stats {
         REDDIT_NEWMSGNOTIFICATION_FAILED("redditnewmsgnotification.failed"),
         USER_CACHE_SIZE("usercache.size"),
         ROOM_CACHE_SIZE("roomcache.size"),
+        REDIS_TIMING_USERPRESENT("redis.timing.userpresent")
         ;
 
         private String key;
