@@ -27,15 +27,9 @@ import java.util.Set;
 public class UpdateUserFromRedditJob extends Job {
 
     private long userId;
-    private boolean clearCacheWhenDone = false;
 
     public UpdateUserFromRedditJob(long userId) {
         this.userId = userId;
-    }
-
-    public UpdateUserFromRedditJob(long userId, boolean clearCacheWhenDone) {
-        this.userId = userId;
-        this.clearCacheWhenDone = clearCacheWhenDone;
     }
 
     @Override
@@ -113,13 +107,10 @@ public class UpdateUserFromRedditJob extends Job {
         // Process any remaining mod joins in our DB, these are rooms user is not longer a mod of
         for (ChatRoom moderatedRoom : moderatedRooms) {
             chatUser.stopModerating(moderatedRoom);
+            moderatedRoom.save();
             ChatRoomStream eventStream = ChatRoomStream.getEventStream(moderatedRoom.getName());
             eventStream.sendRoomUpdate(moderatedRoom);
             Logger.info("User is no longer mod of room " + moderatedRoom.getName() + " because the reddit response didn't have them listed as mod.");
-        }
-
-        if (clearCacheWhenDone) {
-            BreakerCache.clearUsersCacheAll();
         }
     }
 

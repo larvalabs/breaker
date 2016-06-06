@@ -518,6 +518,7 @@ public class Application extends PreloadUserController {
                 user.getModeratedRooms().remove(room);
             }
             user.save();
+            room.save();
             room.refresh();
             ChatRoomStream.getEventStream(room.getName()).sendUserUpdate(room, user, true);
             ChatRoomStream.getEventStream(room.getName()).sendRoomUpdate(room);

@@ -20,12 +20,7 @@ public class UpdateAllUsersFromRedditRecurringJob extends Job {
         int count = 0;
         for (int i = 0; i < allUsers.size(); i++) {
             ChatUser user = allUsers.get(i);
-            boolean clearCache = false;
-            if (i == allUsers.size() - 1) {
-                // todo this isn't ideal because the jobs get run out of order, will think about something better
-                clearCache = true;
-            }
-            new UpdateUserFromRedditJob(user.getId(), clearCache).now();
+            new UpdateUserFromRedditJob(user.getId()).now();
             count++;
         }
         Logger.info("Queued " + count + " jobs.");
