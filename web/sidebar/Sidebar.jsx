@@ -6,6 +6,7 @@ import Immutable from 'immutable';
 import Config from '../config';
 
 import SidebarRoomRoom from './SidebarRoom';
+import { SidebarRoomHeader } from "./SidebarRoomHeader";
 
 import { scrollToRoomNameReset } from '../redux/actions/scroll-actions';
 import { getSidebarOpen, getScrollToRoomName } from '../redux/selectors/ui-selectors';
@@ -28,7 +29,7 @@ class Sidebar extends Component {
     return (
       <ul id="roomlist" className="nav">
         <li key="your-rooms" className="hidden-folded padder m-t m-b-sm text-muted text-xs">
-          <span style={yourRoomsStyles}>Your Rooms</span>
+          <SidebarRoomHeader styles={yourRoomsStyles} />
         </li>
         {
           this.props.roomList.toArray().map((room) => {
