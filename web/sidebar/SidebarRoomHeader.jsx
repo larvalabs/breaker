@@ -32,7 +32,10 @@ export class SidebarRoomHeader extends Component {
   }
 
   toggleRoomInput() {
-    this.setState({ isInputVisible: !this.state.isInputVisible });
+    const isVisible = !this.state.isInputVisible;
+    this.setState({ isInputVisible: isVisible });
+    if(!isVisible) this.setState({ value: "" });
+
   }
 
   mouseOver() {
@@ -49,7 +52,7 @@ export class SidebarRoomHeader extends Component {
 
   handlePressedEnter(event) {
     if (event.key === 'Enter') {
-      const url = '${window.location.origin}/r/${this.state.value.trim()}';
+      const url = `${window.location.origin}/r/${this.state.value.trim()}`;
       window.location.href = url;
     }
   }
