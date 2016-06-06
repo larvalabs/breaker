@@ -27,7 +27,7 @@ import java.util.List;
  */
 public class RedditLinkBotJob extends Job {
 
-    private static final int MAX_NUM_TO_POST_PER_RUN = 1;
+    private static final int MAX_NUM_TO_POST_PER_RUN = 3;   // This is only in effect in "new posts" mode
 
     private String subredditToProcess;
 
@@ -61,7 +61,8 @@ public class RedditLinkBotJob extends Job {
         }
 
         String subredditJsonUrl = "https://www.reddit.com/r/" + subredditToProcess + "/hot.json?sort=hot";
-        if (room.isLinkBotPrefAllNew()) {
+        boolean allNewPostsMode = room.isLinkBotPrefAllNew();
+        if (allNewPostsMode) {
             Logger.info("Room " + room.getName() + " is set to post all new links, switching URLs.");
             subredditJsonUrl = "https://www.reddit.com/r/" + subredditToProcess + "/new.json?sort=new";
         }
@@ -107,8 +108,12 @@ public class RedditLinkBotJob extends Job {
                         RedditLink redditLink = new RedditLink(id, subreddit, permaLink, url, title, "");
                         redditLink.save();
 
+                        String msg = "New top post in /r/";
+                        if (allNewPostsMode) {
+                            msg = "New post in /r/";
+                        }
                         Message message = new Message(botUser, room,
-                                "New top post in /r/" + subredditToProcess + ": " + title + " - " + Constants.REDDIT_BASE_URL + "/" + id + " - score: " + score + " - comments: " + comments);
+                                msg + subredditToProcess + ": " + title + " - " + Constants.REDDIT_BASE_URL + "/" + id + " - score: " + score + " - comments: " + comments);
                         message.unfurlLinks();
                         message.save();
 
@@ -122,8 +127,10 @@ public class RedditLinkBotJob extends Job {
                             break;
                         }
                     }
-                    // We're only interested in the top post now, so as soon as we've seen a non-sticky post bailout
-                    break;
+                    if (!allNewPostsMode) {
+                        // We're only interested in the top post now, so as soon as we've seen a non-sticky post bailout
+                        break;
+                    }
                 }
             }
         }
