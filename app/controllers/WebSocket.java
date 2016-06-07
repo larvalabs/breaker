@@ -335,7 +335,7 @@ public class WebSocket extends PreloadUserController {
                     int i = 0;
                     for (ChatUserRoomJoin chatRoomJoin : chatRoomJoins) {
                         ChatRoom room = chatRoomJoin.getRoom();
-                        if (!bannedFromRooms.contains(room)) {
+                        if (!bannedFromRooms.contains(room) && !room.isDeleted()) {
                             if (Constants.CHATROOM_DEFAULT.equals(room.name) || room.isOpen()) {
                                 JsonChatRoom jsonChatRoom = JsonChatRoom.from(room);
                                 jsonChatRoomsList.add(jsonChatRoom);

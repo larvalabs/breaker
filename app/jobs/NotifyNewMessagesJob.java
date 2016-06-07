@@ -74,10 +74,12 @@ public class NotifyNewMessagesJob extends Job<Boolean> {
             roomsWithNewMessages = new ArrayList<>();
             totalNewMessages = 0;
             for (ChatUserRoomJoin chatRoomJoin : chatRoomJoins) {
-                long numNewMessages = chatRoomJoin.getNumNewMessagesIgnoringBots();
-                if (numNewMessages > 0) {
-                    roomsWithNewMessages.add(chatRoomJoin.getRoom());
-                    totalNewMessages += numNewMessages;
+                if (!chatRoomJoin.getRoom().isDeleted()) {
+                    long numNewMessages = chatRoomJoin.getNumNewMessagesIgnoringBots();
+                    if (numNewMessages > 0) {
+                        roomsWithNewMessages.add(chatRoomJoin.getRoom());
+                        totalNewMessages += numNewMessages;
+                    }
                 }
             }
             return this;

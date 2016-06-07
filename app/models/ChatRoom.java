@@ -85,6 +85,8 @@ public class ChatRoom extends Model {
 
     public String linkBotPref = PREFVAL_LINKBOT_NEWTOP;
 
+    public boolean deleted = false;
+
     public ChatRoom(String displayName) {
         this.name = displayName.toLowerCase();
         this.displayName = displayName;
@@ -348,6 +350,14 @@ public class ChatRoom extends Model {
 
     public boolean isLinkBotNone() {
         return linkBotPref != null && linkBotPref.equals(PREFVAL_LINKBOT_NONE);
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     // Do stuff zone

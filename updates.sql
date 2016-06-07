@@ -13,7 +13,10 @@ update chatroom set name=LOWER(displayname);
 alter table chatuser add column redditUserCreatedUTC int8 default -1;
 alter table chatuser add column redditUserSuspended boolean default false;
 
--- ALL DEPLOYED ABOVE
-
 -- link bot room preferences
 update chatroom set linkBotPref = 'newtop';
+
+-- Chat room deleted flag
+alter table chatroom add column deleted boolean DEFAULT false;
+
+-- ALL DEPLOYED ABOVE

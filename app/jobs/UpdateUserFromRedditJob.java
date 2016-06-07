@@ -57,25 +57,27 @@ public class UpdateUserFromRedditJob extends Job {
         List<ChatUserRoomJoin> chatRoomJoins = chatUser.getChatRoomJoins();
         for (ChatUserRoomJoin chatUserRoomJoin : chatRoomJoins) {
             ChatRoom room = chatUserRoomJoin.getRoom();
-            try {
-                JSONObject jsonFlairObj = breakerRedditClient.getRedditUserFlairForSubreddit(chatUser, room.getName());
-                JSONObject currentFlair = jsonFlairObj.getJSONObject("current");
-                String newFlairText = currentFlair.getString("flair_text");
-                String newFlairCss = currentFlair.getString("flair_css_class");
-                String newFlairPosition = currentFlair.getString("flair_position");
-                boolean changed = chatUserRoomJoin.updateFlairIfDifferent(newFlairText, newFlairCss, newFlairPosition);
-                if (changed) {
-                    Logger.info("User " + chatUser.getUsername() + " has new flair for room " + chatUserRoomJoin.room.getName() + " from reddit, updating user object.");
-                    chatUserRoomJoin.save();
-                    ChatRoomStream eventStream = ChatRoomStream.getEventStream(room.getName());
-                    eventStream.sendUserUpdate(room, chatUser, userOnline);
+            if (!room.isDeleted()) {
+                try {
+                    JSONObject jsonFlairObj = breakerRedditClient.getRedditUserFlairForSubreddit(chatUser, room.getName());
+                    JSONObject currentFlair = jsonFlairObj.getJSONObject("current");
+                    String newFlairText = currentFlair.getString("flair_text");
+                    String newFlairCss = currentFlair.getString("flair_css_class");
+                    String newFlairPosition = currentFlair.getString("flair_position");
+                    boolean changed = chatUserRoomJoin.updateFlairIfDifferent(newFlairText, newFlairCss, newFlairPosition);
+                    if (changed) {
+                        Logger.info("User " + chatUser.getUsername() + " has new flair for room " + chatUserRoomJoin.room.getName() + " from reddit, updating user object.");
+                        chatUserRoomJoin.save();
+                        ChatRoomStream eventStream = ChatRoomStream.getEventStream(room.getName());
+                        eventStream.sendUserUpdate(room, chatUser, userOnline);
+                    }
+                } catch (RedditRequestError redditRequestError) {
+                    Logger.warn("Reddit request error for user " + chatUser.getUsername() + " for room " + chatUserRoomJoin.room.getName());
+                } catch (JSONException e) {
+                    Logger.error(e, "Error parsing json result from reddit request.");
+                } catch (Exception e) {
+                    Logger.error(e, "Problem getting flair for room: " + room.getName());
                 }
-            } catch (RedditRequestError redditRequestError) {
-                Logger.warn("Reddit request error for user " + chatUser.getUsername() + " for room " + chatUserRoomJoin.room.getName());
-            } catch (JSONException e) {
-                Logger.error(e, "Error parsing json result from reddit request.");
-            } catch (Exception e) {
-                Logger.error(e, "Problem getting flair for room: " + room.getName());
             }
         }
 

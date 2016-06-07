@@ -518,6 +518,15 @@ public class Application extends PreloadUserController {
         }
     }
 
+    public static void runRoomCheckJob() {
+        if (connected().isAdmin()) {
+            new MarkIncorrectRoomsDeletedJob().now();
+            renderText("ok");
+        } else {
+            error("User is not an admin.");
+        }
+    }
+
     public static void makeMod(String roomname, String username, boolean mod) {
         if (connected().isAdmin()) {
             ChatRoom room = ChatRoom.findByName(roomname);
