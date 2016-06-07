@@ -3,6 +3,7 @@ package models;
 import com.larvalabs.linkunfurl.LinkInfo;
 import com.larvalabs.linkunfurl.LinkUnfurl;
 import com.larvalabs.redditchat.Constants;
+import com.larvalabs.redditchat.dataobj.BreakerCache;
 import com.larvalabs.redditchat.util.Util;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Fetch;
@@ -10,6 +11,7 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Index;
 import play.Logger;
 import play.db.jpa.JPA;
+import play.db.jpa.JPABase;
 import play.db.jpa.Model;
 
 import javax.persistence.*;
@@ -444,6 +446,20 @@ public class Message extends Model {
             }
         }
         setLinksUnfurled(true);
+    }
+
+    /**
+     * Model overrides and other lower level methods
+     */
+
+    @Override
+    public <T extends JPABase> T save() {
+        Logger.info("SAVEOVERRIDE - Message");
+        BreakerCache.clearMessagesCache(getRoom().getName());
+        // todo Could consider a global server update channel and send updates this way, however this should
+        // already currently be handled by the various room update methods elsewhere in the server
+//        ChatRoomStream.getEventStream(Constants.CHATROOM_DEFAULT).sendRoomUpdate(this);
+        return super.save();
     }
 
 }
