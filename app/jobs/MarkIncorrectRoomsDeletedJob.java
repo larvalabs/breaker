@@ -18,15 +18,8 @@ public class MarkIncorrectRoomsDeletedJob extends Job {
         Logger.info("Checking to see if rooms exist and marking deleted if not...");
         List<ChatRoom> allRooms = ChatRoom.findAll();
         int count = 0;
-        BreakerRedditClient client = new BreakerRedditClient();
         for (ChatRoom room : allRooms) {
-            if (!client.doesSubredditExist(room.getName())) {
-                Logger.info("Room "+room.getName()+" does not exist on Reddit, marking as deleted.");
-                room.setDeleted(true);
-                room.save();
-                count++;
-            }
+            new CheckIfSubredditExistsForRoomJob(room.getName()).now();
         }
-        Logger.info("Marked " + count + " rooms as deleted.");
     }
 }
