@@ -50,7 +50,7 @@ public class ChatRoom extends Model {
 
     public boolean needsScoreRecalc;
 
-    public boolean open = true;
+    public boolean open = false;
     public int numNeededToOpen = Constants.NUM_PEOPLE_TO_OPEN_ROOM;
 
     @ManyToMany(mappedBy = "watchedRooms", fetch = FetchType.LAZY)
@@ -446,6 +446,7 @@ public class ChatRoom extends Model {
             BreakerRedditClient client = new BreakerRedditClient();
             boolean subreditExists = client.doesSubredditExist(name);
             if (!subreditExists) {
+                Logger.info("Chat room " + name + " doesn't exist on reddit.");
                 throw new SubredditDoesNotExistException();
             }
             boolean isPrivate = false;

@@ -69,9 +69,17 @@ public class BreakerRedditClient {
         String url = MessageFormat.format(ABOUT_URL, subreddit);
         WS.HttpResponse response = WS.url(url)
                 .setHeader("User-Agent", this.BREAKER_USER_AGENT)
+                .followRedirects(false)
                 .get();
         if (response.getStatus() == Http.StatusCode.NOT_FOUND) {
             throw new ResourceNotFoundException();
+        } else if (response.getStatus() == Http.StatusCode.FOUND) {
+            // Reddit seems to like redirecting to a search page sometimes
+            if (response.getString().contains("search.json")) {
+                throw new ResourceNotFoundException();
+            } else {
+                throw new RedditRequestError();
+            }
         } else if (response.success()) {
             return false;
         } else if (response.getStatus() >= Http.StatusCode.INTERNAL_ERROR) {
