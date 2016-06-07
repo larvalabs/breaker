@@ -27,7 +27,7 @@ import java.util.List;
  */
 public class RedditLinkBotJob extends Job {
 
-    private static final int MAX_NUM_TO_POST_PER_RUN = 3;   // This is only in effect in "new posts" mode
+    private static final int MAX_NUM_TO_POST_PER_RUN = 1;   // This is only in effect in "new posts" mode
 
     private String subredditToProcess;
 
