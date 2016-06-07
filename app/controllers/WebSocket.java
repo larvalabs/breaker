@@ -22,6 +22,7 @@ import play.mvc.Http.WebSocketClose;
 import play.mvc.Http.WebSocketFrame;
 import play.mvc.WebSocketController;
 import play.mvc.With;
+import reddit.RedditRequestError;
 
 import java.util.*;
 
@@ -47,7 +48,15 @@ public class WebSocket extends PreloadUserController {
         ChatUser user = connected();
         ChatRoom room = null;
         if (roomName != null) {
-            room = ChatRoom.findOrCreateForName(roomName);
+            try {
+                room = ChatRoom.findOrCreateForName(roomName);
+            } catch (ChatRoom.SubredditDoesNotExistException e) {
+                render("Application/subDoesNotExist.html");
+                return;
+            } catch (RedditRequestError redditRequestError) {
+                render("Application/redditError.html");
+                return;
+            }
             if (!room.isOpen()) {
                 Logger.info("Room "+roomName+" not open, directing to room wait page.");
                 Application.roomWait(roomName, null);

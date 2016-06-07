@@ -18,6 +18,7 @@ import play.db.jpa.JPA;
 import play.libs.OAuth2;
 import play.libs.WS;
 import play.mvc.Scope;
+import reddit.RedditRequestError;
 
 import javax.imageio.ImageIO;
 import javax.persistence.Query;
@@ -78,7 +79,7 @@ public class Application extends PreloadUserController {
         render();
     }
 
-    public static void create(String roomName) throws ChatUser.NoAccessToPrivateRoomException, ChatUser.UnableToCheckAccessToPrivateRoom {
+    public static void create(String roomName) throws ChatUser.NoAccessToPrivateRoomException, ChatUser.UnableToCheckAccessToPrivateRoom, RedditRequestError, ChatRoom.SubredditDoesNotExistException {
         ChatUser chatUser = connected();
         if (chatUser == null || chatUser.accessToken == null) {
             index();
@@ -139,7 +140,16 @@ public class Application extends PreloadUserController {
         }
 
         ChatUser user = connected();
-        ChatRoom room = ChatRoom.findOrCreateForName(roomName);
+        ChatRoom room = null;
+        try {
+            room = ChatRoom.findOrCreateForName(roomName);
+        } catch (ChatRoom.SubredditDoesNotExistException e) {
+            render("Application/subDoesNotExist.html");
+            return;
+        } catch (RedditRequestError redditRequestError) {
+            render("Application/redditError.html");
+            return;
+        }
 
         if (accepting) {
             if (user == null) {
@@ -383,7 +393,7 @@ public class Application extends PreloadUserController {
         ImageIO.write(image, "png", response.out);
     }
 
-    public static void leaveRoom(String roomName) {
+    public static void leaveRoom(String roomName) throws RedditRequestError, ChatRoom.SubredditDoesNotExistException {
         ChatUser user = connected();
         ChatRoom chatRoom = ChatRoom.findOrCreateForName(roomName);
         user.leaveChatRoom(chatRoom);

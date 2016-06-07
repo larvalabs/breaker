@@ -15,6 +15,7 @@ import play.db.jpa.JPABase;
 import play.db.jpa.Model;
 import play.modules.redis.Redis;
 import reddit.BreakerRedditClient;
+import reddit.RedditRequestError;
 import reddit.ResourceNotFoundException;
 
 import javax.persistence.*;
@@ -434,12 +435,19 @@ public class ChatRoom extends Model {
         return users;
     }
 
-    public static ChatRoom findOrCreateForName(String name) {
+    public static class SubredditDoesNotExistException extends Exception {
+    }
+
+    public static ChatRoom findOrCreateForName(String name) throws SubredditDoesNotExistException, RedditRequestError {
         ChatRoom chatRoom = findByName(name);
         if (chatRoom == null) {
             Logger.info("Couldn't find chat room " + name + ", creating.");
             chatRoom = new ChatRoom(name);
             BreakerRedditClient client = new BreakerRedditClient();
+            boolean subreditExists = client.doesSubredditExist(name);
+            if (!subreditExists) {
+                throw new SubredditDoesNotExistException();
+            }
             boolean isPrivate = false;
             try {
                 isPrivate = client.isSubredditPrivate(name);

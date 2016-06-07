@@ -65,7 +65,7 @@ public class BreakerRedditClient {
     public BreakerRedditClient() {
     }
 
-    public boolean isSubredditPrivate(String subreddit) throws ResourceNotFoundException {
+    public boolean isSubredditPrivate(String subreddit) throws ResourceNotFoundException, RedditRequestError {
         String url = MessageFormat.format(ABOUT_URL, subreddit);
         WS.HttpResponse response = WS.url(url)
                 .setHeader("User-Agent", this.BREAKER_USER_AGENT)
@@ -74,11 +74,13 @@ public class BreakerRedditClient {
             throw new ResourceNotFoundException();
         } else if (response.success()) {
             return false;
+        } else if (response.getStatus() >= Http.StatusCode.INTERNAL_ERROR) {
+            throw new RedditRequestError();
         }
         return true;
     }
 
-    public boolean doesSubredditExist(String subreddit) {
+    public boolean doesSubredditExist(String subreddit) throws RedditRequestError {
         try {
             // Just try to make a request and look for not found
             boolean whocares = isSubredditPrivate(subreddit);
