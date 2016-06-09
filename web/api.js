@@ -12,6 +12,10 @@ const API = {
 
   fetchMoreMessages(roomName, fromMessageId, count) {
     return request.get(`/application/getmessages?roomName=${roomName}&id=${fromMessageId}&limit=${count}&before=true`);
+  },
+
+  fetchMoreActiveRooms(limit, offset) {
+    return request.get(`/application/getactiverooms?limit=${limit}&offset=${offset}`);
   }
 };
 
