@@ -1,5 +1,6 @@
 package com.larvalabs.redditchat.dataobj;
 
+import com.larvalabs.redditchat.services.ActiveRoomsService;
 import com.larvalabs.redditchat.util.RedisUtil;
 import com.larvalabs.redditchat.util.Stats;
 import models.ChatRoom;
@@ -43,6 +44,7 @@ public class JsonUtil {
 
 
         public TreeMap<String, JsonChatRoom> rooms = new TreeMap<>(lowerStringComparator);
+        public HashMap<Integer, JsonActiveChatRoom> activeRooms = new HashMap<>();
         public TreeMap<String, JsonUser> users = new TreeMap<>(lowerStringComparator);
         public TreeMap<String, JsonRoomMembers> members = new TreeMap<>(lowerStringComparator);
         public TreeMap<String, ArrayList<String>> roomMessages = new TreeMap<>(lowerStringComparator);
@@ -106,6 +108,11 @@ public class JsonUtil {
             if (user.equals(thisUser)) {
                 state.lastSeenTimes.put(roomName, chatRoomJoin.getLastSeenMessageTime());
             }
+        }
+
+        List<JsonActiveChatRoom> activeRooms = ActiveRoomsService.getInstance().findMostActiveRooms(5, 0);
+        for(int i = 0; i < activeRooms.size(); i++) {
+            state.activeRooms.put(i+1, activeRooms.get(i));
         }
 
         Stats.measure(Stats.StatKey.LOAD_FULLSTATE_TIME, (System.currentTimeMillis() - startTime));
