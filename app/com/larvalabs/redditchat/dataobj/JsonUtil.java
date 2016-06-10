@@ -110,9 +110,11 @@ public class JsonUtil {
             }
         }
 
-        List<JsonActiveChatRoom> activeRooms = ActiveRoomsService.getInstance().findMostActiveRooms(5, 0);
-        for(int i = 0; i < activeRooms.size(); i++) {
-            state.activeRooms.put(i+1, activeRooms.get(i));
+        /* Active rooms are also displayed for anonymous users */
+        Long userId = (user != null) ? user.getId() : null;
+        List<JsonActiveChatRoom> activeRooms = ActiveRoomsService.getInstance().findMostActiveRooms(5, 0, userId);
+        for(JsonActiveChatRoom room : activeRooms) {
+            state.activeRooms.put(room.getRank(), room);
         }
 
         Stats.measure(Stats.StatKey.LOAD_FULLSTATE_TIME, (System.currentTimeMillis() - startTime));
