@@ -54,7 +54,9 @@ public class JsonUtil {
         long startTime = System.currentTimeMillis();
         FullState state = new FullState();
 
-        Query getAllStuffQuery = JPA.em().createQuery("select ur from ChatUserRoomJoin ur join fetch ur.room urr join fetch ur.user u where ur.room in (select room from ChatUserRoomJoin ur2 where ur2.user = :user) and ur.room.deleted = false")
+        Query getAllStuffQuery = JPA.em().createQuery("select ur from ChatUserRoomJoin ur join fetch ur.room urr join fetch ur.user u where ur.room " +
+                "in (select room from ChatUserRoomJoin ur2 where ur2.user = :user) " +
+                "and ur.room.deleted = false and ur.room.open = true")
                 .setParameter("user", user);
         List<ChatUserRoomJoin> resultList = getAllStuffQuery.getResultList();
 
