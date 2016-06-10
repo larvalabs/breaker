@@ -4,6 +4,7 @@ import * as menuTypes from '../constants/menu-constants';
 import * as socketTypes from '../constants/socket-constants';
 import * as chatTypes from '../constants/chat-constants';
 import * as scrollTypes from '../constants/scroll-constants';
+import * as activeRoomsTypes from '../constants/active-rooms-contants';
 
 
 const initialState = Immutable.Map({
@@ -79,6 +80,15 @@ export default function ui(state = initialState, action) {
     }
     case (chatTypes.CHAT_ROOM_CHANGED): {
       return state.set('__HAS_FOCUS__', true);
+    }
+    case (activeRoomsTypes.ACTIVE_ROOMS_LOADING_MORE): {
+      return state.set('moreActiveRoomsLoading', true);
+    }
+    case (activeRoomsTypes.ACTIVE_ROOMS_LOADED_MORE): {
+      return state.set('moreActiveRoomsLoading', false);
+    }
+    case (activeRoomsTypes.ACTIVE_ROOMS_FAILED_LOADING_MORE): {
+      return state.set('moreActiveRoomsLoading', false);
     }
     default: {
       return state;

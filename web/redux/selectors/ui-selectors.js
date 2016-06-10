@@ -41,6 +41,13 @@ export const getMoreMessagesLoading = createSelector(
     }
 );
 
+export const getMoreActiveRoomsLoading = createSelector(
+  [getUi],
+  (ui) => {
+    return ui.get('moreActiveRoomsLoading', false);
+  }
+)
+
 export const getConnected = createSelector(
     [getUi],
     (ui) => {

@@ -9,7 +9,9 @@ import SidebarRoomRoom from './SidebarRoom';
 import { SidebarActiveRoom } from './SidebarActiveRoom';
 
 import { scrollToRoomNameReset } from '../redux/actions/scroll-actions';
-import { getSidebarOpen, getScrollToRoomName } from '../redux/selectors/ui-selectors';
+import { loadMoreActiveRooms } from '../redux/actions/active-rooms-actions';
+
+import { getSidebarOpen, getScrollToRoomName, getMoreActiveRoomsLoading } from '../redux/selectors/ui-selectors';
 import { getAllRooms, getCurrentRoom, getCurrentRoomStyles } from '../redux/selectors/rooms-selectors';
 import { getAllActiveRooms } from '../redux/selectors/active-rooms-selector';
 
@@ -48,10 +50,31 @@ class Sidebar extends Component {
     );
   }
 
+  renderLoadingIndicator() {
+    const indicatorStyles = { fontSize: "0.5em", margin: "5px 60px" };
+    return (
+      <div style={indicatorStyles}>
+        <i className="fa fa-circle-o-notch fa-spin fa-3x fa-fw"></i>
+        <span className="sr-only">Loading...</span>
+      </div>
+    );
+  }
+
+  renderMoreActiveRoomsButton() {
+    const { activeRoomsLoading } =  this.props;
+    const moreBtnStyles = { paddingLeft: "40px", margin: 0 };
+
+    return (
+      <li className="hidden-folded m-t m-b-sm text-muted" style={moreBtnStyles} onClick={this.props.moreActiveRooms}>
+        {(activeRoomsLoading) ? this.renderLoadingIndicator() : <a><b>+ more</b></a>}
+      </li>
+    );
+  }
+
   renderActiveRooms() {
     const sidebarColor = this.props.room.getIn(['styles', 'sidebarTextColor']);
     const activeRoomsStyles = { color: sidebarColor };
-    const moreBtnStyles = { paddingLeft: "40px", margin: 0 }
+
 
     return (
         <ul id="roomlist" className="nav">
@@ -68,9 +91,8 @@ class Sidebar extends Component {
               );
             })
           }
-          <li className="hidden-folded m-t m-b-sm text-muted" style={moreBtnStyles}>
-            <a><b>+ more</b></a>
-          </li>
+          {(this.props.activeRoomList.toArray().length > 4) ? this.renderMoreActiveRoomsButton() : null}
+
         </ul>
     );
   }
@@ -88,8 +110,8 @@ class Sidebar extends Component {
         <div className="aside-wrap">
           <div className="navi-wrap" ref="roomList">
             <nav ui-nav className="navi clearfix">
-              {this.renderYourRooms()}
-              {this.renderActiveRooms()}
+              { this.renderYourRooms() }
+              { (this.props.activeRoomList.toArray().length > 0) ? this.renderActiveRooms(): null }
             </nav>
           </div>
         </div>
@@ -104,8 +126,11 @@ Sidebar.defaultProps = {
   room: Immutable.Map(),
   roomName: null,
   roomList: Immutable.Map(),
+  activeRoomList: Immutable.Map(),
+  activeRoomsLoading: false,
   scrollToRoomName: null,
-  resetScrollToRoomName: () => {}
+  resetScrollToRoomName: () => {},
+  moreActiveRooms: () => {}
 };
 
 function mapStateToProps(state) {
@@ -116,6 +141,7 @@ function mapStateToProps(state) {
     roomName: state.get('currentRoom'),
     roomList: getAllRooms(state),
     activeRoomList: getAllActiveRooms(state),
+    activeRoomsLoading: getMoreActiveRoomsLoading(state),
     scrollToRoomName: getScrollToRoomName(state)
   };
 }
@@ -124,6 +150,9 @@ function mapDispatchToProps(dispatch) {
   return {
     resetScrollToRoomName() {
       dispatch(scrollToRoomNameReset());
+    },
+    moreActiveRooms() {
+      dispatch(loadMoreActiveRooms());
     }
   };
 }
