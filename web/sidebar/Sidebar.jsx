@@ -26,6 +26,10 @@ class Sidebar extends Component {
     }
   }
 
+  getOrderedActiveRooms() {
+    return this.props.activeRoomList.toArray().sort((a, b) => a.get('rank') - b.get('rank'));
+  }
+
   renderYourRooms() {
     const sidebarColor = this.props.room.getIn(['styles', 'sidebarTextColor']);
     const yourRoomsStyles = { color: sidebarColor };
@@ -82,7 +86,7 @@ class Sidebar extends Component {
           <span style={activeRoomsStyles}>Active Rooms</span>
         </li>
         {
-          this.props.activeRoomList.toArray().map((room) => {
+          this.getOrderedActiveRooms().map((room) => {
             return (
               <SidebarActiveRoom key={room.get('name')}
                                  room={room}

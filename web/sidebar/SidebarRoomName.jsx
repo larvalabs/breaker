@@ -10,7 +10,7 @@ export default class SidebarRoomName extends Component {
     if (!room.get('isPrivate')) {
       return '#';
     }
-    return <SidebarRoomPrivateIcon styles={styles} />
+    return <SidebarRoomPrivateIcon styles={styles} />;
   }
 
   render() {
