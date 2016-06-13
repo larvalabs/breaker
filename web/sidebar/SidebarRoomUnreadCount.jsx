@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux'
+import { connect } from 'react-redux';
 import Immutable from 'immutable';
 
 import { makeGetLastSeenTimeForRoom } from '../redux/selectors/last-seen-selectors';

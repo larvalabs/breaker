@@ -90,6 +90,9 @@ export default function ui(state = initialState, action) {
     case (activeRoomsTypes.ACTIVE_ROOMS_FAILED_LOADING_MORE): {
       return state.set('moreActiveRoomsLoading', false);
     }
+    case (activeRoomsTypes.ACTIVE_ROOMS_COMPLETE): {
+      return state.set('activeRoomsComplete', true);
+    }
     default: {
       return state;
     }

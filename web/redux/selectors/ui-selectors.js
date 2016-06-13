@@ -46,7 +46,14 @@ export const getMoreActiveRoomsLoading = createSelector(
   (ui) => {
     return ui.get('moreActiveRoomsLoading', false);
   }
-)
+);
+
+export const isActiveRoomsComplete = createSelector(
+  [getUi],
+  (ui) => {
+    return ui.get('activeRoomsComplete', false);
+  }
+);
 
 export const getConnected = createSelector(
     [getUi],
