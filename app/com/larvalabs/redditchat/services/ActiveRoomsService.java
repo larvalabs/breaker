@@ -23,25 +23,6 @@ public class ActiveRoomsService {
     public List<JsonActiveChatRoom> findMostActiveRooms(int limit, int offset, Long userId) {
         StringBuilder sb = new StringBuilder();
 
-        /*
-            SELECT id, name, displayName, iconUrl, activeUsers, rank
-            FROM (
-                SELECT cr.id AS id, cr.name AS name, cr.displayname AS displayName, cr.iconurl AS iconUrl, COUNT(DISTINCT user_id) AS activeUsers, RANK() OVER (ORDER BY COUNT(DISTINCT user_id) DESC, name) as rank
-                FROM chatroom cr
-                LEFT JOIN message m on cr.id = m.room_id
-                WHERE m.createdate > (current_timestamp - interval '30 days')
-                GROUP BY cr.id, cr.name, cr.displayname, cr.iconurl
-                ORDER BY activeUsers DESC
-            ) AS ranked
-            WHERE name <> 'breakerapp' AND id NOT IN (
-                SELECT room_id
-                FROM userroom
-                WHERE user_id = 35
-            )
-            LIMIT 5
-            OFFSET 0;
-         */
-
         sb.append("SELECT id, name, displayName, iconUrl, activeUsers, rank ")
           .append("FROM ( ")
             .append("SELECT cr.id AS id, cr.name AS name, cr.displayname AS displayName, cr.iconurl AS iconUrl, COUNT(DISTINCT user_id) AS activeUsers, RANK() OVER (ORDER BY COUNT(DISTINCT user_id) DESC, name) as rank ")
