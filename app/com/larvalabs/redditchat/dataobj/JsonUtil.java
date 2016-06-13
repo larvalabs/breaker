@@ -44,7 +44,7 @@ public class JsonUtil {
 
 
         public TreeMap<String, JsonChatRoom> rooms = new TreeMap<>(lowerStringComparator);
-        public HashMap<Integer, JsonActiveChatRoom> activeRooms = new HashMap<>();
+        public HashMap<String, JsonActiveChatRoom> activeRooms = new HashMap<>();
         public TreeMap<String, JsonUser> users = new TreeMap<>(lowerStringComparator);
         public TreeMap<String, JsonRoomMembers> members = new TreeMap<>(lowerStringComparator);
         public TreeMap<String, ArrayList<String>> roomMessages = new TreeMap<>(lowerStringComparator);
@@ -114,7 +114,7 @@ public class JsonUtil {
         Long userId = (user != null) ? user.getId() : null;
         List<JsonActiveChatRoom> activeRooms = ActiveRoomsService.getInstance().findMostActiveRooms(5, 0, userId);
         for(JsonActiveChatRoom room : activeRooms) {
-            state.activeRooms.put(room.getRank(), room);
+            state.activeRooms.put(room.getName(), room);
         }
 
         Stats.measure(Stats.StatKey.LOAD_FULLSTATE_TIME, (System.currentTimeMillis() - startTime));
