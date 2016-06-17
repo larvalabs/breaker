@@ -145,6 +145,10 @@ public class ChatRoomStream {
 //            waiting.clear();
         }
 
+        public boolean isFull() {
+            return events.size() >= bufferSize;
+        }
+
         public synchronized T peekTopEvent() {
             return events.peek();
         }

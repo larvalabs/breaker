@@ -105,6 +105,8 @@ public class JsonUser implements Serializable {
         return ChatUser.findById(id);
     }
 
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -119,5 +121,9 @@ public class JsonUser implements Serializable {
     @Override
     public int hashCode() {
         return (int) (id ^ (id >>> 32));
+    }
+
+    public boolean isGuest() {
+        return username != null && username.equals(Constants.USERNAME_GUEST);
     }
 }

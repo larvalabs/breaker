@@ -445,13 +445,12 @@ public class WebSocket extends PreloadUserController {
             } else {
                 // Case: New message on a chat room
                 ChatRoomStream.Event event = (ChatRoomStream.Event) awaitResult;
-                ChatRoomStream.Event topEventInRoomStream = roomConnectionManager.getRoom(event.room.name).eventStream.peekTopEvent();
-                if (topEventInRoomStream != null) {
-                    if ((System.currentTimeMillis() - topEventInRoomStream.timestamp) > Constants.STREAM_TIMEOUT_MILLIS) {
-                        Logger.warn("Stream for user " + thisConnectionUser.username + " timed out on room " + event.room.name + " : disconnecting and removing streams.");
-                        processWebsocketClose(thisConnectionUser, connectionId, roomConnectionManager);
-                        return;
-                    }
+                boolean streamFull = roomConnectionManager.getRoom(event.room.name).eventStream.isFull();
+                // Note: We're getting stalled guest streams and until I can properly debug it, just going to disconnect if it's full
+                if (streamFull && thisConnectionUser.isGuest()) {
+                    Logger.warn("Stream for user " + thisConnectionUser.username + " timed out on room " + event.room.name + " : disconnecting and removing streams.");
+                    processWebsocketClose(thisConnectionUser, connectionId, roomConnectionManager);
+                    return;
                 }
                 String json = event.toJson();
 //                    Logger.debug("Sending event to " + user.username + ":" + connectionId + " - " + json);
