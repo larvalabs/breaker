@@ -21,7 +21,7 @@ import java.util.TreeSet;
 public class RedisUtil {
 
     public static final String REDISKEY_PRESENCE_GLOBAL = "presence__global";
-    public static final double CHANCE_CLEAN_REDIS_PRESENCE = 0.01;
+    public static final double CHANCE_CLEAN_REDIS_PRESENCE = 0.001;
 
     private static Random random = new Random();
 

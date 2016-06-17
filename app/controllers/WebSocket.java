@@ -408,21 +408,21 @@ public class WebSocket extends PreloadUserController {
             } else if (awaitResult instanceof ChatRoomStream.UpdateUserEvent) {
                 ChatRoomStream.UpdateUserEvent updateEvent = (ChatRoomStream.UpdateUserEvent) awaitResult;
                 if (updateEvent.user.equals(thisConnectionUser)) {
-                    Logger.info("Updated local user object from event: " + updateEvent.user.username);
+//                    Logger.info("Updated local user object from event: " + updateEvent.user.username);
                     userArray[0] = updateEvent.user;
                 }
                 outbound.send(updateEvent.toJson());
             } else if (awaitResult instanceof ChatRoomStream.UpdateRoomEvent) {
                 ChatRoomStream.UpdateRoomEvent updateEvent = (ChatRoomStream.UpdateRoomEvent) awaitResult;
                 if (roomConnectionManager.roomConnections.containsKey(updateEvent.room.name)) {
-                    Logger.info("Updated local room object from event: " + updateEvent.room.name);
+//                    Logger.info("Updated local room object from event: " + updateEvent.room.name);
                     roomConnectionManager.getRoom(updateEvent.room.name).room = updateEvent.room;
                 }
                 outbound.send(updateEvent.toJson());
             } else if (awaitResult instanceof ChatRoomStream.UpdateMessageEvent) {
                 ChatRoomStream.UpdateMessageEvent updateEvent = (ChatRoomStream.UpdateMessageEvent) awaitResult;
                 if (roomConnectionManager.roomConnections.containsKey(updateEvent.room.name)) {
-                    Logger.info("Updated local room object from event: " + updateEvent.room.name);
+//                    Logger.info("Updated local room object from event: " + updateEvent.room.name);
                     roomConnectionManager.getRoom(updateEvent.room.name).room = updateEvent.room;
                 }
                 outbound.send(updateEvent.toJson());

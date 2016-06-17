@@ -100,9 +100,13 @@ public class ChatRoomStream {
         final int bufferSize;
         final ConcurrentLinkedQueue<T> events = new ConcurrentLinkedQueue<T>();
         WeakReference<F.Promise<T>> waiting;
+        String username;
+        String roomName;
 
-        public SingleWaiterWeakReferenceEventStream() {
+        public SingleWaiterWeakReferenceEventStream(String username, String roomName) {
             this.bufferSize = 100;
+            this.username = username;
+            this.roomName = roomName;
         }
 
         public SingleWaiterWeakReferenceEventStream(int maxBufferSize) {
@@ -120,7 +124,11 @@ public class ChatRoomStream {
 
         public synchronized void publish(T event) {
             if (events.size() > bufferSize) {
-                Logger.warn("Dropping message.  If this is catastrophic to your app, use a BlockingEvenStream instead");
+                if (roomName != null && username != null) {
+                    Logger.warn("Dropping message for user " + username + " in room " + roomName + ".  If this is catastrophic to your app, use a BlockingEvenStream instead");
+                } else {
+                    Logger.warn("Dropping message.  If this is catastrophic to your app, use a BlockingEvenStream instead");
+                }
                 events.poll();
             }
             events.offer(event);
@@ -219,7 +227,7 @@ public class ChatRoomStream {
         String streamKey = getStreamKey(room.getName(), user.getUsername(), connectionId);
         SingleWaiterWeakReferenceEventStream<Event> userEventStream = userStreams.get(streamKey);
         if (userEventStream == null) {
-            userEventStream = new SingleWaiterWeakReferenceEventStream<>();
+            userEventStream = new SingleWaiterWeakReferenceEventStream<>(room.getName(), user.getUsername());
             userStreams.put(streamKey, userEventStream);
         }
         if (room.isDefaultRoom()) {
