@@ -1,6 +1,7 @@
 import API from '../../api';
 
 import * as actions from '../constants/active-rooms-contants';
+import { findLastRank } from '../selectors/active-rooms-selector';
 
 
 export function loadingMoreActiveRooms() {
@@ -20,18 +21,9 @@ export function setActiveRoomsComplete() {
 }
 
 export function handleMoreActiveRooms() {
-  const findLastRank = (activeRoomsState) => {
-    let rank = 0;
-    activeRoomsState.toArray().forEach(room => {
-      if (rank < room.get('rank')) rank = room.get('rank');
-    });
-    return rank;
-  };
-
   return (dispatch, getState) => {
-    const activeRoomsState = getState().get('activeRooms');
     const limit = 10;
-    const offset = findLastRank(activeRoomsState);
+    const offset = findLastRank(getState());
 
     dispatch(loadingMoreActiveRooms());
     API.fetchMoreActiveRooms(limit, offset)
