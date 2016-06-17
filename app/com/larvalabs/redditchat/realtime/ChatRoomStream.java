@@ -227,7 +227,7 @@ public class ChatRoomStream {
         String streamKey = getStreamKey(room.getName(), user.getUsername(), connectionId);
         SingleWaiterWeakReferenceEventStream<Event> userEventStream = userStreams.get(streamKey);
         if (userEventStream == null) {
-            userEventStream = new SingleWaiterWeakReferenceEventStream<>(room.getName(), user.getUsername());
+            userEventStream = new SingleWaiterWeakReferenceEventStream<>(user.getUsername(), room.getName());
             userStreams.put(streamKey, userEventStream);
         }
         if (room.isDefaultRoom()) {
