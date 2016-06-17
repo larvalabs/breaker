@@ -19,7 +19,7 @@ export function setActiveRoomsComplete() {
   return { type: actions.ACTIVE_ROOMS_COMPLETE };
 }
 
-export function loadMoreActiveRooms() {
+export function handleMoreActiveRooms() {
   const findLastRank = (activeRoomsState) => {
     let rank = 0;
     activeRoomsState.toArray().forEach(room => {
@@ -29,14 +29,16 @@ export function loadMoreActiveRooms() {
   };
 
   return (dispatch, getState) => {
-    const state = getState().get('activeRooms');
+    const activeRoomsState = getState().get('activeRooms');
     const limit = 10;
-    const offset = findLastRank(state);
+    const offset = findLastRank(activeRoomsState);
 
     dispatch(loadingMoreActiveRooms());
     API.fetchMoreActiveRooms(limit, offset)
       .then(response => {
-        if (response.data.length <= 10) dispatch(setActiveRoomsComplete());
+        if (response.data.length <= 10) {
+          dispatch(setActiveRoomsComplete());
+        }
         dispatch(loadedMoreActiveRooms(response.data));
       }).catch(error => {
         dispatch(failedLoadingMoreActiveRooms(error));
