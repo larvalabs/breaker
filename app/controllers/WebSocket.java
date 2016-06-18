@@ -386,6 +386,18 @@ public class WebSocket extends PreloadUserController {
                 return;
             }
 
+            if (awaitResult.room != null) {
+                boolean streamFull = roomConnectionManager.getRoom(awaitResult.room.name).eventStream.isFull();
+                // Note: We're getting stalled guest streams and until I can properly debug it, just going to disconnect if it's full
+//                if (streamFull && thisConnectionUser.isGuest()) {
+                // Note 2: Now seeing many stalled streams, going to try disconnect for all user types to see how it goes
+                if (streamFull) {
+                    Logger.warn("Stream for user " + thisConnectionUser.username + " timed out on room " + awaitResult.room.name + " : disconnecting and removing streams.");
+                    processWebsocketClose(thisConnectionUser, connectionId, roomConnectionManager);
+                    return;
+                }
+            }
+
             if (awaitResult instanceof ChatRoomStream.ServerCommand) {
                 // Case: A command affecting users
                 ChatRoomStream.ServerCommand commandEvent = (ChatRoomStream.ServerCommand) awaitResult;
@@ -445,13 +457,6 @@ public class WebSocket extends PreloadUserController {
             } else {
                 // Case: New message on a chat room
                 ChatRoomStream.Event event = (ChatRoomStream.Event) awaitResult;
-                boolean streamFull = roomConnectionManager.getRoom(event.room.name).eventStream.isFull();
-                // Note: We're getting stalled guest streams and until I can properly debug it, just going to disconnect if it's full
-                if (streamFull && thisConnectionUser.isGuest()) {
-                    Logger.warn("Stream for user " + thisConnectionUser.username + " timed out on room " + event.room.name + " : disconnecting and removing streams.");
-                    processWebsocketClose(thisConnectionUser, connectionId, roomConnectionManager);
-                    return;
-                }
                 String json = event.toJson();
 //                    Logger.debug("Sending event to " + user.username + ":" + connectionId + " - " + json);
                 outbound.send(json);
