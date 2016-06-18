@@ -125,7 +125,7 @@ public class ChatRoomStream {
         public synchronized void publish(T event) {
             if (events.size() > bufferSize) {
                 if (roomName != null && username != null) {
-                    Logger.warn("Dropping message for user " + username + " in room " + roomName + ".  If this is catastrophic to your app, use a BlockingEvenStream instead");
+                    Logger.warn("Dropping message for user " + username + " in room " + roomName + ".  If this is catastrophic to your app, use a BlockingEvenStream instead. Events size: " + events.size() + " isFull: " + isFull());
                 } else {
                     Logger.warn("Dropping message.  If this is catastrophic to your app, use a BlockingEvenStream instead");
                 }
