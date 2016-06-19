@@ -21,7 +21,7 @@ import java.util.TreeSet;
 public class RedisUtil {
 
     public static final String REDISKEY_PRESENCE_GLOBAL = "presence__global";
-    public static final double CHANCE_CLEAN_REDIS_PRESENCE = 0.001;
+    public static final double CHANCE_CLEAN_REDIS_PRESENCE = 0.01;
 
     private static Random random = new Random();
 
@@ -61,7 +61,7 @@ public class RedisUtil {
                 cleanPresenceSet(roomName);
 
                 // Just occasionally measure timing for this to avoid overloading logs
-                Stats.measure(Stats.StatKey.REDIS_TIMING_USERPRESENT, (System.currentTimeMillis() - startTime));
+//                Stats.measure(Stats.StatKey.REDIS_TIMING_USERPRESENT, (System.currentTimeMillis() - startTime));
             }
         } catch (Exception e) {
             Logger.error(e, "Error contacting redis.");
