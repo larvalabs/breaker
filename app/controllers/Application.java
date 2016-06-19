@@ -231,11 +231,13 @@ public class Application extends PreloadUserController {
                 user.updateUserFromRedditJson(me);
                 user.save();
 
-                ChatRoom defaultChat = ChatRoom.findByName(Constants.CHATROOM_DEFAULT);
-                try {
-                    user.joinChatRoom(defaultChat);
-                } catch (ChatUser.UserBannedException | ChatUser.NoAccessToPrivateRoomException | ChatUser.UnableToCheckAccessToPrivateRoom e) {
-                    Logger.error(e, "Unable to join default chat room for user " + username);
+                if (user.getChatRoomJoins() == null || user.getChatRoomJoins().size() == 0) {
+                    ChatRoom defaultChat = ChatRoom.findByName(Constants.CHATROOM_DEFAULT);
+                    try {
+                        user.joinChatRoom(defaultChat);
+                    } catch (ChatUser.UserBannedException | ChatUser.NoAccessToPrivateRoomException | ChatUser.UnableToCheckAccessToPrivateRoom e) {
+                        Logger.error(e, "Unable to join default chat room for user " + username);
+                    }
                 }
 
                 new UpdateUserFromRedditJob(user.getId()).afterRequest();

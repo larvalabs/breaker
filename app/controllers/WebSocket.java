@@ -46,6 +46,7 @@ public class WebSocket extends PreloadUserController {
     public static void room(String roomName){
         long startTime = System.currentTimeMillis();
         ChatUser user = connected();
+        List<ChatUserRoomJoin> roomJoins = user.getChatRoomJoins();
         ChatRoom room = null;
         if (roomName != null) {
             try {
@@ -63,8 +64,15 @@ public class WebSocket extends PreloadUserController {
                 return;
             }
         } else {
-            redirect("/c/" + Constants.CHATROOM_DEFAULT);
-            return;
+            if (roomJoins != null && roomJoins.size() > 0) {
+                Logger.info("No room specified when joining, but user has rooms so using first room.");
+                room = roomJoins.get(0).getRoom();
+                roomName = room.getName();
+            } else {
+                Logger.info("No room specified when joining, and user is not in any rooms so redirecting to default room.");
+                redirect("/c/" + Constants.CHATROOM_DEFAULT);
+                return;
+            }
         }
 
         if (user == null) {
@@ -90,8 +98,7 @@ public class WebSocket extends PreloadUserController {
         }
 
         if (roomName == null || room == null) {
-            List<ChatUserRoomJoin> chatRoomJoins = user.getChatRoomJoins();
-            if (chatRoomJoins.size() == 0) {
+            if (roomJoins.size() == 0) {
                 room = ChatRoom.findByName(Constants.CHATROOM_DEFAULT);
                 try {
                     user.joinChatRoom(room);
