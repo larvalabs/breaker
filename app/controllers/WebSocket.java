@@ -112,21 +112,9 @@ public class WebSocket extends PreloadUserController {
                 }
             }
         } else {
-            try {
-                ChatUserRoomJoin userRoomJoin = ChatUserRoomJoin.findByUserAndRoom(user, room);
-                if (userRoomJoin == null) {
-                    user.joinChatRoom(room);
-                }
-            } catch (ChatUser.UserBannedException e) {
-                // todo show message that they're banned
-                Application.index();
-            } catch (ChatUser.UnableToCheckAccessToPrivateRoom unableToCheckAccessToPrivateRoom) {
-                String errorMessage = "We are having a temporary problem verifying your access to this room, please try again later. (Usually this is a temporary problem contacting Reddit).";
-                render("WebSocket/privateRoomError.html", room, errorMessage);
-                return;
-            } catch (ChatUser.NoAccessToPrivateRoomException e) {
-                String errorMessage = "You do not have permission to access this room.";
-                render("WebSocket/privateRoomError.html", room, errorMessage);
+            ChatUserRoomJoin userRoomJoin = ChatUserRoomJoin.findByUserAndRoom(user, room);
+            if (userRoomJoin == null) {
+                Application.joinRoomCheck(room.getName());
                 return;
             }
         }
