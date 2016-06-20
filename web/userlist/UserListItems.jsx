@@ -84,7 +84,7 @@ export default class UserListItems extends Component {
   renderItemsOrMessage() {
     const { items } = this.props;
 
-    if (items.size < 1) {
+    if (!this.state.filteredUserCount || this.state.filteredUserCount < 1) {
       return this.renderMessage();
     }
     return this.renderItems();
@@ -120,7 +120,7 @@ export default class UserListItems extends Component {
       <div className="wrapper-md m-b-n-md" style={styles.wrapperStyles}>
         <div className="m-b-sm text-md" style={styles.titleStyles}>
           {title}
-          <span className="badge" style={styles.userCount}>{this.state.filteredUserCount}</span>
+          <span className="badge" style={styles.userCount}>{this.state.filteredUserCount || 0}</span>
         </div>
         <div style={styles.listStyles}>
           {this.renderItemsOrMessage()}
