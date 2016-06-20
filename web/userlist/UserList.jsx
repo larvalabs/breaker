@@ -22,7 +22,7 @@ class UserListBox extends Component {
 
     this.state = {
       searchTerm: '',
-      offlineMaximum: 1
+      offlineMaximum: 10
     };
   }
 
