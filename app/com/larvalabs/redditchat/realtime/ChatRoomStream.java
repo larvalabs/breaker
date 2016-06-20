@@ -19,7 +19,9 @@ import play.libs.F;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutionException;
@@ -187,7 +189,9 @@ public class ChatRoomStream {
     public static final int STREAM_SIZE = 0;
     public static final int PRELOAD_NUM_MSGS_ON_STARTUP = STREAM_SIZE;
 
-    private ConcurrentHashMap<String, SingleWaiterWeakReferenceEventStream<Event>> userStreams = new ConcurrentHashMap<>();
+    // Note: these are weak references to the stream because I'm having problems leaking these things and
+    // the RoomConnection in the Websocket should be the single hard reference
+    private ConcurrentHashMap<String, WeakReference<SingleWaiterWeakReferenceEventStream<Event>>> userStreams = new ConcurrentHashMap<>();
 
     private String name;
 
@@ -229,9 +233,9 @@ public class ChatRoomStream {
             publishEvent(new Join(JsonChatRoom.from(room), jsonUser));
         }
         String streamKey = getStreamKey(room.getName(), user.getUsername(), connectionId);
-        SingleWaiterWeakReferenceEventStream<Event> userEventStream = userStreams.get(streamKey);
-        if (userEventStream == null) {
-            userEventStream = new SingleWaiterWeakReferenceEventStream<>(user.getUsername(), room.getName());
+        WeakReference<SingleWaiterWeakReferenceEventStream<Event>> userEventStream = userStreams.get(streamKey);
+        if (userEventStream == null || userEventStream.get() == null) {
+            userEventStream = new WeakReference<>(new SingleWaiterWeakReferenceEventStream<Event>(user.getUsername(), room.getName()));
             userStreams.put(streamKey, userEventStream);
         }
         if (room.isDefaultRoom()) {
@@ -241,7 +245,7 @@ public class ChatRoomStream {
                 Logger.info("Userstream: " + key);
             }
         }
-        return userEventStream;
+        return userEventStream.get();
     }
 
     public void sendMemberList(ChatRoom room) {
@@ -315,8 +319,15 @@ public class ChatRoomStream {
 
     public void publishEventInternal(Event event) {
         BreakerCache.handleEvent(event);
-        for (SingleWaiterWeakReferenceEventStream<Event> userEventStream : userStreams.values()) {
-            userEventStream.publish(event);
+        ArrayList<String> keysToRemove = new ArrayList<>();
+        for (Map.Entry<String, WeakReference<SingleWaiterWeakReferenceEventStream<Event>>> streamEntry : userStreams.entrySet()) {
+            if (streamEntry.getValue().get() != null) {
+                streamEntry.getValue().get().publish(event);
+            }
+        }
+        for (String key : keysToRemove) {
+            Logger.info("Removing " + key + " from user streams because weak reference is null.");
+            userStreams.remove(key);
         }
     }
 
