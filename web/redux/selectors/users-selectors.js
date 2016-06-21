@@ -14,13 +14,13 @@ export const getModUsersForCurrentRoom = createSelector(
 export const getOnlineUsersForCurrentRoom = createSelector(
     [getOnlineForCurrentRoom, getUserEntities],
     (mods, userEntities) => {
-      return mods.map((username) => userEntities.get(username));
+      return mods.filter((username) => username !== 'guest').map((username) => userEntities.get(username));
     }
 );
 
 export const getOfflineUsersForCurrentRoom = createSelector(
     [getOfflineForCurrentRoom, getUserEntities],
     (mods, userEntities) => {
-      return mods.map((username) => userEntities.get(username));
+      return mods.filter((username) => username !== 'guest').map((username) => userEntities.get(username));
     }
 );

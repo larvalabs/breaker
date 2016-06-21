@@ -84,7 +84,7 @@ export default class UserListItems extends Component {
   renderItemsOrMessage() {
     const { items } = this.props;
 
-    if (!this.state.filteredUserCount || this.state.filteredUserCount < 1) {
+    if (items.size < 1) {
       return this.renderMessage();
     }
     return this.renderItems();
