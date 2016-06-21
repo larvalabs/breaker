@@ -125,7 +125,7 @@ export default class UserListItems extends Component {
         <div style={styles.listStyles}>
           {this.renderItemsOrMessage()}
         </div>
-        {(maximum !== -1 && maximum < items.toArray().length) ? <a onClick={ showMore } style={styles.moreBtn}>+ more</a> : null}
+        {(maximum !== -1 && maximum < this.state.filteredUserCount) ? <a onClick={ showMore } style={styles.moreBtn}>+ more</a> : null}
       </div>
     );
   }
