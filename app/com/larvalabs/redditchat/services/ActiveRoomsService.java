@@ -1,7 +1,9 @@
 package com.larvalabs.redditchat.services;
 
 import com.larvalabs.redditchat.dataobj.JsonActiveChatRoom;
+import com.larvalabs.redditchat.util.ActiveRoomsRedisUtil;
 import play.db.jpa.JPA;
+import play.modules.redis.Redis;
 
 import javax.persistence.Query;
 import java.util.ArrayList;
@@ -9,18 +11,24 @@ import java.util.List;
 import java.util.Objects;
 
 public class ActiveRoomsService {
-    private static ActiveRoomsService instance = null;
 
-    protected ActiveRoomsService() {}
+    public static List<JsonActiveChatRoom> getActiveRooms() {
+        List<JsonActiveChatRoom> activeRoomsList = ActiveRoomsRedisUtil.getActiveRooms();
 
-    public static ActiveRoomsService getInstance() {
-        if(instance == null) {
-            instance = new ActiveRoomsService();
+        /* Not cached in Redis => read from DB and cache result */
+        if(activeRoomsList == null || activeRoomsList.size() <= 0) {
+            activeRoomsList = findMostActiveRooms(30);
+            ActiveRoomsRedisUtil.cacheActiveRooms(activeRoomsList);
         }
-        return instance;
+
+        return activeRoomsList;
     }
 
-    public List<JsonActiveChatRoom> findMostActiveRooms(int limit, int offset, Long userId) {
+    public static List<JsonActiveChatRoom> findMostActiveRooms(int limit) {
+        return findMostActiveRooms(limit, 0, null);
+    }
+
+    public static List<JsonActiveChatRoom> findMostActiveRooms(int limit, int offset, Long userId) {
         StringBuilder sb = new StringBuilder();
 
         sb.append("SELECT id, name, displayName, iconUrl, activeUsers, rank ")
@@ -49,7 +57,7 @@ public class ActiveRoomsService {
         return convert(activeRoomsQuery.getResultList());
     }
 
-    private List<JsonActiveChatRoom> convert(List<Object[]> activeRoomsObjects) {
+    private static List<JsonActiveChatRoom> convert(List<Object[]> activeRoomsObjects) {
         List<JsonActiveChatRoom> activeRooms = new ArrayList<>();
         for(Object[] room : activeRoomsObjects) {
             activeRooms.add(new JsonActiveChatRoom(Integer.parseInt(room[0].toString()), room[1].toString(), room[2].toString(), (room[3] != null) ? room[3].toString() : "", Integer.parseInt(room[4].toString()),Integer.parseInt(room[5].toString())));

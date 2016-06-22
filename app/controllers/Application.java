@@ -462,7 +462,7 @@ public class Application extends PreloadUserController {
         if(limit == null || limit > 25) limit = 10; //load max 25 Rooms
         if(offset == null) offset = 0;
 
-        List<JsonActiveChatRoom> activeChatRooms = ActiveRoomsService.getInstance().findMostActiveRooms(limit, offset, userId);
+        List<JsonActiveChatRoom> activeChatRooms = ActiveRoomsService.findMostActiveRooms(limit, offset, userId);
         renderJSON(activeChatRooms);
     }
 

@@ -6,7 +6,6 @@ import com.larvalabs.redditchat.util.Stats;
 import models.ChatRoom;
 import models.ChatUser;
 import models.ChatUserRoomJoin;
-import play.Logger;
 import play.db.jpa.JPA;
 
 import javax.persistence.Query;
@@ -112,13 +111,13 @@ public class JsonUtil {
 
         /* Active rooms are also displayed for anonymous users */
         Long userId = (user != null) ? user.getId() : null;
-        List<JsonActiveChatRoom> activeRooms = ActiveRoomsService.getInstance().findMostActiveRooms(5, 0, userId);
-        for(JsonActiveChatRoom room : activeRooms) {
-            state.activeRooms.put(room.getName(), room);
-        }
+
+        state.activeRooms = JsonActiveRoomsUtil.getActiveRooms(userId);
 
         Stats.measure(Stats.StatKey.LOAD_FULLSTATE_TIME, (System.currentTimeMillis() - startTime));
 
         return state;
     }
+
+
 }
