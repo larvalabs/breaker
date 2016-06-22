@@ -40,8 +40,6 @@ public class JsonUtil {
             }
         };
 
-
-
         public TreeMap<String, JsonChatRoom> rooms = new TreeMap<>(lowerStringComparator);
         public HashMap<String, JsonActiveChatRoom> activeRooms = new HashMap<>();
         public TreeMap<String, JsonUser> users = new TreeMap<>(lowerStringComparator);
@@ -112,9 +110,7 @@ public class JsonUtil {
         }
 
         /* Active rooms are also displayed for anonymous users */
-        Long userId = (user != null) ? user.getId() : null;
-
-        state.activeRooms = JsonActiveRoomsUtil.getActiveRooms(userId);
+        state.activeRooms = JsonActiveRoomsUtil.getActiveRooms(user, 0, 5);
 
         Stats.measure(Stats.StatKey.LOAD_FULLSTATE_TIME, (System.currentTimeMillis() - startTime));
 

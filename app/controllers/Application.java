@@ -529,11 +529,10 @@ public class Application extends PreloadUserController {
     public static void getActiveRooms(Integer limit, Integer offset) {
         ChatUser connected = connected();
 
-        Long userId = (connected == null) ? null : connected.getId();
         if(limit == null || limit > 25) limit = 10; //load max 25 Rooms
         if(offset == null) offset = 0;
 
-        List<JsonActiveChatRoom> activeChatRooms = ActiveRoomsService.findMostActiveRooms(limit, offset, userId);
+        HashMap<String, JsonActiveChatRoom> activeChatRooms = JsonActiveRoomsUtil.getActiveRooms(connected, offset, limit);
         renderJSON(activeChatRooms);
     }
 

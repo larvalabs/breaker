@@ -43,7 +43,6 @@ public class ActiveRoomsService {
           .append("WHERE name <> 'breakerapp' AND id NOT IN ( ")
             .append("SELECT room_id ")
             .append("FROM userroom ");
-        if(userId != null)
           sb.append("WHERE user_id = :userId ");
           sb.append(") ")
           .append("LIMIT :limit ")
@@ -51,8 +50,10 @@ public class ActiveRoomsService {
 
         Query activeRoomsQuery = JPA.em().createNativeQuery(sb.toString());
         activeRoomsQuery.setParameter("limit", limit);
+        offset = (offset != 0) ? offset-1 : offset;
         activeRoomsQuery.setParameter("offset", offset);
-        if(userId != null) activeRoomsQuery.setParameter("userId", userId);
+        userId = (userId != null) ? userId : -1;
+        activeRoomsQuery.setParameter("userId", userId);
 
         return convert(activeRoomsQuery.getResultList());
     }

@@ -1,6 +1,7 @@
 package com.larvalabs.redditchat.util;
 
 import com.larvalabs.redditchat.dataobj.JsonActiveChatRoom;
+import org.apache.commons.codec.binary.Base64;
 import play.Logger;
 import play.modules.redis.Redis;
 
@@ -16,7 +17,7 @@ public class ActiveRoomsRedisUtil {
     public static List<JsonActiveChatRoom> getActiveRooms() {
         String rooms = Redis.get(ACTIVE_ROOMS_KEY);
         if(rooms != null) {
-            return deserialize(rooms.getBytes());
+            return deserialize(Base64.decodeBase64(rooms));
         }
 
         return Collections.emptyList();
@@ -24,7 +25,7 @@ public class ActiveRoomsRedisUtil {
 
     public static String cacheActiveRooms(List<JsonActiveChatRoom> activeRoomsList) {
         byte[] activeRooms = serializeToBytes(activeRoomsList);
-        return Redis.setex(ACTIVE_ROOMS_KEY, ACTIVE_ROOMS_EXPIRE, String.valueOf(activeRooms));
+        return Redis.setex(ACTIVE_ROOMS_KEY, ACTIVE_ROOMS_EXPIRE, Base64.encodeBase64String(activeRooms));
     }
 
     private static byte[] serializeToBytes(List<JsonActiveChatRoom> list) {
@@ -34,6 +35,7 @@ public class ActiveRoomsRedisUtil {
             oos = new ObjectOutputStream(bos);
             oos.writeObject(list);
             oos.flush();
+            return bos.toByteArray();
         } catch (IOException e) {
             Logger.error(e, "Error converting active rooms list to byte array.");
             e.printStackTrace();
@@ -41,8 +43,6 @@ public class ActiveRoomsRedisUtil {
         } finally {
             closeStream(oos);
         }
-
-        return bos.toByteArray();
     }
 
     private static List<JsonActiveChatRoom> deserialize(byte[] activeRooms) {

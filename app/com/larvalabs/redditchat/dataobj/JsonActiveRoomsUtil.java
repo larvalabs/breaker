@@ -1,30 +1,35 @@
 package com.larvalabs.redditchat.dataobj;
 
 import com.larvalabs.redditchat.services.ActiveRoomsService;
+import com.larvalabs.redditchat.services.JoinedRoomsService;
+import models.ChatUser;
+import models.ChatUserRoomJoin;
 
 import java.util.*;
 
 public class JsonActiveRoomsUtil {
-    public static HashMap<String, JsonActiveChatRoom> getActiveRooms(Long userId) {
+    public static HashMap<String, JsonActiveChatRoom> getActiveRooms(ChatUser user, int offset, int amount) {
         HashMap<String, JsonActiveChatRoom> activeRoomsState = new HashMap<>();
-        List<JsonActiveChatRoom> activeRoomsList = ActiveRoomsService.getActiveRooms();
+        List<ChatUserRoomJoin> joinedUserRoom = JoinedRoomsService.findJoinedRooms(user);
 
-        activeRoomsState = updateRoomsToState(activeRoomsState, activeRoomsList);
-        int offset = getLastRank(0, activeRoomsList);
+        List<JsonActiveChatRoom> activeRoomsList = ActiveRoomsService.getActiveRooms(); // load top 30
+
+        activeRoomsState = updateRoomsToState(activeRoomsState, activeRoomsList, joinedUserRoom, offset, amount);
+        offset = getLastRank(offset, activeRoomsList);
 
         List<JsonActiveChatRoom> additionalRooms = new ArrayList<>();
 
-        while(activeRoomsState.size() < 5 &&
-                (additionalRooms = ActiveRoomsService.findMostActiveRooms(5-activeRoomsList.size(), offset, userId)).size() > 0) {
+        while(activeRoomsState.size() < amount &&
+                (additionalRooms = ActiveRoomsService.findMostActiveRooms(amount-activeRoomsState.size(), offset, user.getId())).size() > 0) {
 
-            activeRoomsState = updateRoomsToState(activeRoomsState, additionalRooms);
+            activeRoomsState = updateRoomsToState(activeRoomsState, additionalRooms, joinedUserRoom, offset, amount);
             offset = getLastRank(offset, additionalRooms);
         }
 
         return activeRoomsState;
     }
 
-    private static HashMap<String, JsonActiveChatRoom> updateRoomsToState(HashMap<String, JsonActiveChatRoom> state, List<JsonActiveChatRoom> rooms) {
+    private static HashMap<String, JsonActiveChatRoom> updateRoomsToState(HashMap<String, JsonActiveChatRoom> state, List<JsonActiveChatRoom> rooms, List<ChatUserRoomJoin> joinedUserRoom, int offset, int amount) {
         Collections.sort(rooms, new Comparator<JsonActiveChatRoom>() {
             @Override
             public int compare(JsonActiveChatRoom room1, JsonActiveChatRoom room2) {
@@ -32,11 +37,10 @@ public class JsonActiveRoomsUtil {
             }
         });
 
-
         for(JsonActiveChatRoom room : rooms) {
-            if(!state.containsKey(room.getName())){
+            if(room.getRank() > offset && !state.containsKey(room.getName()) && !isJoinedRoom(joinedUserRoom, room)){
                 state.put(room.getName(), room);
-                if(state.size() >= 5) return state;
+                if(state.size() >= amount) return state;
             }
         }
 
@@ -49,5 +53,14 @@ public class JsonActiveRoomsUtil {
         }
 
         return offset;
+    }
+
+    private static boolean isJoinedRoom(List<ChatUserRoomJoin> joinedUserRoom, JsonActiveChatRoom room) {
+        for(ChatUserRoomJoin joinedRoom : joinedUserRoom) {
+            if(joinedRoom.getRoom().getName().equals(room.getName())) {
+                return true;
+            }
+        }
+        return false;
     }
 }
