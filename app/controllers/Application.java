@@ -19,6 +19,7 @@ import play.db.jpa.JPA;
 import play.libs.OAuth2;
 import play.libs.WS;
 import play.mvc.Scope;
+import play.templates.JavaExtensions;
 import reddit.RedditRequestError;
 
 import javax.imageio.ImageIO;
@@ -129,6 +130,74 @@ public class Application extends PreloadUserController {
         }
     }
 
+    public static void joinRoomCheck(String roomName) {
+        if (roomName != null) {
+            // This is generally a direct link from a subreddit, so introduce things a bit
+            ChatUser chatUser = connected();
+            session.put(SESSION_JOINROOM, roomName);
+            ChatRoom room = ChatRoom.findByName(roomName);
+            String roomInfoStr = null;
+            int userCount = 0;
+            if (room != null) {
+
+                if (!room.isOpen()) {
+                    roomWait(roomName, null);
+                    return;
+                }
+
+                TreeSet<String> usernamesPresent = room.getUsernamesPresent();
+                if (usernamesPresent != null && usernamesPresent.size() > 0) {
+                    userCount = usernamesPresent.size();
+                    String userPlural = "user" + JavaExtensions.pluralize(userCount);
+                    String arePlural = JavaExtensions.pluralize(userCount, new String[]{"is", "are"});
+                    roomInfoStr = "There " + arePlural + " " + userCount + " " + userPlural + " online now.";
+                } else {
+                    roomInfoStr = "This room currently has " + room.getUsers().size() + " members.";
+                }
+            }
+            render(chatUser, roomName, roomInfoStr, userCount);
+        } else {
+            // This is probably a generic signup request from the homepage
+            auth(null);
+        }
+    }
+
+    public static void joinRoom(String roomName) {
+        ChatUser user = connected();
+        ChatRoom room = null;
+        try {
+            room = ChatRoom.findOrCreateForName(roomName);
+        } catch (ChatRoom.SubredditDoesNotExistException e) {
+            render("Application/subDoesNotExist.html");
+            return;
+        } catch (RedditRequestError redditRequestError) {
+            render("Application/redditError.html");
+            return;
+        }
+
+        if (!room.isOpen()) {
+            roomWait(roomName, null);
+            return;
+        }
+
+        try {
+            user.joinChatRoom(room);
+        } catch (ChatUser.UserBannedException e) {
+            // todo show message that they're banned
+            Application.index();
+        } catch (ChatUser.UnableToCheckAccessToPrivateRoom unableToCheckAccessToPrivateRoom) {
+            String errorMessage = "We are having a temporary problem verifying your access to this room, please try again later. (Usually this is a temporary problem contacting Reddit).";
+            render("WebSocket/privateRoomError.html", room, errorMessage);
+            return;
+        } catch (ChatUser.NoAccessToPrivateRoomException e) {
+            String errorMessage = "You do not have permission to access this room.";
+            render("WebSocket/privateRoomError.html", room, errorMessage);
+            return;
+        }
+
+        WebSocket.room(roomName);
+    }
+
     public static void roomWait(String roomName, Boolean accept) {
         if (roomName == null) {
             index();
@@ -232,11 +301,13 @@ public class Application extends PreloadUserController {
                 user.updateUserFromRedditJson(me);
                 user.save();
 
-                ChatRoom defaultChat = ChatRoom.findByName(Constants.CHATROOM_DEFAULT);
-                try {
-                    user.joinChatRoom(defaultChat);
-                } catch (ChatUser.UserBannedException | ChatUser.NoAccessToPrivateRoomException | ChatUser.UnableToCheckAccessToPrivateRoom e) {
-                    Logger.error(e, "Unable to join default chat room for user " + username);
+                if (user.getChatRoomJoins() == null || user.getChatRoomJoins().size() == 0) {
+                    ChatRoom defaultChat = ChatRoom.findByName(Constants.CHATROOM_DEFAULT);
+                    try {
+                        user.joinChatRoom(defaultChat);
+                    } catch (ChatUser.UserBannedException | ChatUser.NoAccessToPrivateRoomException | ChatUser.UnableToCheckAccessToPrivateRoom e) {
+                        Logger.error(e, "Unable to join default chat room for user " + username);
+                    }
                 }
 
                 new UpdateUserFromRedditJob(user.getId()).afterRequest();

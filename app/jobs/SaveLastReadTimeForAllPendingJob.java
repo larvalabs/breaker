@@ -34,16 +34,20 @@ public class SaveLastReadTimeForAllPendingJob extends Job {
     }
 
     @Override
-    public void doJob() throws Exception {
+    public void doJob() {
 //        Logger.info("Starting periodic save of last read values for all users job.");
-        Set<String> combinedPendingToSave = Redis.smembers(REDISKEY_PENDINGUSERNAMES);
-        if (combinedPendingToSave.size() > 0) {
-            Logger.info("Queuing " + combinedPendingToSave.size() + " user / room combos to save in sub jobs.");
-            Redis.del(new String[]{REDISKEY_PENDINGUSERNAMES});
-            for (String combined : combinedPendingToSave) {
-                String[] parts = splitUsernameAndRoom(combined);
-                new SaveLastReadForUserJob(parts[0], parts[1]).now();
+        try {
+            Set<String> combinedPendingToSave = Redis.smembers(REDISKEY_PENDINGUSERNAMES);
+            if (combinedPendingToSave.size() > 0) {
+                Logger.info("Queuing " + combinedPendingToSave.size() + " user / room combos to save in sub jobs.");
+                Redis.del(new String[]{REDISKEY_PENDINGUSERNAMES});
+                for (String combined : combinedPendingToSave) {
+                    String[] parts = splitUsernameAndRoom(combined);
+                    new SaveLastReadForUserJob(parts[0], parts[1]).now();
+                }
             }
+        } catch (Exception e) {
+            Logger.error("Error caught during last read time save: ", e);
         }
     }
 }

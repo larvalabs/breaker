@@ -63,8 +63,15 @@ public class WebSocket extends PreloadUserController {
                 return;
             }
         } else {
-            redirect("/c/" + Constants.CHATROOM_DEFAULT);
-            return;
+            if (user != null && user.getChatRoomJoins() != null && user.getChatRoomJoins().size() > 0) {
+                Logger.info("No room specified when joining, but user has rooms so using first room.");
+                room = user.getChatRoomJoins().get(0).getRoom();
+                roomName = room.getName();
+            } else {
+                Logger.info("No room specified when joining, and user is not in any rooms so redirecting to default room.");
+                redirect("/c/" + Constants.CHATROOM_DEFAULT);
+                return;
+            }
         }
 
         if (user == null) {
@@ -90,8 +97,8 @@ public class WebSocket extends PreloadUserController {
         }
 
         if (roomName == null || room == null) {
-            List<ChatUserRoomJoin> chatRoomJoins = user.getChatRoomJoins();
-            if (chatRoomJoins.size() == 0) {
+            List<ChatUserRoomJoin> roomJoins = user.getChatRoomJoins();
+            if (roomJoins.size() == 0) {
                 room = ChatRoom.findByName(Constants.CHATROOM_DEFAULT);
                 try {
                     user.joinChatRoom(room);
@@ -105,21 +112,9 @@ public class WebSocket extends PreloadUserController {
                 }
             }
         } else {
-            try {
-                ChatUserRoomJoin userRoomJoin = ChatUserRoomJoin.findByUserAndRoom(user, room);
-                if (userRoomJoin == null) {
-                    user.joinChatRoom(room);
-                }
-            } catch (ChatUser.UserBannedException e) {
-                // todo show message that they're banned
-                Application.index();
-            } catch (ChatUser.UnableToCheckAccessToPrivateRoom unableToCheckAccessToPrivateRoom) {
-                String errorMessage = "We are having a temporary problem verifying your access to this room, please try again later. (Usually this is a temporary problem contacting Reddit).";
-                render("WebSocket/privateRoomError.html", room, errorMessage);
-                return;
-            } catch (ChatUser.NoAccessToPrivateRoomException e) {
-                String errorMessage = "You do not have permission to access this room.";
-                render("WebSocket/privateRoomError.html", room, errorMessage);
+            ChatUserRoomJoin userRoomJoin = ChatUserRoomJoin.findByUserAndRoom(user, room);
+            if (userRoomJoin == null) {
+                Application.joinRoomCheck(room.getName());
                 return;
             }
         }
@@ -337,7 +332,7 @@ public class WebSocket extends PreloadUserController {
                     int i = 0;
                     for (ChatUserRoomJoin chatRoomJoin : chatRoomJoins) {
                         ChatRoom room = chatRoomJoin.getRoom();
-                        if (!bannedFromRooms.contains(room) && !room.isDeleted()) {
+                        if (!bannedFromRooms.contains(room) && !room.isDeleted() && room.isOpen()) {
                             if (Constants.CHATROOM_DEFAULT.equals(room.name) || room.isOpen()) {
                                 JsonChatRoom jsonChatRoom = JsonChatRoom.from(room);
                                 jsonChatRoomsList.add(jsonChatRoom);
@@ -388,6 +383,18 @@ public class WebSocket extends PreloadUserController {
                 return;
             }
 
+            if (awaitResult.room != null) {
+                boolean streamFull = roomConnectionManager.getRoom(awaitResult.room.name).eventStream.isFull();
+                // Note: We're getting stalled guest streams and until I can properly debug it, just going to disconnect if it's full
+//                if (streamFull && thisConnectionUser.isGuest()) {
+                // Note 2: Now seeing many stalled streams, going to try disconnect for all user types to see how it goes
+                if (streamFull) {
+                    Logger.warn("Stream for user " + thisConnectionUser.username + " timed out on room " + awaitResult.room.name + " : disconnecting and removing streams.");
+                    processWebsocketClose(thisConnectionUser, connectionId, roomConnectionManager);
+                    return;
+                }
+            }
+
             if (awaitResult instanceof ChatRoomStream.ServerCommand) {
                 // Case: A command affecting users
                 ChatRoomStream.ServerCommand commandEvent = (ChatRoomStream.ServerCommand) awaitResult;
@@ -410,21 +417,21 @@ public class WebSocket extends PreloadUserController {
             } else if (awaitResult instanceof ChatRoomStream.UpdateUserEvent) {
                 ChatRoomStream.UpdateUserEvent updateEvent = (ChatRoomStream.UpdateUserEvent) awaitResult;
                 if (updateEvent.user.equals(thisConnectionUser)) {
-                    Logger.info("Updated local user object from event: " + updateEvent.user.username);
+//                    Logger.info("Updated local user object from event: " + updateEvent.user.username);
                     userArray[0] = updateEvent.user;
                 }
                 outbound.send(updateEvent.toJson());
             } else if (awaitResult instanceof ChatRoomStream.UpdateRoomEvent) {
                 ChatRoomStream.UpdateRoomEvent updateEvent = (ChatRoomStream.UpdateRoomEvent) awaitResult;
                 if (roomConnectionManager.roomConnections.containsKey(updateEvent.room.name)) {
-                    Logger.info("Updated local room object from event: " + updateEvent.room.name);
+//                    Logger.info("Updated local room object from event: " + updateEvent.room.name);
                     roomConnectionManager.getRoom(updateEvent.room.name).room = updateEvent.room;
                 }
                 outbound.send(updateEvent.toJson());
             } else if (awaitResult instanceof ChatRoomStream.UpdateMessageEvent) {
                 ChatRoomStream.UpdateMessageEvent updateEvent = (ChatRoomStream.UpdateMessageEvent) awaitResult;
                 if (roomConnectionManager.roomConnections.containsKey(updateEvent.room.name)) {
-                    Logger.info("Updated local room object from event: " + updateEvent.room.name);
+//                    Logger.info("Updated local room object from event: " + updateEvent.room.name);
                     roomConnectionManager.getRoom(updateEvent.room.name).room = updateEvent.room;
                 }
                 outbound.send(updateEvent.toJson());
@@ -447,14 +454,6 @@ public class WebSocket extends PreloadUserController {
             } else {
                 // Case: New message on a chat room
                 ChatRoomStream.Event event = (ChatRoomStream.Event) awaitResult;
-                ChatRoomStream.Event topEventInRoomStream = roomConnectionManager.getRoom(event.room.name).eventStream.peekTopEvent();
-                if (topEventInRoomStream != null) {
-                    if ((System.currentTimeMillis() - topEventInRoomStream.timestamp) > Constants.STREAM_TIMEOUT_MILLIS) {
-                        Logger.warn("Stream for user " + thisConnectionUser.username + " timed out on room " + event.room.name + " : disconnecting and removing streams.");
-                        processWebsocketClose(thisConnectionUser, connectionId, roomConnectionManager);
-                        return;
-                    }
-                }
                 String json = event.toJson();
 //                    Logger.debug("Sending event to " + user.username + ":" + connectionId + " - " + json);
                 outbound.send(json);

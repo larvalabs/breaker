@@ -62,7 +62,7 @@ public class RedisUtil {
                 cleanPresenceSet(roomName);
 
                 // Just occasionally measure timing for this to avoid overloading logs
-                Stats.measure(Stats.StatKey.REDIS_TIMING_USERPRESENT, (System.currentTimeMillis() - startTime));
+//                Stats.measure(Stats.StatKey.REDIS_TIMING_USERPRESENT, (System.currentTimeMillis() - startTime));
             }
         } catch (Exception e) {
             Logger.error(e, "Error contacting redis.");

@@ -45,7 +45,7 @@ export default class HeaderUserMenu extends Component {
       fontWeight: '600'
     };
 
-    let signInUrl = `/application/startauthforguest?roomName=${this.props.roomName}`;
+    let signInUrl = `/application/startauthforguest?roomName=${this.props.room.get('name')}`;
     if (window.innerWidth < 850) {
       signInUrl += '&compact=true';
     }
