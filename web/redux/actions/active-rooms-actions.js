@@ -28,7 +28,7 @@ export function handleMoreActiveRooms() {
     dispatch(loadingMoreActiveRooms());
     API.fetchMoreActiveRooms(limit, offset)
       .then(response => {
-        if (response.data.length <= 10) {
+        if (response.data.length < 10) {
           dispatch(setActiveRoomsComplete());
         }
         dispatch(loadedMoreActiveRooms(response.data));

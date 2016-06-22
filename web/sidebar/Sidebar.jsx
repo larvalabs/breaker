@@ -79,7 +79,7 @@ class Sidebar extends Component {
     const sidebarColor = this.props.room.getIn(['styles', 'sidebarTextColor']);
     const activeRoomsStyles = { color: sidebarColor };
     const { isActiveRoomsCompleted } = this.props;
-
+    console.log("isactiveRoomsCompleted: ", isActiveRoomsCompleted);
     return (
       <ul id="roomlist" className="nav">
         <li key="active-rooms" className="hidden-folded padder m-t m-b-sm text-muted text-xs">
