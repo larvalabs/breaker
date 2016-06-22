@@ -54,13 +54,14 @@ public class ActiveRoomsRedisUtil {
         } catch (IOException e) {
             Logger.error(e, "Error reading active rooms byte array.");
             e.printStackTrace();
+            return Collections.emptyList();
         } catch (ClassNotFoundException e) {
             Logger.error(e, "Error converting active rooms byte array to list.");
             e.printStackTrace();
+            return Collections.emptyList();
         } finally {
             closeStream(bis);
         }
-        return Collections.emptyList();
     }
 
     private static void closeStream(Closeable closeable) {
