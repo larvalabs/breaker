@@ -124,6 +124,7 @@ public class WebSocket extends PreloadUserController {
         JsonUtil.FullState fullState = JsonUtil.loadFullStateForUser(user);
 
         TreeMap<String, JsonChatRoom> rooms = fullState.rooms;
+        Map<String, JsonActiveChatRoom> activeRooms = fullState.activeRooms;
         TreeMap<String, JsonUser> allUsers = fullState.users;
         TreeMap<String, JsonRoomMembers> members = fullState.members;
         TreeMap<String, ArrayList<String>> roomMessages = fullState.roomMessages;
@@ -136,6 +137,7 @@ public class WebSocket extends PreloadUserController {
         String usersString = gson.toJson(allUsers);
         String membersString = gson.toJson(members);
         String roomMessagesString = gson.toJson(roomMessages);
+        String activeRoomsString = gson.toJson(activeRooms);
         String messagesString = gson.toJson(messages);
         String lastSeenTimesString = gson.toJson(fullState.lastSeenTimes);
         long loadTime = System.currentTimeMillis() - startTime;
@@ -143,7 +145,7 @@ public class WebSocket extends PreloadUserController {
         Stats.measure(Stats.StatKey.INITIALPAGE_TIME, loadTime);
 
         // Links to other suggested rooms
-        List<ChatRoom> activeRooms = new ArrayList<ChatRoom>();
+        //List<ChatRoom> activeRooms = new ArrayList<ChatRoom>();
 /*
         {
             ChatRoom breakerapp = ChatRoom.findByName("breakerapp");
@@ -177,7 +179,7 @@ public class WebSocket extends PreloadUserController {
 
         Logger.info("Websocket room time for " + user.getUsername() + ": " + (System.currentTimeMillis() - startTime));
 
-        render("index.html", user, rooms, userString, roomName, environment, roomsString, usersString, membersString,
+        render("index.html", user, rooms, userString, roomName, environment, roomsString, activeRoomsString, usersString, membersString,
                 roomMessagesString, messagesString, lastSeenTimesString);
     }
 

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Immutable from 'immutable';
 
-import SidebarRoomPrivateIcon from './SidebarRoomPrivateIcon'
+import SidebarRoomPrivateIcon from './SidebarRoomPrivateIcon';
 
 export default class SidebarRoomName extends Component {
   renderLockOrHash() {
@@ -10,7 +10,7 @@ export default class SidebarRoomName extends Component {
     if (!room.get('isPrivate')) {
       return '#';
     }
-    return <SidebarRoomPrivateIcon styles={styles} />
+    return <SidebarRoomPrivateIcon styles={styles} />;
   }
 
   render() {

@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.larvalabs.redditchat.Constants;
 import com.larvalabs.redditchat.dataobj.*;
 import com.larvalabs.redditchat.realtime.ChatRoomStream;
+import com.larvalabs.redditchat.services.ActiveRoomsService;
 import com.larvalabs.redditchat.util.RedditUtil;
 import com.larvalabs.redditchat.util.RedisUtil;
 import com.larvalabs.redditchat.util.Util;
@@ -523,6 +524,16 @@ public class Application extends PreloadUserController {
             jsonMessages.add(JsonMessage.from(message, message.getUser().getUsername(), room.getName()));
         }
         renderJSON(jsonMessages);
+    }
+
+    public static void getActiveRooms(Integer limit, Integer offset) {
+        ChatUser connected = connected();
+
+        if(limit == null || limit > 25) limit = 10; //load max 25 Rooms
+        if(offset == null) offset = 0;
+
+        HashMap<String, JsonActiveChatRoom> activeChatRooms = JsonActiveRoomsUtil.getActiveRooms(connected, offset, limit);
+        renderJSON(activeChatRooms);
     }
 
     /*

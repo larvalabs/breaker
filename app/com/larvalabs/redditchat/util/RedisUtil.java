@@ -1,6 +1,7 @@
 package com.larvalabs.redditchat.util;
 
 import com.larvalabs.redditchat.Constants;
+import com.larvalabs.redditchat.dataobj.JsonActiveChatRoom;
 import com.sun.istack.internal.Nullable;
 import models.ChatUser;
 import models.ChatUserRoomJoin;
@@ -20,8 +21,8 @@ import java.util.TreeSet;
  */
 public class RedisUtil {
 
-    public static final String REDISKEY_PRESENCE_GLOBAL = "presence__global";
-    public static final double CHANCE_CLEAN_REDIS_PRESENCE = 0.01;
+    public static final String REDISKEY_PRESENCE_GLOBAL = RedisConstants.REDISKEY_PRESENCE_GLOBAL;
+    public static final double CHANCE_CLEAN_REDIS_PRESENCE = RedisConstants.CHANCE_CLEAN_REDIS_PRESENCE;
 
     private static Random random = new Random();
 
@@ -198,6 +199,10 @@ public class RedisUtil {
             Logger.error("Error contacting redis.");
             return 0;
         }
+    }
+
+    public static List<JsonActiveChatRoom> getMostActiveChatRooms() {
+        return null;
     }
 
 }

@@ -1,11 +1,12 @@
 package com.larvalabs.redditchat.dataobj;
 
+import com.larvalabs.redditchat.services.ActiveRoomsService;
+import com.larvalabs.redditchat.services.JoinedRoomsService;
 import com.larvalabs.redditchat.util.RedisUtil;
 import com.larvalabs.redditchat.util.Stats;
 import models.ChatRoom;
 import models.ChatUser;
 import models.ChatUserRoomJoin;
-import play.Logger;
 import play.db.jpa.JPA;
 
 import javax.persistence.Query;
@@ -40,9 +41,8 @@ public class JsonUtil {
             }
         };
 
-
-
         public TreeMap<String, JsonChatRoom> rooms = new TreeMap<>(lowerStringComparator);
+        public HashMap<String, JsonActiveChatRoom> activeRooms = new HashMap<>();
         public TreeMap<String, JsonUser> users = new TreeMap<>(lowerStringComparator);
         public TreeMap<String, JsonRoomMembers> members = new TreeMap<>(lowerStringComparator);
         public TreeMap<String, ArrayList<String>> roomMessages = new TreeMap<>(lowerStringComparator);
@@ -54,11 +54,7 @@ public class JsonUtil {
         long startTime = System.currentTimeMillis();
         FullState state = new FullState();
 
-        Query getAllStuffQuery = JPA.em().createQuery("select ur from ChatUserRoomJoin ur join fetch ur.room urr join fetch ur.user u where ur.room " +
-                "in (select room from ChatUserRoomJoin ur2 where ur2.user = :user) " +
-                "and ur.room.deleted = false and ur.room.open = true")
-                .setParameter("user", user);
-        List<ChatUserRoomJoin> resultList = getAllStuffQuery.getResultList();
+        List<ChatUserRoomJoin> resultList = JoinedRoomsService.findJoinedRooms(user);
 
         TreeSet<String> usernamesPresent = RedisUtil.getAllOnlineUsersForAllRooms();
         usernamesPresent.add(user.getUsername());   // Make sure user we're preloading it marked as online
@@ -110,8 +106,13 @@ public class JsonUtil {
             }
         }
 
+        /* Active rooms are also displayed for anonymous users */
+        state.activeRooms = JsonActiveRoomsUtil.getActiveRooms(user, 0, 5);
+
         Stats.measure(Stats.StatKey.LOAD_FULLSTATE_TIME, (System.currentTimeMillis() - startTime));
 
         return state;
     }
+
+
 }

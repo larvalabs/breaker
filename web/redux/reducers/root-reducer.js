@@ -4,6 +4,7 @@ import Immutable from 'immutable';
 import ui from './ui-reducer';
 import bannerMessage from './banner-message-reducer';
 import currentRoom from './current-room-reducer';
+import activeRooms from './active-rooms-reducer';
 import members from './members-reducer';
 import roomMessages from './room-messages-reducer';
 import messages from './message-entites-reducer';
@@ -23,6 +24,7 @@ const App = combineReducers({
   members,
   users,
   rooms,
+  activeRooms,
   roomMessages,
   messages,
   bannerMessage,
