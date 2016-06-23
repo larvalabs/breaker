@@ -93,6 +93,9 @@ export default function ui(state = initialState, action) {
     case (activeRoomsTypes.ACTIVE_ROOMS_COMPLETE): {
       return state.set('activeRoomsComplete', true);
     }
+    case (activeRoomsTypes.ACTIVE_ROOMS_RESET): {
+      return state.set('activeRoomsComplete', false);
+    }
     default: {
       return state;
     }

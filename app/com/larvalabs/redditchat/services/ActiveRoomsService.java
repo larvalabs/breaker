@@ -42,9 +42,9 @@ public class ActiveRoomsService {
           .append(") AS ranked ")
           .append("WHERE name <> 'breakerapp' AND id NOT IN ( ")
             .append("SELECT room_id ")
-            .append("FROM userroom ");
-          sb.append("WHERE user_id = :userId ");
-          sb.append(") ")
+            .append("FROM userroom ")
+            .append("WHERE user_id = :userId ")
+            .append(") ")
           .append("LIMIT :limit ")
           .append("OFFSET :offset");
 

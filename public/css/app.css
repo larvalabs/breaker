@@ -350,3 +350,7 @@ li.chat-message-root .message-body, li.chat-message-short .message-body, li.chat
   content: none !important;
 }
 
+.hoverable:hover {
+  cursor: pointer;
+}
+

@@ -9,7 +9,7 @@ import SidebarRoomRoom from './SidebarRoom';
 import { SidebarActiveRoom } from './SidebarActiveRoom';
 
 import { scrollToRoomNameReset } from '../redux/actions/scroll-actions';
-import { handleMoreActiveRooms } from '../redux/actions/active-rooms-actions';
+import { handleMoreActiveRooms, handleResetActiveRooms } from '../redux/actions/active-rooms-actions';
 
 import { getSidebarOpen, getScrollToRoomName, getMoreActiveRoomsLoading, isActiveRoomsComplete } from '../redux/selectors/ui-selectors';
 import { getAllRooms, getCurrentRoom, getCurrentRoomStyles } from '../redux/selectors/rooms-selectors';
@@ -75,15 +75,29 @@ class Sidebar extends Component {
     );
   }
 
+  renderCollapseButton() {
+    const styles = {
+      float: 'right',
+      fontSize: '1.1em'
+    };
+
+    return (
+      <span style={styles}>
+        <i className="fa fa-compress hoverable" onClick={ this.props.resetActiveRooms }></i>
+      </span>
+    );
+  }
+
   renderActiveRooms() {
     const sidebarColor = this.props.room.getIn(['styles', 'sidebarTextColor']);
     const activeRoomsStyles = { color: sidebarColor };
     const { isActiveRoomsCompleted } = this.props;
-    
+
     return (
-      <ul id="roomlist" className="nav">
+      <ul id="roomlist" className="nav" style={{ marginBottom: '10px' }}>
         <li key="active-rooms" className="hidden-folded padder m-t m-b-sm text-muted text-xs">
           <span style={activeRoomsStyles}>Active Rooms</span>
+          {(this.props.activeRoomList.toArray().length > 5) ? this.renderCollapseButton() : null}
         </li>
         {
           this.getOrderedActiveRooms().map((room) => {
@@ -160,6 +174,9 @@ function mapDispatchToProps(dispatch) {
     },
     moreActiveRooms() {
       dispatch(handleMoreActiveRooms());
+    },
+    resetActiveRooms() {
+      dispatch(handleResetActiveRooms());
     }
   };
 }
