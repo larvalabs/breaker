@@ -23,7 +23,7 @@ public class JsonActiveRoomsUtil {
         List<JsonActiveChatRoom> additionalRooms = new ArrayList<>();
 
         while (activeRoomsState.size() < amount &&
-                (additionalRooms = ActiveRoomsService.findMostActiveRooms(amount - activeRoomsState.size(), offset-1, user.getId())).size() > 0) {
+                (additionalRooms = ActiveRoomsService.findMostActiveRooms(30, offset-1, user.getId())).size() > 0) {
 
             activeRoomsState = updateRoomsToState(activeRoomsState, additionalRooms, joinedUserRoom, offset, amount);
             offset = getLastRank(offset, additionalRooms);
