@@ -21,8 +21,9 @@ import java.util.TreeSet;
  */
 public class RedisUtil {
 
-    public static final String REDISKEY_PRESENCE_GLOBAL = RedisConstants.REDISKEY_PRESENCE_GLOBAL;
-    public static final double CHANCE_CLEAN_REDIS_PRESENCE = RedisConstants.CHANCE_CLEAN_REDIS_PRESENCE;
+    public static final String REDISKEY_PRESENCE_GLOBAL = "presence__global";
+    public static final String REDISKEY_ACTIVE_ROOMS = "active__rooms";
+    public static final double CHANCE_CLEAN_REDIS_PRESENCE = 0.01;
 
     private static Random random = new Random();
 
@@ -203,6 +204,31 @@ public class RedisUtil {
 
     public static List<JsonActiveChatRoom> getMostActiveChatRooms() {
         return null;
+    }
+
+    public static TreeSet<String> getActiveRooms(int limit) {
+        try {
+            int time = (int) (System.currentTimeMillis() / 1000);
+            Set<String> activeRoomNames = Redis.zrange(REDISKEY_ACTIVE_ROOMS, 0, limit);
+            return new TreeSet<String>(activeRoomNames);
+        } catch (Exception e) {
+            Logger.error(e, "Error contacting redis.");
+            return new TreeSet<String>();
+        }
+    }
+
+    public static void markRoomActive(String roomName) {
+        try {
+            int time = (int) (System.currentTimeMillis() / 1000);
+            Redis.zadd(REDISKEY_ACTIVE_ROOMS, time, roomName);
+            if (random.nextFloat() < CHANCE_CLEAN_REDIS_PRESENCE) {
+                // this is just housekeeping to keep the sets from getting too big
+                Long removed = Redis.zremrangeByScore(REDISKEY_ACTIVE_ROOMS, 0, time - Constants.PRESENCE_TIMEOUT_SEC * 2);
+
+            }
+        } catch (Exception e) {
+            Logger.error(e, "Error contacting redis.");
+        }
     }
 
 }

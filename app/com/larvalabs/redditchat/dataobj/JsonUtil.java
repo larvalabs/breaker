@@ -1,15 +1,12 @@
 package com.larvalabs.redditchat.dataobj;
 
 import com.larvalabs.redditchat.services.ActiveRoomsService;
-import com.larvalabs.redditchat.services.JoinedRoomsService;
 import com.larvalabs.redditchat.util.RedisUtil;
 import com.larvalabs.redditchat.util.Stats;
 import models.ChatRoom;
 import models.ChatUser;
 import models.ChatUserRoomJoin;
-import play.db.jpa.JPA;
 
-import javax.persistence.Query;
 import java.util.*;
 
 /**
@@ -54,7 +51,15 @@ public class JsonUtil {
         long startTime = System.currentTimeMillis();
         FullState state = new FullState();
 
-        List<ChatUserRoomJoin> resultList = JoinedRoomsService.findJoinedRooms(user);
+        /* Active rooms are also displayed for anonymous users */
+        List<JsonActiveChatRoom> activeRooms = ActiveRoomsService.getActiveRooms(30);
+        HashMap<String, JsonActiveChatRoom> activeRoomMap = new HashMap<>();
+        for (JsonActiveChatRoom activeRoom : activeRooms) {
+            activeRoomMap.put(activeRoom.getName(), activeRoom);
+        }
+        state.activeRooms = activeRoomMap;
+
+        List<ChatUserRoomJoin> resultList = ChatUserRoomJoin.findWithoutDeletedAndUnopened(user);
 
         TreeSet<String> usernamesPresent = RedisUtil.getAllOnlineUsersForAllRooms();
         usernamesPresent.add(user.getUsername());   // Make sure user we're preloading it marked as online
@@ -104,15 +109,14 @@ public class JsonUtil {
             if (user.equals(thisUser)) {
                 state.lastSeenTimes.put(roomName, chatRoomJoin.getLastSeenMessageTime());
             }
-        }
 
-        /* Active rooms are also displayed for anonymous users */
-        state.activeRooms = JsonActiveRoomsUtil.getActiveRooms(user, 0, 5);
+            // Remove the room from active rooms if we're in it already
+            state.activeRooms.remove(roomName);
+        }
 
         Stats.measure(Stats.StatKey.LOAD_FULLSTATE_TIME, (System.currentTimeMillis() - startTime));
 
         return state;
     }
-
 
 }

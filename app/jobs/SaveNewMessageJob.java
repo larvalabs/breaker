@@ -3,6 +3,7 @@ package jobs;
 import com.larvalabs.linkunfurl.LinkInfo;
 import com.larvalabs.linkunfurl.LinkUnfurl;
 import com.larvalabs.redditchat.realtime.ChatRoomStream;
+import com.larvalabs.redditchat.util.RedisUtil;
 import com.larvalabs.redditchat.util.Util;
 import models.ChatRoom;
 import models.ChatUser;
@@ -46,6 +47,8 @@ public class SaveNewMessageJob extends Job<Message> {
         savedMessage.save();
 
         ChatRoomStream.getEventStream(roomName).sendMessageUpdate(chatRoom, savedMessage);
+
+        RedisUtil.markRoomActive(roomName);
 
         return savedMessage;
     }
