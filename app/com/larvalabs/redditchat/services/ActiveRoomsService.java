@@ -1,5 +1,6 @@
 package com.larvalabs.redditchat.services;
 
+import com.larvalabs.redditchat.Constants;
 import com.larvalabs.redditchat.dataobj.JsonActiveChatRoom;
 import com.larvalabs.redditchat.util.ActiveRoomsRedisUtil;
 import play.db.jpa.JPA;
@@ -36,7 +37,8 @@ public class ActiveRoomsService {
             .append("SELECT cr.id AS id, cr.name AS name, cr.displayname AS displayName, cr.iconurl AS iconUrl, COUNT(DISTINCT user_id) AS activeUsers, RANK() OVER (ORDER BY COUNT(DISTINCT user_id) DESC, name) as rank ")
             .append("FROM chatroom cr ")
             .append("LEFT JOIN message m on cr.id = m.room_id ")
-            .append("WHERE m.createdate > (current_timestamp - interval '30 days') ")
+            .append("WHERE m.createdate > (current_timestamp - interval '30 days') AND ")
+            .append("m.user_id <> (SELECT id FROM chatuser WHERE username = :botname) ")
             .append("GROUP BY cr.id, cr.name, cr.displayname, cr.iconurl ")
             .append("ORDER BY activeUsers DESC ")
           .append(") AS ranked ")
@@ -54,6 +56,7 @@ public class ActiveRoomsService {
         activeRoomsQuery.setParameter("offset", offset);
         userId = (userId != null) ? userId : -1;
         activeRoomsQuery.setParameter("userId", userId);
+        activeRoomsQuery.setParameter("botname", Constants.BREAKER_BOT_USERNAME);
 
         return convert(activeRoomsQuery.getResultList());
     }
