@@ -9,7 +9,7 @@ import SidebarRoomRoom from './SidebarRoom';
 import { SidebarActiveRoom } from './SidebarActiveRoom';
 
 import { scrollToRoomNameReset } from '../redux/actions/scroll-actions';
-import { handleMoreActiveRooms, handleResetActiveRooms } from '../redux/actions/active-rooms-actions';
+import { handleMoreActiveRooms, resetActiveRoomsList } from '../redux/actions/active-rooms-actions';
 
 import { getSidebarOpen, getScrollToRoomName, getMoreActiveRoomsLoading, isActiveRoomsComplete } from '../redux/selectors/ui-selectors';
 import { getAllRooms, getCurrentRoom, getCurrentRoomStyles } from '../redux/selectors/rooms-selectors';
@@ -176,7 +176,7 @@ function mapDispatchToProps(dispatch) {
       dispatch(handleMoreActiveRooms());
     },
     resetActiveRooms() {
-      dispatch(handleResetActiveRooms());
+      dispatch(resetActiveRoomsList());
     }
   };
 }

@@ -20,14 +20,8 @@ export function setActiveRoomsComplete() {
   return { type: actions.ACTIVE_ROOMS_COMPLETE };
 }
 
-export function resetActiveRooms() {
+export function resetActiveRoomsList() {
   return { type: actions.ACTIVE_ROOMS_RESET };
-}
-
-export function handleResetActiveRooms() {
-  return (dispatch) => {
-    dispatch(resetActiveRooms());
-  };
 }
 
 export function handleMoreActiveRooms() {
