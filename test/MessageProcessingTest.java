@@ -4,12 +4,15 @@ import com.larvalabs.redditchat.dataobj.JsonMessage;
 import com.larvalabs.redditchat.dataobj.JsonUser;
 import models.ChatRoom;
 import models.ChatUser;
+import models.Message;
 import org.junit.Before;
 import org.junit.Test;
 import play.Logger;
 import play.libs.Mail;
 import play.test.Fixtures;
 import play.test.UnitTest;
+
+import java.util.List;
 
 /**
  * Created by matt on 12/24/15.
@@ -61,5 +64,14 @@ public class MessageProcessingTest extends UnitTest {
         assertTrue(command.type == ChatCommands.CommandType.BAN);
         assertEquals("user1uid", command.username);
 //        ChatCommands.execCommand(room1, message, null, null);
+    }
+
+    @Test
+    public void testUserMentions() throws Exception {
+        String message = "This is a @megamatt2000 test that should @DJ-Professor-K work.";
+        List<String> usernames = Message.getMentionedUsernames(message);
+        assertEquals(2, usernames.size());
+        assertEquals("megamatt2000", usernames.get(0));
+        assertEquals("DJ-Professor-K".toLowerCase(), usernames.get(1));
     }
 }

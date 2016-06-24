@@ -217,7 +217,7 @@ public class RedisUtil {
         try {
             int time = (int) (System.currentTimeMillis() / 1000);
             Redis.zadd(REDISKEY_ACTIVE_ROOMS, time, roomName);
-            if (random.nextFloat() < CHANCE_CLEAN_REDIS_PRESENCE || true) {
+            if (random.nextFloat() < CHANCE_CLEAN_REDIS_PRESENCE) {
                 // this is just housekeeping to keep the sets from getting too big
                 Long removed = Redis.zremrangeByRank(REDISKEY_ACTIVE_ROOMS, 0, -10);
                 Logger.info("Remove " + removed + " active rooms from active room set.");

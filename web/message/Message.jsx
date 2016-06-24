@@ -35,7 +35,7 @@ class Message extends Component {
 
   renderHTMLMessage() {
     let classes = 'message-body m-t-midxs';
-    const message = this.props.message.get('messageHtml').replace(/@(\w+)/g, this.renderFormattedMention);
+    const message = this.props.message.get('messageHtml').replace(/@([A-Za-z0-9_-]+)/g, this.renderFormattedMention);
     return <div className={classes} dangerouslySetInnerHTML={ { __html: message } }></div>;
   }
 
