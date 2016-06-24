@@ -62,6 +62,11 @@ li.chat-message-root .message-body, li.chat-message-short .message-body, li.chat
   padding-top: 7px;
 }
 
+/* To fix left-indent problems in some subs */
+.flair {
+  display: inline-block;
+}
+
 .flair-message-hack {
   margin-left: 1em;
 }
@@ -76,7 +81,7 @@ li.chat-message-root .message-body, li.chat-message-short .message-body, li.chat
 }
 
 .flair-container {
-  display: inline-block;
+  display: inline;
   min-width: 3em;
   height: 100%;
   margin-left: 0.5em;
