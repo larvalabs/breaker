@@ -107,6 +107,14 @@ public class ChatUserRoomJoin extends Model {
 //        return find("user = ? join chatroom", chatUser).fetch();
     }
 
+    public static List<ChatUserRoomJoin> findWithoutDeletedAndUnopened(ChatUser user) {
+        Query getAllStuffQuery = JPA.em().createQuery("select ur from ChatUserRoomJoin ur join fetch ur.room urr join fetch ur.user u where ur.room " +
+                "in (select room from ChatUserRoomJoin ur2 where ur2.user = :user) " +
+                "and ur.room.deleted = false and ur.room.open = true")
+                .setParameter("user", user);
+        return getAllStuffQuery.getResultList();
+    }
+
     public static List<ChatUserRoomJoin> findByChatRoom(ChatRoom chatRoom) {
         return find("room = ?", chatRoom).fetch();
     }

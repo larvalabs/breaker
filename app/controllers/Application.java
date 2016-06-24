@@ -532,8 +532,8 @@ public class Application extends PreloadUserController {
         if(limit == null || limit > 25) limit = 10; //load max 25 Rooms
         if(offset == null) offset = 0;
 
-        HashMap<String, JsonActiveChatRoom> activeChatRooms = JsonActiveRoomsUtil.getActiveRooms(connected, offset, limit);
-        renderJSON(activeChatRooms);
+        List<JsonActiveChatRoom> activeRooms = ActiveRoomsService.getActiveRooms(limit);
+        renderJSON(activeRooms);
     }
 
     /*
