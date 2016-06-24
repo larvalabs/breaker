@@ -21,6 +21,8 @@ public class Constants {
     public static final int DEFAULT_MIN_KARMA_REQUIRED_TO_POST = 2;
     public static final long STREAM_TIMEOUT_MILLIS = TimeUnit.MINUTES.toMillis(2);
 
+    public static final int ACTIVE_ROOMS_MAX = 5;
+
     public enum Flair {
         DEV_SAME_ROOM(0x1F451),
         TOP_STARS_ROOM(0x1F31F),

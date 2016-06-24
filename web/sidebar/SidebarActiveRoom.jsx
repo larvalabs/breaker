@@ -8,13 +8,19 @@ export const SidebarActiveRoom = (props) => {
   const { styles, room } = props;
 
   const renderActiveUsers = () => {
-    const activeUsersStyles = { backgroundColor: '#B73030', color: '#F8DCDC' };
+    const activeUsersStyles = { backgroundColor: '#b4b6bd', color: '#3a3f51' };
 
-    return (
-      <div className="unread-count-room pull-right">
-        <b className="unreadcount label bg-info pull-right" style={activeUsersStyles}>{room.get('activeUsers')}</b>
-      </div>
-    );
+    if (room.get('activeUsers') > 0) {
+      return (
+        <div className="unread-count-room pull-right">
+          <b className="unreadcount label bg-info pull-right" style={activeUsersStyles}>{room.get('activeUsers')}</b>
+        </div>);
+    } else {
+      return (
+          <div className="unread-count-room pull-right">
+
+          </div>);
+    }
   };
 
   const joinRoom = () => {

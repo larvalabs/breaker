@@ -8,7 +8,7 @@ public final class JsonActiveChatRoom implements Serializable{
     private final String name;
     private final String displayName;
     private final String iconUrl;
-    private final int activeUsers;
+    private int activeUsers;
 
     public JsonActiveChatRoom(int id, String roomName, String displayName, String iconUrl, int activeUsers, int rank) {
         this.id = id;
@@ -35,4 +35,7 @@ public final class JsonActiveChatRoom implements Serializable{
         return activeUsers;
     }
 
+    public void setActiveUsers(int activeUsers) {
+        this.activeUsers = activeUsers;
+    }
 }

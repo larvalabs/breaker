@@ -202,14 +202,10 @@ public class RedisUtil {
         }
     }
 
-    public static List<JsonActiveChatRoom> getMostActiveChatRooms() {
-        return null;
-    }
-
     public static TreeSet<String> getActiveRooms(int limit) {
         try {
             int time = (int) (System.currentTimeMillis() / 1000);
-            Set<String> activeRoomNames = Redis.zrange(REDISKEY_ACTIVE_ROOMS, 0, limit);
+            Set<String> activeRoomNames = Redis.zrange(REDISKEY_ACTIVE_ROOMS, -limit, -1);
             return new TreeSet<String>(activeRoomNames);
         } catch (Exception e) {
             Logger.error(e, "Error contacting redis.");
@@ -221,10 +217,10 @@ public class RedisUtil {
         try {
             int time = (int) (System.currentTimeMillis() / 1000);
             Redis.zadd(REDISKEY_ACTIVE_ROOMS, time, roomName);
-            if (random.nextFloat() < CHANCE_CLEAN_REDIS_PRESENCE) {
+            if (random.nextFloat() < CHANCE_CLEAN_REDIS_PRESENCE || true) {
                 // this is just housekeeping to keep the sets from getting too big
-                Long removed = Redis.zremrangeByScore(REDISKEY_ACTIVE_ROOMS, 0, time - Constants.PRESENCE_TIMEOUT_SEC * 2);
-
+                Long removed = Redis.zremrangeByRank(REDISKEY_ACTIVE_ROOMS, 0, -10);
+                Logger.info("Remove " + removed + " active rooms from active room set.");
             }
         } catch (Exception e) {
             Logger.error(e, "Error contacting redis.");

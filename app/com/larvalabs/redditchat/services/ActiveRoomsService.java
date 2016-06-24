@@ -15,8 +15,10 @@ public class ActiveRoomsService {
         int rank = 1;
         for (String roomName : activeRooms) {
             JsonChatRoom jsonChatRoom = BreakerCache.getJsonChatRoom(roomName);
-            activeRoomsList.add(new JsonActiveChatRoom(0, roomName, jsonChatRoom.displayName, jsonChatRoom.iconUrl, 1, rank));
-            rank++;
+            if (jsonChatRoom != null) {
+                activeRoomsList.add(new JsonActiveChatRoom(0, roomName, jsonChatRoom.displayName, jsonChatRoom.iconUrl, 1, rank));
+                rank++;
+            }
         }
 
         return activeRoomsList;

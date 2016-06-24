@@ -1,11 +1,13 @@
 package com.larvalabs.redditchat.dataobj;
 
+import com.larvalabs.redditchat.Constants;
 import com.larvalabs.redditchat.services.ActiveRoomsService;
 import com.larvalabs.redditchat.util.RedisUtil;
 import com.larvalabs.redditchat.util.Stats;
 import models.ChatRoom;
 import models.ChatUser;
 import models.ChatUserRoomJoin;
+import play.modules.redis.Redis;
 
 import java.util.*;
 
@@ -112,6 +114,26 @@ public class JsonUtil {
 
             // Remove the room from active rooms if we're in it already
             state.activeRooms.remove(roomName);
+        }
+
+        if (state.activeRooms.size() > Constants.ACTIVE_ROOMS_MAX) {
+            ArrayList<JsonActiveChatRoom> rooms = new ArrayList<>();
+            rooms.addAll(state.activeRooms.values());
+            Collections.sort(rooms, new Comparator<JsonActiveChatRoom>() {
+                @Override
+                public int compare(JsonActiveChatRoom o1, JsonActiveChatRoom o2) {
+                    return Integer.compare(o1.getRank(), o2.getRank());
+                }
+            });
+            state.activeRooms.clear();
+            for (int i = 0; i < Constants.ACTIVE_ROOMS_MAX; i++) {
+                JsonActiveChatRoom jsonActiveChatRoom = rooms.get(i);
+                state.activeRooms.put(jsonActiveChatRoom.getName(), jsonActiveChatRoom);
+            }
+        }
+
+        for (JsonActiveChatRoom jsonActiveChatRoom : state.activeRooms.values()) {
+            jsonActiveChatRoom.setActiveUsers((int) RedisUtil.getCurrentUserCount(jsonActiveChatRoom.getName()));
         }
 
         Stats.measure(Stats.StatKey.LOAD_FULLSTATE_TIME, (System.currentTimeMillis() - startTime));
