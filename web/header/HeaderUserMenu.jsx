@@ -6,10 +6,14 @@ import Config from '../config';
 
 export default class HeaderUserMenu extends Component {
   renderUsername() {
+    var avatarStyleOverrides = {
+      objectFit: 'cover',
+      height: '40px'
+    };
     return (
       <div>
         <span className="thumb-sm avatar pull-right m-t-n-sm m-b-n-sm m-l-sm">
-          <img src={this.props.user.get('profileImageUrl')} alt="..." />
+          <img src={this.props.user.get('profileImageUrl')} alt="..." style={avatarStyleOverrides} />
           <i className="on md b-white bottom" />
         </span>
         <span className="hidden-sm hidden-md">{this.props.user.get('username')}</span>

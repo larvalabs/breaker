@@ -15,17 +15,22 @@ export default class UserAvatar extends Component {
       userImage = '/public/img/user-anon.png';
     }
 
-    let anonOpacityStyle = {};
+    let avatarStyleOverrides = {};
     if (userImage.indexOf('user-anon.png') > 0) {
-      anonOpacityStyle = { opacity: '0.2' };
+      avatarStyleOverrides = { opacity: '0.2' };
     }
+    avatarStyleOverrides.height = '40px';
+    avatarStyleOverrides.objectFit = 'cover';
+    // avatarStyleOverrides.backgroundImage = 'url(' + userImage + ')';
+    // avatarStyleOverrides.backgroundPosition = 'center center';
+    // avatarStyleOverrides.backgroundRepeat = 'no-repeat';
 
     const userLink = `https://reddit.com/u/${user.get('username')}`;
     const onlineClass = user.get('online') ? 'on' : 'off';
 
     return (
       <a href={userLink} className="pull-left thumb-sm avatar m-r hidden-xs" target="_blank">
-        <img src={userImage} alt="..." className="img-circle" style={anonOpacityStyle}/>
+        <img src={userImage} alt="..." className="img-circle" style={avatarStyleOverrides}/>
         <i className={`${onlineClass} b-white bottom`} />
       </a>
     );
