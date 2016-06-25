@@ -31,9 +31,9 @@ export const SidebarActiveRoom = (props) => {
   return (
     <li className="roomlistentry" onClick={joinRoom} title="Active Users">
       <SidebarRoomSelect styles={styles} active={false}>
+        {renderActiveUsers()}
         <SidebarRoomAvatar room={room}/>
         <SidebarRoomName room={room} styles={styles}/>
-        {renderActiveUsers()}
       </SidebarRoomSelect>
     </li>
   );
