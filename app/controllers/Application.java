@@ -533,7 +533,11 @@ public class Application extends PreloadUserController {
         if(offset == null) offset = 0;
 
         List<JsonActiveChatRoom> activeRooms = ActiveRoomsService.getActiveRooms(limit);
-        renderJSON(activeRooms);
+        HashMap<String, JsonActiveChatRoom> activeRoomMap = new HashMap<>();
+        for (JsonActiveChatRoom activeRoom : activeRooms) {
+            activeRoomMap.put(activeRoom.getName(), activeRoom);
+        }
+        renderJSON(activeRoomMap);
     }
 
     /*

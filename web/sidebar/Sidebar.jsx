@@ -101,7 +101,7 @@ class Sidebar extends Component {
         </li>
         {
           this.getOrderedActiveRooms()
-              .filter((room) => {return !this.props.roomList.has(room.get('name'))})
+              .filter((room) => {return room && !this.props.roomList.has(room.get('name'))})
               .map((room) => {
             return (
               <SidebarActiveRoom key={room.get('name')}
