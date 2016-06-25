@@ -100,7 +100,9 @@ class Sidebar extends Component {
           {(this.props.activeRoomList.toArray().length > 5) ? this.renderCollapseButton() : null}
         </li>
         {
-          this.getOrderedActiveRooms().map((room) => {
+          this.getOrderedActiveRooms()
+              .filter((room) => {return !this.props.roomList.has(room.get('name'))})
+              .map((room) => {
             return (
               <SidebarActiveRoom key={room.get('name')}
                                  room={room}
