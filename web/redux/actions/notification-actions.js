@@ -40,6 +40,8 @@ export function handleSendNotification(title, body, roomName) {
 
 export function handleMessageUserMentionNotification(message) {
   return (dispatch, getStore) => {
+    const store = getStore();
+
     // Prop validation
     if (!message.message.mentionedUsernames || !message.message.mentionedUsernames.length) {
       return null;
@@ -49,7 +51,7 @@ export function handleMessageUserMentionNotification(message) {
       return null;
     }
 
-    const authUsername = getStore().getIn(['authUser', 'username'], '').toLowerCase();
+    const authUsername = store.getIn(['authUser', 'username'], '').toLowerCase();
     if (message.user.username.toLowerCase() === authUsername) {
       return null;
     }
@@ -70,6 +72,11 @@ export function handleNewMessageNotification(message) {
 
     const store = getStore();
     if (store.get('currentRoom') === message.room.name && store.getIn(['ui', '__HAS_FOCUS__'])) {
+      return null;
+    }
+
+    const lastSeenRoomTime = store.getIn(['lastSeenTimes', message.room.name]);
+    if (message.message.createDateLongUTC < lastSeenRoomTime) {
       return null;
     }
 
