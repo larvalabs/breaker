@@ -301,17 +301,20 @@ public class WebSocket extends PreloadUserController {
 
     public static class ChatRoomSocket extends WebSocketController {
 
-        public static void join() {
+        public static void join(Boolean test) {
 
             long startTime = System.currentTimeMillis();
 
             ChatUser user = getUser();
+            if (test != null && test) {
+                user = ChatUser.findByUsername(Constants.USERNAME_REACTNATIVE_TESTUSER);
+            }
             if (user == null) {
                 disconnect();
                 return;
             }
             String connectionId = Util.getUUID();
-            Logger.info("Getting chat room joins");
+            Logger.info("Getting chat room joins for " + user.getUsername());
             List<ChatUserRoomJoin> chatRoomJoins = user.getChatRoomJoins();
 
             Logger.debug(user.getUsername() + " connecting to websocket and " + chatRoomJoins.size() + " rooms.");

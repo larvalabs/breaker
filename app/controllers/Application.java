@@ -474,8 +474,12 @@ public class Application extends PreloadUserController {
         renderText("ok");
     }
 
-    public static void initialState() {
-        JsonUtil.FullState fullState = JsonUtil.loadFullStateForUser(connected());
+    public static void initialState(Boolean test) {
+        ChatUser user = connected();
+        if (test != null && test) {
+            user = ChatUser.findByUsername(Constants.USERNAME_REACTNATIVE_TESTUSER);
+        }
+        JsonUtil.FullState fullState = JsonUtil.loadFullStateForUser(user);
         renderJSON(fullState);
     }
 
