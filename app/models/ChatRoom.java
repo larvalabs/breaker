@@ -616,6 +616,10 @@ public class ChatRoom extends Model {
         return getLastMessageReadTimeForUser(name, username);
     }
 
+    public void cleanupLastMessageReadForUser(String username) {
+        Redis.del(new String[]{makeKeyForLastReadTime(name, username)});
+    }
+
     public static long getLastMessageReadTimeForUser(String roomName, String username) {
         try {
             String lastTime = Redis.get(makeKeyForLastReadTime(roomName, username));

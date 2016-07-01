@@ -29,6 +29,7 @@ public class SaveLastReadForUserJob extends Job {
             Logger.info("Settings last message read for " + user.getUsername() + " in " + room.getName() + " to " + lastMessageReadTimeForUser);
             join.setLastSeenMessageTime(lastMessageReadTimeForUser);
             join.save();
+            room.cleanupLastMessageReadForUser(user.getUsername());
         }
     }
 }
