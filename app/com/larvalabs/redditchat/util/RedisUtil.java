@@ -183,7 +183,7 @@ public class RedisUtil {
         try {
             int time = (int) (System.currentTimeMillis() / 1000);
             Long removed = Redis.zremrangeByScore(getRedisPresenceKeyForRoom(roomName), 0, time - Constants.PRESENCE_TIMEOUT_SEC * 2);
-//            Logger.debug("Clean of presence set for " + name + " removed " + removed + " elements.");
+            Logger.debug("Clean of presence set for " + roomName + " removed " + removed + " elements.");
         } catch (Exception e) {
             Logger.error(e, "Error contacting redis.");
         }
@@ -227,4 +227,14 @@ public class RedisUtil {
         }
     }
 
+    public static void cleanAllPresenceSets() {
+        Set<String> keys = Redis.keys("presence_*");
+        for (String key : keys) {
+            String[] split = key.split("_");
+            if (split.length > 1) {
+                cleanPresenceSet(split[1]);
+            }
+        }
+        cleanPresenceSetGlobal();
+    }
 }

@@ -666,6 +666,16 @@ public class Application extends PreloadUserController {
 
     }
 
+    public static void runDailyCleanup() {
+        if (connected().isAdmin()) {
+            new DailyCleanupJob().now();
+            renderText("OK");
+        } else {
+            error("User is not an admin.");
+        }
+
+    }
+
     /**
      * Test methods
      */
@@ -692,5 +702,4 @@ public class Application extends PreloadUserController {
             WebSocket.room("breakerapp");
         }
     }
-
 }
