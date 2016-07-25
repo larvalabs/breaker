@@ -19,4 +19,14 @@ update chatroom set linkBotPref = 'newtop';
 -- Chat room deleted flag
 alter table chatroom add column deleted boolean DEFAULT false;
 
+-- Manually added room mods join
+CREATE TABLE user_moderatorroomchatonly
+(
+  moderatorschatonly_id BIGINT NOT NULL,
+  moderatedroomschatonly_id BIGINT NOT NULL,
+  CONSTRAINT user_moderatorroomchatonly_pkey PRIMARY KEY (moderatorschatonly_id, moderatedroomschatonly_id),
+  CONSTRAINT fk_7w6eloi7oivos987rq37uciw1 FOREIGN KEY (moderatorschatonly_id) REFERENCES chatuser (id),
+  CONSTRAINT fk_b7tu3cvox4k8qedygl07u1lte FOREIGN KEY (moderatedroomschatonly_id) REFERENCES chatroom (id)
+);
+
 -- ALL DEPLOYED ABOVE

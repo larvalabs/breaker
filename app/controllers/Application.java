@@ -623,9 +623,9 @@ public class Application extends PreloadUserController {
             ChatRoom room = ChatRoom.findByName(roomname);
             ChatUser user = ChatUser.findByUsername(username);
             if (mod) {
-                user.moderateRoom(room);
+                user.moderateRoom(room, true);
             } else {
-                user.getModeratedRooms().remove(room);
+                user.stopModerating(room, true);
             }
             user.save();
             room.save();

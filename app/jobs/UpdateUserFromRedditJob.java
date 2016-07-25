@@ -94,7 +94,7 @@ public class UpdateUserFromRedditJob extends Job {
             } else {
                 ChatRoom newModRoom = ChatRoom.findByName(subName);
                 if (newModRoom != null) {
-                    chatUser.moderateRoom(newModRoom);
+                    chatUser.moderateRoom(newModRoom, false);
                     chatUser.joinChatRoom(newModRoom);
                     Logger.info("User made moderator of room " + newModRoom.getName());
                     ChatRoomStream eventStream = ChatRoomStream.getEventStream(newModRoom.getName());
@@ -108,7 +108,7 @@ public class UpdateUserFromRedditJob extends Job {
 
         // Process any remaining mod joins in our DB, these are rooms user is not longer a mod of
         for (ChatRoom moderatedRoom : moderatedRooms) {
-            chatUser.stopModerating(moderatedRoom);
+            chatUser.stopModerating(moderatedRoom, false);
             moderatedRoom.save();
             ChatRoomStream eventStream = ChatRoomStream.getEventStream(moderatedRoom.getName());
             eventStream.sendRoomUpdate(moderatedRoom);

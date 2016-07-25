@@ -78,6 +78,10 @@ public class ChatUser extends Model {
     public Set<ChatRoom> moderatedRooms = new HashSet<ChatRoom>();
 
     @ManyToMany(cascade = CascadeType.PERSIST)
+    @JoinTable(name = "user_moderatorroomchatonly")
+    public Set<ChatRoom> moderatedRoomsChatOnly = new HashSet<ChatRoom>();
+
+    @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(name = "user_flagging_user")
     public Set<ChatUser> flaggingUsers = new HashSet<ChatUser>();
 
@@ -242,6 +246,14 @@ public class ChatUser extends Model {
 
     public void setModeratedRooms(Set<ChatRoom> moderatedRooms) {
         this.moderatedRooms = moderatedRooms;
+    }
+
+    public Set<ChatRoom> getModeratedRoomsChatOnly() {
+        return moderatedRoomsChatOnly;
+    }
+
+    public void setModeratedRoomsChatOnly(Set<ChatRoom> moderatedRoomsChatOnly) {
+        this.moderatedRoomsChatOnly = moderatedRoomsChatOnly;
     }
 
     public Set<ChatUser> getFlaggingUsers() {
@@ -450,7 +462,7 @@ public class ChatUser extends Model {
     }
 
     public boolean isModerator(ChatRoom chatRoom) {
-        return admin || getModeratedRooms().contains(chatRoom);
+        return admin || getModeratedRooms().contains(chatRoom) || getModeratedRoomsChatOnly().contains(chatRoom);
     }
 
     public void watchRoom(ChatRoom room) {
@@ -463,13 +475,21 @@ public class ChatUser extends Model {
         save();
     }
 
-    public void moderateRoom(ChatRoom room) {
-        moderatedRooms.add(room);
+    public void moderateRoom(ChatRoom room, boolean chatModType) {
+        if (chatModType) {
+            moderatedRoomsChatOnly.add(room);
+        } else {
+            moderatedRooms.add(room);
+        }
         save();
     }
 
-    public void stopModerating(ChatRoom room) {
-        moderatedRooms.remove(room);
+    public void stopModerating(ChatRoom room, boolean chatModType) {
+        if (chatModType) {
+            moderatedRoomsChatOnly.remove(room);
+        } else {
+            moderatedRooms.remove(room);
+        }
         save();
     }
 

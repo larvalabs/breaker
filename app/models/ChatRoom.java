@@ -64,6 +64,9 @@ public class ChatRoom extends Model {
     @ManyToMany(mappedBy = "moderatedRooms", fetch = FetchType.LAZY)
     public Set<ChatUser> moderators = new HashSet<ChatUser>();
 
+    @ManyToMany(mappedBy = "moderatedRoomsChatOnly", fetch = FetchType.LAZY)
+    public Set<ChatUser> moderatorsChatOnly = new HashSet<ChatUser>();
+
     public String iconUrl;
     public String banner;
     public String flairScale;
@@ -240,13 +243,24 @@ public class ChatRoom extends Model {
         this.moderators = moderators;
     }
 
-    public void addModerator(ChatUser chatUser) {
-        chatUser.moderateRoom(this);
+    public Set<ChatUser> getModeratorsChatOnly() {
+        return moderatorsChatOnly;
+    }
+
+    public void setModeratorsChatOnly(Set<ChatUser> moderatorsChatOnly) {
+        this.moderatorsChatOnly = moderatorsChatOnly;
+    }
+
+    public void addModerator(ChatUser chatUser, boolean chatRoomType) {
+        chatUser.moderateRoom(this, chatRoomType);
     }
 
     public List<String> getModeratorUsernames() {
         List<String> usernames = new ArrayList<>();
         for (ChatUser moderator : moderators) {
+            usernames.add(moderator.getUsername());
+        }
+        for (ChatUser moderator : moderatorsChatOnly) {
             usernames.add(moderator.getUsername());
         }
         return usernames;
@@ -401,7 +415,7 @@ public class ChatRoom extends Model {
     }
 
     public boolean isModerator(ChatUser user) {
-        return getModerators().contains(user) || user.isAdmin();
+        return getModerators().contains(user) || getModeratorsChatOnly().contains(user) || user.isAdmin();
     }
 
     public boolean isRedditModerator(ChatUser user) {
