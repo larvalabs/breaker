@@ -100,8 +100,9 @@ public class Application extends PreloadUserController {
 
     public static void logout() {
         session.remove(SESSION_UID);
-        redirect("/");
-//        index();
+        response.removeCookie(REMEMBERME_COOKIE);
+        Logger.info("Removing rememberme cookies.");
+        render();
     }
 
     public static void preAuthForRoomJoin(String roomName) {
