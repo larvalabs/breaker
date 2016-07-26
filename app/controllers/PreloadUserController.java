@@ -16,6 +16,7 @@ public class PreloadUserController extends Controller {
 
     public static final String SESSION_UID = "uid";
     public static final String REMEMBERME_COOKIE = "rememberme";
+    public static final String HEADER_MOBILE_ACCESS = "x-breakeraccesscode";
 
     @Before
     static void preloadUser() {
@@ -25,6 +26,14 @@ public class PreloadUserController extends Controller {
         if (session.contains("uid")) {
             String uid = session.get(SESSION_UID);
             Logger.info("existing user: " + uid);
+            user = ChatUser.get(uid);
+            if (user != null) {
+                renderArgs.put("user", user);
+            }
+        } else if (request.headers.containsKey(HEADER_MOBILE_ACCESS)) {
+            String accessCode = request.headers.get(HEADER_MOBILE_ACCESS).value();
+            String uid = Crypto.decryptAES(accessCode);
+            Logger.info("Mobile access header: " + accessCode + ", uid: " + uid);
             user = ChatUser.get(uid);
             if (user != null) {
                 renderArgs.put("user", user);

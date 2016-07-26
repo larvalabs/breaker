@@ -16,6 +16,7 @@ import org.apache.commons.lang.StringUtils;
 import play.Logger;
 import play.Play;
 import play.db.jpa.JPA;
+import play.libs.Crypto;
 import play.libs.OAuth2;
 import play.libs.WS;
 import play.mvc.Scope;
@@ -51,6 +52,7 @@ public class Application extends PreloadUserController {
 
     public static final String SESSION_JOINROOM = "joinroomname";
     public static final String SESSION_WAITROOM = "waitroomname";
+    public static final String SESSION_MOBILEAPPLOGIN = "mobileapplogin";
     public static final String HTTPS_WWW_BREAKERAPP_COM = "https://www.breakerapp.com";
 
     public static void index() {
@@ -74,6 +76,15 @@ public class Application extends PreloadUserController {
             redirect("/");
         }
 
+    }
+
+    public static void testGetUser() {
+        ChatUser chatUser = connected();
+        if (chatUser != null) {
+            renderText(chatUser.getUsername());
+        } else {
+            renderText("No user logged in.");
+        }
     }
 
     public static void test() {
@@ -273,9 +284,15 @@ public class Application extends PreloadUserController {
         auth(compact);
     }
 
+    public static void startAuthForMobileApp() {
+        Logger.info("This is a mobile app login, setting mobile app redirect cookie.");
+        session.put(SESSION_MOBILEAPPLOGIN, "true");
+        auth(true);
+    }
+
     public static void auth(Boolean compact) {
-        Logger.debug("Received auth response.");
         if (OAuth2.isCodeResponse()) {
+            Logger.debug("Received auth response.");
 //            ChatUser user = connected();
 //            OAuth2.Response response = retrieveAccessToken(REDDIT_CALLBACK);
             Tokens tokens = retrieveAccessToken(REDDIT_CALLBACK);
@@ -318,7 +335,14 @@ public class Application extends PreloadUserController {
 
             String joiningRoom = session.get(SESSION_JOINROOM);
             String waitingRoom = session.get(SESSION_WAITROOM);
-            if (joiningRoom != null) {
+            String mobileAppLogin = session.get(SESSION_MOBILEAPPLOGIN);
+            if (mobileAppLogin != null) {
+                session.remove(SESSION_MOBILEAPPLOGIN);
+                String accessCode = Crypto.encryptAES(connected().getUid());
+                String mobileAppAuthUrl = Play.configuration.getProperty("mobileapp.auth.url");
+                Logger.info("Mobile app logged in, redirecting to " + mobileAppAuthUrl + accessCode);
+                redirect(mobileAppAuthUrl + accessCode);
+            } else if (joiningRoom != null) {
                 session.remove(SESSION_JOINROOM);
                 WebSocket.room(joiningRoom);
             } else if (waitingRoom != null) {
