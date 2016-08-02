@@ -25,6 +25,7 @@ public class PreloadUserController extends Controller {
 //        session.put(SESSION_UID, "2hfc8agp4k9ane");
         if (session.contains("uid")) {
             String uid = session.get(SESSION_UID);
+            Logger.info("Access: " + Crypto.encryptAES(uid));
             Logger.info("existing user: " + uid);
             user = ChatUser.get(uid);
             if (user != null) {
@@ -32,9 +33,7 @@ public class PreloadUserController extends Controller {
             }
         } else if (request.headers.containsKey(HEADER_MOBILE_ACCESS)) {
             String accessCode = request.headers.get(HEADER_MOBILE_ACCESS).value();
-            String uid = Crypto.decryptAES(accessCode);
-            Logger.info("Mobile access header: " + accessCode + ", uid: " + uid);
-            user = ChatUser.get(uid);
+            user = getUserFromAccessCode(accessCode);
             if (user != null) {
                 renderArgs.put("user", user);
             }
@@ -56,6 +55,12 @@ public class PreloadUserController extends Controller {
             }
         }
 
+    }
+
+    public static ChatUser getUserFromAccessCode(String accessCode) {
+        String uid = Crypto.decryptAES(accessCode);
+        Logger.info("Mobile access header: " + accessCode + ", uid: " + uid);
+        return ChatUser.get(uid);
     }
 
     static void setUserInSession(ChatUser user) {

@@ -31,9 +31,11 @@ import static controllers.Application.SESSION_JOINROOM;
 @With(ForceSSL.class)
 public class WebSocket extends PreloadUserController {
 
-    private static ChatUser getUser() {
+    private static ChatUser getUser(String accessCode) {
         ChatUser user;
-        if (session.contains("uid")) {
+        if (accessCode != null) {
+            return PreloadUserController.getUserFromAccessCode(accessCode);
+        } else if (session.contains("uid")) {
             String uid = session.get(Application.SESSION_UID);
             Logger.info("websocket found existing user: " + uid);
             return ChatUser.get(uid);
@@ -301,11 +303,11 @@ public class WebSocket extends PreloadUserController {
 
     public static class ChatRoomSocket extends WebSocketController {
 
-        public static void join(Boolean test) {
+        public static void join(Boolean test, String accessCode) {
 
             long startTime = System.currentTimeMillis();
 
-            ChatUser user = getUser();
+            ChatUser user = getUser(accessCode);
             if (test != null && test) {
                 user = ChatUser.findByUsername(Constants.USERNAME_REACTNATIVE_TESTUSER);
             }
