@@ -6,7 +6,7 @@ import formatBytes from '../util/formatters';
 import { toggleCollapseLink } from '../redux/actions/chat-actions';
 import { getAllCollapsedLinks } from '../redux/selectors/ui-selectors';
 
-export default class TitleCollapsible extends Component {
+export class TitleCollapsible extends Component {
   constructor(props) {
     super(props);
     this.handleClick = this.handleClick.bind(this);
