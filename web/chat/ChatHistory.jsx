@@ -5,7 +5,7 @@ import * as scrollActions from '../redux/actions/scroll-actions';
 import { getMoreMessagesLoading } from '../redux/selectors/ui-selectors';
 import { getCurrentRoomHasMoreMessages, getMessageCountCurrentRoom } from '../redux/selectors/room-messages-selectors';
 
-export default class MessageHistory extends Component {
+export class MessageHistory extends Component {
   renderTitle() {
     const { loading, currentRoom, hasMore, handleMoreMessages } = this.props;
     if (loading) {

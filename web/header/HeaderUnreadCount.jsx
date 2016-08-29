@@ -5,7 +5,7 @@ import Immutable from 'immutable';
 import { handleScrollToNextUnread } from '../redux/actions/scroll-actions';
 
 
-export default class HeaderUnreadCount extends Component {
+export class HeaderUnreadCount extends Component {
   render() {
     const backgroundColor = this.props.room.getIn(['styles', 'sidebarUnreadColor']);
     const color = this.props.room.getIn(['styles', 'sidebarUnreadTextColor']);
