@@ -98,7 +98,7 @@ public class JsonUtil {
 
             if (!state.roomMessages.containsKey(roomName)) {
 //                long messagesStart = System.currentTimeMillis();
-                ArrayList<JsonMessage> roomMessages = BreakerCache.getLastMessages(thisRoom);
+                TreeSet<JsonMessage> roomMessages = BreakerCache.getLastMessages(thisRoom);
                 ArrayList<String> messageIds = new ArrayList<>();
                 for (JsonMessage roomMessage : roomMessages) {
                     state.messages.put(roomMessage.uuid, roomMessage);

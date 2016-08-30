@@ -180,7 +180,20 @@ public class JsonMessage implements Serializable {
         linkInfo = linkInfos.toArray(new JsonLinkInfo[]{});
     }
 
-/*
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof JsonMessage) {
+            return uuid.equals(((JsonMessage) obj).uuid);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return uuid.hashCode();
+    }
+
+    /*
     public void fillTranslation(Translation translation) {
         translatedMessage = translation.getTranslatedMessageText();
         translatedLanguage = translation.getLanguage();

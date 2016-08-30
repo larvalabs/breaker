@@ -18,7 +18,7 @@ public class BreakerCache {
     public static final boolean CACHE_ENABLED = true;
     public static Random random = new Random();
 
-    private static HashMap<String, ArrayList<JsonMessage>> messageCache = new HashMap<String, ArrayList<JsonMessage>>();
+    private static HashMap<String, TreeSet<JsonMessage>> messageCache = new HashMap<String, TreeSet<JsonMessage>>();
     private static LRUMap<String, JsonUser> userCache = new LRUMap<>(1000);
     private static LRUMap<String, JsonChatRoom> roomCache = new LRUMap<>(1000);
 
@@ -29,36 +29,82 @@ public class BreakerCache {
         return KEY_MESSAGES + roomName;
     }
 
+/*
     public static void clearMessagesCache(String roomName) {
         synchronized (messageCache) {
             messageCache.remove(getMessagesKey(roomName));
         }
         Logger.info("Clear message cache for " + roomName);
     }
+*/
 
-    public static ArrayList<JsonMessage> getLastMessages(ChatRoom room) {
+    public static void addMessageToCache(Message message) {
+        JsonMessage jsonMsg = JsonMessage.from(message, message.getUser().getUsername(), message.getRoom().getName());
+        addToCacheInternal(jsonMsg);
+    }
+
+    /**
+     * Preferred over the Message alternative because it saves a conversion to JsonMessage.
+     * @param message
+     */
+    public static void addMessageToCache(JsonMessage message) {
+        addToCacheInternal(message);
+    }
+
+    private static void addToCacheInternal(JsonMessage jsonMsg) {
         synchronized (messageCache) {
-            ArrayList<JsonMessage> roomMessages = messageCache.get(getMessagesKey(room.getName()));
-            if (roomMessages == null || !CACHE_ENABLED) {
-                Logger.info("Cache miss room messages for " + room.getName());
-                roomMessages = getLastJsonMessages(room);
-                messageCache.put(getMessagesKey(room.getName()), roomMessages);
-            } else {
-//                Logger.info("Cache hit room messages for " + room.getName());
+            TreeSet<JsonMessage> jsonMessages = messageCache.get(getMessagesKey(jsonMsg.roomName));
+            if (jsonMessages == null) {
+                jsonMessages = makeNewMessageSet();
+                messageCache.put(getMessagesKey(jsonMsg.roomName), jsonMessages);
             }
-            return roomMessages;
+            jsonMessages.remove(jsonMsg);
+            jsonMessages.add(jsonMsg);
+            if (jsonMessages.size() > Constants.DEFAULT_MESSAGE_LIMIT) {
+                jsonMessages.remove(jsonMessages.first());
+            }
         }
+    }
+
+    private static void addAllToCacheInternal(String roomName, Collection<JsonMessage> messages) {
+        synchronized (messageCache) {
+            TreeSet<JsonMessage> jsonMessages = messageCache.get(getMessagesKey(roomName));
+            if (jsonMessages == null) {
+                jsonMessages = makeNewMessageSet();
+                jsonMessages.addAll(messages);
+                messageCache.put(getMessagesKey(roomName), jsonMessages);
+            } else {
+                jsonMessages.removeAll(messages);
+                jsonMessages.addAll(messages);
+            }
+            while (jsonMessages.size() > Constants.DEFAULT_MESSAGE_LIMIT) {
+                jsonMessages.remove(jsonMessages.first());
+            }
+        }
+    }
+
+    public static TreeSet<JsonMessage> getLastMessages(ChatRoom room) {
+        TreeSet<JsonMessage> roomMessages = messageCache.get(getMessagesKey(room.getName()));
+        if (roomMessages == null || !CACHE_ENABLED) {
+            Logger.info("Cache miss room messages for " + room.getName());
+            return loadLastJsonMessages(room);
+        } else {
+//                Logger.info("Cache hit room messages for " + room.getName());
+        }
+        return new TreeSet<>(roomMessages);
     }
 
     public static void preloadCacheForRoom(ChatRoom room) {
-        ArrayList<JsonMessage> lastJsonMessages = getLastJsonMessages(room);
-        synchronized (messageCache) {
-            messageCache.put(getMessagesKey(room.getName()), lastJsonMessages);
-        }
+        loadLastJsonMessages(room);
     }
 
-    private static ArrayList<JsonMessage> getLastJsonMessages(ChatRoom room) {
-        ArrayList<JsonMessage> roomMessages = new ArrayList<JsonMessage>();
+    /**
+     * Load latest messages and cache as messages are loaded.
+     * @param room
+     * @return
+     */
+    private static TreeSet<JsonMessage> loadLastJsonMessages(ChatRoom room) {
+        TreeSet<JsonMessage> roomMessages = makeNewMessageSet();
         List<Message> messageList = room.getMessages(Constants.DEFAULT_MESSAGE_LIMIT);
         for (Message message : messageList) {
             JsonMessage jsonMessage = JsonMessage.from(message, message.getUser().getUsername(), room.getName());
@@ -67,8 +113,18 @@ public class BreakerCache {
             }
             roomMessages.add(jsonMessage);
         }
-        Collections.reverse(roomMessages);
+        addAllToCacheInternal(room.getName(), roomMessages);
+//        Collections.reverse(roomMessages);
         return roomMessages;
+    }
+
+    private static TreeSet<JsonMessage> makeNewMessageSet() {
+        return new TreeSet<>(new Comparator<JsonMessage>() {
+            @Override
+            public int compare(JsonMessage o1, JsonMessage o2) {
+                return Long.compare(o1.createDateLongUTC, o2.createDateLongUTC);
+            }
+        });
     }
 
     public static void clearUsersCacheAll() {
@@ -140,7 +196,9 @@ public class BreakerCache {
     public static void handleEvent(ChatRoomStream.Event serverEvent) {
         if (serverEvent instanceof ChatRoomStream.Message && !(serverEvent instanceof ChatRoomStream.ServerMessage)) {
             ChatRoomStream.Message event = (ChatRoomStream.Message) serverEvent;
-            clearMessagesCache(event.room.name);
+            addMessageToCache(event.message);
+            Logger.info("Added message id " + event.message.uuid + " to cache.");
+//            clearMessagesCache(event.room.name);
             putJsonUser(event.user);
         } else if (serverEvent instanceof ChatRoomStream.UpdateUserEvent) {
             ChatRoomStream.UpdateUserEvent event = (ChatRoomStream.UpdateUserEvent) serverEvent;

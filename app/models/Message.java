@@ -454,8 +454,8 @@ public class Message extends Model {
 
     @Override
     public <T extends JPABase> T save() {
-        Logger.info("SAVEOVERRIDE - Message");
-        BreakerCache.clearMessagesCache(getRoom().getName());
+//        Logger.info("SAVEOVERRIDE - Message");
+//        BreakerCache.addMessageToCache(this);
         // todo Could consider a global server update channel and send updates this way, however this should
         // already currently be handled by the various room update methods elsewhere in the server
 //        ChatRoomStream.getEventStream(Constants.CHATROOM_DEFAULT).sendRoomUpdate(this);
