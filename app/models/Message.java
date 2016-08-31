@@ -337,7 +337,7 @@ public class Message extends Model {
         Matcher matcher = ChatUser.PATTERN_USER_MENTION.matcher(messageText);
         while (matcher.find()) {
             String username = matcher.group();
-            Logger.info("Found username: " + username);
+//            Logger.info("Found username: " + username);
             username = username.replaceAll("@", "").trim().toLowerCase();
             usernames.add(username);
         }

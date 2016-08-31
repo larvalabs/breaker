@@ -544,14 +544,17 @@ public class Application extends PreloadUserController {
         }
         List<Message> messages;
         if (before) {
+            Logger.info("Getting messages for " + roomName + " before " + id);
             messages = room.getMessagesWithoutBannedBefore(connected, id, limit);
         } else {
+            Logger.info("Getting messages for " + roomName + " after " + id);
             messages = room.getMessagesWithoutBannedAfter(connected, id, limit);
         }
         List<JsonMessage> jsonMessages = new ArrayList<>();
         for (Message message : messages) {
             jsonMessages.add(JsonMessage.from(message, message.getUser().getUsername(), room.getName()));
         }
+        Logger.info("Sending " + jsonMessages.size() + " messages.");
         renderJSON(jsonMessages);
     }
 
