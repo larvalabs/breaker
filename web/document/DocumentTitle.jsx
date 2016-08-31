@@ -18,10 +18,14 @@ class DocumentTitle extends Component {
   }
 
   getTitle() {
-    const { unreadCount } = this.props;
+    const { unreadCount, roomName } = this.props;
 
     if (unreadCount && unreadCount > 0) {
-      return `(${unreadCount}) breaker`;
+      if (roomName) {
+        return `(${unreadCount}) #${roomName} : breaker`;
+      } else {
+        return `(${unreadCount}) breaker`;
+      }
     }
 
     return `breaker`;
