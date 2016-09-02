@@ -16,7 +16,12 @@ const API = {
 
   fetchMoreActiveRooms(limit, offset) {
     return request.get(`/application/getactiverooms?limit=${limit}&offset=${offset}`);
+  },
+
+  deleteMessage(messageUuid) {
+    return request.get(`/application/deletemessage?uuid=${messageUuid}`);
   }
+
 };
 
 export default API;

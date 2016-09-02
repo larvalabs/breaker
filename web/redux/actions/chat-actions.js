@@ -1,3 +1,4 @@
+import API from '../../api';
 import socket from '../../socket';
 
 import * as actions from '../constants/chat-constants';
@@ -86,3 +87,14 @@ export function loadedMoreMessages(room, messages) {
 export function failedLoadingMoreMessages(error) {
   return { type: actions.CHAT_FAILED_LOADING_MESSAGES, error };
 }
+
+export function handleDeleteMessage(uuid) {
+  return (dispatch) => {
+    API.deleteMessage(uuid).then(() => {
+      console.log('Sent delete message request.');
+    }).catch((e) => {
+      console.log('Failed to delete message', e);  // eslint-disable-line
+    });
+  };
+}
+

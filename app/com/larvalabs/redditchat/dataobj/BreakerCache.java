@@ -203,7 +203,7 @@ public class BreakerCache {
         } else if (serverEvent instanceof ChatRoomStream.UpdateMessageEvent) {
             ChatRoomStream.UpdateMessageEvent event = (ChatRoomStream.UpdateMessageEvent) serverEvent;
             addMessageToCache(event.message);
-            Logger.info("Updated message id " + event.message.uuid + "/" + event.message.id + " to cache.");
+            Logger.info("Updated message id " + event.message.uuid + "/" + event.message.id + " in cache.");
 //            clearMessagesCache(event.room.name);
         } else if (serverEvent instanceof ChatRoomStream.UpdateUserEvent) {
             ChatRoomStream.UpdateUserEvent event = (ChatRoomStream.UpdateUserEvent) serverEvent;

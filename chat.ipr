@@ -20,7 +20,7 @@
     </annotationProcessing>
   </component>
   <component name="CopyrightManager" default="" />
-  <component name="DataSourceManagerImpl" format="xml" hash="2069717651">
+  <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
     <data-source source="LOCAL" name="PostgreSQL - redditchat@localhost" uuid="8574837b-0841-4b77-9ec8-b77692ecaa69">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
@@ -177,10 +177,11 @@
   </component>
   <component name="dataSourceStorageLocal">
     <data-source name="PostgreSQL - redditchat@localhost" uuid="8574837b-0841-4b77-9ec8-b77692ecaa69">
+      <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" />
       <secret-storage>master_key</secret-storage>
       <user-name>matt</user-name>
-      <schema-pattern>redditchat.pg_catalog redditchat.public</schema-pattern>
-      <default-schemas>redditchat.public</default-schemas>
+      <introspection-scope>redditchat:pg_catalog,public</introspection-scope>
+      <resolve-scope>redditchat:public</resolve-scope>
     </data-source>
   </component>
   <component name="libraryTable">

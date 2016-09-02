@@ -18,10 +18,24 @@ export default function roomMessages(state = Immutable.Map(), action) {
           ).push(action.message.message.uuid)
       );
     }
+    case (socketTypes.SOCK_UPDATE_MESSAGE): {
+      if (action.message.message.deleted) {
+        return state.set(
+            action.message.room.name,
+            state.get(
+                action.message.room.name,
+                Immutable.List()
+            ).filter(function(msgUuid) {
+              return msgUuid !== action.message.message.uuid;
+            })
+        );
+      }
+      return state;
+    }
     case (chatTypes.CHAT_LOADED_MESSAGES): {
       return state.update(action.room, (currentMessageList) => {
         return Immutable.List(
-            action.messages.map((message) => message.uuid)
+            action.messages.filter((message) => !message.deleted).map((message) => message.uuid)
         ).reverse().concat(currentMessageList);
       });
     }
