@@ -530,6 +530,31 @@ public class Application extends PreloadUserController {
         }
     }
 
+    public static void deleteMessage(String uuid) {
+        ChatUser connected = connected();
+        if (connected != null) {
+            Message message = Message.findByUUID(uuid);
+            if (message != null) {
+                ChatRoom room = message.getRoom();
+                boolean allowedToDelete = room.isModerator(connected) || connected.isAdmin();
+                if (allowedToDelete) {
+                    message.setDeleted(true);
+                    message.save();
+                    ChatRoomStream.getEventStream(room.getName()).sendMessageUpdate(room, message);
+                    Logger.info("Message " + uuid + " marked deleted by " + connected.getUsername());
+                    ok();
+                } else {
+                    error("Not authorized to delete.");
+                }
+            } else {
+                error("Message not found.");
+            }
+        } else {
+            error("User not connected.");
+        }
+        error();
+    }
+
     public static void getMessages(String roomName, Long id, Integer limit, Boolean before) {
         ChatUser connected = connected();
         if (connected == null) {

@@ -33,15 +33,16 @@ export default class ChatMessageWithGrouping extends Component {
     }
 
     if (this.shouldRenderShortMessage(previousMessage, currentMessage)) {
-      return <ChatShortMessage message={currentMessage} user={user} />;
+      return <ChatShortMessage message={currentMessage} user={user} userIsMod={this.props.userIsMod} />;
     }
 
-    return <ChatMessage message={currentMessage} user={user} />;
+    return <ChatMessage message={currentMessage} user={user} userIsMod={this.props.userIsMod} />;
   }
 }
 
 ChatMessageWithGrouping.defaultProps = {
   user: Immutable.Map(),
   currentMessage: Immutable.Map(),
-  previousMessage: Immutable.Map()
+  previousMessage: Immutable.Map(),
+  userIsMod: false
 };

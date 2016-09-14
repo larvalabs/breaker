@@ -22,6 +22,7 @@ public class JsonMessage implements Serializable {
     public long createDateLongUTC;
     public boolean isNewSinceLastSession;
     public String detectedLanguage;
+    public boolean deleted;
 
     public String messageHtml;
     public String[] allLinks;
@@ -42,7 +43,7 @@ public class JsonMessage implements Serializable {
 //    public String translatedLanguage;
 
     public JsonMessage(long id, String uuid, String username, String roomName, String message, String imageUrl, String imageThumbUrl, int likeCount, boolean userDidLike,
-                       Date createDate, boolean newSinceLastSession, String detectedLanguage) {
+                       Date createDate, boolean newSinceLastSession, String detectedLanguage, boolean deleted) {
         this.id = id;
         this.uuid = uuid;
         this.username = username;
@@ -56,6 +57,7 @@ public class JsonMessage implements Serializable {
         this.createDateLongUTC = createDate.getTime();
         isNewSinceLastSession = newSinceLastSession;
         this.detectedLanguage = detectedLanguage;
+        this.deleted = deleted;
         try {
             processMessage();
         } catch (Exception e) {
@@ -82,7 +84,7 @@ public class JsonMessage implements Serializable {
         return new JsonMessage(message.getId(), message.getUuid(), username, roomName,
                 message.messageText, message.getImageUrl(), message.getImageThumbUrl(),
                 message.getLikeCount(), false, message.createDate,
-                false, message.getLanguageDetected());
+                false, message.getLanguageDetected(), message.isDeleted());
     }
 
     public static JsonMessage from(Message message, ChatUser loggedInUser, boolean isNewSinceLastSession) {
@@ -99,7 +101,7 @@ public class JsonMessage implements Serializable {
         return new JsonMessage(message.getId(), message.getUuid(), message.getUser().getUsername(), message.getRoom().getName(),
                 message.messageText, message.getImageUrl(), message.getImageThumbUrl(),
                 message.getLikeCount(), didLikeMessage, message.createDate,
-                isNewSinceLastSession, message.getLanguageDetected());
+                isNewSinceLastSession, message.getLanguageDetected(), message.isDeleted());
     }
 
     public static JsonMessage makePresavedMessage(String uuid, String username, String roomName, String message) {

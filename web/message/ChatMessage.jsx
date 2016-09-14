@@ -29,7 +29,7 @@ export default class ChatMessage extends Component {
         {this.renderTime()}
         <div className="clear">
           <UsernameAndFlair user={this.props.user} messageUsername={this.props.message.get('username')}/>
-          <Message message={this.props.message} />
+          <Message message={this.props.message} userIsMod={this.props.userIsMod}/>
         </div>
 
       </li>
@@ -40,5 +40,6 @@ export default class ChatMessage extends Component {
 ChatMessage.defaultProps = {
   message: Immutable.Map(),
   user: Immutable.Map(),
-  root: true
+  root: true,
+  userIsMod: false
 };

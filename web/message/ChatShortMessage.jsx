@@ -25,7 +25,7 @@ export default class ChatMessage extends Component {
       <li className={liClasses}>
         {this.renderUserImage()}
         <Clear>
-          <Message message={this.props.message} />
+          <Message message={this.props.message} userIsMod={this.props.userIsMod} />
         </Clear>
       </li>
     );

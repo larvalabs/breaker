@@ -10,10 +10,13 @@ import * as scrollActions from '../redux/actions/scroll-actions';
 
 import { getCurrentRoom } from '../redux/selectors/rooms-selectors';
 import { getScrollToMessageId } from '../redux/selectors/ui-selectors';
+import { getAuthUserIsMod } from '../redux/selectors/auth-user-selectors';
 import {
     getAllMessagesEntitiesForCurrentRoom,
     getFirstMessageIdForCurrentRoom
 } from '../redux/selectors/message-entities-selectors';
+
+
 
 
 class ChatThread extends Component {
@@ -57,6 +60,7 @@ class ChatThread extends Component {
       return (
         <ChatMessageWithGrouping ref={uuid} key={uuid}
                                  currentMessage={message} previousMessage={previous} user={user}
+                                 userIsMod={this.props.userIsMod}
         />
       );
     });
@@ -99,6 +103,7 @@ function mapStateToProps(state) {
   return {
     room: getCurrentRoom(state),
     users: state.get('users'),
+    userIsMod: getAuthUserIsMod(state),
     scrollToMessageId: getScrollToMessageId(state),
     firstMessageID: getFirstMessageIdForCurrentRoom(state),
     messages: getAllMessagesEntitiesForCurrentRoom(state)

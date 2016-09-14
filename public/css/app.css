@@ -359,3 +359,13 @@ li.chat-message-root .message-body, li.chat-message-short .message-body, li.chat
   cursor: pointer;
 }
 
+.visible-on-parent-hover {
+  display: none;
+  /*visibility: collapse;*/
+}
+
+.visible-on-hover-trigger:hover > .visible-on-parent-hover {
+  display: block;
+  /*visibility: visible;*/
+}
+

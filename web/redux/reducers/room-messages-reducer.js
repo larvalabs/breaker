@@ -9,6 +9,7 @@ import stateFromJS from '../../util/stateFromJS';
 export default function roomMessages(state = Immutable.Map(), action) {
   switch (action.type) {
     case (socketTypes.SOCK_SERVER):
+    case (socketTypes.SOCK_UPDATE_MESSAGE):
     case (socketTypes.SOCK_MESSAGE): {
       return state.set(
           action.message.room.name,
