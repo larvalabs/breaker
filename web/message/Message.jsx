@@ -36,12 +36,7 @@ class Message extends Component {
 
   renderHTMLMessage() {
     let classes = 'message-body m-t-midxs pos-rlt visible-on-hover-trigger';
-    let deleteClasses = 'pull-right text-sm text-muted';
-    let deleteHtml = '<div class="visible-on-parent-hover pull-right text-sm text-muted"><a href="#" onClick={this.props.handleDeleteMessage}>delete</a></div>';
     let message = this.props.message.get('messageHtml').replace(/@([A-Za-z0-9_-]+)/g, this.renderFormattedMention);
-    if (this.props.message.get('deleted')) {
-      message = '<i>[deleted]</i>';
-    }
     if (this.props.userIsMod) {
       return <div className={classes}>
         <a className="visible-on-parent-hover" href="#" onClick={this.props.handleDeleteMessage}><i className="fa fa-trash text-muted pull-left text-xs m-t-xs"></i></a>
@@ -54,6 +49,14 @@ class Message extends Component {
     }
   }
 
+  renderDeletedMessage() {
+    let classes = 'message-body m-t-midxs pos-rlt visible-on-hover-trigger';
+    let message = '<i>[deleted]</i>';
+    return <div className={classes}>
+      <div dangerouslySetInnerHTML={ { __html: message } }/>
+    </div>;
+  }
+
   renderMessageBody() {
     if (this.props.message.get('messageHtml')) {
       return this.renderHTMLMessage();
@@ -62,12 +65,20 @@ class Message extends Component {
   }
 
   render() {
-    return (
-      <div>
-        {this.renderMessageBody()}
-        <LinkInfo linkInfo={this.props.message.getIn(['linkInfo', 0])} uuid={this.props.message.get('uuid')} />
-      </div>
-    );
+    if (!this.props.message.get('deleted')) {
+      return (
+          <div>
+            {this.renderMessageBody()}
+            <LinkInfo linkInfo={this.props.message.getIn(['linkInfo', 0])} uuid={this.props.message.get('uuid')}/>
+          </div>
+      );
+    } else {
+      return (
+          <div>
+            {this.renderDeletedMessage()}
+          </div>
+      );
+    }
   }
 }
 

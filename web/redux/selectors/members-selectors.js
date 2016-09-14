@@ -35,6 +35,6 @@ export const getOfflineForCurrentRoom = createSelector(
 export const getAllMembersForCurrentRoom = createSelector(
     [getModsForCurrentRoom, getOnlineForCurrentRoom, getOfflineForCurrentRoom],
     (modUserNames, onlineUserNames, offlineUserNames) => {
-      return modUserNames.union(onlineUserNames).union(offlineUserNames);
+      return modUserNames.toSet().union(onlineUserNames).union(offlineUserNames);
     }
 );

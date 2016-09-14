@@ -101,10 +101,8 @@ public class JsonUtil {
                 TreeSet<JsonMessage> roomMessages = BreakerCache.getLastMessages(thisRoom);
                 ArrayList<String> messageIds = new ArrayList<>();
                 for (JsonMessage roomMessage : roomMessages) {
-                    if (!roomMessage.deleted) {
-                        state.messages.put(roomMessage.uuid, roomMessage);
-                        messageIds.add(roomMessage.uuid);
-                    }
+                    state.messages.put(roomMessage.uuid, roomMessage);
+                    messageIds.add(roomMessage.uuid);
                 }
                 state.roomMessages.put(roomName, messageIds);
 //                Logger.info("Messages load time: " + (System.currentTimeMillis() - messagesStart));
